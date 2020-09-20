@@ -1,0 +1,99 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Files\emulation">
+      <UniqueIdentifier>{73924b88-53f7-4072-b0ec-5432efe8a682}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\emulation\cpu">
+      <UniqueIdentifier>{d9e80016-4585-4e23-9baf-9dd43b255f31}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\emulation\video">
+      <UniqueIdentifier>{82d6b3c3-8dec-49c4-b811-a41fb84d3569}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\emulation\clock">
+      <UniqueIdentifier>{f20e2b5f-7d0f-4db5-84f5-c4d846f7646e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\emulation\bus">
+      <UniqueIdentifier>{093095f2-bee9-45ec-a80a-aceec334eb53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\emulation\bus\ram">
+      <UniqueIdentifier>{0f4b8cac-79ed-46ee-80d3-0bf6110fb0d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\emulation\bus\rom">
+      <UniqueIdentifier>{48a7edd7-2097-4bba-9717-38032e6c1df0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\emulation\bus\debug">
+      <UniqueIdentifier>{4712631f-f30d-4214-b057-d94ace0bb8a7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cpu2a03_fast.h">
+      <Filter>Source Files\emulation\cpu</Filter>
+    </ClInclude>
+    <ClInclude Include="ppu.h">
+      <Filter>Source Files\emulation\video</Filter>
+    </ClInclude>
+    <ClInclude Include="clock.h">
+      <Filter>Source Files\emulation\clock</Filter>
+    </ClInclude>
+    <ClInclude Include="bus.h">
+      <Filter>Source Files\emulation\bus</Filter>
+    </ClInclude>
+    <ClInclude Include="rom.h">
+      <Filter>Source Files\emulation\bus\rom</Filter>
+    </ClInclude>
+    <ClInclude Include="mainram.h">
+      <Filter>Source Files\emulation\bus\ram</Filter>
+    </ClInclude>
+    <ClInclude Include="debug6k.h">
+      <Filter>Source Files\emulation\bus\debug</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DenverEMU.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cpu2a03_fast.cpp">
+      <Filter>Source Files\emulation\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="ppu.cpp">
+      <Filter>Source Files\emulation\video</Filter>
+    </ClCompile>
+    <ClCompile Include="clock.cpp">
+      <Filter>Source Files\emulation\clock</Filter>
+    </ClCompile>
+    <ClCompile Include="bus.cpp">
+      <Filter>Source Files\emulation\bus</Filter>
+    </ClCompile>
+    <ClCompile Include="rom.cpp">
+      <Filter>Source Files\emulation\bus\rom</Filter>
+    </ClCompile>
+    <ClCompile Include="mainram.cpp">
+      <Filter>Source Files\emulation\bus\ram</Filter>
+    </ClCompile>
+    <ClCompile Include="debug6k.cpp">
+      <Filter>Source Files\emulation\bus\debug</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

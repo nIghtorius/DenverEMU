@@ -1,0 +1,8 @@
+﻿  DenverEMU.cpp
+  cpu2a03_fast.cpp
+  Generating code
+  24 of 348 functions ( 6.9%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    10 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  DenverEMU.vcxproj -> C:\Users\nIghtorius.PHIBIAN\source\repos\DenverEMU\x64\Release\DenverEMU.exe
