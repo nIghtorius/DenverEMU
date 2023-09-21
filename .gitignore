@@ -1,1 +1,4 @@
 *.nes
+Debug\*
+Release\*
+x64\*
