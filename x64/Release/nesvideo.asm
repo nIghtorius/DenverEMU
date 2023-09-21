@@ -201,14 +201,14 @@ PUBLIC	?process_ppu_image@nesvideo@@QEAAXPEAG@Z	; nesvideo::process_ppu_image
 PUBLIC	?getFrame@nesvideo@@QEAAPEAXXZ			; nesvideo::getFrame
 ;	COMDAT pdata
 pdata	SEGMENT
-$pdata$??0nesvideo@@QEAA@XZ DD imagerel $LN4@nesvideo
-	DD	imagerel $LN4@nesvideo+32
+$pdata$??0nesvideo@@QEAA@XZ DD imagerel $LN4
+	DD	imagerel $LN4+32
 	DD	imagerel $unwind$??0nesvideo@@QEAA@XZ
 pdata	ENDS
 ;	COMDAT pdata
 pdata	SEGMENT
-$pdata$?process_ppu_image@nesvideo@@QEAAXPEAG@Z DD imagerel $LN11@process_pp
-	DD	imagerel $LN11@process_pp+160
+$pdata$?process_ppu_image@nesvideo@@QEAAXPEAG@Z DD imagerel $LN11
+	DD	imagerel $LN11+160
 	DD	imagerel $unwind$?process_ppu_image@nesvideo@@QEAAXPEAG@Z
 ;	COMDAT xdata
 xdata	SEGMENT
@@ -222,4 +222,127 @@ xdata	ENDS
 xdata	SEGMENT
 $unwind$??0nesvideo@@QEAA@XZ DD 020601H
 	DD	030023206H
+; Function compile flags: /Ogtpy
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\nesvideo.cpp
+;	COMDAT ?getFrame@nesvideo@@QEAAPEAXXZ
+_TEXT	SEGMENT
+this$ = 8
+?getFrame@nesvideo@@QEAAPEAXXZ PROC			; nesvideo::getFrame, COMDAT
+
+; 14   : 	return displaybuffer;
+
+	mov	rax, QWORD PTR [rcx]
+
+; 15   : }
+
+	ret	0
+?getFrame@nesvideo@@QEAAPEAXXZ ENDP			; nesvideo::getFrame
+_TEXT	ENDS
+; Function compile flags: /Ogtpy
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\nesvideo.cpp
+;	COMDAT ?process_ppu_image@nesvideo@@QEAAXPEAG@Z
+_TEXT	SEGMENT
+this$ = 8
+ppu_image$ = 16
+?process_ppu_image@nesvideo@@QEAAXPEAG@Z PROC		; nesvideo::process_ppu_image, COMDAT
+
+; 17   : void nesvideo::process_ppu_image(unsigned __int16 * ppu_image) {
+
+$LN11:
+	mov	QWORD PTR [rsp+8], rbx
+	mov	QWORD PTR [rsp+16], rbp
+	mov	QWORD PTR [rsp+24], rsi
+	mov	QWORD PTR [rsp+32], rdi
+	mov	esi, 65528				; 0000fff8H
+	lea	rdi, OFFSET FLAT:?ntscpalette@@3QBEB
+	mov	r11, rdx
+	mov	rbx, rcx
+	xor	r10d, r10d
+	lea	ebp, QWORD PTR [rsi+4]
+	npad	4
+$LL4@process_pp:
+
+; 18   : 	/*
+; 19   : 		input is a buffer of 16 bits per pixel.
+; 20   : 		pixel data is made up as
+; 21   : 		[xxxxx]e[rgb][pppppppp]
+; 22   : 		[rgb] is emphasis bits, [pppppppp] is pixel data. [xxxxx] is filler data we ignore (no need)
+; 23   : 	*/
+; 24   : 
+; 25   : 	for (int x = 0; x < 61440; x++) {
+; 26   : 		unsigned __int8 pixel = ppu_image[x] & 0x3F;
+
+	movzx	r8d, BYTE PTR [r10+r11]
+
+; 27   : 		
+; 28   : 		__int32 idx = pixel * 3;
+; 29   : 
+; 30   : 		unsigned __int16 framepixel = ((ntscpalette[idx] >> 3) << 11) |
+; 31   : 			((ntscpalette[idx + 1] >> 2) << 5) |
+
+	mov	eax, r8d
+	and	r8d, 63					; 0000003fH
+	and	eax, 63					; 0000003fH
+	lea	rdx, QWORD PTR [rax+rax*2]
+	movzx	eax, BYTE PTR [rdx+rdi+1]
+	movzx	r9d, BYTE PTR [rdx+rdi]
+	and	r9w, si
+	shl	r9w, 5
+	or	r9w, ax
+	lea	rax, QWORD PTR [r8+r8*2]
+	movzx	eax, BYTE PTR [rax+rdi+2]
+	and	r9w, bp
+	shr	al, 3
+	movzx	ecx, al
+
+; 32   : 			((ntscpalette[idx + 2] >> 3));
+; 33   : 
+; 34   : 		displaybuffer[x] = framepixel;
+
+	mov	rax, QWORD PTR [rbx]
+	shl	r9w, 3
+	or	r9w, cx
+	mov	WORD PTR [r10+rax], r9w
+	add	r10, 2
+	cmp	r10, 122880				; 0001e000H
+	jl	SHORT $LL4@process_pp
+
+; 35   : 	}
+; 36   : }
+
+	mov	rbx, QWORD PTR [rsp+8]
+	mov	rbp, QWORD PTR [rsp+16]
+	mov	rsi, QWORD PTR [rsp+24]
+	mov	rdi, QWORD PTR [rsp+32]
+	ret	0
+?process_ppu_image@nesvideo@@QEAAXPEAG@Z ENDP		; nesvideo::process_ppu_image
+_TEXT	ENDS
+; Function compile flags: /Ogtpy
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\nesvideo.cpp
+;	COMDAT ??0nesvideo@@QEAA@XZ
+_TEXT	SEGMENT
+this$ = 48
+??0nesvideo@@QEAA@XZ PROC				; nesvideo::nesvideo, COMDAT
+
+; 5    : nesvideo::nesvideo() {
+
+$LN4:
+	push	rbx
+	sub	rsp, 32					; 00000020H
+	mov	rbx, rcx
+
+; 6    : 	displaybuffer = (unsigned __int16 *)malloc(122880); // buffer is 256x240 16 bits.
+
+	mov	ecx, 122880				; 0001e000H
+	call	QWORD PTR __imp_malloc
+	mov	QWORD PTR [rbx], rax
+
+; 7    : }
+
+	mov	rax, rbx
+	add	rsp, 32					; 00000020H
+	pop	rbx
+	ret	0
+??0nesvideo@@QEAA@XZ ENDP				; nesvideo::nesvideo
+_TEXT	ENDS
 END

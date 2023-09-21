@@ -71,20 +71,20 @@ PUBLIC	??0mainram@@QEAA@XZ				; mainram::mainram
 EXTRN	??_Emainram@@UEAAPEAXI@Z:PROC			; mainram::`vector deleting destructor'
 ;	COMDAT pdata
 pdata	SEGMENT
-$pdata$??1mainram@@UEAA@XZ DD imagerel $LN10@mainram
-	DD	imagerel $LN10@mainram+55
+$pdata$??1mainram@@UEAA@XZ DD imagerel $LN10
+	DD	imagerel $LN10+55
 	DD	imagerel $unwind$??1mainram@@UEAA@XZ
 pdata	ENDS
 ;	COMDAT pdata
 pdata	SEGMENT
-$pdata$??_Gmainram@@UEAAPEAXI@Z DD imagerel $LN15@scalar
-	DD	imagerel $LN15@scalar+87
+$pdata$??_Gmainram@@UEAAPEAXI@Z DD imagerel $LN15
+	DD	imagerel $LN15+87
 	DD	imagerel $unwind$??_Gmainram@@UEAAPEAXI@Z
 pdata	ENDS
 ;	COMDAT pdata
 pdata	SEGMENT
-$pdata$??0mainram@@QEAA@XZ DD imagerel $LN7@mainram
-	DD	imagerel $LN7@mainram+108
+$pdata$??0mainram@@QEAA@XZ DD imagerel $LN7
+	DD	imagerel $LN7+108
 	DD	imagerel $unwind$??0mainram@@QEAA@XZ
 ;	COMDAT xdata
 xdata	SEGMENT
@@ -101,4 +101,190 @@ xdata	ENDS
 xdata	SEGMENT
 $unwind$??1mainram@@UEAA@XZ DD 020601H
 	DD	030023206H
+; Function compile flags: /Ogtpy
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\ram\mainram.cpp
+;	COMDAT ??0mainram@@QEAA@XZ
+_TEXT	SEGMENT
+this$ = 48
+??0mainram@@QEAA@XZ PROC				; mainram::mainram, COMDAT
+
+; 6    : mainram::mainram() {
+
+$LN7:
+	push	rbx
+	sub	rsp, 32					; 00000020H
+	mov	rbx, rcx
+	call	??0bus_device@@QEAA@XZ			; bus_device::bus_device
+	lea	rax, OFFSET FLAT:??_7mainram@@6B@
+
+; 7    : 	ram = (byte *)malloc(0x0800);	// 2k ram
+
+	mov	ecx, 2048				; 00000800H
+	mov	QWORD PTR [rbx], rax
+	call	QWORD PTR __imp_malloc
+
+; 8    : 	devicestart = 0x0000;	// start of device.
+; 9    : 	deviceend = 0x1FFF;		// end of device.
+; 10   : 	devicemask = 0x07FF;	// mask 2k ( 0000 0111 1111 1111 )	// this enables mirroring for 0x0800, 0x1000 and 0x1800
+; 11   : 	strcpy_s(this->get_device_descriptor(), MAX_DESCRIPTOR_LENGTH, "Denver NES mainram (2k)");
+
+	mov	rcx, QWORD PTR [rbx+8]
+	lea	r8, OFFSET FLAT:??_C@_0BI@NBBEICM@Denver?5NES?5mainram?5?$CI2k?$CJ@
+	mov	edx, 128				; 00000080H
+	mov	QWORD PTR [rbx+72], rax
+	mov	DWORD PTR [rbx+44], 0
+	mov	DWORD PTR [rbx+48], 8191		; 00001fffH
+	mov	DWORD PTR [rbx+52], 2047		; 000007ffH
+	call	QWORD PTR __imp_strcpy_s
+
+; 12   : 	// initialize RAM to 0x00
+; 13   : 	memset(ram, 0x00, 0x0800);
+
+	mov	rcx, QWORD PTR [rbx+72]
+	xor	edx, edx
+	mov	r8d, 2048				; 00000800H
+	call	memset
+
+; 14   : }
+
+	mov	rax, rbx
+	add	rsp, 32					; 00000020H
+	pop	rbx
+	ret	0
+??0mainram@@QEAA@XZ ENDP				; mainram::mainram
+_TEXT	ENDS
+; Function compile flags: /Ogtpy
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\ram\mainram.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+;	COMDAT ??_Gmainram@@UEAAPEAXI@Z
+_TEXT	SEGMENT
+this$ = 48
+__flags$ = 56
+??_Gmainram@@UEAAPEAXI@Z PROC				; mainram::`scalar deleting destructor', COMDAT
+$LN15:
+	mov	QWORD PTR [rsp+8], rbx
+	push	rdi
+	sub	rsp, 32					; 00000020H
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\ram\mainram.cpp
+
+; 16   : mainram::~mainram() {
+
+	lea	rax, OFFSET FLAT:??_7mainram@@6B@
+	mov	rdi, rcx
+	mov	QWORD PTR [rcx], rax
+	mov	ebx, edx
+
+; 17   : 	free(ram);		// dispose ram when disposing memory.
+
+	mov	rcx, QWORD PTR [rcx+72]
+	call	QWORD PTR __imp_free
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+
+; 186  : 	free(devicedescriptor);	// be done with it.
+
+	mov	rcx, QWORD PTR [rdi+8]
+	lea	rax, OFFSET FLAT:??_7device@@6B@
+	mov	QWORD PTR [rdi], rax
+	call	QWORD PTR __imp_free
+	test	bl, 1
+	je	SHORT $LN12@scalar
+	mov	edx, 80					; 00000050H
+	mov	rcx, rdi
+	call	??3@YAXPEAX_K@Z				; operator delete
+$LN12@scalar:
+	mov	rbx, QWORD PTR [rsp+48]
+	mov	rax, rdi
+	add	rsp, 32					; 00000020H
+	pop	rdi
+	ret	0
+??_Gmainram@@UEAAPEAXI@Z ENDP				; mainram::`scalar deleting destructor'
+_TEXT	ENDS
+; Function compile flags: /Ogtpy
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\ram\mainram.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\ram\mainram.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\ram\mainram.cpp
+;	COMDAT ??1mainram@@UEAA@XZ
+_TEXT	SEGMENT
+this$ = 48
+??1mainram@@UEAA@XZ PROC				; mainram::~mainram, COMDAT
+
+; 16   : mainram::~mainram() {
+
+$LN10:
+	push	rbx
+	sub	rsp, 32					; 00000020H
+	lea	rax, OFFSET FLAT:??_7mainram@@6B@
+	mov	rbx, rcx
+	mov	QWORD PTR [rcx], rax
+
+; 17   : 	free(ram);		// dispose ram when disposing memory.
+
+	mov	rcx, QWORD PTR [rcx+72]
+	call	QWORD PTR __imp_free
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+
+; 186  : 	free(devicedescriptor);	// be done with it.
+
+	mov	rcx, QWORD PTR [rbx+8]
+	lea	rax, OFFSET FLAT:??_7device@@6B@
+	mov	QWORD PTR [rbx], rax
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\ram\mainram.cpp
+
+; 18   : }
+
+	add	rsp, 32					; 00000020H
+	pop	rbx
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+
+; 186  : 	free(devicedescriptor);	// be done with it.
+
+	rex_jmp	QWORD PTR __imp_free
+??1mainram@@UEAA@XZ ENDP				; mainram::~mainram
+_TEXT	ENDS
+; Function compile flags: /Ogtpy
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\ram\mainram.cpp
+;	COMDAT ?write@mainram@@UEAAXHHE@Z
+_TEXT	SEGMENT
+this$ = 8
+addr$ = 16
+addr_from_base$ = 24
+data$ = 32
+?write@mainram@@UEAAXHHE@Z PROC				; mainram::write, COMDAT
+
+; 21   : 	// addr = real address to write
+; 22   : 	// addr_from_base = address always starting relative to zero point. if device is 0x1000 and 0x1002 is written this will be 0x0002
+; 23   : 	ram[addr_from_base] = data;	
+
+	mov	rax, QWORD PTR [rcx+72]
+	movsxd	rdx, r8d
+	mov	BYTE PTR [rdx+rax], r9b
+
+; 24   : }
+
+	ret	0
+?write@mainram@@UEAAXHHE@Z ENDP				; mainram::write
+_TEXT	ENDS
+; Function compile flags: /Ogtpy
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\ram\mainram.cpp
+;	COMDAT ?read@mainram@@UEAAEHH@Z
+_TEXT	SEGMENT
+this$ = 8
+addr$ = 16
+addr_from_base$ = 24
+?read@mainram@@UEAAEHH@Z PROC				; mainram::read, COMDAT
+
+; 27   : 	// same as write but then read.
+; 28   : 	return ram[addr_from_base];
+
+	mov	rax, QWORD PTR [rcx+72]
+	movsxd	rdx, r8d
+	movzx	eax, BYTE PTR [rdx+rax]
+
+; 29   : }
+
+	ret	0
+?read@mainram@@UEAAEHH@Z ENDP				; mainram::read
+_TEXT	ENDS
 END

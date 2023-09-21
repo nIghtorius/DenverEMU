@@ -14,7 +14,7 @@
 
 #pragma once
 
-#include "bus.h"
+#include "..\bus.h"
 class vrom : public bus_device {
 private:
 public:
@@ -44,7 +44,7 @@ private:
 public:
 	rom();
 	~rom();
-	virtual	void	set_rom_data(byte *data, int size);
+	virtual	void	set_rom_data(byte *data, size_t size);
 	virtual void	write(int addr, int addr_from_base, byte data);
 	virtual	byte	read(int addr, int addr_from_base);
 	byte	*romdata;

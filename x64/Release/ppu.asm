@@ -208,38 +208,38 @@ EXTRN	??_Eppu_pal_ram@@UEAAPEAXI@Z:PROC		; ppu_pal_ram::`vector deleting destruc
 EXTRN	??_Eppu@@UEAAPEAXI@Z:PROC			; ppu::`vector deleting destructor'
 ;	COMDAT pdata
 pdata	SEGMENT
-$pdata$??1ppu_pal_ram@@UEAA@XZ DD imagerel $LN10@ppu_pal_ra
-	DD	imagerel $LN10@ppu_pal_ra+55
+$pdata$??1ppu_pal_ram@@UEAA@XZ DD imagerel $LN10
+	DD	imagerel $LN10+55
 	DD	imagerel $unwind$??1ppu_pal_ram@@UEAA@XZ
 pdata	ENDS
 ;	COMDAT pdata
 pdata	SEGMENT
-$pdata$??_Gppu_pal_ram@@UEAAPEAXI@Z DD imagerel $LN15@scalar
-	DD	imagerel $LN15@scalar+87
+$pdata$??_Gppu_pal_ram@@UEAAPEAXI@Z DD imagerel $LN15
+	DD	imagerel $LN15+87
 	DD	imagerel $unwind$??_Gppu_pal_ram@@UEAAPEAXI@Z
 pdata	ENDS
 ;	COMDAT pdata
 pdata	SEGMENT
-$pdata$??0ppu_pal_ram@@QEAA@XZ DD imagerel $LN7@ppu_pal_ra
-	DD	imagerel $LN7@ppu_pal_ra+91
+$pdata$??0ppu_pal_ram@@QEAA@XZ DD imagerel $LN7
+	DD	imagerel $LN7+91
 	DD	imagerel $unwind$??0ppu_pal_ram@@QEAA@XZ
 pdata	ENDS
 ;	COMDAT pdata
 pdata	SEGMENT
-$pdata$??1ppuram@@UEAA@XZ DD imagerel $LN10@ppuram
-	DD	imagerel $LN10@ppuram+55
+$pdata$??1ppuram@@UEAA@XZ DD imagerel $LN10
+	DD	imagerel $LN10+55
 	DD	imagerel $unwind$??1ppuram@@UEAA@XZ
 pdata	ENDS
 ;	COMDAT pdata
 pdata	SEGMENT
-$pdata$??_Gppuram@@UEAAPEAXI@Z DD imagerel $LN15@scalar
-	DD	imagerel $LN15@scalar+87
+$pdata$??_Gppuram@@UEAAPEAXI@Z DD imagerel $LN15
+	DD	imagerel $LN15+87
 	DD	imagerel $unwind$??_Gppuram@@UEAAPEAXI@Z
 pdata	ENDS
 ;	COMDAT pdata
 pdata	SEGMENT
-$pdata$??0ppuram@@QEAA@XZ DD imagerel $LN7@ppuram
-	DD	imagerel $LN7@ppuram+91
+$pdata$??0ppuram@@QEAA@XZ DD imagerel $LN7
+	DD	imagerel $LN7+91
 	DD	imagerel $unwind$??0ppuram@@QEAA@XZ
 pdata	ENDS
 ;	COMDAT pdata
@@ -251,62 +251,63 @@ pdata	ENDS
 ;	COMDAT pdata
 pdata	SEGMENT
 $pdata$3$?rundevice@ppu@@UEAAHH@Z DD imagerel $LN148+40
-	DD	imagerel $LN148+2843
+	DD	imagerel $LN148+2827
 	DD	imagerel $chain$3$?rundevice@ppu@@UEAAHH@Z
 pdata	ENDS
 ;	COMDAT pdata
 pdata	SEGMENT
-$pdata$4$?rundevice@ppu@@UEAAHH@Z DD imagerel $LN148+2843
-	DD	imagerel $LN148+2855
+$pdata$4$?rundevice@ppu@@UEAAHH@Z DD imagerel $LN148+2827
+	DD	imagerel $LN148+2839
 	DD	imagerel $chain$4$?rundevice@ppu@@UEAAHH@Z
 pdata	ENDS
 ;	COMDAT pdata
 pdata	SEGMENT
-$pdata$?write@ppu@@UEAAXHHE@Z DD imagerel $LN19@write
-	DD	imagerel $LN19@write+619
+$pdata$?write@ppu@@UEAAXHHE@Z DD imagerel $LN19
+	DD	imagerel $LN19+619
 	DD	imagerel $unwind$?write@ppu@@UEAAXHHE@Z
 pdata	ENDS
 ;	COMDAT pdata
 pdata	SEGMENT
-$pdata$?read@ppu@@UEAAEHH@Z DD imagerel $LN15@read
-	DD	imagerel $LN15@read+152
+$pdata$?read@ppu@@UEAAEHH@Z DD imagerel $LN15
+	DD	imagerel $LN15+152
 	DD	imagerel $unwind$?read@ppu@@UEAAEHH@Z
 pdata	ENDS
 ;	COMDAT pdata
 pdata	SEGMENT
-$pdata$0$?read@ppu@@UEAAEHH@Z DD imagerel $LN15@read+152
-	DD	imagerel $LN15@read+220
+$pdata$0$?read@ppu@@UEAAEHH@Z DD imagerel $LN15+152
+	DD	imagerel $LN15+220
 	DD	imagerel $chain$0$?read@ppu@@UEAAEHH@Z
 pdata	ENDS
 ;	COMDAT pdata
 pdata	SEGMENT
-$pdata$1$?read@ppu@@UEAAEHH@Z DD imagerel $LN15@read+220
-	DD	imagerel $LN15@read+228
+$pdata$1$?read@ppu@@UEAAEHH@Z DD imagerel $LN15+220
+	DD	imagerel $LN15+228
 	DD	imagerel $chain$1$?read@ppu@@UEAAEHH@Z
 pdata	ENDS
 ;	COMDAT pdata
 pdata	SEGMENT
-$pdata$??1ppu@@UEAA@XZ DD imagerel $LN248@ppu
-	DD	imagerel $LN248@ppu+341
+$pdata$??1ppu@@UEAA@XZ DD imagerel $LN248
+	DD	imagerel $LN248+341
 	DD	imagerel $unwind$??1ppu@@UEAA@XZ
 pdata	ENDS
 ;	COMDAT pdata
 pdata	SEGMENT
-$pdata$??_Gppu@@UEAAPEAXI@Z DD imagerel $LN253@scalar
-	DD	imagerel $LN253@scalar+380
+$pdata$??_Gppu@@UEAAPEAXI@Z DD imagerel $LN253
+	DD	imagerel $LN253+380
 	DD	imagerel $unwind$??_Gppu@@UEAAPEAXI@Z
 pdata	ENDS
 ;	COMDAT pdata
 pdata	SEGMENT
-$pdata$??0ppu@@QEAA@XZ DD imagerel $LN189@ppu
-	DD	imagerel $LN189@ppu+439
+$pdata$??0ppu@@QEAA@XZ DD imagerel $LN189
+	DD	imagerel $LN189+439
 	DD	imagerel $unwind$??0ppu@@QEAA@XZ
 pdata	ENDS
 ;	COMDAT pdata
 pdata	SEGMENT
-$pdata$?set_char_rom@ppu@@QEAAXPEAVbus_device@@@Z DD imagerel $LN195@set_char_r
-	DD	imagerel $LN195@set_char_r+177
+$pdata$?set_char_rom@ppu@@QEAAXPEAVbus_device@@@Z DD imagerel $LN195
+	DD	imagerel $LN195+177
 	DD	imagerel $unwind$?set_char_rom@ppu@@QEAAXPEAVbus_device@@@Z
+pdata	ENDS
 ;	COMDAT xdata
 xdata	SEGMENT
 $unwind$?set_char_rom@ppu@@QEAAXPEAVbus_device@@@Z DD 041919H
@@ -335,12 +336,15 @@ $stateUnwindMap$??0ppu@@QEAA@XZ DD 0ffffffffH
 xdata	ENDS
 ;	COMDAT CONST
 CONST	SEGMENT
-$cppxdata$??0ppu@@QEAA@XZ DQ 00000000419930522r	; 8.69997e-314
+$cppxdata$??0ppu@@QEAA@XZ DD 019930522H
+	DD	04H
 	DD	imagerel $stateUnwindMap$??0ppu@@QEAA@XZ
-	DQ	00000000000000000r		; 0
+	DD	00H
+	DD	00H
 	DD	02H
 	DD	imagerel $ip2state$??0ppu@@QEAA@XZ
-	DQ	00000000000000020r		; 1.58101e-322
+	DD	020H
+	DD	00H
 	DD	01H
 CONST	ENDS
 ;	COMDAT xdata
@@ -371,16 +375,16 @@ xdata	ENDS
 ;	COMDAT xdata
 xdata	SEGMENT
 $chain$1$?read@ppu@@UEAAEHH@Z DD 021H
-	DD	imagerel $LN15@read
-	DD	imagerel $LN15@read+152
+	DD	imagerel $LN15
+	DD	imagerel $LN15+152
 	DD	imagerel $unwind$?read@ppu@@UEAAEHH@Z
 xdata	ENDS
 ;	COMDAT xdata
 xdata	SEGMENT
 $chain$0$?read@ppu@@UEAAEHH@Z DD 020521H
 	DD	063405H
-	DD	imagerel $LN15@read
-	DD	imagerel $LN15@read+152
+	DD	imagerel $LN15
+	DD	imagerel $LN15+152
 	DD	imagerel $unwind$?read@ppu@@UEAAEHH@Z
 xdata	ENDS
 ;	COMDAT xdata
@@ -404,10 +408,10 @@ $chain$4$?rundevice@ppu@@UEAAHH@Z DD 021H
 xdata	ENDS
 ;	COMDAT xdata
 xdata	SEGMENT
-$chain$3$?rundevice@ppu@@UEAAHH@Z DD 082021H
-	DD	04f420H
-	DD	0cd416H
-	DD	0bc40eH
+$chain$3$?rundevice@ppu@@UEAAHH@Z DD 082221H
+	DD	04f422H
+	DD	0cd417H
+	DD	0bc40dH
 	DD	0a7405H
 	DD	imagerel $LN148
 	DD	imagerel $LN148+40
@@ -452,23 +456,1668 @@ xdata	SEGMENT
 $unwind$??1ppu_pal_ram@@UEAA@XZ DD 020601H
 	DD	030023206H
 ; Function compile flags: /Ogtpy
-; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\ppu.cpp
-; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus.cpp
-; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\ppu.cpp
-; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus.cpp
-; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\ppu.cpp
-; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus.cpp
-; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\ppu.cpp
-; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus.cpp
-; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\ppu.cpp
-; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus.cpp
-; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\ppu.cpp
-; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus.cpp
-; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\ppu.cpp
-; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus.cpp
-; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\ppu.cpp
-; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus.cpp
-; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\ppu.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+;	COMDAT ?getFrameBuffer@ppu@@QEAAPEAXXZ
+_TEXT	SEGMENT
+this$ = 8
+?getFrameBuffer@ppu@@QEAAPEAXXZ PROC			; ppu::getFrameBuffer, COMDAT
+
+; 490  : 	return framebuffer;
+
+	mov	rax, QWORD PTR [rcx+224]
+
+; 491  : }
+
+	ret	0
+?getFrameBuffer@ppu@@QEAAPEAXXZ ENDP			; ppu::getFrameBuffer
+_TEXT	ENDS
+; Function compile flags: /Ogtpy
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+;	COMDAT ?isFrameReady@ppu@@QEAA_NXZ
+_TEXT	SEGMENT
+this$ = 8
+?isFrameReady@ppu@@QEAA_NXZ PROC			; ppu::isFrameReady, COMDAT
+
+; 494  : 	bool retval = frameready;
+
+	movzx	eax, BYTE PTR [rcx+232]
+
+; 495  : 	frameready = false;
+
+	mov	BYTE PTR [rcx+232], 0
+
+; 496  : 	return retval;
+; 497  : }
+
+	ret	0
+?isFrameReady@ppu@@QEAA_NXZ ENDP			; ppu::isFrameReady
+_TEXT	ENDS
+; Function compile flags: /Ogtpy
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+;	COMDAT ?configure_horizontal_mirror@ppu@@QEAAXXZ
+_TEXT	SEGMENT
+this$ = 8
+?configure_horizontal_mirror@ppu@@QEAAXXZ PROC		; ppu::configure_horizontal_mirror, COMDAT
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+
+; 154  : 	for (int i = 0; i < 16; i++) pinout.pins[i] = i;
+
+	xor	eax, eax
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+
+; 477  : 	vram.resetpins_to_default();
+
+	lea	rdx, QWORD PTR [rcx+416]
+	npad	7
+$LL6@configure_:
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+
+; 154  : 	for (int i = 0; i < 16; i++) pinout.pins[i] = i;
+
+	mov	BYTE PTR [rdx], al
+	lea	rdx, QWORD PTR [rdx+1]
+	inc	eax
+	cmp	eax, 16
+	jl	SHORT $LL6@configure_
+
+; 155  : 	processlayout = false;
+
+	mov	BYTE PTR [rcx+400], 0
+
+; 148  : 	pinout.pins[pin2] = pinout.pins[pin1];
+
+	movzx	eax, BYTE PTR [rcx+426]
+	mov	BYTE PTR [rcx+427], al
+
+; 137  : 	pinout.pins[pin] = -2;
+
+	mov	BYTE PTR [rcx+426], -2
+
+; 138  : 	processlayout = true;
+
+	mov	BYTE PTR [rcx+400], 1
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+
+; 480  : }
+
+	ret	0
+?configure_horizontal_mirror@ppu@@QEAAXXZ ENDP		; ppu::configure_horizontal_mirror
+_TEXT	ENDS
+; Function compile flags: /Ogtpy
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\vector
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\vector
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\vector
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\vector
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\xutility
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\vector
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\vector
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\xmemory0
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\vector
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+;	COMDAT ?set_char_rom@ppu@@QEAAXPEAVbus_device@@@Z
+_TEXT	SEGMENT
+device$ = 32
+__$ArrayPad$ = 40
+this$ = 64
+vdata$ = 72
+?set_char_rom@ppu@@QEAAXPEAVbus_device@@@Z PROC		; ppu::set_char_rom, COMDAT
+
+; 464  : void	ppu::set_char_rom(bus_device *vdata) {
+
+$LN195:
+	mov	QWORD PTR [rsp+16], rbx
+	push	rdi
+	sub	rsp, 48					; 00000030H
+	mov	rax, QWORD PTR __security_cookie
+	xor	rax, rsp
+	mov	QWORD PTR __$ArrayPad$[rsp], rax
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\vector
+
+; 1704 : 		return (static_cast<size_type>(this->_Mylast() - this->_Myfirst()));
+
+	mov	r10, QWORD PTR [rcx+256]
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+
+; 74   : 	for (size_t i = 0; i < devices.size(); i++) {
+
+	xor	eax, eax
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\vector
+
+; 1704 : 		return (static_cast<size_type>(this->_Mylast() - this->_Myfirst()));
+
+	mov	r9, QWORD PTR [rcx+248]
+	mov	r8, r10
+	sub	r8, r9
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+
+; 464  : void	ppu::set_char_rom(bus_device *vdata) {
+
+	mov	rdi, rdx
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\vector
+
+; 1704 : 		return (static_cast<size_type>(this->_Mylast() - this->_Myfirst()));
+
+	sar	r8, 3
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+
+; 464  : void	ppu::set_char_rom(bus_device *vdata) {
+
+	mov	rbx, rcx
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+
+; 74   : 	for (size_t i = 0; i < devices.size(); i++) {
+
+	test	r8, r8
+	je	SHORT $LN5@set_char_r
+	npad	2
+$LL6@set_char_r:
+
+; 75   : 		if (devices[i]->devicestart == baseaddr) {
+
+	mov	rcx, QWORD PTR [r9+rax*8]
+	cmp	DWORD PTR [rcx+44], 0
+	je	SHORT $LN189@set_char_r
+
+; 74   : 	for (size_t i = 0; i < devices.size(); i++) {
+
+	inc	rax
+	cmp	rax, r8
+	jb	SHORT $LL6@set_char_r
+
+; 75   : 		if (devices[i]->devicestart == baseaddr) {
+
+	jmp	SHORT $LN5@set_char_r
+$LN189@set_char_r:
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\vector
+
+; 130  : 		_Ptr += _Off;
+
+	lea	rcx, QWORD PTR [r9+rax*8]
+
+; 1561 : 		_Move_unchecked(_Where._Ptr + 1, this->_Mylast(), _Where._Ptr);
+
+	lea	rdx, QWORD PTR [rcx+8]
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\xutility
+
+; 2402 : 	const auto _Count = static_cast<size_t>(_Last_ch - _First_ch);
+
+	sub	r10, rdx
+
+; 2403 : 	_CSTD memmove(_Dest_ch, _First_ch, _Count);
+
+	mov	r8, r10
+	call	memmove
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\vector
+
+; 1563 : 		--this->_Mylast();
+
+	add	QWORD PTR [rbx+256], -8
+$LN5@set_char_r:
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+
+; 70   : 	devices.push_back(device);
+
+	lea	rcx, QWORD PTR [rbx+248]
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+
+; 469  : 	vbus.registerdevice(vdata);
+
+	mov	QWORD PTR device$[rsp], rdi
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\vector
+
+; 1726 : 		return (this->_Myend() != this->_Mylast());
+
+	mov	rdx, QWORD PTR [rcx+8]
+	cmp	QWORD PTR [rcx+16], rdx
+
+; 917  : 		if (_Has_unused_capacity())
+
+	je	SHORT $LN114@set_char_r
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\xmemory0
+
+; 879  : 		{	// construct _Objty(_Types...) at _Ptr
+
+	mov	QWORD PTR [rdx], rdi
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\vector
+
+; 905  : 		++this->_Mylast();
+
+	add	QWORD PTR [rcx+8], 8
+
+; 919  : 			return (_Emplace_back_with_unused_capacity(_STD forward<_Valty>(_Val)...));
+
+	jmp	SHORT $LN113@set_char_r
+$LN114@set_char_r:
+
+; 920  : 			}
+; 921  : 
+; 922  : 		_Ty& _Result = *_Emplace_reallocate(this->_Mylast(), _STD forward<_Valty>(_Val)...);
+
+	lea	r8, QWORD PTR device$[rsp]
+	call	??$_Emplace_reallocate@AEBQEAVbus_device@@@?$vector@PEAVbus_device@@V?$allocator@PEAVbus_device@@@std@@@std@@QEAAPEAPEAVbus_device@@QEAPEAV2@AEBQEAV2@@Z ; std::vector<bus_device *,std::allocator<bus_device *> >::_Emplace_reallocate<bus_device * const &>
+$LN113@set_char_r:
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+
+; 470  : }
+
+	mov	rcx, QWORD PTR __$ArrayPad$[rsp]
+	xor	rcx, rsp
+	call	__security_check_cookie
+	mov	rbx, QWORD PTR [rsp+72]
+	add	rsp, 48					; 00000030H
+	pop	rdi
+	ret	0
+?set_char_rom@ppu@@QEAAXPEAVbus_device@@@Z ENDP		; ppu::set_char_rom
+_TEXT	ENDS
+; Function compile flags: /Ogtpy
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\vector
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.h
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\vector
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\xmemory0
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\vector
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\vector
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\xmemory0
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\vector
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+;	COMDAT ??0ppu@@QEAA@XZ
+_TEXT	SEGMENT
+$T70 = 32
+this$GSCopy$ = 40
+device$ = 48
+device$ = 48
+this$ = 96
+??0ppu@@QEAA@XZ PROC					; ppu::ppu, COMDAT
+
+; 11   : ppu::ppu() : bus_device () {
+
+$LN189:
+	push	rsi
+	push	rdi
+	push	r14
+	sub	rsp, 64					; 00000040H
+	mov	QWORD PTR $T70[rsp], -2
+	mov	QWORD PTR [rsp+104], rbx
+	mov	QWORD PTR [rsp+112], rbp
+	mov	rdi, rcx
+	mov	QWORD PTR this$GSCopy$[rsp], rcx
+	call	??0bus_device@@QEAA@XZ			; bus_device::bus_device
+	npad	1
+	lea	rax, OFFSET FLAT:??_7ppu@@6B@
+	mov	QWORD PTR [rdi], rax
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\vector
+
+; 389  : 		: _Myfirst(),
+
+	xor	ebp, ebp
+	mov	QWORD PTR [rdi+248], rbp
+
+; 390  : 		_Mylast(),
+
+	mov	QWORD PTR [rdi+256], rbp
+
+; 391  : 		_Myend()
+
+	mov	QWORD PTR [rdi+264], rbp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.h
+
+; 73   : 	bool	no_bus_conflicts = false;		// default we do not emulate bus conflicts, it is costly.
+
+	mov	BYTE PTR [rdi+272], bpl
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+
+; 11   : ppu::ppu() : bus_device () {
+
+	lea	r14, QWORD PTR [rdi+280]
+
+; 521  : ppu_pal_ram::ppu_pal_ram() : bus_device() {
+
+	mov	rcx, r14
+	call	??0bus_device@@QEAA@XZ			; bus_device::bus_device
+	lea	rax, OFFSET FLAT:??_7ppu_pal_ram@@6B@
+	mov	QWORD PTR [r14], rax
+
+; 522  : 	strcpy_s(get_device_descriptor(), MAX_DESCRIPTOR_LENGTH, "PPU palette RAM 32 bytes");
+
+	lea	r8, OFFSET FLAT:??_C@_0BJ@GBIMAOLL@PPU?5palette?5RAM?532?5bytes@
+	mov	edx, 128				; 00000080H
+	mov	rcx, QWORD PTR [r14+8]
+	call	QWORD PTR __imp_strcpy_s
+
+; 523  : 	ram = (byte *)malloc(0x20);
+
+	lea	ecx, QWORD PTR [rbp+32]
+	call	QWORD PTR __imp_malloc
+	mov	QWORD PTR [r14+72], rax
+
+; 524  : 	devicestart = 0x3F00;
+
+	mov	DWORD PTR [r14+44], 16128		; 00003f00H
+
+; 525  : 	deviceend = 0x3FFF;
+
+	mov	DWORD PTR [r14+48], 16383		; 00003fffH
+
+; 526  : 	devicemask = 0x3F1F;
+
+	mov	DWORD PTR [r14+52], 16159		; 00003f1fH
+
+; 11   : ppu::ppu() : bus_device () {
+
+	lea	rsi, QWORD PTR [rdi+360]
+
+; 500  : ppuram::ppuram() : bus_device() {
+
+	mov	rcx, rsi
+	call	??0bus_device@@QEAA@XZ			; bus_device::bus_device
+	lea	rax, OFFSET FLAT:??_7ppuram@@6B@
+	mov	QWORD PTR [rsi], rax
+
+; 501  : 	strcpy_s(get_device_descriptor(), MAX_DESCRIPTOR_LENGTH, "PPU mainram 2k");
+
+	lea	r8, OFFSET FLAT:??_C@_0P@MFMHDPIH@PPU?5mainram?52k@
+	mov	edx, 128				; 00000080H
+	mov	rcx, QWORD PTR [rsi+8]
+	call	QWORD PTR __imp_strcpy_s
+
+; 502  : 	ram = (byte *)malloc(0x800);
+
+	mov	ecx, 2048				; 00000800H
+	call	QWORD PTR __imp_malloc
+	mov	QWORD PTR [rsi+72], rax
+
+; 503  : 	devicestart = 0x2000;
+
+	mov	DWORD PTR [rsi+44], 8192		; 00002000H
+
+; 504  : 	deviceend = 0x3EFF;
+
+	mov	DWORD PTR [rsi+48], 16127		; 00003effH
+
+; 505  : 	devicemask = 0x27FF;	 // per default ppu has 2k of RAM mirrored to 4k of address-space.
+
+	mov	DWORD PTR [rsi+52], 10239		; 000027ffH
+
+; 12   : 	strcpy_s(get_device_descriptor(), MAX_DESCRIPTOR_LENGTH, "Denver PPU Unit");
+
+	lea	r8, OFFSET FLAT:??_C@_0BA@OKGNICPF@Denver?5PPU?5Unit@
+	mov	edx, 128				; 00000080H
+	mov	rcx, QWORD PTR [rdi+8]
+	call	QWORD PTR __imp_strcpy_s
+
+; 13   : 	devicestart = 0x2000;
+
+	mov	DWORD PTR [rdi+44], 8192		; 00002000H
+
+; 14   : 	deviceend = 0x3FFF;
+
+	mov	DWORD PTR [rdi+48], 16383		; 00003fffH
+
+; 15   : 	devicemask = 0x2007;
+
+	mov	DWORD PTR [rdi+52], 8199		; 00002007H
+
+; 16   : 	tick_rate = 0x1;
+
+	mov	DWORD PTR [rdi+16], 1
+
+; 17   : 	// make bus
+; 18   : 	// Palette RAM
+; 19   : 	vbus.registerdevice(&vpal);
+
+	mov	QWORD PTR device$[rsp], r14
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+
+; 70   : 	devices.push_back(device);
+
+	lea	rbx, QWORD PTR [rdi+248]
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\vector
+
+; 1726 : 		return (this->_Myend() != this->_Mylast());
+
+	mov	rdx, QWORD PTR [rbx+8]
+
+; 917  : 		if (_Has_unused_capacity())
+
+	cmp	QWORD PTR [rbx+16], rdx
+	je	SHORT $LN34@ppu
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\xmemory0
+
+; 879  : 		{	// construct _Objty(_Types...) at _Ptr
+
+	mov	QWORD PTR [rdx], r14
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\vector
+
+; 905  : 		++this->_Mylast();
+
+	add	QWORD PTR [rbx+8], 8
+
+; 919  : 			return (_Emplace_back_with_unused_capacity(_STD forward<_Valty>(_Val)...));
+
+	jmp	SHORT $LN33@ppu
+$LN34@ppu:
+
+; 920  : 			}
+; 921  : 
+; 922  : 		_Ty& _Result = *_Emplace_reallocate(this->_Mylast(), _STD forward<_Valty>(_Val)...);
+
+	lea	r8, QWORD PTR device$[rsp]
+	mov	rcx, rbx
+	call	??$_Emplace_reallocate@AEBQEAVbus_device@@@?$vector@PEAVbus_device@@V?$allocator@PEAVbus_device@@@std@@@std@@QEAAPEAPEAVbus_device@@QEAPEAV2@AEBQEAV2@@Z ; std::vector<bus_device *,std::allocator<bus_device *> >::_Emplace_reallocate<bus_device * const &>
+$LN33@ppu:
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+
+; 21   : 	vbus.registerdevice(&vram);
+
+	mov	QWORD PTR device$[rsp], rsi
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\vector
+
+; 1726 : 		return (this->_Myend() != this->_Mylast());
+
+	mov	rdx, QWORD PTR [rbx+8]
+
+; 917  : 		if (_Has_unused_capacity())
+
+	cmp	QWORD PTR [rbx+16], rdx
+	je	SHORT $LN113@ppu
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\xmemory0
+
+; 879  : 		{	// construct _Objty(_Types...) at _Ptr
+
+	mov	QWORD PTR [rdx], rsi
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\vector
+
+; 905  : 		++this->_Mylast();
+
+	add	QWORD PTR [rbx+8], 8
+
+; 919  : 			return (_Emplace_back_with_unused_capacity(_STD forward<_Valty>(_Val)...));
+
+	jmp	SHORT $LN112@ppu
+$LN113@ppu:
+
+; 920  : 			}
+; 921  : 
+; 922  : 		_Ty& _Result = *_Emplace_reallocate(this->_Mylast(), _STD forward<_Valty>(_Val)...);
+
+	lea	r8, QWORD PTR device$[rsp]
+	mov	rcx, rbx
+	call	??$_Emplace_reallocate@AEBQEAVbus_device@@@?$vector@PEAVbus_device@@V?$allocator@PEAVbus_device@@@std@@@std@@QEAAPEAPEAVbus_device@@QEAPEAV2@AEBQEAV2@@Z ; std::vector<bus_device *,std::allocator<bus_device *> >::_Emplace_reallocate<bus_device * const &>
+$LN112@ppu:
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+
+; 24   : 	framebuffer = (word *)malloc(256 * 240 * 2);
+
+	mov	ecx, 122880				; 0001e000H
+	call	QWORD PTR __imp_malloc
+	mov	QWORD PTR [rdi+224], rax
+
+; 25   : 	scanline = -1;
+
+	mov	DWORD PTR [rdi+212], -1
+
+; 26   : 	beam = 0;
+
+	mov	QWORD PTR [rdi+216], rbp
+
+; 27   : 	cycle = 0;
+; 28   : }
+
+	mov	rax, rdi
+	mov	rbx, QWORD PTR [rsp+104]
+	mov	rbp, QWORD PTR [rsp+112]
+	add	rsp, 64					; 00000040H
+	pop	r14
+	pop	rdi
+	pop	rsi
+	ret	0
+??0ppu@@QEAA@XZ ENDP					; ppu::ppu
+_TEXT	ENDS
+;	COMDAT text$x
+text$x	SEGMENT
+$T70 = 32
+this$GSCopy$ = 40
+device$ = 48
+device$ = 48
+this$ = 96
+?dtor$0@?0???0ppu@@QEAA@XZ@4HA PROC			; `ppu::ppu'::`1'::dtor$0
+	mov	rcx, QWORD PTR this$GSCopy$[rdx]
+	jmp	??1bus_device@@UEAA@XZ			; bus_device::~bus_device
+?dtor$0@?0???0ppu@@QEAA@XZ@4HA ENDP			; `ppu::ppu'::`1'::dtor$0
+$T70 = 32
+this$GSCopy$ = 40
+device$ = 48
+device$ = 48
+this$ = 96
+?dtor$1@?0???0ppu@@QEAA@XZ@4HA PROC			; `ppu::ppu'::`1'::dtor$1
+	mov	rcx, QWORD PTR this$GSCopy$[rdx]
+	add	rcx, 240				; 000000f0H
+	jmp	??1bus@@QEAA@XZ				; bus::~bus
+?dtor$1@?0???0ppu@@QEAA@XZ@4HA ENDP			; `ppu::ppu'::`1'::dtor$1
+$T70 = 32
+this$GSCopy$ = 40
+device$ = 48
+device$ = 48
+this$ = 96
+?dtor$2@?0???0ppu@@QEAA@XZ@4HA PROC			; `ppu::ppu'::`1'::dtor$2
+	mov	rcx, QWORD PTR this$GSCopy$[rdx]
+	add	rcx, 280				; 00000118H
+	jmp	??1ppu_pal_ram@@UEAA@XZ			; ppu_pal_ram::~ppu_pal_ram
+?dtor$2@?0???0ppu@@QEAA@XZ@4HA ENDP			; `ppu::ppu'::`1'::dtor$2
+$T70 = 32
+this$GSCopy$ = 40
+device$ = 48
+device$ = 48
+this$ = 96
+?dtor$3@?0???0ppu@@QEAA@XZ@4HA PROC			; `ppu::ppu'::`1'::dtor$3
+	mov	rcx, QWORD PTR this$GSCopy$[rdx]
+	add	rcx, 360				; 00000168H
+	jmp	??1ppuram@@UEAA@XZ			; ppuram::~ppuram
+?dtor$3@?0???0ppu@@QEAA@XZ@4HA ENDP			; `ppu::ppu'::`1'::dtor$3
+text$x	ENDS
+; Function compile flags: /Ogtpy
+;	COMDAT text$x
+text$x	SEGMENT
+$T70 = 32
+this$GSCopy$ = 40
+device$ = 48
+device$ = 48
+this$ = 96
+?dtor$0@?0???0ppu@@QEAA@XZ@4HA PROC			; `ppu::ppu'::`1'::dtor$0
+	mov	rcx, QWORD PTR this$GSCopy$[rdx]
+	jmp	??1bus_device@@UEAA@XZ			; bus_device::~bus_device
+?dtor$0@?0???0ppu@@QEAA@XZ@4HA ENDP			; `ppu::ppu'::`1'::dtor$0
+text$x	ENDS
+; Function compile flags: /Ogtpy
+;	COMDAT text$x
+text$x	SEGMENT
+$T70 = 32
+this$GSCopy$ = 40
+device$ = 48
+device$ = 48
+this$ = 96
+?dtor$1@?0???0ppu@@QEAA@XZ@4HA PROC			; `ppu::ppu'::`1'::dtor$1
+	mov	rcx, QWORD PTR this$GSCopy$[rdx]
+	add	rcx, 240				; 000000f0H
+	jmp	??1bus@@QEAA@XZ				; bus::~bus
+?dtor$1@?0???0ppu@@QEAA@XZ@4HA ENDP			; `ppu::ppu'::`1'::dtor$1
+text$x	ENDS
+; Function compile flags: /Ogtpy
+;	COMDAT text$x
+text$x	SEGMENT
+$T70 = 32
+this$GSCopy$ = 40
+device$ = 48
+device$ = 48
+this$ = 96
+?dtor$2@?0???0ppu@@QEAA@XZ@4HA PROC			; `ppu::ppu'::`1'::dtor$2
+	mov	rcx, QWORD PTR this$GSCopy$[rdx]
+	add	rcx, 280				; 00000118H
+	jmp	??1ppu_pal_ram@@UEAA@XZ			; ppu_pal_ram::~ppu_pal_ram
+?dtor$2@?0???0ppu@@QEAA@XZ@4HA ENDP			; `ppu::ppu'::`1'::dtor$2
+text$x	ENDS
+; Function compile flags: /Ogtpy
+;	COMDAT text$x
+text$x	SEGMENT
+$T70 = 32
+this$GSCopy$ = 40
+device$ = 48
+device$ = 48
+this$ = 96
+?dtor$3@?0???0ppu@@QEAA@XZ@4HA PROC			; `ppu::ppu'::`1'::dtor$3
+	mov	rcx, QWORD PTR this$GSCopy$[rdx]
+	add	rcx, 360				; 00000168H
+	jmp	??1ppuram@@UEAA@XZ			; ppuram::~ppuram
+?dtor$3@?0???0ppu@@QEAA@XZ@4HA ENDP			; `ppu::ppu'::`1'::dtor$3
+text$x	ENDS
+; Function compile flags: /Ogtpy
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\vector
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\vector
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\xutility
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\vector
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\vector
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\vector
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\vector
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\xutility
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\vector
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+;	COMDAT ??_Gppu@@UEAAPEAXI@Z
+_TEXT	SEGMENT
+this$ = 48
+__flags$ = 56
+??_Gppu@@UEAAPEAXI@Z PROC				; ppu::`scalar deleting destructor', COMDAT
+$LN253:
+	mov	QWORD PTR [rsp+16], rbx
+	mov	QWORD PTR [rsp+24], rbp
+	mov	QWORD PTR [rsp+32], rsi
+	push	rdi
+	sub	rsp, 32					; 00000020H
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+
+; 31   : 	vbus.removedevice_select_base(vpal.devicestart);
+
+	mov	r10d, DWORD PTR [rcx+324]
+	lea	rax, OFFSET FLAT:??_7ppu@@6B@
+	mov	rbx, rcx
+
+; 30   : ppu::~ppu() {
+
+	mov	QWORD PTR [rcx], rax
+	mov	ebp, edx
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+
+; 74   : 	for (size_t i = 0; i < devices.size(); i++) {
+
+	xor	edi, edi
+	mov	ecx, edi
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\vector
+
+; 1704 : 		return (static_cast<size_type>(this->_Mylast() - this->_Myfirst()));
+
+	mov	r8, QWORD PTR [rbx+256]
+	mov	r9, QWORD PTR [rbx+248]
+	mov	rdx, r8
+	sub	rdx, r9
+	sar	rdx, 3
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+
+; 74   : 	for (size_t i = 0; i < devices.size(); i++) {
+
+	test	rdx, rdx
+	je	SHORT $LN9@scalar
+	npad	5
+$LL10@scalar:
+
+; 75   : 		if (devices[i]->devicestart == baseaddr) {
+
+	mov	rax, QWORD PTR [r9+rcx*8]
+	cmp	DWORD PTR [rax+44], r10d
+	je	SHORT $LN242@scalar
+
+; 74   : 	for (size_t i = 0; i < devices.size(); i++) {
+
+	inc	rcx
+	cmp	rcx, rdx
+	jb	SHORT $LL10@scalar
+
+; 75   : 		if (devices[i]->devicestart == baseaddr) {
+
+	jmp	SHORT $LN9@scalar
+$LN242@scalar:
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\vector
+
+; 130  : 		_Ptr += _Off;
+
+	lea	rcx, QWORD PTR [r9+rcx*8]
+
+; 1561 : 		_Move_unchecked(_Where._Ptr + 1, this->_Mylast(), _Where._Ptr);
+
+	lea	rdx, QWORD PTR [rcx+8]
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\xutility
+
+; 2402 : 	const auto _Count = static_cast<size_t>(_Last_ch - _First_ch);
+
+	sub	r8, rdx
+
+; 2403 : 	_CSTD memmove(_Dest_ch, _First_ch, _Count);
+
+	call	memmove
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\vector
+
+; 1563 : 		--this->_Mylast();
+
+	add	QWORD PTR [rbx+256], -8
+	mov	r8, QWORD PTR [rbx+256]
+$LN9@scalar:
+
+; 1704 : 		return (static_cast<size_type>(this->_Mylast() - this->_Myfirst()));
+
+	mov	rdx, QWORD PTR [rbx+248]
+	mov	rcx, r8
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+
+; 32   : 	vbus.removedevice_select_base(vram.devicestart);
+
+	mov	r9d, DWORD PTR [rbx+404]
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\vector
+
+; 1704 : 		return (static_cast<size_type>(this->_Mylast() - this->_Myfirst()));
+
+	sub	rcx, rdx
+	sar	rcx, 3
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+
+; 74   : 	for (size_t i = 0; i < devices.size(); i++) {
+
+	test	rcx, rcx
+	je	SHORT $LN115@scalar
+$LL116@scalar:
+
+; 75   : 		if (devices[i]->devicestart == baseaddr) {
+
+	mov	rax, QWORD PTR [rdx+rdi*8]
+	cmp	DWORD PTR [rax+44], r9d
+	je	SHORT $LN243@scalar
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\vector
+
+; 1704 : 		return (static_cast<size_type>(this->_Mylast() - this->_Myfirst()));
+
+	mov	r8, QWORD PTR [rbx+256]
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+
+; 74   : 	for (size_t i = 0; i < devices.size(); i++) {
+
+	inc	rdi
+	cmp	rdi, rcx
+	jb	SHORT $LL116@scalar
+
+; 75   : 		if (devices[i]->devicestart == baseaddr) {
+
+	jmp	SHORT $LN115@scalar
+$LN243@scalar:
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\vector
+
+; 130  : 		_Ptr += _Off;
+
+	lea	rcx, QWORD PTR [rdx+rdi*8]
+
+; 1561 : 		_Move_unchecked(_Where._Ptr + 1, this->_Mylast(), _Where._Ptr);
+
+	lea	rdx, QWORD PTR [rcx+8]
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\xutility
+
+; 2402 : 	const auto _Count = static_cast<size_t>(_Last_ch - _First_ch);
+
+	sub	r8, rdx
+
+; 2403 : 	_CSTD memmove(_Dest_ch, _First_ch, _Count);
+
+	call	memmove
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\vector
+
+; 1563 : 		--this->_Mylast();
+
+	add	QWORD PTR [rbx+256], -8
+$LN115@scalar:
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+
+; 509  : 	free(ram);
+
+	mov	rcx, QWORD PTR [rbx+432]
+	lea	rax, OFFSET FLAT:??_7ppuram@@6B@
+	mov	QWORD PTR [rbx+360], rax
+	call	QWORD PTR __imp_free
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+
+; 186  : 	free(devicedescriptor);	// be done with it.
+
+	mov	rcx, QWORD PTR [rbx+368]
+	lea	rdi, OFFSET FLAT:??_7device@@6B@
+	mov	QWORD PTR [rbx+360], rdi
+	call	QWORD PTR __imp_free
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+
+; 530  : 	free(ram);
+
+	mov	rcx, QWORD PTR [rbx+352]
+	lea	rax, OFFSET FLAT:??_7ppu_pal_ram@@6B@
+	mov	QWORD PTR [rbx+280], rax
+	call	QWORD PTR __imp_free
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+
+; 186  : 	free(devicedescriptor);	// be done with it.
+
+	mov	rcx, QWORD PTR [rbx+288]
+	mov	QWORD PTR [rbx+280], rdi
+	call	QWORD PTR __imp_free
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+
+; 33   : }
+
+	lea	rcx, QWORD PTR [rbx+240]
+	call	??1bus@@QEAA@XZ				; bus::~bus
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+
+; 186  : 	free(devicedescriptor);	// be done with it.
+
+	mov	rcx, QWORD PTR [rbx+8]
+	mov	QWORD PTR [rbx], rdi
+	call	QWORD PTR __imp_free
+	test	bpl, 1
+	je	SHORT $LN250@scalar
+	mov	edx, 704				; 000002c0H
+	mov	rcx, rbx
+	call	??3@YAXPEAX_K@Z				; operator delete
+$LN250@scalar:
+	mov	rbp, QWORD PTR [rsp+64]
+	mov	rax, rbx
+	mov	rbx, QWORD PTR [rsp+56]
+	mov	rsi, QWORD PTR [rsp+72]
+	add	rsp, 32					; 00000020H
+	pop	rdi
+	ret	0
+??_Gppu@@UEAAPEAXI@Z ENDP				; ppu::`scalar deleting destructor'
+_TEXT	ENDS
+; Function compile flags: /Ogtpy
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\vector
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\vector
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\xutility
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\vector
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\vector
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\vector
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\vector
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\xutility
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\vector
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+;	COMDAT ??1ppu@@UEAA@XZ
+_TEXT	SEGMENT
+this$ = 48
+??1ppu@@UEAA@XZ PROC					; ppu::~ppu, COMDAT
+
+; 30   : ppu::~ppu() {
+
+$LN248:
+	mov	QWORD PTR [rsp+16], rbx
+	mov	QWORD PTR [rsp+24], rsi
+	push	rdi
+	sub	rsp, 32					; 00000020H
+
+; 31   : 	vbus.removedevice_select_base(vpal.devicestart);
+
+	mov	r10d, DWORD PTR [rcx+324]
+	lea	rax, OFFSET FLAT:??_7ppu@@6B@
+	mov	rdi, rcx
+	mov	QWORD PTR [rcx], rax
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+
+; 74   : 	for (size_t i = 0; i < devices.size(); i++) {
+
+	xor	ebx, ebx
+	mov	ecx, ebx
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\vector
+
+; 1704 : 		return (static_cast<size_type>(this->_Mylast() - this->_Myfirst()));
+
+	mov	r8, QWORD PTR [rdi+256]
+	mov	r9, QWORD PTR [rdi+248]
+	mov	rdx, r8
+	sub	rdx, r9
+	sar	rdx, 3
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+
+; 74   : 	for (size_t i = 0; i < devices.size(); i++) {
+
+	test	rdx, rdx
+	je	SHORT $LN5@ppu
+$LL6@ppu:
+
+; 75   : 		if (devices[i]->devicestart == baseaddr) {
+
+	mov	rax, QWORD PTR [r9+rcx*8]
+	cmp	DWORD PTR [rax+44], r10d
+	je	SHORT $LN238@ppu
+
+; 74   : 	for (size_t i = 0; i < devices.size(); i++) {
+
+	inc	rcx
+	cmp	rcx, rdx
+	jb	SHORT $LL6@ppu
+
+; 75   : 		if (devices[i]->devicestart == baseaddr) {
+
+	jmp	SHORT $LN5@ppu
+$LN238@ppu:
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\vector
+
+; 130  : 		_Ptr += _Off;
+
+	lea	rcx, QWORD PTR [r9+rcx*8]
+
+; 1561 : 		_Move_unchecked(_Where._Ptr + 1, this->_Mylast(), _Where._Ptr);
+
+	lea	rdx, QWORD PTR [rcx+8]
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\xutility
+
+; 2402 : 	const auto _Count = static_cast<size_t>(_Last_ch - _First_ch);
+
+	sub	r8, rdx
+
+; 2403 : 	_CSTD memmove(_Dest_ch, _First_ch, _Count);
+
+	call	memmove
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\vector
+
+; 1563 : 		--this->_Mylast();
+
+	add	QWORD PTR [rdi+256], -8
+	mov	r8, QWORD PTR [rdi+256]
+$LN5@ppu:
+
+; 1704 : 		return (static_cast<size_type>(this->_Mylast() - this->_Myfirst()));
+
+	mov	rdx, QWORD PTR [rdi+248]
+	mov	rcx, r8
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+
+; 32   : 	vbus.removedevice_select_base(vram.devicestart);
+
+	mov	r9d, DWORD PTR [rdi+404]
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\vector
+
+; 1704 : 		return (static_cast<size_type>(this->_Mylast() - this->_Myfirst()));
+
+	sub	rcx, rdx
+	sar	rcx, 3
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+
+; 74   : 	for (size_t i = 0; i < devices.size(); i++) {
+
+	test	rcx, rcx
+	je	SHORT $LN111@ppu
+$LL112@ppu:
+
+; 75   : 		if (devices[i]->devicestart == baseaddr) {
+
+	mov	rax, QWORD PTR [rdx+rbx*8]
+	cmp	DWORD PTR [rax+44], r9d
+	je	SHORT $LN239@ppu
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\vector
+
+; 1704 : 		return (static_cast<size_type>(this->_Mylast() - this->_Myfirst()));
+
+	mov	r8, QWORD PTR [rdi+256]
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+
+; 74   : 	for (size_t i = 0; i < devices.size(); i++) {
+
+	inc	rbx
+	cmp	rbx, rcx
+	jb	SHORT $LL112@ppu
+
+; 75   : 		if (devices[i]->devicestart == baseaddr) {
+
+	jmp	SHORT $LN111@ppu
+$LN239@ppu:
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\vector
+
+; 130  : 		_Ptr += _Off;
+
+	lea	rcx, QWORD PTR [rdx+rbx*8]
+
+; 1561 : 		_Move_unchecked(_Where._Ptr + 1, this->_Mylast(), _Where._Ptr);
+
+	lea	rdx, QWORD PTR [rcx+8]
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\xutility
+
+; 2402 : 	const auto _Count = static_cast<size_t>(_Last_ch - _First_ch);
+
+	sub	r8, rdx
+
+; 2403 : 	_CSTD memmove(_Dest_ch, _First_ch, _Count);
+
+	call	memmove
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\vector
+
+; 1563 : 		--this->_Mylast();
+
+	add	QWORD PTR [rdi+256], -8
+$LN111@ppu:
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+
+; 509  : 	free(ram);
+
+	mov	rcx, QWORD PTR [rdi+432]
+	lea	rax, OFFSET FLAT:??_7ppuram@@6B@
+	mov	QWORD PTR [rdi+360], rax
+	call	QWORD PTR __imp_free
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+
+; 186  : 	free(devicedescriptor);	// be done with it.
+
+	mov	rcx, QWORD PTR [rdi+368]
+	lea	rbx, OFFSET FLAT:??_7device@@6B@
+	mov	QWORD PTR [rdi+360], rbx
+	call	QWORD PTR __imp_free
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+
+; 530  : 	free(ram);
+
+	mov	rcx, QWORD PTR [rdi+352]
+	lea	rax, OFFSET FLAT:??_7ppu_pal_ram@@6B@
+	mov	QWORD PTR [rdi+280], rax
+	call	QWORD PTR __imp_free
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+
+; 186  : 	free(devicedescriptor);	// be done with it.
+
+	mov	rcx, QWORD PTR [rdi+288]
+	mov	QWORD PTR [rdi+280], rbx
+	call	QWORD PTR __imp_free
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+
+; 33   : }
+
+	lea	rcx, QWORD PTR [rdi+240]
+	call	??1bus@@QEAA@XZ				; bus::~bus
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+
+; 186  : 	free(devicedescriptor);	// be done with it.
+
+	mov	rcx, QWORD PTR [rdi+8]
+	mov	QWORD PTR [rdi], rbx
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+
+; 33   : }
+
+	mov	rbx, QWORD PTR [rsp+56]
+	mov	rsi, QWORD PTR [rsp+64]
+	add	rsp, 32					; 00000020H
+	pop	rdi
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+
+; 186  : 	free(devicedescriptor);	// be done with it.
+
+	rex_jmp	QWORD PTR __imp_free
+??1ppu@@UEAA@XZ ENDP					; ppu::~ppu
+_TEXT	ENDS
+; Function compile flags: /Ogtpy
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+;	COMDAT ?read@ppu@@UEAAEHH@Z
+_TEXT	SEGMENT
+this$ = 48
+addr$ = 56
+addr_from_base$ = 64
+?read@ppu@@UEAAEHH@Z PROC				; ppu::read, COMDAT
+
+; 36   : byte	ppu::read(int addr, int addr_from_base) {
+
+$LN15:
+	push	rdi
+	sub	rsp, 32					; 00000020H
+	mov	rdi, rcx
+
+; 37   : 	// registers
+; 38   : 	// PPU STATUS register
+; 39   : 	if (addr_from_base == PPU_PPUSTATUS_PORT) {
+
+	cmp	r8d, 2
+	jne	SHORT $LN2@read
+
+; 40   : 		byte	status = latch & 0x1F;
+
+	movzx	eax, BYTE PTR [rcx+208]
+	and	al, 31
+
+; 41   : 		if (ppustatus.sprite_0_hit) status |= PPU_SPR_0HIT;
+; 42   : 		if (ppustatus.sprite_overflow) status |= PPU_SPR_OVERFLOW;
+; 43   : 		if (ppustatus.vblank) status |= PPU_VBLANK;	
+; 44   : 		// clear vblank status after reading PPUSTATUS_PORT (* see https://wiki.nesdev.com/w/index.php/PPU_registers @ read $2002)
+; 45   : 		ppustatus.vblank = false;
+; 46   : 		ppu_internal.address_write_latch = false;	// reset write latch for address and scroll (* see https://wiki.nesdev.com/w/index.php/PPU_registers @ read $2002)
+
+	mov	BYTE PTR [rdi+96], 0
+	movzx	r8d, al
+	movzx	eax, r8b
+	or	al, 64					; 00000040H
+	cmp	BYTE PTR [rcx+88], 0
+	movzx	edx, al
+	cmove	edx, r8d
+	movzx	r8d, dl
+	movzx	eax, r8b
+	or	al, 32					; 00000020H
+	cmp	BYTE PTR [rdi+87], 0
+	movzx	ecx, al
+	cmove	ecx, r8d
+	movzx	edx, cl
+	movzx	eax, dl
+	or	al, 128					; 00000080H
+	cmp	BYTE PTR [rdi+89], 0
+	movzx	eax, al
+	cmove	eax, edx
+	mov	BYTE PTR [rdi+89], 0
+
+; 68   : }
+
+	add	rsp, 32					; 00000020H
+	pop	rdi
+	ret	0
+$LN2@read:
+
+; 47   : 		return status;
+; 48   : 	}
+; 49   : 	// OAMDATA register
+; 50   : 	if (addr_from_base == PPU_OAMDATA_PORT) {
+
+	cmp	r8d, 4
+	jne	SHORT $LN6@read
+
+; 51   : 		if (ppu_internal.oam_clearing) return 0xFF; // when clearing sec oam, reads to 2004 will return 0xFF
+
+	cmp	BYTE PTR [rcx+166], 0
+	je	SHORT $LN7@read
+	mov	al, 255					; 000000ffH
+
+; 68   : }
+
+	add	rsp, 32					; 00000020H
+	pop	rdi
+	ret	0
+$LN7@read:
+
+; 52   : 		char *buf = (char *)&oam;
+; 53   : 		return buf[oamaddr]; // no increment as per write (* see https://wiki.nesdev.com/w/index.php/PPU_registers @ read $2004)
+
+	movzx	eax, BYTE PTR [rcx+696]
+	movzx	eax, BYTE PTR [rax+rcx+440]
+
+; 68   : }
+
+	add	rsp, 32					; 00000020H
+	pop	rdi
+	ret	0
+$LN6@read:
+
+; 54   : 	}
+; 55   : 	// READ register.
+; 56   : 	if (addr_from_base == PPU_DATA_PORT) {
+
+	cmp	r8d, 7
+	jne	SHORT $LN8@read
+
+; 57   : 		byte data = prt2007buffer;
+; 58   : 		prt2007buffer = vbus.readmemory(ppu_internal.v_register);
+
+	movzx	edx, WORD PTR [rdi+102]
+	mov	QWORD PTR [rsp+48], rbx
+	movzx	ebx, BYTE PTR [rcx+233]
+	add	rcx, 240				; 000000f0H
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+
+; 23   : 	address = addr;
+
+	mov	DWORD PTR [rcx], edx
+
+; 24   : 	return read();
+
+	call	?read@bus@@QEAAEXZ			; bus::read
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+
+; 65   : 		return data;
+
+	cmp	BYTE PTR [rdi+73], 0
+	mov	ecx, 32					; 00000020H
+	mov	BYTE PTR [rdi+233], al
+	mov	eax, 1
+	cmove	cx, ax
+	movzx	eax, bl
+	add	WORD PTR [rdi+102], cx
+	mov	rbx, QWORD PTR [rsp+48]
+
+; 68   : }
+
+	add	rsp, 32					; 00000020H
+	pop	rdi
+	ret	0
+$LN8@read:
+
+; 66   : 	}
+; 67   : 	return 0x00;
+
+	xor	al, al
+
+; 68   : }
+
+	add	rsp, 32					; 00000020H
+	pop	rdi
+	ret	0
+?read@ppu@@UEAAEHH@Z ENDP				; ppu::read
+_TEXT	ENDS
+; Function compile flags: /Ogtpy
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+;	COMDAT ?write@ppu@@UEAAXHHE@Z
+_TEXT	SEGMENT
+this$ = 48
+addr$ = 56
+addr_from_base$ = 64
+tv544 = 72
+tv540 = 72
+tv531 = 72
+data$ = 72
+?write@ppu@@UEAAXHHE@Z PROC				; ppu::write, COMDAT
+
+; 70   : void	ppu::write(int addr, int addr_from_base, byte data) {
+
+$LN19:
+	mov	QWORD PTR [rsp+8], rbx
+	mov	QWORD PTR [rsp+16], rsi
+	push	rdi
+	sub	rsp, 32					; 00000020H
+
+; 71   : 	// update latch
+; 72   : 	latch = data;
+
+	movzx	r11d, r9b
+	mov	BYTE PTR [rcx+208], r9b
+	movzx	edi, r9b
+	movzx	esi, r9b
+	and	r11b, 8
+	and	dil, 4
+	and	sil, 16
+	mov	rbx, rcx
+
+; 73   : 	// registers.
+; 74   : 	if (addr_from_base == PPU_PPUCTRL_PORT) {
+
+	test	r8d, r8d
+	jne	SHORT $LN14@write
+
+; 75   : 		ppu_internal.t_register &= ~0xC00;
+
+	mov	eax, 62463				; 0000f3ffH
+	and	WORD PTR [rcx+100], ax
+
+; 76   : 		ppu_internal.t_register |= (data & PPU_BASENAMETABLE) << 10;
+
+	movzx	eax, r9b
+	and	al, 3
+	movzx	ecx, al
+	shl	cx, 10
+	or	WORD PTR [rbx+100], cx
+
+; 77   : 		ppuctrl.bg_0x1000 = (data & PPU_BG_TABLE_0X1000) > 0;
+
+	test	sil, sil
+	setne	al
+
+; 78   : 		ppuctrl.sprites_0x1000 = (data & PPU_SPRITE_TABLE_0X1000) > 0;
+
+	test	r11b, r11b
+	mov	BYTE PTR [rbx+75], al
+	setne	al
+	mov	BYTE PTR [rbx+74], al
+
+; 79   : 		ppuctrl.do_nmi = (data & PPU_DO_NMI) > 0;
+
+	movzx	eax, r9b
+	and	al, 128					; 00000080H
+	seta	al
+
+; 80   : 		ppuctrl.increment_32_bytes = (data & PPU_VRAM_INCREMENT_32BYTES) > 0;
+
+	test	dil, dil
+	mov	BYTE PTR [rbx+78], al
+	setne	al
+	mov	BYTE PTR [rbx+73], al
+
+; 81   : 		ppuctrl.master_mode = (data & PPU_MASTER_MODE) > 0;
+
+	movzx	eax, r9b
+	and	al, 64					; 00000040H
+	seta	al
+
+; 82   : 		ppuctrl.sprites_8x16 = (data & PPU_SPRITE_8X16) > 0;
+
+	and	r9b, 32					; 00000020H
+	mov	BYTE PTR [rbx+77], al
+	seta	al
+	mov	BYTE PTR [rbx+76], al
+
+; 131  : 	}
+; 132  : }
+
+	mov	rbx, QWORD PTR [rsp+48]
+	mov	rsi, QWORD PTR [rsp+56]
+	add	rsp, 32					; 00000020H
+	pop	rdi
+	ret	0
+$LN14@write:
+
+; 82   : 		ppuctrl.sprites_8x16 = (data & PPU_SPRITE_8X16) > 0;
+
+	movzx	ecx, r9b
+	movzx	edx, r9b
+	movzx	r10d, r9b
+	and	cl, 128					; 00000080H
+	and	dl, 64					; 00000040H
+	and	r10b, 32				; 00000020H
+
+; 83   : 	}
+; 84   : 	if (addr_from_base == PPU_PPUMASK_PORT) {
+
+	cmp	r8d, 1
+	jne	SHORT $LN3@write
+
+; 85   : 		ppumask.bg8lt = (data & PPU_BG_L8P) > 0;
+
+	test	r9b, 2
+	seta	al
+
+; 86   : 		ppumask.emp_blu = (data & PPU_EMP_BLUE) > 0;
+
+	test	cl, cl
+	mov	BYTE PTR [rbx+80], al
+	setne	al
+
+; 87   : 		ppumask.emp_grn = (data & PPU_EMP_GREEN) > 0;
+
+	test	dl, dl
+	mov	BYTE PTR [rbx+86], al
+	setne	al
+
+; 88   : 		ppumask.emp_red = (data & PPU_EMP_RED) > 0;
+
+	test	r10b, r10b
+	mov	BYTE PTR [rbx+85], al
+	setne	al
+
+; 89   : 		ppumask.grayscale = (data & PPU_GREYSCALE) > 0;
+
+	and	r9b, r8b
+
+; 90   : 		ppumask.showbg = (data & PPU_SHOW_BG) > 0;
+
+	test	r11b, r11b
+	mov	BYTE PTR [rbx+84], al
+	mov	BYTE PTR [rbx+79], r9b
+	setne	al
+
+; 91   : 		ppumask.showspr = (data & PPU_SHOW_SPR) > 0;
+
+	test	sil, sil
+	mov	BYTE PTR [rbx+82], al
+	setne	al
+
+; 92   : 		ppumask.spr8lt = (data & PPU_SPR_L8P) > 0;
+
+	test	dil, dil
+	mov	BYTE PTR [rbx+83], al
+	setne	al
+	mov	BYTE PTR [rbx+81], al
+
+; 131  : 	}
+; 132  : }
+
+	mov	rbx, QWORD PTR [rsp+48]
+	mov	rsi, QWORD PTR [rsp+56]
+	add	rsp, 32					; 00000020H
+	pop	rdi
+	ret	0
+$LN3@write:
+
+; 93   : 	}
+; 94   : 	// OAMADDR register (0x03)
+; 95   : 	if (addr_from_base == PPU_OAMADDR_PORT) {
+
+	cmp	r8d, 3
+	jne	SHORT $LN15@write
+
+; 96   : 		oamaddr = data;
+
+	mov	BYTE PTR [rbx+696], r9b
+
+; 131  : 	}
+; 132  : }
+
+	mov	rbx, QWORD PTR [rsp+48]
+	mov	rsi, QWORD PTR [rsp+56]
+	add	rsp, 32					; 00000020H
+	pop	rdi
+	ret	0
+$LN15@write:
+
+; 97   : 	}
+; 98   : 	// OAMDATA register
+; 99   : 	if (addr_from_base == PPU_OAMDATA_PORT) {
+
+	cmp	r8d, 4
+	jne	SHORT $LN5@write
+
+; 100  : 		char *buf = (char*)&oam;
+; 101  : 		buf[oamaddr++] = data;
+
+	movzx	eax, BYTE PTR [rbx+696]
+	mov	BYTE PTR [rax+rbx+440], r9b
+	inc	BYTE PTR [rbx+696]
+
+; 131  : 	}
+; 132  : }
+
+	mov	rbx, QWORD PTR [rsp+48]
+	mov	rsi, QWORD PTR [rsp+56]
+	add	rsp, 32					; 00000020H
+	pop	rdi
+	ret	0
+$LN5@write:
+
+; 102  : 	}
+; 103  : 	if (addr_from_base == PPU_SCROLL_PORT) {
+
+	cmp	r8d, 5
+	jne	SHORT $LN16@write
+
+; 104  : 		if (!ppu_internal.address_write_latch) {
+
+	movzx	r8d, BYTE PTR [rbx+96]
+	movzx	eax, r9b
+	movzx	edx, WORD PTR [rbx+100]
+	and	al, 7
+	test	r8b, r8b
+	jne	SHORT $LN7@write
+
+; 105  : 			ppu_internal.t_register &= ~0x1F;
+; 106  : 			ppu_internal.t_register |= (data & 0xF8) >> 3;
+
+	shr	r9b, 3
+
+; 107  : 			ppu_internal.x_shift = data & 0x07;
+
+	mov	BYTE PTR [rbx+97], al
+	mov	eax, 65504				; 0000ffe0H
+	movzx	ecx, r9b
+
+; 108  : 		}
+; 109  : 		else {
+
+	jmp	SHORT $LN17@write
+$LN7@write:
+
+; 110  : 			ppu_internal.t_register &= ~0x73E0;
+; 111  : 			ppu_internal.t_register |= (data & 0x07) << 12;
+
+	movzx	ecx, al
+
+; 112  : 			ppu_internal.t_register |= (data & 0xF8) << 2;
+
+	and	r9b, 248				; 000000f8H
+	shl	cx, 10
+	movzx	eax, r9b
+	or	cx, ax
+	mov	eax, 35871				; 00008c1fH
+	shl	cx, 2
+$LN17@write:
+
+; 113  : 		}
+; 114  : 		ppu_internal.address_write_latch = !ppu_internal.address_write_latch;
+
+	and	dx, ax
+	or	cx, dx
+	test	r8b, r8b
+	mov	WORD PTR [rbx+100], cx
+	sete	al
+	mov	BYTE PTR [rbx+96], al
+
+; 131  : 	}
+; 132  : }
+
+	mov	rbx, QWORD PTR [rsp+48]
+	mov	rsi, QWORD PTR [rsp+56]
+	add	rsp, 32					; 00000020H
+	pop	rdi
+	ret	0
+$LN16@write:
+
+; 115  : 	}
+; 116  : 	if (addr_from_base == PPU_ADDRESS_PORT) {
+
+	cmp	r8d, 6
+	jne	SHORT $LN9@write
+
+; 117  : 		if (!ppu_internal.address_write_latch) {
+
+	movzx	ecx, BYTE PTR [rbx+96]
+	test	cl, cl
+	jne	SHORT $LN10@write
+
+; 118  : 			ppu_internal.t_register &= ~0x7F00;
+
+	mov	eax, 33023				; 000080ffH
+
+; 119  : 			ppu_internal.t_register |= (data & 0x3F) << 8;
+
+	and	r9b, 63					; 0000003fH
+	and	WORD PTR [rbx+100], ax
+	movzx	eax, r9b
+	shl	ax, 8
+	or	WORD PTR [rbx+100], ax
+
+; 124  : 			ppu_internal.v_register = ppu_internal.t_register;
+; 125  : 		}
+; 126  : 		ppu_internal.address_write_latch = !ppu_internal.address_write_latch;
+
+	test	cl, cl
+	sete	al
+	mov	BYTE PTR [rbx+96], al
+
+; 131  : 	}
+; 132  : }
+
+	mov	rbx, QWORD PTR [rsp+48]
+	mov	rsi, QWORD PTR [rsp+56]
+	add	rsp, 32					; 00000020H
+	pop	rdi
+	ret	0
+$LN10@write:
+
+; 120  : 		}
+; 121  : 		else {
+; 122  : 			ppu_internal.t_register &= 0xFF00;
+; 123  : 			ppu_internal.t_register |= data;
+
+	movzx	eax, r9b
+	mov	BYTE PTR [rbx+100], 0
+	or	WORD PTR [rbx+100], ax
+	movzx	eax, WORD PTR [rbx+100]
+
+; 124  : 			ppu_internal.v_register = ppu_internal.t_register;
+; 125  : 		}
+; 126  : 		ppu_internal.address_write_latch = !ppu_internal.address_write_latch;
+
+	test	cl, cl
+	mov	WORD PTR [rbx+102], ax
+	sete	al
+	mov	BYTE PTR [rbx+96], al
+
+; 131  : 	}
+; 132  : }
+
+	mov	rbx, QWORD PTR [rsp+48]
+	mov	rsi, QWORD PTR [rsp+56]
+	add	rsp, 32					; 00000020H
+	pop	rdi
+	ret	0
+$LN9@write:
+
+; 127  : 	}
+; 128  : 	if (addr_from_base == PPU_DATA_PORT) {
+
+	cmp	r8d, 7
+	jne	SHORT $LN12@write
+
+; 129  : 		vbus.writememory(ppu_internal.v_register, data);
+
+	movzx	edx, WORD PTR [rbx+102]
+	lea	rcx, QWORD PTR [rbx+240]
+	movzx	r8d, r9b
+	call	?writememory@bus@@QEAAXHE@Z		; bus::writememory
+
+; 130  : 		ppu_internal.v_register += ppuctrl.increment_32_bytes ? 32 : 1;
+
+	cmp	BYTE PTR [rbx+73], 0
+	mov	eax, 1
+	mov	ecx, 32					; 00000020H
+	cmovne	ax, cx
+	add	WORD PTR [rbx+102], ax
+$LN12@write:
+
+; 131  : 	}
+; 132  : }
+
+	mov	rbx, QWORD PTR [rsp+48]
+	mov	rsi, QWORD PTR [rsp+56]
+	add	rsp, 32					; 00000020H
+	pop	rdi
+	ret	0
+?write@ppu@@UEAAXHHE@Z ENDP				; ppu::write
+_TEXT	ENDS
+; Function compile flags: /Ogtpy
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
 ;	COMDAT ?rundevice@ppu@@UEAAHH@Z
 _TEXT	SEGMENT
 this$ = 80
@@ -497,17 +2146,16 @@ $LN148:
 ; 316  : 				ppu_internal.v_register = (ppu_internal.v_register & ~0x041F) | (ppu_internal.t_register & 0x041F);
 
 	mov	r8d, DWORD PTR [rcx+220]
-	lea	r10d, QWORD PTR [r14+8]
+	lea	r10d, QWORD PTR [r14+16]
 	mov	QWORD PTR [rsp+80], rdi
-	lea	r11d, QWORD PTR [r14+16]
-	mov	QWORD PTR [rsp+88], r12
 	mov	r9d, r8d
-	mov	QWORD PTR [rsp+96], r13
+	mov	QWORD PTR [rsp+88], r12
 	mov	edi, 64480				; 0000fbe0H
+	mov	QWORD PTR [rsp+96], r13
+	mov	r12d, 28672				; 00007000H
 	mov	QWORD PTR [rsp+32], r15
-	mov	r13d, 28672				; 00007000H
+	lea	r13d, QWORD PTR [r14+8]
 	lea	r15, QWORD PTR [r14-1]
-	mov	r12d, 340				; 00000154H
 $LL4@rundevice:
 
 ; 137  : 		if ((ppumask.showbg || ppumask.showspr) && !((scanline>=240) && (scanline<=260))) {
@@ -555,7 +2203,7 @@ $LN141@rundevice:
 	lea	rcx, QWORD PTR [rbx+240]
 	and	eax, 4095				; 00000fffH
 	bts	eax, 13
-; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
 
 ; 23   : 	address = addr;
 
@@ -564,7 +2212,7 @@ $LN141@rundevice:
 ; 24   : 	return read();
 
 	call	?read@bus@@QEAAEXZ			; bus::read
-; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\ppu.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
 
 ; 142  : 					ppu_internal.shiftreg_nametable = vbus.readmemory(0x2000 | (ppu_internal.v_register & 0x0FFF));
 
@@ -598,7 +2246,7 @@ $LN14@rundevice:
 	or	r8d, eax
 	shr	r8d, 2
 	or	r8d, edx
-; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
 
 ; 23   : 	address = addr;
 
@@ -607,7 +2255,7 @@ $LN14@rundevice:
 ; 24   : 	return read();
 
 	call	?read@bus@@QEAAEXZ			; bus::read
-; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\ppu.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
 
 ; 150  : 					ppu_internal.shiftreg_attribute_latch = ab;
 
@@ -640,7 +2288,7 @@ $LN16@rundevice:
 	and	edx, 4095				; 00000fffH
 	shl	edx, 4
 	or	edx, r8d
-; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
 
 ; 23   : 	address = addr;
 
@@ -649,7 +2297,7 @@ $LN16@rundevice:
 ; 24   : 	return read();
 
 	call	?read@bus@@QEAAEXZ			; bus::read
-; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\ppu.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
 
 ; 157  : 					ppu_internal.shiftregs_pattern_latch = (vbus.readmemory(pattern_address)); // read to lower part.
 
@@ -668,7 +2316,7 @@ $LN18@rundevice:
 
 	movzx	r10d, BYTE PTR [rbx+98]
 	movzx	edx, BYTE PTR [rbx+75]
-	or	r10b, 8
+	or	r10b, r13b
 	movzx	r8d, BYTE PTR [rbx+201]
 
 ; 162  : 					//ppu_internal.shiftregs_pattern_par[1] = vbus->readmemory(pattern_address);
@@ -705,7 +2353,7 @@ $LN133@rundevice:
 	shl	edx, 4
 	or	edx, eax
 	movzx	eax, dx
-; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
 
 ; 23   : 	address = addr;
 
@@ -714,7 +2362,7 @@ $LN133@rundevice:
 ; 24   : 	return read();
 
 	call	?read@bus@@QEAAEXZ			; bus::read
-; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\ppu.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
 
 ; 169  : 					ppu_internal.shiftregs_pattern[1] |= (vbus.readmemory(pattern_address)); // read to lower part.
 
@@ -838,8 +2486,7 @@ $LN144@rundevice:
 
 	mov	WORD PTR [rbx+102], cx
 $LN143@rundevice:
-	mov	r10d, 8
-	lea	r11d, QWORD PTR [r10+8]
+	mov	r10d, 16
 $LN23@rundevice:
 	mov	eax, DWORD PTR [rbx+220]
 	mov	ecx, eax
@@ -933,7 +2580,7 @@ $LN26@rundevice:
 
 	movzx	eax, BYTE PTR [rbx+162]
 	cmove	edx, r15d
-	cmp	al, 8
+	cmp	al, r13b
 	jae	SHORT $LN29@rundevice
 	cmp	BYTE PTR [rbx+168], r14b
 	jne	SHORT $LN29@rundevice
@@ -948,8 +2595,8 @@ $LN29@rundevice:
 	cmp	edx, ecx
 	jl	SHORT $LN97@rundevice
 	cmp	BYTE PTR [rbx+76], r14b
-	mov	eax, r10d
-	cmovne	eax, r11d
+	mov	eax, r13d
+	cmovne	eax, r10d
 	add	eax, ecx
 	cmp	edx, eax
 	jge	SHORT $LN97@rundevice
@@ -967,7 +2614,7 @@ $LN98@rundevice:
 
 	test	al, al
 	je	SHORT $LN30@rundevice
-	cmp	BYTE PTR [rbx+162], 8
+	cmp	BYTE PTR [rbx+162], r13b
 	jb	SHORT $LN30@rundevice
 
 ; 216  : 							// sprite overflow.
@@ -987,7 +2634,7 @@ $LN30@rundevice:
 ; 222  : 						if ((ppu_internal.sn < 8) && !ppu_internal.oam_evald) {
 
 	movzx	edx, BYTE PTR [rbx+162]
-	cmp	dl, 8
+	cmp	dl, r13b
 	jae	SHORT $LN5@rundevice
 	cmp	BYTE PTR [rbx+168], r14b
 	jne	SHORT $LN5@rundevice
@@ -1051,7 +2698,7 @@ $LN5@rundevice:
 	inc	al
 	mov	BYTE PTR [rbx+161], r14b
 	mov	BYTE PTR [rbx+160], al
-	cmp	cl, 8
+	cmp	cl, r13b
 	jae	SHORT $LN38@rundevice
 	inc	cl
 	mov	BYTE PTR [rbx+162], cl
@@ -1134,7 +2781,7 @@ $LN136@rundevice:
 	lea	rcx, QWORD PTR [rbx+240]
 	and	eax, 4095				; 00000fffH
 	bts	eax, 13
-; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
 
 ; 23   : 	address = addr;
 
@@ -1143,7 +2790,7 @@ $LN136@rundevice:
 ; 24   : 	return read();
 
 	call	?read@bus@@QEAAEXZ			; bus::read
-; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\ppu.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
 
 ; 261  : 					ppu_internal.shiftreg_nametable = vbus.readmemory(0x2000 | (ppu_internal.v_register & 0x0FFF));
 
@@ -1164,7 +2811,7 @@ $LN42@rundevice:
 	lea	rcx, QWORD PTR [rbx+240]
 	and	eax, 4095				; 00000fffH
 	bts	eax, 13
-; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
 
 ; 23   : 	address = addr;
 
@@ -1173,7 +2820,7 @@ $LN42@rundevice:
 ; 24   : 	return read();
 
 	call	?read@bus@@QEAAEXZ			; bus::read
-; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\ppu.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
 
 ; 266  : 					ppu_internal.shiftreg_spr_latch[ppu_internal.n] = ppu_internal.secoam[ppu_internal.n].attr;
 
@@ -1265,7 +2912,7 @@ $LN100@rundevice:
 	add	dx, ax
 	add	dx, r9w
 	movzx	eax, dx
-; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
 
 ; 23   : 	address = addr;
 
@@ -1274,7 +2921,7 @@ $LN100@rundevice:
 ; 24   : 	return read();
 
 	call	?read@bus@@QEAAEXZ			; bus::read
-; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\ppu.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
 
 ; 287  : 					ppu_internal.shiftreg_spr_pattern_lo[ppu_internal.n] = vbus.readmemory(pattern_address);
 
@@ -1370,8 +3017,8 @@ $LN102@rundevice:
 	add	dx, ax
 	add	dx, r9w
 	movzx	eax, dx
-	add	eax, 8
-; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus.cpp
+	add	eax, r13d
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
 
 ; 23   : 	address = addr;
 
@@ -1380,7 +3027,7 @@ $LN102@rundevice:
 ; 24   : 	return read();
 
 	call	?read@bus@@QEAAEXZ			; bus::read
-; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\ppu.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
 
 ; 309  : 					ppu_internal.shiftreg_spr_pattern_hi[ppu_internal.n] = vbus.readmemory(pattern_address + 8);
 
@@ -1430,8 +3077,8 @@ $LN135@rundevice:
 
 	movzx	ecx, WORD PTR [rbx+102]
 	movzx	eax, cx
-	and	ax, r13w
-	cmp	ax, r13w
+	and	ax, r12w
+	cmp	ax, r12w
 	je	SHORT $LN59@rundevice
 
 ; 322  : 					ppu_internal.v_register += 0x1000;
@@ -1534,7 +3181,6 @@ $LN60@rundevice:
 ; 346  : 					for (int i = 0; i < 8; i++) {
 
 	mov	rdi, r14
-	npad	4
 $LL9@rundevice:
 
 ; 347  : 						// check if count is zero then render the pattern buffers.
@@ -1647,7 +3293,7 @@ $LN7@rundevice:
 ; 346  : 					for (int i = 0; i < 8; i++) {
 
 	inc	rdi
-	cmp	rdi, 8
+	cmp	rdi, r13
 	jl	$LL9@rundevice
 $LN8@rundevice:
 
@@ -1677,17 +3323,16 @@ $LN8@rundevice:
 ; 392  : 					// no need for full bus emulation on color data.
 ; 393  : 					color = vpal.read(0, color | palentry);	// addr = 0x000 (vpal ignores that anyway)
 
-	mov	eax, 8
 	mov	r10d, 4
 	mov	edx, 32768				; 00008000H
-	sar	edx, cl
 	mov	r8d, r14d
+	sar	edx, cl
+	mov	eax, r14d
 	test	WORD PTR [rbx+112], dx
 	lea	rcx, QWORD PTR [rbx+280]
 	mov	r9, QWORD PTR [rcx]
-	cmova	r8d, eax
+	cmova	r8d, r13d
 	test	WORD PTR [rbx+110], dx
-	mov	eax, r14d
 	cmova	eax, r10d
 	mov	r10d, 2
 	or	r8d, eax
@@ -1947,13 +3592,14 @@ $LN86@rundevice:
 ; 452  : 				if (ppu_internal.odd_even_frame) cycle = 340;
 
 	movzx	eax, BYTE PTR [rbx+202]
+	mov	edx, 340				; 00000154H
 	test	al, al
 	mov	DWORD PTR [rbx+212], r14d
 
 ; 453  : 				ppu_internal.odd_even_frame = !ppu_internal.odd_even_frame;
 
 	sete	al
-	cmovne	ecx, r12d
+	cmovne	ecx, edx
 	mov	BYTE PTR [rbx+202], al
 $LN87@rundevice:
 
@@ -1964,10 +3610,10 @@ $LN87@rundevice:
 	lea	r8d, DWORD PTR [rcx+1]
 	mov	DWORD PTR [rbx+220], r8d
 
-; 457  : 		if (cycle == 340) {			
+; 457  : 		if (cycle == 341) {			
 
 	mov	r9d, r8d
-	cmp	r8d, r12d
+	cmp	r8d, 341				; 00000155H
 	jne	SHORT $LN2@rundevice
 
 ; 458  : 			cycle = 0;
@@ -1980,10 +3626,9 @@ $LN2@rundevice:
 ; 135  : 	// run the PPU..
 ; 136  : 	for (int i = 0; i < ticks; i++) {
 
-	mov	r10d, 8
 	inc	esi
 	mov	edi, 64480				; 0000fbe0H
-	lea	r11d, QWORD PTR [r10+8]
+	mov	r10d, 16
 	cmp	esi, ebp
 	jl	$LL4@rundevice
 
@@ -2007,5 +3652,620 @@ $LN142@rundevice:
 	pop	rbx
 	ret	0
 ?rundevice@ppu@@UEAAHH@Z ENDP				; ppu::rundevice
+_TEXT	ENDS
+; Function compile flags: /Ogtpy
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+;	COMDAT ?dma@ppu@@UEAAXPEAE_N1@Z
+_TEXT	SEGMENT
+this$ = 8
+data$ = 16
+is_output$ = 24
+started$ = 32
+?dma@ppu@@UEAAXPEAE_N1@Z PROC				; ppu::dma, COMDAT
+
+; 483  : 	if (is_output) {
+
+	test	r8b, r8b
+	je	SHORT $LN2@dma
+
+; 484  : 		char * buf = (char *)oam;
+; 485  : 		buf[oamaddr++] = *data;
+
+	movzx	r8d, BYTE PTR [rcx+696]
+	movzx	eax, BYTE PTR [rdx]
+	mov	BYTE PTR [r8+rcx+440], al
+	inc	BYTE PTR [rcx+696]
+$LN2@dma:
+
+; 486  : 	}
+; 487  : }
+
+	ret	0
+?dma@ppu@@UEAAXPEAE_N1@Z ENDP				; ppu::dma
+_TEXT	ENDS
+; Function compile flags: /Ogtpy
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+;	COMDAT ??0ppuram@@QEAA@XZ
+_TEXT	SEGMENT
+this$ = 48
+??0ppuram@@QEAA@XZ PROC					; ppuram::ppuram, COMDAT
+
+; 500  : ppuram::ppuram() : bus_device() {
+
+$LN7:
+	push	rbx
+	sub	rsp, 32					; 00000020H
+	mov	rbx, rcx
+	call	??0bus_device@@QEAA@XZ			; bus_device::bus_device
+
+; 501  : 	strcpy_s(get_device_descriptor(), MAX_DESCRIPTOR_LENGTH, "PPU mainram 2k");
+
+	mov	rcx, QWORD PTR [rbx+8]
+	lea	rax, OFFSET FLAT:??_7ppuram@@6B@
+	lea	r8, OFFSET FLAT:??_C@_0P@MFMHDPIH@PPU?5mainram?52k@
+	mov	QWORD PTR [rbx], rax
+	mov	edx, 128				; 00000080H
+	call	QWORD PTR __imp_strcpy_s
+
+; 502  : 	ram = (byte *)malloc(0x800);
+
+	mov	ecx, 2048				; 00000800H
+	call	QWORD PTR __imp_malloc
+	mov	QWORD PTR [rbx+72], rax
+
+; 503  : 	devicestart = 0x2000;
+; 504  : 	deviceend = 0x3EFF;
+; 505  : 	devicemask = 0x27FF;	 // per default ppu has 2k of RAM mirrored to 4k of address-space.
+; 506  : }
+
+	mov	rax, rbx
+	mov	DWORD PTR [rbx+44], 8192		; 00002000H
+	mov	DWORD PTR [rbx+48], 16127		; 00003effH
+	mov	DWORD PTR [rbx+52], 10239		; 000027ffH
+	add	rsp, 32					; 00000020H
+	pop	rbx
+	ret	0
+??0ppuram@@QEAA@XZ ENDP					; ppuram::ppuram
+_TEXT	ENDS
+; Function compile flags: /Ogtpy
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+;	COMDAT ??_Gppuram@@UEAAPEAXI@Z
+_TEXT	SEGMENT
+this$ = 48
+__flags$ = 56
+??_Gppuram@@UEAAPEAXI@Z PROC				; ppuram::`scalar deleting destructor', COMDAT
+$LN15:
+	mov	QWORD PTR [rsp+8], rbx
+	push	rdi
+	sub	rsp, 32					; 00000020H
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+
+; 508  : ppuram::~ppuram() {
+
+	lea	rax, OFFSET FLAT:??_7ppuram@@6B@
+	mov	rdi, rcx
+	mov	QWORD PTR [rcx], rax
+	mov	ebx, edx
+
+; 509  : 	free(ram);
+
+	mov	rcx, QWORD PTR [rcx+72]
+	call	QWORD PTR __imp_free
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+
+; 186  : 	free(devicedescriptor);	// be done with it.
+
+	mov	rcx, QWORD PTR [rdi+8]
+	lea	rax, OFFSET FLAT:??_7device@@6B@
+	mov	QWORD PTR [rdi], rax
+	call	QWORD PTR __imp_free
+	test	bl, 1
+	je	SHORT $LN12@scalar
+	mov	edx, 80					; 00000050H
+	mov	rcx, rdi
+	call	??3@YAXPEAX_K@Z				; operator delete
+$LN12@scalar:
+	mov	rbx, QWORD PTR [rsp+48]
+	mov	rax, rdi
+	add	rsp, 32					; 00000020H
+	pop	rdi
+	ret	0
+??_Gppuram@@UEAAPEAXI@Z ENDP				; ppuram::`scalar deleting destructor'
+_TEXT	ENDS
+; Function compile flags: /Ogtpy
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+;	COMDAT ??1ppuram@@UEAA@XZ
+_TEXT	SEGMENT
+this$ = 48
+??1ppuram@@UEAA@XZ PROC					; ppuram::~ppuram, COMDAT
+
+; 508  : ppuram::~ppuram() {
+
+$LN10:
+	push	rbx
+	sub	rsp, 32					; 00000020H
+	lea	rax, OFFSET FLAT:??_7ppuram@@6B@
+	mov	rbx, rcx
+	mov	QWORD PTR [rcx], rax
+
+; 509  : 	free(ram);
+
+	mov	rcx, QWORD PTR [rcx+72]
+	call	QWORD PTR __imp_free
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+
+; 186  : 	free(devicedescriptor);	// be done with it.
+
+	mov	rcx, QWORD PTR [rbx+8]
+	lea	rax, OFFSET FLAT:??_7device@@6B@
+	mov	QWORD PTR [rbx], rax
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+
+; 510  : }
+
+	add	rsp, 32					; 00000020H
+	pop	rbx
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+
+; 186  : 	free(devicedescriptor);	// be done with it.
+
+	rex_jmp	QWORD PTR __imp_free
+??1ppuram@@UEAA@XZ ENDP					; ppuram::~ppuram
+_TEXT	ENDS
+; Function compile flags: /Ogtpy
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+;	COMDAT ?write@ppuram@@UEAAXHHE@Z
+_TEXT	SEGMENT
+this$ = 8
+addr$ = 16
+addr_from_base$ = 24
+data$ = 32
+?write@ppuram@@UEAAXHHE@Z PROC				; ppuram::write, COMDAT
+
+; 513  : 	ram[addr_from_base] = data;
+
+	mov	rax, QWORD PTR [rcx+72]
+	movsxd	rdx, r8d
+	mov	BYTE PTR [rdx+rax], r9b
+
+; 514  : }
+
+	ret	0
+?write@ppuram@@UEAAXHHE@Z ENDP				; ppuram::write
+_TEXT	ENDS
+; Function compile flags: /Ogtpy
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+;	COMDAT ?read@ppuram@@UEAAEHH@Z
+_TEXT	SEGMENT
+this$ = 8
+addr$ = 16
+addr_from_base$ = 24
+?read@ppuram@@UEAAEHH@Z PROC				; ppuram::read, COMDAT
+
+; 517  : 	return ram[addr_from_base];
+
+	mov	rax, QWORD PTR [rcx+72]
+	movsxd	rdx, r8d
+	movzx	eax, BYTE PTR [rdx+rax]
+
+; 518  : }
+
+	ret	0
+?read@ppuram@@UEAAEHH@Z ENDP				; ppuram::read
+_TEXT	ENDS
+; Function compile flags: /Ogtpy
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+;	COMDAT ??0ppu_pal_ram@@QEAA@XZ
+_TEXT	SEGMENT
+this$ = 48
+??0ppu_pal_ram@@QEAA@XZ PROC				; ppu_pal_ram::ppu_pal_ram, COMDAT
+
+; 521  : ppu_pal_ram::ppu_pal_ram() : bus_device() {
+
+$LN7:
+	push	rbx
+	sub	rsp, 32					; 00000020H
+	mov	rbx, rcx
+	call	??0bus_device@@QEAA@XZ			; bus_device::bus_device
+
+; 522  : 	strcpy_s(get_device_descriptor(), MAX_DESCRIPTOR_LENGTH, "PPU palette RAM 32 bytes");
+
+	mov	rcx, QWORD PTR [rbx+8]
+	lea	rax, OFFSET FLAT:??_7ppu_pal_ram@@6B@
+	lea	r8, OFFSET FLAT:??_C@_0BJ@GBIMAOLL@PPU?5palette?5RAM?532?5bytes@
+	mov	QWORD PTR [rbx], rax
+	mov	edx, 128				; 00000080H
+	call	QWORD PTR __imp_strcpy_s
+
+; 523  : 	ram = (byte *)malloc(0x20);
+
+	mov	ecx, 32					; 00000020H
+	call	QWORD PTR __imp_malloc
+	mov	QWORD PTR [rbx+72], rax
+
+; 524  : 	devicestart = 0x3F00;
+; 525  : 	deviceend = 0x3FFF;
+; 526  : 	devicemask = 0x3F1F;
+; 527  : }
+
+	mov	rax, rbx
+	mov	DWORD PTR [rbx+44], 16128		; 00003f00H
+	mov	DWORD PTR [rbx+48], 16383		; 00003fffH
+	mov	DWORD PTR [rbx+52], 16159		; 00003f1fH
+	add	rsp, 32					; 00000020H
+	pop	rbx
+	ret	0
+??0ppu_pal_ram@@QEAA@XZ ENDP				; ppu_pal_ram::ppu_pal_ram
+_TEXT	ENDS
+; Function compile flags: /Ogtpy
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+;	COMDAT ??_Gppu_pal_ram@@UEAAPEAXI@Z
+_TEXT	SEGMENT
+this$ = 48
+__flags$ = 56
+??_Gppu_pal_ram@@UEAAPEAXI@Z PROC			; ppu_pal_ram::`scalar deleting destructor', COMDAT
+$LN15:
+	mov	QWORD PTR [rsp+8], rbx
+	push	rdi
+	sub	rsp, 32					; 00000020H
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+
+; 529  : ppu_pal_ram::~ppu_pal_ram() {
+
+	lea	rax, OFFSET FLAT:??_7ppu_pal_ram@@6B@
+	mov	rdi, rcx
+	mov	QWORD PTR [rcx], rax
+	mov	ebx, edx
+
+; 530  : 	free(ram);
+
+	mov	rcx, QWORD PTR [rcx+72]
+	call	QWORD PTR __imp_free
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+
+; 186  : 	free(devicedescriptor);	// be done with it.
+
+	mov	rcx, QWORD PTR [rdi+8]
+	lea	rax, OFFSET FLAT:??_7device@@6B@
+	mov	QWORD PTR [rdi], rax
+	call	QWORD PTR __imp_free
+	test	bl, 1
+	je	SHORT $LN12@scalar
+	mov	edx, 80					; 00000050H
+	mov	rcx, rdi
+	call	??3@YAXPEAX_K@Z				; operator delete
+$LN12@scalar:
+	mov	rbx, QWORD PTR [rsp+48]
+	mov	rax, rdi
+	add	rsp, 32					; 00000020H
+	pop	rdi
+	ret	0
+??_Gppu_pal_ram@@UEAAPEAXI@Z ENDP			; ppu_pal_ram::`scalar deleting destructor'
+_TEXT	ENDS
+; Function compile flags: /Ogtpy
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+;	COMDAT ??1ppu_pal_ram@@UEAA@XZ
+_TEXT	SEGMENT
+this$ = 48
+??1ppu_pal_ram@@UEAA@XZ PROC				; ppu_pal_ram::~ppu_pal_ram, COMDAT
+
+; 529  : ppu_pal_ram::~ppu_pal_ram() {
+
+$LN10:
+	push	rbx
+	sub	rsp, 32					; 00000020H
+	lea	rax, OFFSET FLAT:??_7ppu_pal_ram@@6B@
+	mov	rbx, rcx
+	mov	QWORD PTR [rcx], rax
+
+; 530  : 	free(ram);
+
+	mov	rcx, QWORD PTR [rcx+72]
+	call	QWORD PTR __imp_free
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+
+; 186  : 	free(devicedescriptor);	// be done with it.
+
+	mov	rcx, QWORD PTR [rbx+8]
+	lea	rax, OFFSET FLAT:??_7device@@6B@
+	mov	QWORD PTR [rbx], rax
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+
+; 531  : }
+
+	add	rsp, 32					; 00000020H
+	pop	rbx
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+
+; 186  : 	free(devicedescriptor);	// be done with it.
+
+	rex_jmp	QWORD PTR __imp_free
+??1ppu_pal_ram@@UEAA@XZ ENDP				; ppu_pal_ram::~ppu_pal_ram
+_TEXT	ENDS
+; Function compile flags: /Ogtpy
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+;	COMDAT ?pal_addr_compute@ppu_pal_ram@@AEAAHH@Z
+_TEXT	SEGMENT
+this$dead$ = 8
+addr$ = 16
+?pal_addr_compute@ppu_pal_ram@@AEAAHH@Z PROC		; ppu_pal_ram::pal_addr_compute, COMDAT
+
+; 534  : 	if (addr == 0x10) return 0x00;
+
+	cmp	edx, 16
+	jne	SHORT $LN2@pal_addr_c
+	xor	eax, eax
+
+; 538  : 	return addr;
+; 539  : }
+
+	ret	0
+$LN2@pal_addr_c:
+
+; 535  : 	if (addr == 0x14) return 0x04;
+
+	cmp	edx, 20
+	jne	SHORT $LN3@pal_addr_c
+	lea	eax, QWORD PTR [rdx-16]
+
+; 538  : 	return addr;
+; 539  : }
+
+	ret	0
+$LN3@pal_addr_c:
+
+; 536  : 	if (addr == 0x18) return 0x08;
+
+	cmp	edx, 24
+	jne	SHORT $LN4@pal_addr_c
+	mov	eax, 8
+
+; 538  : 	return addr;
+; 539  : }
+
+	ret	0
+$LN4@pal_addr_c:
+
+; 537  : 	if (addr == 0x1C) return 0x0C;
+
+	mov	eax, 12
+	cmp	edx, 28
+	cmove	edx, eax
+	mov	eax, edx
+
+; 538  : 	return addr;
+; 539  : }
+
+	ret	0
+?pal_addr_compute@ppu_pal_ram@@AEAAHH@Z ENDP		; ppu_pal_ram::pal_addr_compute
+_TEXT	ENDS
+; Function compile flags: /Ogtpy
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+;	COMDAT ?write@ppu_pal_ram@@UEAAXHHE@Z
+_TEXT	SEGMENT
+this$ = 8
+addr$ = 16
+addr_from_base$ = 24
+data$ = 32
+?write@ppu_pal_ram@@UEAAXHHE@Z PROC			; ppu_pal_ram::write, COMDAT
+
+; 541  : void ppu_pal_ram::write(int addr, int addr_from_base, byte data) {
+
+	mov	rax, rcx
+
+; 534  : 	if (addr == 0x10) return 0x00;
+
+	cmp	r8d, 16
+	jne	SHORT $LN4@write
+
+; 542  : 	ram[pal_addr_compute (addr_from_base)] = data;
+
+	mov	rax, QWORD PTR [rax+72]
+
+; 534  : 	if (addr == 0x10) return 0x00;
+
+	xor	r8d, r8d
+
+; 542  : 	ram[pal_addr_compute (addr_from_base)] = data;
+
+	movsxd	rcx, r8d
+	mov	BYTE PTR [rcx+rax], r9b
+
+; 543  : }
+
+	ret	0
+$LN4@write:
+
+; 535  : 	if (addr == 0x14) return 0x04;
+
+	cmp	r8d, 20
+	jne	SHORT $LN5@write
+
+; 542  : 	ram[pal_addr_compute (addr_from_base)] = data;
+
+	mov	rax, QWORD PTR [rax+72]
+
+; 535  : 	if (addr == 0x14) return 0x04;
+
+	mov	r8d, 4
+
+; 542  : 	ram[pal_addr_compute (addr_from_base)] = data;
+
+	movsxd	rcx, r8d
+	mov	BYTE PTR [rcx+rax], r9b
+
+; 543  : }
+
+	ret	0
+$LN5@write:
+
+; 536  : 	if (addr == 0x18) return 0x08;
+
+	cmp	r8d, 24
+	jne	SHORT $LN6@write
+
+; 542  : 	ram[pal_addr_compute (addr_from_base)] = data;
+
+	mov	rax, QWORD PTR [rax+72]
+
+; 536  : 	if (addr == 0x18) return 0x08;
+
+	mov	r8d, 8
+
+; 542  : 	ram[pal_addr_compute (addr_from_base)] = data;
+
+	movsxd	rcx, r8d
+	mov	BYTE PTR [rcx+rax], r9b
+
+; 543  : }
+
+	ret	0
+$LN6@write:
+
+; 542  : 	ram[pal_addr_compute (addr_from_base)] = data;
+
+	mov	rax, QWORD PTR [rax+72]
+
+; 537  : 	if (addr == 0x1C) return 0x0C;
+
+	mov	ecx, 12
+	cmp	r8d, 28
+	cmove	r8d, ecx
+
+; 542  : 	ram[pal_addr_compute (addr_from_base)] = data;
+
+	movsxd	rcx, r8d
+	mov	BYTE PTR [rcx+rax], r9b
+
+; 543  : }
+
+	ret	0
+?write@ppu_pal_ram@@UEAAXHHE@Z ENDP			; ppu_pal_ram::write
+_TEXT	ENDS
+; Function compile flags: /Ogtpy
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\video\ppu.cpp
+;	COMDAT ?read@ppu_pal_ram@@UEAAEHH@Z
+_TEXT	SEGMENT
+this$ = 8
+addr$ = 16
+addr_from_base$ = 24
+?read@ppu_pal_ram@@UEAAEHH@Z PROC			; ppu_pal_ram::read, COMDAT
+
+; 546  : 	if (addr_from_base == 0x04) return ram[0x00];
+
+	lea	eax, DWORD PTR [r8-4]
+	mov	rdx, rcx
+	test	eax, -13				; fffffff3H
+	jne	SHORT $LN4@read
+	cmp	r8d, 16
+	je	SHORT $LN15@read
+
+; 547  : 	if (addr_from_base == 0x08) return ram[0x00];
+; 548  : 	if (addr_from_base == 0x0C) return ram[0x00];
+
+	mov	rax, QWORD PTR [rcx+72]
+	movzx	eax, BYTE PTR [rax]
+
+; 550  : }
+
+	ret	0
+$LN4@read:
+
+; 534  : 	if (addr == 0x10) return 0x00;
+
+	cmp	r8d, 16
+	jne	SHORT $LN7@read
+$LN15@read:
+
+; 549  : 	return ram[pal_addr_compute(addr_from_base)];	
+
+	mov	rax, QWORD PTR [rdx+72]
+
+; 534  : 	if (addr == 0x10) return 0x00;
+
+	xor	r8d, r8d
+
+; 549  : 	return ram[pal_addr_compute(addr_from_base)];	
+
+	movsxd	rcx, r8d
+	movzx	eax, BYTE PTR [rcx+rax]
+
+; 550  : }
+
+	ret	0
+$LN7@read:
+
+; 535  : 	if (addr == 0x14) return 0x04;
+
+	cmp	r8d, 20
+	jne	SHORT $LN8@read
+
+; 549  : 	return ram[pal_addr_compute(addr_from_base)];	
+
+	mov	rax, QWORD PTR [rdx+72]
+
+; 535  : 	if (addr == 0x14) return 0x04;
+
+	mov	r8d, 4
+
+; 549  : 	return ram[pal_addr_compute(addr_from_base)];	
+
+	movsxd	rcx, r8d
+	movzx	eax, BYTE PTR [rcx+rax]
+
+; 550  : }
+
+	ret	0
+$LN8@read:
+
+; 536  : 	if (addr == 0x18) return 0x08;
+
+	cmp	r8d, 24
+	jne	SHORT $LN9@read
+
+; 549  : 	return ram[pal_addr_compute(addr_from_base)];	
+
+	mov	rax, QWORD PTR [rdx+72]
+
+; 536  : 	if (addr == 0x18) return 0x08;
+
+	mov	r8d, 8
+
+; 549  : 	return ram[pal_addr_compute(addr_from_base)];	
+
+	movsxd	rcx, r8d
+	movzx	eax, BYTE PTR [rcx+rax]
+
+; 550  : }
+
+	ret	0
+$LN9@read:
+
+; 537  : 	if (addr == 0x1C) return 0x0C;
+
+	mov	eax, 12
+	cmp	r8d, 28
+	cmove	r8d, eax
+
+; 549  : 	return ram[pal_addr_compute(addr_from_base)];	
+
+	mov	rax, QWORD PTR [rdx+72]
+	movsxd	rcx, r8d
+	movzx	eax, BYTE PTR [rcx+rax]
+
+; 550  : }
+
+	ret	0
+?read@ppu_pal_ram@@UEAAEHH@Z ENDP			; ppu_pal_ram::read
 _TEXT	ENDS
 END

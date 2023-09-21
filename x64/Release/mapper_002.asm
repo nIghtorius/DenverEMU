@@ -19,7 +19,6 @@ CONST	SEGMENT
 	DQ	FLAT:??_Euxrom@@UEAAPEAXI@Z
 	DQ	FLAT:?write@uxrom@@UEAAXHHE@Z
 	DQ	FLAT:?read@uxrom@@UEAAEHH@Z
-	DQ	FLAT:?set_rom_data@rom@@UEAAXPEAEH@Z
 	DQ	FLAT:?set_rom_data@uxrom@@UEAAXPEAE_K@Z
 CONST	ENDS
 ;	COMDAT ??_R4uxrom@@6B@
@@ -71,12 +70,66 @@ PUBLIC	??_Guxrom@@UEAAPEAXI@Z				; uxrom::`scalar deleting destructor'
 EXTRN	??_Euxrom@@UEAAPEAXI@Z:PROC			; uxrom::`vector deleting destructor'
 ;	COMDAT pdata
 pdata	SEGMENT
-$pdata$??_Guxrom@@UEAAPEAXI@Z DD imagerel $LN18@scalar
-	DD	imagerel $LN18@scalar+67
+$pdata$??_Guxrom@@UEAAPEAXI@Z DD imagerel $LN18
+	DD	imagerel $LN18+67
 	DD	imagerel $unwind$??_Guxrom@@UEAAPEAXI@Z
 ;	COMDAT xdata
 xdata	SEGMENT
 $unwind$??_Guxrom@@UEAAPEAXI@Z DD 040a01H
 	DD	06340aH
 	DD	07006320aH
+; Function compile flags: /Ogtpy
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+;	COMDAT ??_Guxrom@@UEAAPEAXI@Z
+_TEXT	SEGMENT
+this$ = 48
+__flags$ = 56
+??_Guxrom@@UEAAPEAXI@Z PROC				; uxrom::`scalar deleting destructor', COMDAT
+$LN18:
+	mov	QWORD PTR [rsp+8], rbx
+	push	rdi
+	sub	rsp, 32					; 00000020H
+
+; 185  : device::~device() {
+
+	lea	rax, OFFSET FLAT:??_7device@@6B@
+	mov	rdi, rcx
+	mov	QWORD PTR [rcx], rax
+	mov	ebx, edx
+
+; 186  : 	free(devicedescriptor);	// be done with it.
+
+	mov	rcx, QWORD PTR [rcx+8]
+	call	QWORD PTR __imp_free
+	test	bl, 1
+	je	SHORT $LN15@scalar
+	mov	edx, 96					; 00000060H
+	mov	rcx, rdi
+	call	??3@YAXPEAX_K@Z				; operator delete
+$LN15@scalar:
+	mov	rbx, QWORD PTR [rsp+48]
+	mov	rax, rdi
+	add	rsp, 32					; 00000020H
+	pop	rdi
+	ret	0
+??_Guxrom@@UEAAPEAXI@Z ENDP				; uxrom::`scalar deleting destructor'
+_TEXT	ENDS
+; Function compile flags: /Ogtpy
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+;	COMDAT ??1uxrom@@UEAA@XZ
+_TEXT	SEGMENT
+this$ = 8
+??1uxrom@@UEAA@XZ PROC					; uxrom::~uxrom, COMDAT
+
+; 185  : device::~device() {
+
+	lea	rax, OFFSET FLAT:??_7device@@6B@
+	mov	QWORD PTR [rcx], rax
+
+; 186  : 	free(devicedescriptor);	// be done with it.
+
+	mov	rcx, QWORD PTR [rcx+8]
+	rex_jmp	QWORD PTR __imp_free
+??1uxrom@@UEAA@XZ ENDP					; uxrom::~uxrom
+_TEXT	ENDS
 END

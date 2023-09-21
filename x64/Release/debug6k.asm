@@ -127,8 +127,8 @@ PUBLIC	??_Gdebug6k@@UEAAPEAXI@Z			; debug6k::`scalar deleting destructor'
 EXTRN	??_Edebug6k@@UEAAPEAXI@Z:PROC			; debug6k::`vector deleting destructor'
 ;	COMDAT pdata
 pdata	SEGMENT
-$pdata$??$?6U?$char_traits@D@std@@@std@@YAAEAV?$basic_ostream@DU?$char_traits@D@std@@@0@AEAV10@D@Z DD imagerel $LN108@operator
-	DD	imagerel $LN108@operator+445
+$pdata$??$?6U?$char_traits@D@std@@@std@@YAAEAV?$basic_ostream@DU?$char_traits@D@std@@@0@AEAV10@D@Z DD imagerel $LN108
+	DD	imagerel $LN108+445
 	DD	imagerel $unwind$??$?6U?$char_traits@D@std@@@std@@YAAEAV?$basic_ostream@DU?$char_traits@D@std@@@0@AEAV10@D@Z
 pdata	ENDS
 ;	COMDAT pdata
@@ -139,8 +139,8 @@ $pdata$?catch$4@?0???$?6U?$char_traits@D@std@@@std@@YAAEAV?$basic_ostream@DU?$ch
 pdata	ENDS
 ;	COMDAT pdata
 pdata	SEGMENT
-$pdata$??_Gdebug6k@@UEAAPEAXI@Z DD imagerel $LN15@scalar
-	DD	imagerel $LN15@scalar+67
+$pdata$??_Gdebug6k@@UEAAPEAXI@Z DD imagerel $LN15
+	DD	imagerel $LN15+67
 	DD	imagerel $unwind$??_Gdebug6k@@UEAAPEAXI@Z
 ;	COMDAT xdata
 xdata	SEGMENT
@@ -201,19 +201,21 @@ $stateUnwindMap$??$?6U?$char_traits@D@std@@@std@@YAAEAV?$basic_ostream@DU?$char_
 	DD	01H
 	DD	00H
 	DD	0ffffffffH
-	DD	imagerel __std_terminate
+	DD	imagerel __imp___std_terminate
 	DD	04H
-	DD	imagerel __std_terminate
+	DD	imagerel __imp___std_terminate
 xdata	ENDS
 ;	COMDAT CONST
 CONST	SEGMENT
-$cppxdata$??$?6U?$char_traits@D@std@@@std@@YAAEAV?$basic_ostream@DU?$char_traits@D@std@@@0@AEAV10@D@Z DQ 00000000619930522r ; 1.2944e-313
+$cppxdata$??$?6U?$char_traits@D@std@@@std@@YAAEAV?$basic_ostream@DU?$char_traits@D@std@@@0@AEAV10@D@Z DD 019930522H
+	DD	06H
 	DD	imagerel $stateUnwindMap$??$?6U?$char_traits@D@std@@@std@@YAAEAV?$basic_ostream@DU?$char_traits@D@std@@@0@AEAV10@D@Z
 	DD	01H
 	DD	imagerel $tryMap$??$?6U?$char_traits@D@std@@@std@@YAAEAV?$basic_ostream@DU?$char_traits@D@std@@@0@AEAV10@D@Z
 	DD	08H
 	DD	imagerel $ip2state$??$?6U?$char_traits@D@std@@@std@@YAAEAV?$basic_ostream@DU?$char_traits@D@std@@@0@AEAV10@D@Z
-	DQ	00000000000000020r		; 1.58101e-322
+	DD	020H
+	DD	00H
 	DD	01H
 CONST	ENDS
 ;	COMDAT xdata
@@ -225,4 +227,552 @@ $unwind$??$?6U?$char_traits@D@std@@@std@@YAAEAV?$basic_ostream@DU?$char_traits@D
 	DD	060067007H
 	DD	imagerel __CxxFrameHandler3
 	DD	imagerel $cppxdata$??$?6U?$char_traits@D@std@@@std@@YAAEAV?$basic_ostream@DU?$char_traits@D@std@@@0@AEAV10@D@Z
+; Function compile flags: /Ogtpy
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+;	COMDAT ??_Gdebug6k@@UEAAPEAXI@Z
+_TEXT	SEGMENT
+this$ = 48
+__flags$ = 56
+??_Gdebug6k@@UEAAPEAXI@Z PROC				; debug6k::`scalar deleting destructor', COMDAT
+$LN15:
+	mov	QWORD PTR [rsp+8], rbx
+	push	rdi
+	sub	rsp, 32					; 00000020H
+
+; 185  : device::~device() {
+
+	lea	rax, OFFSET FLAT:??_7device@@6B@
+	mov	rdi, rcx
+	mov	QWORD PTR [rcx], rax
+	mov	ebx, edx
+
+; 186  : 	free(devicedescriptor);	// be done with it.
+
+	mov	rcx, QWORD PTR [rcx+8]
+	call	QWORD PTR __imp_free
+	test	bl, 1
+	je	SHORT $LN12@scalar
+	mov	edx, 72					; 00000048H
+	mov	rcx, rdi
+	call	??3@YAXPEAX_K@Z				; operator delete
+$LN12@scalar:
+	mov	rbx, QWORD PTR [rsp+48]
+	mov	rax, rdi
+	add	rsp, 32					; 00000020H
+	pop	rdi
+	ret	0
+??_Gdebug6k@@UEAAPEAXI@Z ENDP				; debug6k::`scalar deleting destructor'
+_TEXT	ENDS
+; Function compile flags: /Ogtpy
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\debug\debug6k.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\debug\debug6k.cpp
+;	COMDAT ??1debug6k@@UEAA@XZ
+_TEXT	SEGMENT
+this$ = 8
+??1debug6k@@UEAA@XZ PROC				; debug6k::~debug6k, COMDAT
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\bus.cpp
+
+; 185  : device::~device() {
+
+	lea	rax, OFFSET FLAT:??_7device@@6B@
+	mov	QWORD PTR [rcx], rax
+
+; 186  : 	free(devicedescriptor);	// be done with it.
+
+	mov	rcx, QWORD PTR [rcx+8]
+	rex_jmp	QWORD PTR __imp_free
+??1debug6k@@UEAA@XZ ENDP				; debug6k::~debug6k
+_TEXT	ENDS
+; Function compile flags: /Ogtpy
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\debug\debug6k.cpp
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\ostream
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\debug\debug6k.cpp
+;	COMDAT ?write@debug6k@@UEAAXHHE@Z
+_TEXT	SEGMENT
+this$ = 8
+addr$ = 16
+addr_from_base$ = 24
+data$ = 32
+?write@debug6k@@UEAAXHHE@Z PROC				; debug6k::write, COMDAT
+
+; 17   : 	if (addr_from_base > 3)  std::cout << data;
+
+	cmp	r8d, 3
+	jle	SHORT $LN2@write
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\ostream
+
+; 984  : 	return (_Ostr << (char)_Ch);
+
+	mov	rcx, QWORD PTR __imp_?cout@std@@3V?$basic_ostream@DU?$char_traits@D@std@@@1@A
+	movzx	edx, r9b
+	jmp	??$?6U?$char_traits@D@std@@@std@@YAAEAV?$basic_ostream@DU?$char_traits@D@std@@@0@AEAV10@D@Z ; std::operator<<<std::char_traits<char> >
+$LN2@write:
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\bus\debug\debug6k.cpp
+
+; 18   : }
+
+	ret	0
+?write@debug6k@@UEAAXHHE@Z ENDP				; debug6k::write
+_TEXT	ENDS
+; Function compile flags: /Ogtpy
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\ostream
+;	COMDAT ??$?6U?$char_traits@D@std@@@std@@YAAEAV?$basic_ostream@DU?$char_traits@D@std@@@0@AEAV10@E@Z
+_TEXT	SEGMENT
+_Ostr$ = 8
+_Ch$ = 16
+??$?6U?$char_traits@D@std@@@std@@YAAEAV?$basic_ostream@DU?$char_traits@D@std@@@0@AEAV10@E@Z PROC ; std::operator<<<std::char_traits<char> >, COMDAT
+
+; 984  : 	return (_Ostr << (char)_Ch);
+
+	jmp	??$?6U?$char_traits@D@std@@@std@@YAAEAV?$basic_ostream@DU?$char_traits@D@std@@@0@AEAV10@D@Z ; std::operator<<<std::char_traits<char> >
+??$?6U?$char_traits@D@std@@@std@@YAAEAV?$basic_ostream@DU?$char_traits@D@std@@@0@AEAV10@E@Z ENDP ; std::operator<<<std::char_traits<char> >
+_TEXT	ENDS
+; Function compile flags: /Ogtpy
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\ostream
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\ios
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\ostream
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\xiosbase
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\ostream
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\ios
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\ostream
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\xiosbase
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\ostream
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\xiosbase
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\ostream
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\iosfwd
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\ostream
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\iosfwd
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\ostream
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\xiosbase
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\ostream
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\ios
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\ostream
+;	COMDAT ??$?6U?$char_traits@D@std@@@std@@YAAEAV?$basic_ostream@DU?$char_traits@D@std@@@0@AEAV10@D@Z
+_TEXT	SEGMENT
+$T29 = 32
+_Ok$ = 40
+_Ostr$ = 112
+_Ch$ = 120
+_State$ = 128
+??$?6U?$char_traits@D@std@@@std@@YAAEAV?$basic_ostream@DU?$char_traits@D@std@@@0@AEAV10@D@Z PROC ; std::operator<<<std::char_traits<char> >, COMDAT
+
+; 836  : 	{	// insert a char into char stream
+
+$LN108:
+	mov	QWORD PTR [rsp+8], rcx
+	push	rsi
+	push	rdi
+	push	r12
+	push	r14
+	push	r15
+	sub	rsp, 64					; 00000040H
+	mov	QWORD PTR $T29[rsp], -2
+	mov	QWORD PTR [rsp+120], rbx
+	movzx	r12d, dl
+	mov	rsi, rcx
+
+; 837  : 	typedef char _Elem;
+; 838  : 	typedef basic_ostream<_Elem, _Traits> _Myos;
+; 839  : 	ios_base::iostate _State = ios_base::goodbit;
+
+	xor	ebx, ebx
+	mov	DWORD PTR _State$[rsp], ebx
+
+; 98   : 			: _Myostr(_Ostr)
+
+	mov	r15, rcx
+	mov	QWORD PTR _Ok$[rsp], rcx
+
+; 100  : 			if (_Myostr.rdbuf() != nullptr)
+
+	mov	r8, QWORD PTR [rcx]
+	movsxd	rax, DWORD PTR [r8+4]
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\ios
+
+; 87   : 		return (_Mystrbuf);
+
+	mov	rcx, QWORD PTR [rax+rcx+72]
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\ostream
+
+; 100  : 			if (_Myostr.rdbuf() != nullptr)
+
+	test	rcx, rcx
+	je	SHORT $LN27@operator
+
+; 101  : 				_Myostr.rdbuf()->_Lock();
+
+	mov	rax, QWORD PTR [rcx]
+	call	QWORD PTR [rax+8]
+	mov	r8, QWORD PTR [r15]
+$LN27@operator:
+
+; 122  : 			if (_Ostr.good() && _Ostr.tie() != nullptr && _Ostr.tie() != &_Ostr)
+
+	movsxd	rcx, DWORD PTR [r8+4]
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\xiosbase
+
+; 330  : 		return (_Mystate);
+
+	mov	rax, r8
+	mov	rdx, r8
+
+; 352  : 		return (rdstate() == ios_base::goodbit);
+
+	cmp	DWORD PTR [rcx+rsi+16], 0
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\ostream
+
+; 122  : 			if (_Ostr.good() && _Ostr.tie() != nullptr && _Ostr.tie() != &_Ostr)
+
+	jne	SHORT $LN23@operator
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\ios
+
+; 75   : 		return (_Tiestr);
+
+	mov	rcx, QWORD PTR [rcx+rsi+80]
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\ostream
+
+; 122  : 			if (_Ostr.good() && _Ostr.tie() != nullptr && _Ostr.tie() != &_Ostr)
+
+	test	rcx, rcx
+	je	SHORT $LN23@operator
+	cmp	rcx, rsi
+	je	SHORT $LN23@operator
+
+; 123  : 				_Ostr.tie()->flush();
+
+	call	QWORD PTR __imp_?flush@?$basic_ostream@DU?$char_traits@D@std@@@std@@QEAAAEAV12@XZ
+	mov	rax, QWORD PTR [rsi]
+	mov	rdx, rax
+$LN23@operator:
+
+; 124  : 			_Ok = _Ostr.good();	// store test only after flushing tie
+
+	movsxd	rcx, DWORD PTR [rax+4]
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\xiosbase
+
+; 330  : 		return (_Mystate);
+
+	mov	eax, DWORD PTR [rcx+rsi+16]
+
+; 352  : 		return (rdstate() == ios_base::goodbit);
+
+	test	eax, eax
+	sete	BYTE PTR _Ok$[rsp+8]
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\ostream
+
+; 840  : 	const typename _Myos::sentry _Ok(_Ostr);
+
+	test	eax, eax
+
+; 841  : 
+; 842  : 	if (_Ok)
+
+	jne	$LN20@operator
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\xiosbase
+
+; 433  : 		return (_Wide);
+
+	mov	r8, QWORD PTR [rcx+rsi+40]
+
+; 390  : 		return (_Fmtfl);
+
+	mov	ecx, DWORD PTR [rcx+rsi+24]
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\ostream
+
+; 846  : 		_TRY_IO_BEGIN
+
+	lea	rax, QWORD PTR [r8-1]
+	xor	edi, edi
+	cmp	r8, 1
+	cmovg	rdi, rax
+
+; 847  : 		if ((_Ostr.flags() & ios_base::adjustfield) != ios_base::left)
+
+	and	ecx, 448				; 000001c0H
+	mov	r14d, 4
+	cmp	ecx, 64					; 00000040H
+	je	SHORT $LN100@operator
+	npad	4
+$LL4@operator:
+
+; 848  : 			for (; _State == ios_base::goodbit && 0 < _Pad;
+
+	test	ebx, ebx
+	jne	SHORT $LN6@operator
+	test	rdi, rdi
+	jle	SHORT $LN102@operator
+
+; 850  : 				if (_Traits::eq_int_type(_Traits::eof(),
+
+	mov	rax, QWORD PTR [rsi]
+	movsxd	rcx, DWORD PTR [rax+4]
+	movzx	edx, BYTE PTR [rcx+rsi+88]
+	mov	rcx, QWORD PTR [rcx+rsi+72]
+	call	QWORD PTR __imp_?sputc@?$basic_streambuf@DU?$char_traits@D@std@@@std@@QEAAHD@Z
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\iosfwd
+
+; 531  : 		return (_Left == _Right);
+
+	cmp	eax, -1
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\ostream
+
+; 850  : 				if (_Traits::eq_int_type(_Traits::eof(),
+
+	cmove	ebx, r14d
+	mov	DWORD PTR _State$[rsp], ebx
+
+; 849  : 				--_Pad)	// pad on left
+
+	dec	rdi
+	jmp	SHORT $LL4@operator
+$LN102@operator:
+	mov	rdx, QWORD PTR [rsi]
+$LN100@operator:
+
+; 851  : 					_Ostr.rdbuf()->sputc(_Ostr.fill())))
+; 852  : 					_State |= ios_base::badbit;
+; 853  : 
+; 854  : 		if (_State == ios_base::goodbit
+; 855  : 			&& _Traits::eq_int_type(_Traits::eof(),
+
+	movsxd	rax, DWORD PTR [rdx+4]
+	movzx	edx, r12b
+	mov	rcx, QWORD PTR [rax+rsi+72]
+	call	QWORD PTR __imp_?sputc@?$basic_streambuf@DU?$char_traits@D@std@@@std@@QEAAHD@Z
+	cmp	eax, -1
+	cmove	ebx, r14d
+$LN105@operator:
+
+; 856  : 				_Ostr.rdbuf()->sputc(_Ch)))
+; 857  : 			_State |= ios_base::badbit;
+; 858  : 
+; 859  : 		for (; _State == ios_base::goodbit && 0 < _Pad;
+
+	mov	DWORD PTR _State$[rsp], ebx
+	test	ebx, ebx
+	jne	SHORT $LN6@operator
+	test	rdi, rdi
+	jle	SHORT $LN6@operator
+
+; 861  : 			if (_Traits::eq_int_type(_Traits::eof(),
+
+	mov	rax, QWORD PTR [rsi]
+	movsxd	rcx, DWORD PTR [rax+4]
+	movzx	edx, BYTE PTR [rcx+rsi+88]
+	mov	rcx, QWORD PTR [rcx+rsi+72]
+	call	QWORD PTR __imp_?sputc@?$basic_streambuf@DU?$char_traits@D@std@@@std@@QEAAHD@Z
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\iosfwd
+
+; 531  : 		return (_Left == _Right);
+
+	cmp	eax, -1
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\ostream
+
+; 861  : 			if (_Traits::eq_int_type(_Traits::eof(),
+
+	cmove	ebx, r14d
+
+; 860  : 			--_Pad)	// pad on right
+
+	dec	rdi
+	jmp	SHORT $LN105@operator
+$LN6@operator:
+	jmp	SHORT $LN20@operator
+$LN21@operator:
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\ios
+	mov	rsi, QWORD PTR _Ostr$[rsp]
+	mov	ebx, DWORD PTR _State$[rsp]
+	mov	r15, QWORD PTR _Ok$[rsp]
+$LN20@operator:
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\ostream
+
+; 862  : 				_Ostr.rdbuf()->sputc(_Ostr.fill())))
+; 863  : 				_State |= ios_base::badbit;
+; 864  : 		_CATCH_IO_(_Ostr)
+; 865  : 		}
+; 866  : 
+; 867  : 	_Ostr.width(0);
+
+	mov	rax, QWORD PTR [rsi]
+	movsxd	rcx, DWORD PTR [rax+4]
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\xiosbase
+
+; 439  : 		_Wide = _Newwidth;
+
+	mov	QWORD PTR [rcx+rsi+40], 0
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\ostream
+
+; 868  : 	_Ostr.setstate(_State);
+
+	mov	rax, QWORD PTR [rsi]
+	movsxd	rcx, DWORD PTR [rax+4]
+	add	rcx, rsi
+	xor	r8d, r8d
+	mov	edx, ebx
+	call	QWORD PTR __imp_?setstate@?$basic_ios@DU?$char_traits@D@std@@@std@@QEAAXH_N@Z
+	npad	1
+
+; 137  : 			if (!_STD uncaught_exception())	// TRANSITION, OS#15518458
+
+	call	QWORD PTR __imp_?uncaught_exception@std@@YA_NXZ
+	test	al, al
+	jne	SHORT $LN80@operator
+
+; 138  : 				{
+; 139  : 				this->_Myostr._Osfx();
+
+	mov	rcx, r15
+	call	QWORD PTR __imp_?_Osfx@?$basic_ostream@DU?$char_traits@D@std@@@std@@QEAAXXZ
+	npad	1
+$LN80@operator:
+
+; 106  : 			if (_Myostr.rdbuf() != nullptr)
+
+	mov	rax, QWORD PTR [r15]
+	movsxd	rcx, DWORD PTR [rax+4]
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\ios
+
+; 87   : 		return (_Mystrbuf);
+
+	mov	rcx, QWORD PTR [rcx+r15+72]
+; File c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\ostream
+
+; 106  : 			if (_Myostr.rdbuf() != nullptr)
+
+	test	rcx, rcx
+	je	SHORT $LN84@operator
+
+; 107  : 				_Myostr.rdbuf()->_Unlock();
+
+	mov	rax, QWORD PTR [rcx]
+	call	QWORD PTR [rax+16]
+	npad	1
+$LN84@operator:
+
+; 869  : 	return (_Ostr);
+
+	mov	rax, rsi
+
+; 870  : 	}
+
+	mov	rbx, QWORD PTR [rsp+120]
+	add	rsp, 64					; 00000040H
+	pop	r15
+	pop	r14
+	pop	r12
+	pop	rdi
+	pop	rsi
+	ret	0
+??$?6U?$char_traits@D@std@@@std@@YAAEAV?$basic_ostream@DU?$char_traits@D@std@@@0@AEAV10@D@Z ENDP ; std::operator<<<std::char_traits<char> >
+_TEXT	ENDS
+;	COMDAT text$x
+text$x	SEGMENT
+$T29 = 32
+_Ok$ = 40
+_Ostr$ = 112
+_Ch$ = 120
+_State$ = 128
+?dtor$1@?0???$?6U?$char_traits@D@std@@@std@@YAAEAV?$basic_ostream@DU?$char_traits@D@std@@@0@AEAV10@D@Z@4HA PROC ; `std::operator<<<std::char_traits<char> >'::`1'::dtor$1
+	lea	rcx, QWORD PTR _Ok$[rdx]
+	jmp	??1_Sentry_base@?$basic_ostream@DU?$char_traits@D@std@@@std@@QEAA@XZ ; std::basic_ostream<char,std::char_traits<char> >::_Sentry_base::~_Sentry_base
+?dtor$1@?0???$?6U?$char_traits@D@std@@@std@@YAAEAV?$basic_ostream@DU?$char_traits@D@std@@@0@AEAV10@D@Z@4HA ENDP ; `std::operator<<<std::char_traits<char> >'::`1'::dtor$1
+$T29 = 32
+_Ok$ = 40
+_Ostr$ = 112
+_Ch$ = 120
+_State$ = 128
+?dtor$0@?0???$?6U?$char_traits@D@std@@@std@@YAAEAV?$basic_ostream@DU?$char_traits@D@std@@@0@AEAV10@D@Z@4HA PROC ; `std::operator<<<std::char_traits<char> >'::`1'::dtor$0
+	lea	rcx, QWORD PTR _Ok$[rdx]
+	jmp	??1sentry@?$basic_ostream@DU?$char_traits@D@std@@@std@@QEAA@XZ ; std::basic_ostream<char,std::char_traits<char> >::sentry::~sentry
+?dtor$0@?0???$?6U?$char_traits@D@std@@@std@@YAAEAV?$basic_ostream@DU?$char_traits@D@std@@@0@AEAV10@D@Z@4HA ENDP ; `std::operator<<<std::char_traits<char> >'::`1'::dtor$0
+$T29 = 32
+_Ok$ = 40
+_Ostr$ = 112
+_Ch$ = 120
+_State$ = 128
+?catch$4@?0???$?6U?$char_traits@D@std@@@std@@YAAEAV?$basic_ostream@DU?$char_traits@D@std@@@0@AEAV10@D@Z@4HA PROC ; `std::operator<<<std::char_traits<char> >'::`1'::catch$4
+
+; 862  : 				_Ostr.rdbuf()->sputc(_Ostr.fill())))
+; 863  : 				_State |= ios_base::badbit;
+; 864  : 		_CATCH_IO_(_Ostr)
+
+	mov	QWORD PTR [rsp+16], rdx
+	push	rbp
+	sub	rsp, 32					; 00000020H
+	mov	rbp, rdx
+__catch$??$?6U?$char_traits@D@std@@@std@@YAAEAV?$basic_ostream@DU?$char_traits@D@std@@@0@AEAV10@D@Z$0:
+	mov	rdx, QWORD PTR _Ostr$[rbp]
+	mov	rax, QWORD PTR [rdx]
+	movsxd	rcx, DWORD PTR [rax+4]
+	add	rcx, rdx
+	mov	r8b, 1
+	mov	edx, 4
+	call	QWORD PTR __imp_?setstate@?$basic_ios@DU?$char_traits@D@std@@@std@@QEAAXH_N@Z
+	npad	1
+	lea	rax, $LN21@catch$4
+	add	rsp, 32					; 00000020H
+	pop	rbp
+	ret	0
+	int	3
+?catch$4@?0???$?6U?$char_traits@D@std@@@std@@YAAEAV?$basic_ostream@DU?$char_traits@D@std@@@0@AEAV10@D@Z@4HA ENDP ; `std::operator<<<std::char_traits<char> >'::`1'::catch$4
+text$x	ENDS
+; Function compile flags: /Ogtpy
+;	COMDAT text$x
+text$x	SEGMENT
+$T29 = 32
+_Ok$ = 40
+_Ostr$ = 112
+_Ch$ = 120
+_State$ = 128
+?dtor$1@?0???$?6U?$char_traits@D@std@@@std@@YAAEAV?$basic_ostream@DU?$char_traits@D@std@@@0@AEAV10@D@Z@4HA PROC ; `std::operator<<<std::char_traits<char> >'::`1'::dtor$1
+	lea	rcx, QWORD PTR _Ok$[rdx]
+	jmp	??1_Sentry_base@?$basic_ostream@DU?$char_traits@D@std@@@std@@QEAA@XZ ; std::basic_ostream<char,std::char_traits<char> >::_Sentry_base::~_Sentry_base
+?dtor$1@?0???$?6U?$char_traits@D@std@@@std@@YAAEAV?$basic_ostream@DU?$char_traits@D@std@@@0@AEAV10@D@Z@4HA ENDP ; `std::operator<<<std::char_traits<char> >'::`1'::dtor$1
+text$x	ENDS
+; Function compile flags: /Ogtpy
+;	COMDAT text$x
+text$x	SEGMENT
+$T29 = 32
+_Ok$ = 40
+_Ostr$ = 112
+_Ch$ = 120
+_State$ = 128
+?dtor$0@?0???$?6U?$char_traits@D@std@@@std@@YAAEAV?$basic_ostream@DU?$char_traits@D@std@@@0@AEAV10@D@Z@4HA PROC ; `std::operator<<<std::char_traits<char> >'::`1'::dtor$0
+	lea	rcx, QWORD PTR _Ok$[rdx]
+	jmp	??1sentry@?$basic_ostream@DU?$char_traits@D@std@@@std@@QEAA@XZ ; std::basic_ostream<char,std::char_traits<char> >::sentry::~sentry
+?dtor$0@?0???$?6U?$char_traits@D@std@@@std@@YAAEAV?$basic_ostream@DU?$char_traits@D@std@@@0@AEAV10@D@Z@4HA ENDP ; `std::operator<<<std::char_traits<char> >'::`1'::dtor$0
+text$x	ENDS
+; Function compile flags: /Ogtpy
+;	COMDAT text$x
+text$x	SEGMENT
+$T29 = 32
+_Ok$ = 40
+_Ostr$ = 112
+_Ch$ = 120
+_State$ = 128
+?catch$4@?0???$?6U?$char_traits@D@std@@@std@@YAAEAV?$basic_ostream@DU?$char_traits@D@std@@@0@AEAV10@D@Z@4HA PROC ; `std::operator<<<std::char_traits<char> >'::`1'::catch$4
+
+; 864  : 		_CATCH_IO_(_Ostr)
+
+	mov	QWORD PTR [rsp+16], rdx
+	push	rbp
+	sub	rsp, 32					; 00000020H
+	mov	rbp, rdx
+__catch$??$?6U?$char_traits@D@std@@@std@@YAAEAV?$basic_ostream@DU?$char_traits@D@std@@@0@AEAV10@D@Z$0:
+	mov	rdx, QWORD PTR _Ostr$[rbp]
+	mov	rax, QWORD PTR [rdx]
+	movsxd	rcx, DWORD PTR [rax+4]
+	add	rcx, rdx
+	mov	r8b, 1
+	mov	edx, 4
+	call	QWORD PTR __imp_?setstate@?$basic_ios@DU?$char_traits@D@std@@@std@@QEAAXH_N@Z
+	npad	1
+	lea	rax, $LN21@catch$4
+	add	rsp, 32					; 00000020H
+	pop	rbp
+	ret	0
+	int	3
+?catch$4@?0???$?6U?$char_traits@D@std@@@std@@YAAEAV?$basic_ostream@DU?$char_traits@D@std@@@0@AEAV10@D@Z@4HA ENDP ; `std::operator<<<std::char_traits<char> >'::`1'::catch$4
+text$x	ENDS
 END

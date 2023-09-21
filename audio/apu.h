@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "bus.h"
+#include "..\bus\bus.h"
 
 #define PULSE_DUTY_CYCLE_LCH_VOLENV			0x00
 #define PULSE_SWEEP							0x01

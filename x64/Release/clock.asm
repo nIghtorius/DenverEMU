@@ -9,34 +9,34 @@ PUBLIC	?setdevices@fastclock@@QEAAXPEAVdevice@@00@Z	; fastclock::setdevices
 PUBLIC	??0fastclock@@QEAA@XZ				; fastclock::fastclock
 ;	COMDAT pdata
 pdata	SEGMENT
-$pdata$?step@fastclock@@QEAAXXZ DD imagerel $LN15@step
-	DD	imagerel $LN15@step+40
+$pdata$?step@fastclock@@QEAAXXZ DD imagerel $LN15
+	DD	imagerel $LN15+40
 	DD	imagerel $unwind$?step@fastclock@@QEAAXXZ
 pdata	ENDS
 ;	COMDAT pdata
 pdata	SEGMENT
-$pdata$0$?step@fastclock@@QEAAXXZ DD imagerel $LN15@step+40
-	DD	imagerel $LN15@step+191
+$pdata$0$?step@fastclock@@QEAAXXZ DD imagerel $LN15+40
+	DD	imagerel $LN15+191
 	DD	imagerel $chain$0$?step@fastclock@@QEAAXXZ
 pdata	ENDS
 ;	COMDAT pdata
 pdata	SEGMENT
-$pdata$1$?step@fastclock@@QEAAXXZ DD imagerel $LN15@step+191
-	DD	imagerel $LN15@step+210
+$pdata$1$?step@fastclock@@QEAAXXZ DD imagerel $LN15+191
+	DD	imagerel $LN15+210
 	DD	imagerel $chain$1$?step@fastclock@@QEAAXXZ
 ;	COMDAT xdata
 xdata	SEGMENT
 $chain$1$?step@fastclock@@QEAAXXZ DD 021H
-	DD	imagerel $LN15@step
-	DD	imagerel $LN15@step+40
+	DD	imagerel $LN15
+	DD	imagerel $LN15+40
 	DD	imagerel $unwind$?step@fastclock@@QEAAXXZ
 xdata	ENDS
 ;	COMDAT xdata
 xdata	SEGMENT
 $chain$0$?step@fastclock@@QEAAXXZ DD 020521H
 	DD	097405H
-	DD	imagerel $LN15@step
-	DD	imagerel $LN15@step+40
+	DD	imagerel $LN15
+	DD	imagerel $LN15+40
 	DD	imagerel $unwind$?step@fastclock@@QEAAXXZ
 xdata	ENDS
 ;	COMDAT xdata
@@ -45,4 +45,164 @@ $unwind$?step@fastclock@@QEAAXXZ DD 021519H
 	DD	030025206H
 	DD	imagerel __GSHandlerCheck
 	DD	028H
+; Function compile flags: /Ogtpy
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\clock\clock.cpp
+;	COMDAT ??0fastclock@@QEAA@XZ
+_TEXT	SEGMENT
+this$ = 8
+??0fastclock@@QEAA@XZ PROC				; fastclock::fastclock, COMDAT
+
+; 80   : }
+
+	mov	rax, rcx
+	ret	0
+??0fastclock@@QEAA@XZ ENDP				; fastclock::fastclock
+_TEXT	ENDS
+; Function compile flags: /Ogtpy
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\clock\clock.cpp
+;	COMDAT ?setdevices@fastclock@@QEAAXPEAVdevice@@00@Z
+_TEXT	SEGMENT
+this$ = 8
+cpu$ = 16
+ppu$ = 24
+apu$ = 32
+?setdevices@fastclock@@QEAAXPEAVdevice@@00@Z PROC	; fastclock::setdevices, COMDAT
+
+; 86   : 	this->cpudevice = cpu;
+
+	mov	QWORD PTR [rcx], rdx
+
+; 87   : 	this->ppudevice = ppu;
+
+	mov	QWORD PTR [rcx+8], r8
+
+; 88   : 	this->apudevice = apu;
+
+	mov	QWORD PTR [rcx+16], r9
+
+; 89   : }
+
+	ret	0
+?setdevices@fastclock@@QEAAXPEAVdevice@@00@Z ENDP	; fastclock::setdevices
+_TEXT	ENDS
+; Function compile flags: /Ogtpy
+; File c:\users\nightorius.phibian\source\repos\denveremu\denveremu\clock\clock.cpp
+;	COMDAT ?step@fastclock@@QEAAXXZ
+_TEXT	SEGMENT
+dmabyte$ = 32
+__$ArrayPad$ = 40
+this$ = 64
+?step@fastclock@@QEAAXXZ PROC				; fastclock::step, COMDAT
+
+; 91   : void fastclock::step() {
+
+$LN15:
+	push	rbx
+	sub	rsp, 48					; 00000030H
+	mov	rax, QWORD PTR __security_cookie
+	xor	rax, rsp
+	mov	QWORD PTR __$ArrayPad$[rsp], rax
+	mov	rbx, rcx
+
+; 92   : 	//  run cpu 1 step.
+; 93   : 	byte dmabyte;
+; 94   : 	if (this->cpudevice == NULL) return;
+
+	mov	rcx, QWORD PTR [rcx]
+	test	rcx, rcx
+	je	$LN7@step
+
+; 95   : 	if (this->cpudevice->in_dma_mode) {
+
+	cmp	BYTE PTR [rcx+36], 0
+	mov	QWORD PTR [rsp+72], rdi
+	je	SHORT $LN5@step
+	npad	1
+$LL2@step:
+
+; 96   : 		while (this->cpudevice->in_dma_mode) {
+; 97   : 			this->cpudevice->dma(&dmabyte, false, false);
+
+	mov	rcx, QWORD PTR [rbx]
+	lea	rdx, QWORD PTR dmabyte$[rsp]
+	xor	r9d, r9d
+	xor	r8d, r8d
+	mov	rax, QWORD PTR [rcx]
+	call	QWORD PTR [rax+8]
+
+; 98   : 			this->ppudevice->dma(&dmabyte, true, cpudevice->dma_start);
+
+	mov	rcx, QWORD PTR [rbx+8]
+	lea	rdx, QWORD PTR dmabyte$[rsp]
+	mov	rax, QWORD PTR [rbx]
+	mov	r8b, 1
+	mov	r10, QWORD PTR [rcx]
+	movzx	r9d, BYTE PTR [rax+37]
+	call	QWORD PTR [r10+8]
+
+; 99   : 			cpudevice->dma_start = false;
+
+	mov	rax, QWORD PTR [rbx]
+
+; 100  : 			this->cpudevice->rundevice(1);
+
+	mov	edx, 1
+	mov	BYTE PTR [rax+37], 0
+	mov	rcx, QWORD PTR [rbx]
+	mov	rax, QWORD PTR [rcx]
+	call	QWORD PTR [rax]
+	mov	rax, QWORD PTR [rbx]
+	cmp	BYTE PTR [rax+36], 0
+	jne	SHORT $LL2@step
+
+; 101  : 		}
+; 102  : 		this->ppudevice->rundevice(1536);
+
+	mov	rcx, QWORD PTR [rbx+8]
+	mov	edx, 1536				; 00000600H
+	mov	rax, QWORD PTR [rcx]
+	call	QWORD PTR [rax]
+	mov	rcx, QWORD PTR [rbx]
+$LN5@step:
+
+; 103  : 	}
+; 104  : 	int actualcputicks = this->cpudevice->rundevice(1);	
+
+	mov	rax, QWORD PTR [rcx]
+	mov	edx, 1
+	call	QWORD PTR [rax]
+
+; 105  : 	if (this->ppudevice != NULL) this->ppudevice->rundevice(actualcputicks);
+
+	mov	rcx, QWORD PTR [rbx+8]
+	mov	edi, eax
+	test	rcx, rcx
+	je	SHORT $LN6@step
+	mov	r8, QWORD PTR [rcx]
+	mov	edx, eax
+	call	QWORD PTR [r8]
+$LN6@step:
+
+; 106  : 	if (this->apudevice != NULL) this->apudevice->rundevice(actualcputicks);
+
+	mov	rcx, QWORD PTR [rbx+16]
+	test	rcx, rcx
+	je	SHORT $LN13@step
+	mov	rax, QWORD PTR [rcx]
+	mov	edx, edi
+	call	QWORD PTR [rax]
+$LN13@step:
+	mov	rdi, QWORD PTR [rsp+72]
+$LN7@step:
+
+; 107  : }
+
+	mov	rcx, QWORD PTR __$ArrayPad$[rsp]
+	xor	rcx, rsp
+	call	__security_check_cookie
+	add	rsp, 48					; 00000030H
+	pop	rbx
+	ret	0
+?step@fastclock@@QEAAXXZ ENDP				; fastclock::step
+_TEXT	ENDS
 END

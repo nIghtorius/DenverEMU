@@ -51,38 +51,38 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="cpu2a03_fast.h">
-      <Filter>Source Files\emulation\cpu</Filter>
-    </ClInclude>
-    <ClInclude Include="ppu.h">
-      <Filter>Source Files\emulation\video</Filter>
-    </ClInclude>
-    <ClInclude Include="clock.h">
-      <Filter>Source Files\emulation\clock</Filter>
-    </ClInclude>
-    <ClInclude Include="bus.h">
-      <Filter>Source Files\emulation\bus</Filter>
-    </ClInclude>
-    <ClInclude Include="rom.h">
-      <Filter>Source Files\emulation\bus\rom</Filter>
-    </ClInclude>
-    <ClInclude Include="mainram.h">
-      <Filter>Source Files\emulation\bus\ram</Filter>
-    </ClInclude>
-    <ClInclude Include="debug6k.h">
-      <Filter>Source Files\emulation\bus\debug</Filter>
-    </ClInclude>
-    <ClInclude Include="nesvideo.h">
-      <Filter>Source Files\emulation\video</Filter>
-    </ClInclude>
-    <ClInclude Include="mapper_002.h">
-      <Filter>Source Files\emulation\bus\rom\mappers</Filter>
-    </ClInclude>
-    <ClInclude Include="apu.h">
+    <ClInclude Include="audio\apu.h">
       <Filter>Source Files\emulation\audio</Filter>
     </ClInclude>
-    <ClInclude Include="mapper_001.h">
+    <ClInclude Include="bus\rom\rom.h">
+      <Filter>Source Files\emulation\bus\rom</Filter>
+    </ClInclude>
+    <ClInclude Include="bus\bus.h">
+      <Filter>Source Files\emulation\bus</Filter>
+    </ClInclude>
+    <ClInclude Include="bus\debug\debug6k.h">
+      <Filter>Source Files\emulation\bus\debug</Filter>
+    </ClInclude>
+    <ClInclude Include="bus\ram\mainram.h">
+      <Filter>Source Files\emulation\bus\ram</Filter>
+    </ClInclude>
+    <ClInclude Include="bus\rom\mappers\mapper_001.h">
       <Filter>Source Files\emulation\bus\rom\mappers</Filter>
+    </ClInclude>
+    <ClInclude Include="bus\rom\mappers\mapper_002.h">
+      <Filter>Source Files\emulation\bus\rom\mappers</Filter>
+    </ClInclude>
+    <ClInclude Include="clock\clock.h">
+      <Filter>Source Files\emulation\clock</Filter>
+    </ClInclude>
+    <ClInclude Include="cpu\cpu2a03_fast.h">
+      <Filter>Source Files\emulation\cpu</Filter>
+    </ClInclude>
+    <ClInclude Include="video\nesvideo.h">
+      <Filter>Source Files\emulation\video</Filter>
+    </ClInclude>
+    <ClInclude Include="video\ppu.h">
+      <Filter>Source Files\emulation\video</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -92,38 +92,38 @@
     <ClCompile Include="DenverEMU.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="cpu2a03_fast.cpp">
-      <Filter>Source Files\emulation\cpu</Filter>
-    </ClCompile>
-    <ClCompile Include="ppu.cpp">
-      <Filter>Source Files\emulation\video</Filter>
-    </ClCompile>
-    <ClCompile Include="clock.cpp">
-      <Filter>Source Files\emulation\clock</Filter>
-    </ClCompile>
-    <ClCompile Include="bus.cpp">
-      <Filter>Source Files\emulation\bus</Filter>
-    </ClCompile>
-    <ClCompile Include="rom.cpp">
-      <Filter>Source Files\emulation\bus\rom</Filter>
-    </ClCompile>
-    <ClCompile Include="mainram.cpp">
-      <Filter>Source Files\emulation\bus\ram</Filter>
-    </ClCompile>
-    <ClCompile Include="debug6k.cpp">
-      <Filter>Source Files\emulation\bus\debug</Filter>
-    </ClCompile>
-    <ClCompile Include="nesvideo.cpp">
-      <Filter>Source Files\emulation\video</Filter>
-    </ClCompile>
-    <ClCompile Include="mapper_002.cpp">
-      <Filter>Source Files\emulation\bus\rom\mappers</Filter>
-    </ClCompile>
-    <ClCompile Include="apu.cpp">
+    <ClCompile Include="audio\apu.cpp">
       <Filter>Source Files\emulation\audio</Filter>
     </ClCompile>
-    <ClCompile Include="mapper_001.cpp">
+    <ClCompile Include="bus\rom\rom.cpp">
+      <Filter>Source Files\emulation\bus\rom</Filter>
+    </ClCompile>
+    <ClCompile Include="bus\bus.cpp">
+      <Filter>Source Files\emulation\bus</Filter>
+    </ClCompile>
+    <ClCompile Include="bus\debug\debug6k.cpp">
+      <Filter>Source Files\emulation\bus\debug</Filter>
+    </ClCompile>
+    <ClCompile Include="bus\ram\mainram.cpp">
+      <Filter>Source Files\emulation\bus\ram</Filter>
+    </ClCompile>
+    <ClCompile Include="bus\rom\mappers\mapper_002.cpp">
       <Filter>Source Files\emulation\bus\rom\mappers</Filter>
+    </ClCompile>
+    <ClCompile Include="bus\rom\mappers\mapper_001.cpp">
+      <Filter>Source Files\emulation\bus\rom\mappers</Filter>
+    </ClCompile>
+    <ClCompile Include="clock\clock.cpp">
+      <Filter>Source Files\emulation\clock</Filter>
+    </ClCompile>
+    <ClCompile Include="cpu\cpu2a03_fast.cpp">
+      <Filter>Source Files\emulation\cpu</Filter>
+    </ClCompile>
+    <ClCompile Include="video\ppu.cpp">
+      <Filter>Source Files\emulation\video</Filter>
+    </ClCompile>
+    <ClCompile Include="video\nesvideo.cpp">
+      <Filter>Source Files\emulation\video</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

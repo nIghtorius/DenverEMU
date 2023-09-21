@@ -168,39 +168,39 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="apu.h" />
-    <ClInclude Include="bus.h" />
-    <ClInclude Include="clock.h" />
-    <ClInclude Include="cpu2a03_fast.h" />
-    <ClInclude Include="debug6k.h" />
-    <ClInclude Include="mainram.h" />
-    <ClInclude Include="mapper_001.h" />
-    <ClInclude Include="mapper_002.h" />
-    <ClInclude Include="nesvideo.h" />
-    <ClInclude Include="ppu.h" />
-    <ClInclude Include="rom.h" />
+    <ClInclude Include="audio\apu.h" />
+    <ClInclude Include="bus\bus.h" />
+    <ClInclude Include="bus\debug\debug6k.h" />
+    <ClInclude Include="bus\ram\mainram.h" />
+    <ClInclude Include="bus\rom\mappers\mapper_001.h" />
+    <ClInclude Include="bus\rom\mappers\mapper_002.h" />
+    <ClInclude Include="bus\rom\rom.h" />
+    <ClInclude Include="clock\clock.h" />
+    <ClInclude Include="cpu\cpu2a03_fast.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="video\nesvideo.h" />
+    <ClInclude Include="video\ppu.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="apu.cpp" />
-    <ClCompile Include="bus.cpp" />
-    <ClCompile Include="clock.cpp" />
-    <ClCompile Include="cpu2a03_fast.cpp" />
-    <ClCompile Include="debug6k.cpp" />
+    <ClCompile Include="audio\apu.cpp" />
+    <ClCompile Include="bus\bus.cpp" />
+    <ClCompile Include="bus\debug\debug6k.cpp" />
+    <ClCompile Include="bus\ram\mainram.cpp" />
+    <ClCompile Include="bus\rom\mappers\mapper_001.cpp" />
+    <ClCompile Include="bus\rom\mappers\mapper_002.cpp" />
+    <ClCompile Include="bus\rom\rom.cpp" />
+    <ClCompile Include="clock\clock.cpp" />
+    <ClCompile Include="cpu\cpu2a03_fast.cpp" />
     <ClCompile Include="DenverEMU.cpp" />
-    <ClCompile Include="mainram.cpp" />
-    <ClCompile Include="mapper_001.cpp" />
-    <ClCompile Include="mapper_002.cpp" />
-    <ClCompile Include="nesvideo.cpp" />
-    <ClCompile Include="ppu.cpp" />
-    <ClCompile Include="rom.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="video\nesvideo.cpp" />
+    <ClCompile Include="video\ppu.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

@@ -7,7 +7,7 @@
 */
 
 #pragma once
-#include "bus.h"	// it is a bus device.
+#include "..\bus\bus.h"	// it is a bus device.
 
 #define		PPU_PPUCTRL_PORT				0x00
 #define		PPU_PPUMASK_PORT				0x01
