@@ -26,3 +26,16 @@ public:
 	void run();
 };
 
+// faster variant. static clocks.
+class fastclock {
+private:
+	device *cpudevice;
+	device *ppudevice;
+	device *apudevice;
+public:
+	fastclock();
+	~fastclock();
+	void step();
+	void run();
+	void setdevices(device *cpu, device *ppu, device *apu);
+};

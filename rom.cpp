@@ -40,10 +40,10 @@ vrom::vrom() {
 vrom::~vrom() {
 }
 
-void vrom::set_rom_data(byte *data, int size) {
+void vrom::set_rom_data(byte *data, size_t size) {
 	this->romdata = data;
-	this->romsize = size;
-	devicemask = (size - 1);
+	this->romsize = (int)size;
+	devicemask = ((int)size - 1);
 }
 
 void vrom::write(int addr, int addr_from_base, byte data) {
@@ -52,6 +52,10 @@ void vrom::write(int addr, int addr_from_base, byte data) {
 
 byte vrom::read(int addr, int addr_from_base) {
 	return romdata[addr_from_base];
+}
+
+void vrom::link_ppu_bus(bus_device *ppu_bus) {
+	ppubus = ppu_bus;
 }
 
 vram::vram() {
@@ -72,15 +76,4 @@ void vram::write(int addr, int addr_from_base, byte data) {
 
 byte vram::read(int addr, int addr_from_base) {
 	return ram[addr_from_base];
-}
-
-cartridge::cartridge(bus_device *rd, bus_device *vrd) {
-	this->romdevice = rd;
-	this->vromdevice = vrd;
-}
-
-cartridge::~cartridge() {
-	// destroy roms
-	delete romdevice;
-	delete vromdevice;
 }

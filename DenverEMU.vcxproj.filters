@@ -37,6 +37,12 @@
     <Filter Include="Source Files\emulation\bus\debug">
       <UniqueIdentifier>{4712631f-f30d-4214-b057-d94ace0bb8a7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\emulation\bus\rom\mappers">
+      <UniqueIdentifier>{eed948e7-4f6a-4176-867e-2097e56ced0e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\emulation\audio">
+      <UniqueIdentifier>{bab6d04a-3d5b-415a-9809-2100737101b0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -66,6 +72,18 @@
     <ClInclude Include="debug6k.h">
       <Filter>Source Files\emulation\bus\debug</Filter>
     </ClInclude>
+    <ClInclude Include="nesvideo.h">
+      <Filter>Source Files\emulation\video</Filter>
+    </ClInclude>
+    <ClInclude Include="mapper_002.h">
+      <Filter>Source Files\emulation\bus\rom\mappers</Filter>
+    </ClInclude>
+    <ClInclude Include="apu.h">
+      <Filter>Source Files\emulation\audio</Filter>
+    </ClInclude>
+    <ClInclude Include="mapper_001.h">
+      <Filter>Source Files\emulation\bus\rom\mappers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -94,6 +112,18 @@
     </ClCompile>
     <ClCompile Include="debug6k.cpp">
       <Filter>Source Files\emulation\bus\debug</Filter>
+    </ClCompile>
+    <ClCompile Include="nesvideo.cpp">
+      <Filter>Source Files\emulation\video</Filter>
+    </ClCompile>
+    <ClCompile Include="mapper_002.cpp">
+      <Filter>Source Files\emulation\bus\rom\mappers</Filter>
+    </ClCompile>
+    <ClCompile Include="apu.cpp">
+      <Filter>Source Files\emulation\audio</Filter>
+    </ClCompile>
+    <ClCompile Include="mapper_001.cpp">
+      <Filter>Source Files\emulation\bus\rom\mappers</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

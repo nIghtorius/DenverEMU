@@ -61,20 +61,24 @@ private:
 	byte	opc_inc(byte data);
 	void	opc_ld_(byte &rdata, byte data);
 	void	opc_cmp(byte rdata, byte data);
+	int		rundevice_internal(int ticks);
 
 	cpuregs	regs;
 	int		dma_cycle;
 	byte	dma_high;
 	byte	dma_count;
+	bus		*mbus;
 
 public:	
-	bus		*mbus;
 	bool	error_state;
 	cpu2a03_fast();
 	~cpu2a03_fast();
 	int		rundevice(int ticks);
 	void	reset();
 	void	coldboot();
+
+	// memory setup
+	void	definememorybus(bus *membus);
 
 	//stack
 	void	pushstack_word(word data);
@@ -86,7 +90,7 @@ public:
 	void	write(int addr, int addr_from_base, byte data);
 
 	// dma
-	void	dma(byte *data, bool is_output);
+	void	dma(byte *data, bool is_output, bool started);
 
 	//debug
 	void	log_register();

@@ -1,11 +1,11 @@
 #include "stdafx.h"
 #include "cpu2a03_fast.h"
 #include <iostream>
-#include <iomanip>
+#include <intrin.h>
 
 cpu2a03_fast::cpu2a03_fast() {
 	// initialize cpu.
-	strcpy_s(this->get_device_descriptor(), MAX_DESCRIPTOR_LENGTH, "Denver 2a03 CPU (fast emulation)");
+	strcpy_s(get_device_descriptor(), MAX_DESCRIPTOR_LENGTH, "Denver 2a03 CPU (fast emulation)");
 	regs.pc = 0x0000;
 	regs.sp = 0xFD;
 	regs.sr = cf_interrupt | cf_break | 0x20;
@@ -18,7 +18,7 @@ cpu2a03_fast::cpu2a03_fast() {
 
 	// CPU also has some HW in it.
 	devicestart = 0x4000;
-	deviceend = 0x4020;
+	deviceend = 0x401F;
 	devicemask = 0x401F;
 }
 
@@ -26,8 +26,6 @@ cpu2a03_fast::~cpu2a03_fast() {
 }
 
 void cpu2a03_fast::log_register() {
-	std::cout << std::setfill('0');
-	std::cout << "pc: " << std::hex << std::setw(4) << int(regs.pc) << std::setw(2) <<  " -> ac:" << int(regs.ac) << ", x:" << int(regs.x) << ", y:" << int(regs.y) << ", sp:" << int(regs.sp) << ", sr: " << int (regs.sr) << std::endl;
 }
 
 void cpu2a03_fast::set_pc(word addr) {
@@ -41,8 +39,8 @@ void cpu2a03_fast::pushstack_byte(byte data) {
 }
 
 void cpu2a03_fast::pushstack_word(word data) {
-	this->pushstack_byte((data & 0xFF00) >> 8);
-	this->pushstack_byte((data & 0x00FF));
+	pushstack_byte((data & 0xFF00) >> 8);
+	pushstack_byte((data & 0x00FF));
 }
 
 byte cpu2a03_fast::pullstack_byte() {
@@ -57,18 +55,28 @@ word cpu2a03_fast::pullstack_word() {
 	return t;
 }
 
-int	cpu2a03_fast::rundevice(int ticks) {
+int cpu2a03_fast::rundevice(int ticks) {
+	int tickcount = 0;
+	while (tickcount < ticks) {
+		tickcount += rundevice_internal(ticks);
+		// dma we need to break immediality. clock module needs this attention.
+		if (in_dma_mode) return tickcount;
+	}
+	return tickcount;
+}
+
+int	cpu2a03_fast::rundevice_internal (int ticks) {
 	int	actualticks = 0;
 	
 	// check dma mode
 	if (in_dma_mode) {
-		if (this->dma_cycle == 1) {
-			this->dma_cycle = 0;
+		if (dma_cycle == 1) {
+			dma_cycle = 0;
 			in_dma_mode = false;
 			return tick_rate;
 		}
-		this->dma_cycle -= 2;
-		if (this->dma_cycle == 0) in_dma_mode = false;
+		dma_cycle -= 2;
+		if (dma_cycle == 0) in_dma_mode = false;
 		return 2 * tick_rate;
 	}
 
@@ -1728,7 +1736,7 @@ void cpu2a03_fast::reset() {
 
 void cpu2a03_fast::coldboot() {
 	if (!mbus) {
-		throw std::runtime_error("cpu2a03_fast::coldboot() called without defined memory bus!\r\nPlease assign memory bus before calling coldboot()");
+		throw new std::runtime_error("cpu2a03_fast::coldboot() called without defined memory bus!\r\nPlease assign memory bus before calling coldboot()");
 		return;
 	}
 	regs.pc = mbus->readmemory_as_word(vector_reset);
@@ -1744,18 +1752,25 @@ void cpu2a03_fast::coldboot() {
 void cpu2a03_fast::write(int addr, int addr_from_base, byte data) {
 	if (addr_from_base == 0x14) {
 		// DMA request.
-		this->in_dma_mode = true;	// chip is outputting DMA
-		this->dma_cycle = 512;		// 512 cpu ticks = 1536 ppu ticks. (*3)
-		if (this->ticksdone % 2) this->dma_cycle++;
-		this->dma_count = 255;
-		this->dma_high = data;
+		in_dma_mode = true;	// chip is outputting DMA
+		dma_cycle = 512;		// 512 cpu ticks = 1536 ppu ticks. (*3)
+		//if (ticksdone % 2) dma_cycle++;
+		dma_count = 255;
+		dma_high = data;
 		return; // done processing.
 	}
 }
 
-void cpu2a03_fast::dma(byte *data, bool is_output) {
+void cpu2a03_fast::dma(byte *data, bool is_output, bool started) {
+	if ((dma_cycle > 0) && (dma_cycle < 0x100) && (dma_count == 0xFF)) __debugbreak();
 	if (!is_output) {
+		//std::cout << "dma(" << std::dec << (int)dma_count << ") -- addr: " << std::hex << "0x" << (int)(dma_high << 8 | (255 - dma_count)); 
 		*data = mbus->readmemory(dma_high << 8 | (255 - dma_count));
+		//std::cout << ", read byte : 0x" << (int)*data << std::dec << " | dma_cycle: " << dma_cycle << std::endl;
 		dma_count--;
 	}
+}
+
+void cpu2a03_fast::definememorybus(bus *membus) {
+	mbus = membus;
 }

@@ -31,8 +31,9 @@ void clock::step() {
 		if (!device->ticker) {
 			// check dma
 			if (dmadevice == device) {
-				device->dma(&dmabyte, false);
-				for (auto device : this->devices) if (device != dmadevice) device->dma(&dmabyte, true);
+				device->dma(&dmabyte, false, device->dma_start);
+				for (auto device : this->devices) if (device != dmadevice) device->dma(&dmabyte, true, device->dma_start);
+				device->dma_start = false;
 			}
 			device->ticker = device->tick_rate;
 			cticks = device->rundevice(1);	// always run one tick. problem is.. not all device do 1 tick so we always need to sync afterwards.
@@ -74,3 +75,40 @@ void clock::run() {
 	}
 }
 
+// fast clock
+fastclock::fastclock() {
+}
+
+fastclock::~fastclock() {
+}
+
+void fastclock::setdevices(device *cpu, device *ppu, device *apu) {
+	this->cpudevice = cpu;
+	this->ppudevice = ppu;
+	this->apudevice = apu;
+}
+
+void fastclock::step() {
+	//  run cpu 1 step.
+	byte dmabyte;
+	if (this->cpudevice == NULL) return;
+	if (this->cpudevice->in_dma_mode) {
+		while (this->cpudevice->in_dma_mode) {
+			this->cpudevice->dma(&dmabyte, false, false);
+			this->ppudevice->dma(&dmabyte, true, cpudevice->dma_start);
+			cpudevice->dma_start = false;
+			this->cpudevice->rundevice(1);
+		}
+		this->ppudevice->rundevice(1536);
+	}
+	int actualcputicks = this->cpudevice->rundevice(1);	
+	if (this->ppudevice != NULL) this->ppudevice->rundevice(actualcputicks);
+	if (this->apudevice != NULL) this->apudevice->rundevice(actualcputicks);
+}
+
+void fastclock::run() {
+	// make it all run.
+	while (1) {
+		step();
+	}
+}

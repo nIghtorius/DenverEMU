@@ -107,10 +107,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>G:\sdl12\SDL-1.2.15\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerOutput>AssemblyAndSourceCode</AssemblerOutput>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>G:\sdl12\SDL-1.2.15\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL.lib;SDLmain.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -151,32 +155,44 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>G:\sdl12\SDL-1.2.15\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerOutput>AssemblyAndSourceCode</AssemblerOutput>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>G:\sdl12\SDL-1.2.15\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL.lib;SDLmain.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="apu.h" />
     <ClInclude Include="bus.h" />
     <ClInclude Include="clock.h" />
     <ClInclude Include="cpu2a03_fast.h" />
     <ClInclude Include="debug6k.h" />
     <ClInclude Include="mainram.h" />
+    <ClInclude Include="mapper_001.h" />
+    <ClInclude Include="mapper_002.h" />
+    <ClInclude Include="nesvideo.h" />
     <ClInclude Include="ppu.h" />
     <ClInclude Include="rom.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="apu.cpp" />
     <ClCompile Include="bus.cpp" />
     <ClCompile Include="clock.cpp" />
     <ClCompile Include="cpu2a03_fast.cpp" />
     <ClCompile Include="debug6k.cpp" />
     <ClCompile Include="DenverEMU.cpp" />
     <ClCompile Include="mainram.cpp" />
+    <ClCompile Include="mapper_001.cpp" />
+    <ClCompile Include="mapper_002.cpp" />
+    <ClCompile Include="nesvideo.cpp" />
     <ClCompile Include="ppu.cpp" />
     <ClCompile Include="rom.cpp" />
     <ClCompile Include="stdafx.cpp">

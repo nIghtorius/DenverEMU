@@ -8,6 +8,7 @@
 #include <vector>
 
 #define		MAX_DESCRIPTOR_LENGTH	128
+#define		BUS_OPEN_BUS			0xF0
 
 /*
 	bus_device
@@ -38,11 +39,12 @@ public:
 	int		tickstodo;
 	int		ticksdone;
 	bool	in_dma_mode;
+	bool	dma_start;
 	device();
 	~device();
-	virtual	int rundevice(int ticks); // returns the amount of ticks it actually did.
-	char *	get_device_descriptor();
-	virtual	void	dma(byte *data, bool is_output);
+	virtual	int		rundevice(int ticks); // returns the amount of ticks it actually did.
+	char *			get_device_descriptor();
+	virtual	void	dma(byte *data, bool is_output, bool started);
 };
 
 // a device connected to a bus.
@@ -54,7 +56,7 @@ public:
 	int		devicemask;
 	buslayout	pinout;
 	bus_device();
-	~bus_device();
+	virtual ~bus_device();
 	word			compute_addr_from_layout(word addr);
 	void			swappins(int pin1, int pin2);
 	void			groundpin(int pin);
@@ -68,6 +70,7 @@ class bus {
 private:
 	int		address;
 	std::vector<bus_device *> devices;
+	bool	no_bus_conflicts = false;		// default we do not emulate bus conflicts, it is costly.
 public:	
 	bus();
 	~bus();
@@ -86,4 +89,5 @@ public:
 	void	removedevice_select_base(int baseaddr);
 	// reports (cout)
 	void	reportdevices();
+	void	emulate_bus_conflicts(bool enable);	// emulate busconflicts? (true is slower)
 };

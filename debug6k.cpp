@@ -6,7 +6,7 @@ debug6k::debug6k() {
 	devicestart = 0x6000;	// start of device.
 	deviceend = 0x6FFF;		// end of device.
 	devicemask = 0x6FFF;	
-	strcpy_s(this->get_device_descriptor(), MAX_DESCRIPTOR_LENGTH, "Denver blargg 0x6000 debugger");
+	strcpy_s(get_device_descriptor(), MAX_DESCRIPTOR_LENGTH, "Denver blargg 0x6000 debugger");
 }
 
 
@@ -18,7 +18,7 @@ void debug6k::write(int addr, int addr_from_base, byte data) {
 }
 
 bogusdevice::bogusdevice() {
-	strcpy_s(this->get_device_descriptor(), MAX_DESCRIPTOR_LENGTH, "Device that does 2 clocks per clock request");
+	strcpy_s(get_device_descriptor(), MAX_DESCRIPTOR_LENGTH, "Device that does 2 clocks per clock request");
 	tick_rate = 2;
 }
 

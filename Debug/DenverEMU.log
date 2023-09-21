@@ -1,2 +1,11 @@
 ﻿  DenverEMU.cpp
+  bus.cpp
+  clock.cpp
+  cpu2a03_fast.cpp
+  debug6k.cpp
+  mainram.cpp
+  mapper_002.cpp
+  ppu.cpp
+  rom.cpp
+  Generating Code...
   DenverEMU.vcxproj -> C:\Users\nIghtorius.PHIBIAN\source\repos\DenverEMU\Debug\DenverEMU.exe

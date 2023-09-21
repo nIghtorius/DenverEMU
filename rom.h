@@ -15,21 +15,23 @@
 #pragma once
 
 #include "bus.h"
-
 class vrom : public bus_device {
-	byte	*romdata;
-	int		romsize;
+private:
 public:
 	vrom();
 	~vrom();
-	virtual void	set_rom_data(byte *data, int size);
+	virtual void	set_rom_data(byte *data, size_t size);
 	virtual void	write(int addr, int addr_from_base, byte data);
 	virtual byte	read(int addr, int addr_from_base);
+	void			link_ppu_bus(bus_device *ppu_bus);
+	bus_device		*ppubus;
+	byte			*romdata;
+	int				romsize;
 };
 
-class vram : public bus_device {
+class vram : public vrom {
+private:
 	byte	*ram;
-	int		ramsize;
 public:
 	vram();
 	~vram();
@@ -38,23 +40,13 @@ public:
 };
 
 class rom : public bus_device {
-	byte	*romdata;
-	int		romsize;
-
+private:
 public:
 	rom();
 	~rom();
 	virtual	void	set_rom_data(byte *data, int size);
 	virtual void	write(int addr, int addr_from_base, byte data);
 	virtual	byte	read(int addr, int addr_from_base);
-};
-
-// cartridge class ( contains both ROM and VROM )
-class cartridge {
-private:
-	bus_device	*romdevice;
-	bus_device	*vromdevice;
-public:
-	cartridge(bus_device *rd, bus_device *vrd);
-	~cartridge();
+	byte	*romdata;
+	int		romsize;
 };

@@ -39,6 +39,11 @@
 #define		PPU_SPR_0HIT					0x40
 #define		PPU_VBLANK						0x80
 
+#define		OAM_SPR_ATTR_PALETTE			0x03
+#define		OAM_SPR_ATTR_UNDEFINED			0x1C
+#define		OAM_SPR_ATTR_FLIP_HOR			0x40
+#define		OAM_SPR_ATTR_FLIP_VER			0x80
+
 #pragma pack (push, 1)
 struct oamentry {
 	byte	y;
@@ -81,15 +86,21 @@ struct ppu_render_state {
 	byte		y_shift;
 	word		t_register; // internal temporary register
 	word		v_register; // https://wiki.nesdev.com/w/index.php/PPU_rendering @ PPU address bus contents
-	byte		shiftregs_pattern_par[2];
+	byte		shiftregs_pattern_latch;
 	word		shiftregs_pattern[2];		// pattern shift registers.
-	byte		shiftreg_attribute_par;
-	word		shiftreg_attribute;			// attribute shift registers.
+	word		shiftreg_attribute[2];		// attribute shift registers.
+	byte		shiftreg_attribute_latch;	//
 	oamentry	secoam[8];					// secondary OAM
 	byte*		secoamb;
-	byte		n;
-	byte		m;
-	byte		ss;
+	byte		n;							// index into primary OAM.
+	byte		m;							// copy byte.
+	byte		sn;							// index into secondary OAM.
+	byte		spr_pix;					// pixel buffer for sprite. rendering depends on showspr
+	byte		spr_pix_pal;
+	byte		buffer_oam_read;
+	bool		oam_clearing;
+	bool		oam_copy;
+	bool		oam_evald;					// true when OAM eval is complete n == 64
 	byte		shiftreg_spr_pattern_lo[8];	// sprite pattern shift register (8)
 	byte		shiftreg_spr_pattern_hi[8];	// sprite pattern shift register (8)
 	byte		shiftreg_spr_latch[8];		// sprite latch shift register (attr data)
@@ -135,10 +146,10 @@ private:
 	byte					prt2007buffer;
 
 public:
-	bus*					vbus;		// vbus = videobus.
-	ppu_pal_ram*			vpal;
-	ppuram*					vram;
-	oamentry*				oam;
+	bus						vbus;		// vbus = videobus.
+	ppu_pal_ram				vpal;
+	ppuram					vram;
+	oamentry				oam[64];
 	byte					oamaddr;
 	ppu();
 	~ppu();
@@ -148,7 +159,7 @@ public:
 	void					set_char_rom(bus_device *vdata);
 	void					configure_vertical_mirror();
 	void					configure_horizontal_mirror();
-	void					dma(byte *data, bool is_output);
+	void					dma(byte *data, bool is_output, bool started);
 	void*					getFrameBuffer();
 	bool					isFrameReady();	// when true next call will be false unless the frame is ready again.
 };

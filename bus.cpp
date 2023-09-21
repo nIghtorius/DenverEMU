@@ -10,52 +10,60 @@ bus::bus() {
 
 
 bus::~bus() {
+	// free all connected devices.
+	for (auto device : devices) delete device;
 }
 
 void	bus::writememory(int addr, byte data) {
-	this->address = addr;
-	this->write(data);
+	address = addr;
+	write(data);
 }
 
 byte	bus::readmemory(int addr) {
-	this->address = addr;
-	return this->read();
+	address = addr;
+	return read();
 }
 
 word	bus::readmemory_as_word(int addr) {
 	word		result;
-	this->address = addr;
-	result = this->read();
-	this->address++;
-	return result | this->read() << 8;
+	address = addr;
+	result = read();
+	address++;
+	return result | read() << 8;
 }
 
 word	bus::readmemory_as_word_wrap(int addr) {
 	word		result;
-	this->address = addr;
-	result = this->read();
-	this->address = (addr & 0xFF00) | ((addr + 1) & 0xFF);
-	return result | this->read() << 8;
+	address = addr;
+	result = read();
+	address = (addr & 0xFF00) | ((addr + 1) & 0xFF);
+	return result | read() << 8;
 }
 
 void	bus::write(byte data) {
-	for (auto device : this->devices) {
-		if ((this->address >= device->devicestart) && (this->address <= device->deviceend)) {
-			word caddr = device->compute_addr_from_layout(this->address);
+	for (auto device : devices) {
+		if ((address >= device->devicestart) && (address <= device->deviceend)) {
+			word caddr = device->compute_addr_from_layout(address);
 			device->write(caddr, caddr - device->devicestart, data);
+			if (!no_bus_conflicts) break;	// do not emulate bus conflicts, we are done.
 		}
 	}
 }
 
 byte	bus::read() {
 	byte	readbus = 0x00;
-	for (auto device : this->devices) {
-		if ((this->address >= device->devicestart) && (this->address <= device->deviceend)) {
-			word caddr = device->compute_addr_from_layout(this->address);
+	for (auto device : devices) {
+		if ((address >= device->devicestart) && (address <= device->deviceend)) {
+			word caddr = device->compute_addr_from_layout(address);
 			readbus |= device->read(caddr, caddr - device->devicestart);
+			if (!no_bus_conflicts) break; // do not emulate bus conflicts, we are done.
 		}		
 	}
 	return readbus;
+}
+
+void	bus::emulate_bus_conflicts(bool enable) {
+	no_bus_conflicts = enable;
 }
 
 void	bus::registerdevice(bus_device *device) {
@@ -65,7 +73,6 @@ void	bus::registerdevice(bus_device *device) {
 void	bus::removedevice_select_base(int baseaddr) {
 	for (size_t i = 0; i < devices.size(); i++) {
 		if (devices[i]->devicestart == baseaddr) {
-			delete devices[i];	// remove bus device from RAM!
 			devices.erase(devices.begin() + i);
 			return;
 		}
@@ -103,10 +110,10 @@ void	bus::reportdevices() {
 }
 
 bus_device::bus_device() {
-	strcpy_s(this->get_device_descriptor(), MAX_DESCRIPTOR_LENGTH, "Denver Base I/O Device");
-	this->devicestart = 0x0000;
-	this->deviceend = 0xFFFF;
-	this->devicemask = 0xFFFF;
+	strcpy_s(get_device_descriptor(), MAX_DESCRIPTOR_LENGTH, "Denver Base I/O Device");
+	devicestart = 0x0000;
+	deviceend = 0xFFFF;
+	devicemask = 0xFFFF;
 	for (int i = 0; i < 16; i++) pinout.pins[i] = i;
 }
 
@@ -152,10 +159,10 @@ bus_device::~bus_device() {
 }
 
 char * device::get_device_descriptor() {
-	return this->devicedescriptor;
+	return devicedescriptor;
 }
 
-void device::dma(byte *data, bool is_output) {
+void device::dma(byte *data, bool is_output, bool started) {
 	// dma transfer.
 }
 
@@ -171,12 +178,12 @@ byte bus_device::read(int addr, int addr_from_base) {
 device::device() {
 	ticksdone = 0;
 	tickstodo = 0;
-	this->devicedescriptor = (char *)malloc(MAX_DESCRIPTOR_LENGTH);	// reserve 128 bytes.
-	strcpy_s(this->devicedescriptor, MAX_DESCRIPTOR_LENGTH, "Denver Base Device");	// default device name for debugging.
+	devicedescriptor = (char *)malloc(MAX_DESCRIPTOR_LENGTH);	// reserve 128 bytes.
+	strcpy_s(devicedescriptor, MAX_DESCRIPTOR_LENGTH, "Denver Base Device");	// default device name for debugging.
 }
 
 device::~device() {
-	free(this->devicedescriptor);	// be done with it.
+	free(devicedescriptor);	// be done with it.
 }
 
 int device::rundevice(int ticks) {

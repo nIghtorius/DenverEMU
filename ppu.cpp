@@ -9,29 +9,29 @@
 #include <chrono>
 
 ppu::ppu() : bus_device () {
-	strcpy_s(this->get_device_descriptor(), MAX_DESCRIPTOR_LENGTH, "Denver PPU Unit");
-	this->devicestart = 0x2000;
-	this->deviceend = 0x3FFF;
-	this->devicemask = 0x2007;
-	this->tick_rate = 0x1;
+	strcpy_s(get_device_descriptor(), MAX_DESCRIPTOR_LENGTH, "Denver PPU Unit");
+	devicestart = 0x2000;
+	deviceend = 0x3FFF;
+	devicemask = 0x2007;
+	tick_rate = 0x1;
 	// make bus
-	vbus = new bus();
 	// Palette RAM
-	vpal = new ppu_pal_ram();
-	vbus->registerdevice(vpal);
+	vbus.registerdevice(&vpal);
 	// vram
-	vram = new ppuram();
-	vbus->registerdevice(vram);
+	vbus.registerdevice(&vram);
 	// oam (internal, unbussed)
-	oam = (oamentry *)malloc(256);	 // reserve 256 bytes for OAM memory.	
 	// framebuffer.
 	framebuffer = (word *)malloc(256 * 240 * 2);
-	// write stripes.
-	memset(framebuffer, 0xF0, 256 * 240 * 2);
 	scanline = -1;
 	beam = 0;
 	cycle = 0;
 }
+
+ppu::~ppu() {
+	vbus.removedevice_select_base(vpal.devicestart);
+	vbus.removedevice_select_base(vram.devicestart);
+}
+
 
 byte	ppu::read(int addr, int addr_from_base) {
 	// registers
@@ -48,13 +48,14 @@ byte	ppu::read(int addr, int addr_from_base) {
 	}
 	// OAMDATA register
 	if (addr_from_base == PPU_OAMDATA_PORT) {
-		char *buf = (char *)oam;
+		if (ppu_internal.oam_clearing) return 0xFF; // when clearing sec oam, reads to 2004 will return 0xFF
+		char *buf = (char *)&oam;
 		return buf[oamaddr]; // no increment as per write (* see https://wiki.nesdev.com/w/index.php/PPU_registers @ read $2004)
 	}
 	// READ register.
 	if (addr_from_base == PPU_DATA_PORT) {
 		byte data = prt2007buffer;
-		prt2007buffer = vbus->readmemory(ppu_internal.v_register);
+		prt2007buffer = vbus.readmemory(ppu_internal.v_register);
 		if (ppuctrl.increment_32_bytes) {
 			ppu_internal.v_register += 32;
 		}
@@ -92,11 +93,11 @@ void	ppu::write(int addr, int addr_from_base, byte data) {
 	}
 	// OAMADDR register (0x03)
 	if (addr_from_base == PPU_OAMADDR_PORT) {
-		data = oamaddr;
+		oamaddr = data;
 	}
 	// OAMDATA register
 	if (addr_from_base == PPU_OAMDATA_PORT) {
-		char *buf = (char*)oam;
+		char *buf = (char*)&oam;
 		buf[oamaddr++] = data;
 	}
 	if (addr_from_base == PPU_SCROLL_PORT) {
@@ -125,7 +126,7 @@ void	ppu::write(int addr, int addr_from_base, byte data) {
 		ppu_internal.address_write_latch = !ppu_internal.address_write_latch;
 	}
 	if (addr_from_base == PPU_DATA_PORT) {
-		vbus->writememory(ppu_internal.v_register, data);
+		vbus.writememory(ppu_internal.v_register, data);
 		ppu_internal.v_register += ppuctrl.increment_32_bytes ? 32 : 1;
 	}
 }
@@ -138,27 +139,42 @@ int		ppu::rundevice(int ticks) {
 			if (((cycle >= 1) && (cycle <= 256)) | ((cycle >= 321) && (cycle <= 340))) {
 				if (((cycle - 1) % 8) == 1) {
 					// load name table shift register.
-					ppu_internal.shiftreg_nametable = vbus->readmemory(0x2000 | (ppu_internal.v_register & 0x0FFF));
+					ppu_internal.shiftreg_nametable = vbus.readmemory(0x2000 | (ppu_internal.v_register & 0x0FFF));
 				}
 				else if (((cycle - 1) % 8) == 3) {					
 					// load attribute table shift register.
 					word attr_address = ppu_internal.v_register & ~0x2000;
 					attr_address = 0x03C0 | (attr_address & 0x0C00) | ((attr_address >> 4) & 0x0038) | ((attr_address >> 2) & 0x0007);
 					// better fetch the palette entry @ latch mode, finding it later is incredibly difficult.
-					word ab = vbus->readmemory(attr_address | 0x2000);
-					word paladdr = (ab >> (((((attr_address & 0x001F) >> 1) % 2) << 1) | ((((attr_address & 0x03E0) >> 6) % 2) << 2)) & 0x0003) << 2;					
-					ppu_internal.shiftreg_attribute_par = (byte)paladdr;
+					byte ab = vbus.readmemory(attr_address | 0x2000);
+					ppu_internal.shiftreg_attribute_latch = ab;
 				}
 				else if (((cycle - 1) % 8) == 5) {
 					// load pattern table tile low
 					ppu_internal.y_shift = (ppu_internal.v_register & 0x7000) >> 12;
 					word pattern_address = (ppuctrl.bg_0x1000 << 12) | ((word)ppu_internal.shiftreg_nametable << 4) | ppu_internal.y_shift;
-					ppu_internal.shiftregs_pattern_par[0] = vbus->readmemory(pattern_address);
+					// ppu_internal.shiftregs_pattern_par[0] = vbus->readmemory(pattern_address);<-- hack
+					ppu_internal.shiftregs_pattern_latch = (vbus.readmemory(pattern_address)); // read to lower part.
 				}
 				else if (((cycle - 1) % 8) == 7) {
 					// load pattern table tile high
 					word pattern_address = (ppuctrl.bg_0x1000 << 12) | ((word)ppu_internal.shiftreg_nametable << 4) | 8 | ppu_internal.y_shift;
-					ppu_internal.shiftregs_pattern_par[1] = vbus->readmemory(pattern_address);
+					//ppu_internal.shiftregs_pattern_par[1] = vbus->readmemory(pattern_address);
+					if (cycle >= 321) {
+						ppu_internal.shiftregs_pattern[0] <<= 8; // clean upper part.
+						ppu_internal.shiftregs_pattern[1] <<= 8; // clean upper part.
+						ppu_internal.shiftreg_attribute[0] <<= 8; // clean upper part.
+						ppu_internal.shiftreg_attribute[1] <<= 8; // clean upper part.
+					}
+					ppu_internal.shiftregs_pattern[1] |= (vbus.readmemory(pattern_address)); // read to lower part.
+					ppu_internal.shiftregs_pattern[0] |= ppu_internal.shiftregs_pattern_latch;
+
+					byte color = ((ppu_internal.shiftreg_attribute_latch) >> (((((ppu_internal.v_register & 0x1F) >> 1) % 2) << 1) | ((((ppu_internal.v_register & 0x3E0) >> 6) % 2) << 2)) & 0x03);
+					byte cb1 = color & 0x01;
+					byte cb2 = (color >> 1) & 0x01;					
+					ppu_internal.shiftreg_attribute[0] |= cb1 | (cb1 << 1) | (cb1 << 2) | (cb1 << 3) | (cb1 << 4) | (cb1 << 5) | (cb1 << 6) | (cb1 << 7);
+					ppu_internal.shiftreg_attribute[1] |= cb2 | (cb2 << 1) | (cb2 << 2) | (cb2 << 3) | (cb2 << 4) | (cb2 << 5) | (cb2 << 6) | (cb2 << 7);
+
 					// last fetch also update Coarse X (v register) (loopy_v verti)
 					if ((ppu_internal.v_register & 0x001F) == 31) {
 						ppu_internal.v_register &= ~0x001F;
@@ -171,70 +187,128 @@ int		ppu::rundevice(int ticks) {
 			}
 			// secondary OAM reset (cycli 1--64)
 			if ((cycle >= 1) && (cycle <= 64)) {
-				if (((cycle - 1) % 8) == 1) {
-					byte secaddr = (cycle - 1) / 8;
-					memset(&ppu_internal.secoam[secaddr], 0xFF, 4);
-					ppu_internal.n = 0;
-					ppu_internal.ss = 0;
-					ppu_internal.m = 0;
-				}
+				ppu_internal.oam_clearing = true;
+				byte secaddr = (cycle - 1) % 8;
+				memset(&ppu_internal.secoam[(cycle - 1) % 8], 0xFF, 4);
+				ppu_internal.n = 0;
+				ppu_internal.m = 0;
+				ppu_internal.sn = 0;
+				ppu_internal.oam_evald = false;
 			}
 			// sprite eval (cycli 65--256)
 			if ((cycle >= 65) && (cycle <= 256)) {				
-				if (ppu_internal.n < 64) {
-					bool odd = ((cycle - 1) % 2) > 0;
-					if (!odd) {
-						ppu_internal.secoamb = (byte *)&ppu_internal.secoam[ppu_internal.ss];
-						if (ppu_internal.m == 0) {
-							// step 1.
-							if (ppu_internal.ss < 8) {
-								ppu_internal.secoamb[ppu_internal.m] = oam[ppu_internal.n].y;
-								ppu_internal.m++;
-							}
-							else {
-								if ((oam[ppu_internal.n].y >= scanline + 1) && (oam[ppu_internal.n].y <= scanline + 1 + (ppuctrl.sprites_8x16 ? 16 : 8))) {
-									ppustatus.sprite_overflow = true;
-								}
+				ppu_internal.oam_clearing = false;
+				bool odd = (cycle % 2) > 0;
+				if (odd) {
+					// odd cycle (read from primary OAM)
+					ppu_internal.secoamb = (byte *)&oam[ppu_internal.n];
+					ppu_internal.buffer_oam_read = ppu_internal.secoamb[ppu_internal.m];
+				} else {
+					// even cycle (write to secondary OAM)
+					if (ppu_internal.m == 0) {
+						int scancomp = (scanline == 261) ? -1 : scanline;
+						if ((ppu_internal.sn < 8) && !ppu_internal.oam_evald) ppu_internal.secoam[ppu_internal.sn].y = ppu_internal.buffer_oam_read;
+						ppu_internal.oam_copy =
+							(scancomp >= ppu_internal.buffer_oam_read) &&
+							(scancomp < (int)ppu_internal.buffer_oam_read + (ppuctrl.sprites_8x16 ? 16 : 8));
+							
+						if (ppu_internal.oam_copy && (ppu_internal.sn >= 8)) {
+							// sprite overflow.
+							ppustatus.sprite_overflow = true;
+						}
+					}
+					// copy cycles.
+					if (ppu_internal.oam_copy) {
+						if ((ppu_internal.sn < 8) && !ppu_internal.oam_evald) {
+							switch (ppu_internal.m) {
+							case 0x01:	ppu_internal.secoam[ppu_internal.sn].tile = ppu_internal.buffer_oam_read;
+								break;
+							case 0x02:	ppu_internal.secoam[ppu_internal.sn].attr = ppu_internal.buffer_oam_read;
+								break;
+							case 0x03:	ppu_internal.secoam[ppu_internal.sn].x = ppu_internal.buffer_oam_read;
+								break;
 							}
 						}
-						else {
-							if ((oam[ppu_internal.n].y >= scanline + 1) && (oam[ppu_internal.n].y <= scanline + 1 + (ppuctrl.sprites_8x16 ? 16 : 8))) {
-								// is in scanline. copy it.
-								ppu_internal.secoamb[ppu_internal.m] = ((byte *)&oam[ppu_internal.n])[ppu_internal.m];
-								if (ppu_internal.m == 3) {
-									// copy complete increment n and ss and reset m to 0
-									ppu_internal.m = 0;
-									ppu_internal.n++;
-									ppu_internal.ss++;
-								}
-							}
-							else {
-								// it is not. ignore it further and increment n.
-								ppu_internal.n++;
-								ppu_internal.m = 0;
-							}
-						}					
+						ppu_internal.m++;
+						if (ppu_internal.m == 4) {
+							// m overflows, reset to 0 and increment n.
+							ppu_internal.m = 0;
+							ppu_internal.n++;
+							if (ppu_internal.sn < 8) ppu_internal.sn++;
+							ppu_internal.oam_copy = false;	// disable copy system.
+						}
+					}
+					else {
+						// wrap n
+						// increment n when no copy is required.
+						ppu_internal.n++;
+					}
+					// spr overflow bug?
+					//if (ppustatus.sprite_overflow && (ppu_internal.sn < 8)) ppu_internal.n++;
+					// wrap n
+					if (ppu_internal.n == 64) {
+						ppu_internal.oam_evald = true;
+						ppu_internal.n = 0;
 					}
 				}
 			}
 			// sprite loading.
-			if ((cycle >= 257) && (cycle <= 320)) {
+			if ((cycle >= 257) && (cycle <= 320) && (scanline != 261)) {
+				if (cycle == 257) ppu_internal.n = 0;
 				byte cs = (cycle - 1) % 8;
 				if (cs == 1) {
-
+					// do garbage nametable read.
+					ppu_internal.shiftreg_nametable = vbus.readmemory(0x2000 | (ppu_internal.v_register & 0x0FFF));
 				}
 				else if (cs == 3) {
-					// load x and attr.
-					ppu_internal.shiftreg_spr_counter[ppu_internal.ss] = ppu_internal.secoam[ppu_internal.ss].x;
-					ppu_internal.shiftreg_spr_latch[ppu_internal.ss] = ppu_internal.secoam[ppu_internal.ss].attr;
+					// do garbage nametable read.
+					ppu_internal.shiftreg_nametable = vbus.readmemory(0x2000 | (ppu_internal.v_register & 0x0FFF));
+					ppu_internal.shiftreg_spr_latch[ppu_internal.n] = ppu_internal.secoam[ppu_internal.n].attr;
 				}
 				else if (cs == 5) {
 					// load pattern table tile low
-					//word pattern_address = (ppuctrl.sprites_0x1000 << 12) | ((word)ppu_internal.secoam[ppu_internal.ss].tile 
-					//ppu_internal.shiftreg_spr_pattern_lo[ppu_internal.ss] = vbus->readmemory(pattern_address);
+					byte ltile = ppu_internal.secoam[ppu_internal.n].tile;
+					int	 ix = scanline - (ppu_internal.secoam[ppu_internal.n].y);
+					word pattern_address;
+					if (ppuctrl.sprites_8x16) {
+						pattern_address = (ltile & 1) == 1 ? 0x1000 : 0x0000;
+						ltile &= 0xFE;
+					}
+					else {
+						pattern_address = (ppuctrl.sprites_0x1000 << 12);
+					}
+					// check bit flip horiz.
+					if ((ppu_internal.shiftreg_spr_latch[ppu_internal.n] & OAM_SPR_ATTR_FLIP_VER) == OAM_SPR_ATTR_FLIP_VER) {
+						// inverse ix.
+						ix = ppuctrl.sprites_8x16 ? 15 - ix : 7 - ix;
+					}
+					if (ix > 7) pattern_address += 8;
+					pattern_address += (ltile << 4) + ix;
+					ppu_internal.shiftreg_spr_pattern_lo[ppu_internal.n] = vbus.readmemory(pattern_address);
+					ppu_internal.shiftreg_spr_counter[ppu_internal.n] = ppu_internal.secoam[ppu_internal.n].x;
 				}
 				else if (cs == 7) {
-
+					// load pattern table tile high
+					byte ltile = ppu_internal.secoam[ppu_internal.n].tile;
+					int	 ix = scanline - (ppu_internal.secoam[ppu_internal.n].y);
+					word pattern_address;
+					if (ppuctrl.sprites_8x16) {
+						pattern_address = (ltile & 1) == 1 ? 0x1000 : 0x0000;
+						ltile &= 0xFE;
+					}
+					else {
+						pattern_address = (ppuctrl.sprites_0x1000 << 12);
+					}
+					// check bit flip horiz.
+					if ((ppu_internal.shiftreg_spr_latch[ppu_internal.n] & OAM_SPR_ATTR_FLIP_VER) == OAM_SPR_ATTR_FLIP_VER) {
+						// inverse ix.
+						ix = ppuctrl.sprites_8x16 ? 15 - ix : 7 - ix;
+					}					
+					if (ix > 7) pattern_address += 8;
+					pattern_address += (ltile << 4) + ix;
+					ppu_internal.shiftreg_spr_pattern_hi[ppu_internal.n] = vbus.readmemory(pattern_address + 8);
+					ppu_internal.shiftreg_spr_counter[ppu_internal.n] = ppu_internal.secoam[ppu_internal.n].x;
+					ppu_internal.n++;	// eval to next sprite in seconday oam. this will never go over 7, because eval will stop earlier.
 				}
 			}
 			// addressing cycle.
@@ -249,7 +323,7 @@ int		ppu::rundevice(int ticks) {
 				}
 				else {
 					ppu_internal.v_register &= ~0x7000;
-					byte y = ((ppu_internal.v_register & 0x03E0) >> 5);
+					int y = ((ppu_internal.v_register & 0x03E0) >> 5);
 					if (y == 29) {
 						y = 0;
 						ppu_internal.v_register ^= 0x0800;
@@ -264,33 +338,82 @@ int		ppu::rundevice(int ticks) {
 				}
 			}
 		}
-		// BG rendering cycles.
-		byte bg = 0x00;
+		// BG/SPR rendering cycles.
 		if ((scanline >= 0) && (scanline <= 239)) {
-			if ((cycle >= 4) && (cycle <= 259)) {
-				if (ppumask.showbg) {
-					// load new data from the parallel registers.
-					if ((cycle - 4) % 8 == 0) {
-						ppu_internal.shiftregs_pattern[0] |= ppu_internal.shiftregs_pattern_par[0];
-						ppu_internal.shiftregs_pattern[1] |= ppu_internal.shiftregs_pattern_par[1];
-					}
+			if ((cycle >= 0) && (cycle <= 259)) {
+				if (ppumask.showspr) {
+					// decrement counters.
+					for (int i = 0; i < 8; i++) {
+						// check if count is zero then render the pattern buffers.
+						if (ppu_internal.shiftreg_spr_counter[i] == 0) {
+							// we can get the pixel two ways depending on OAM_SPR_ATTR_FLIP_VER
+							byte pix = 0;
+							if ((ppu_internal.shiftreg_spr_latch[i] & OAM_SPR_ATTR_FLIP_HOR) == OAM_SPR_ATTR_FLIP_HOR) {
+								// flipped.
+								pix = ppu_internal.shiftreg_spr_pattern_lo[i] & 0x01;
+								pix |= (ppu_internal.shiftreg_spr_pattern_hi[i] & 0x01) << 1;
+								ppu_internal.shiftreg_spr_pattern_lo[i] >>= 1;
+								ppu_internal.shiftreg_spr_pattern_hi[i] >>= 1;
+							}
+							else {
+								// normal.
+								pix = (ppu_internal.shiftreg_spr_pattern_lo[i] & 0x80) >> 7;
+								pix |= (ppu_internal.shiftreg_spr_pattern_hi[i] & 0x80) >> 6;
+								ppu_internal.shiftreg_spr_pattern_lo[i] <<= 1;
+								ppu_internal.shiftreg_spr_pattern_hi[i] <<= 1;
+							}
 
-					// get the pixel.	
+							// get pixel color.
+							byte spr_palette = (ppu_internal.shiftreg_spr_latch[i] & OAM_SPR_ATTR_PALETTE);
+							if (pix > 0) {
+								ppu_internal.spr_pix = pix;
+								ppu_internal.spr_pix_pal = vpal.read(0, 0x10 | spr_palette << 2 | pix);
+							}
+						}
+						// decrement counter register.
+						if (ppu_internal.shiftreg_spr_counter[i] < 255)
+							ppu_internal.shiftreg_spr_counter[i] = ppu_internal.shiftreg_spr_counter[i] > 0 ? ppu_internal.shiftreg_spr_counter[i] - 1 : 0;
+					}
+				}
+				if (ppumask.showbg) {				
+					// get the pixel.
 					word pix_mux = 0x8000 >> ppu_internal.x_shift;
 					byte palentry = (((ppu_internal.shiftregs_pattern[1] & pix_mux) > 0) << 1) |
 						((ppu_internal.shiftregs_pattern[0] & pix_mux) > 0);
 
+					byte color = (((ppu_internal.shiftreg_attribute[1] & pix_mux) > 0) << 1) |
+						((ppu_internal.shiftreg_attribute[0] & pix_mux) > 0);
+					
+					color <<= 2;
+					
+
+					// convert color from the palette entry!
+					//color = vbus.readmemory ((color | 0x3F00) | palentry);
+					// no need for full bus emulation on color data.
+					color = vpal.read(0, color | palentry);	// addr = 0x000 (vpal ignores that anyway)
+
 					// shift the registers.
 					ppu_internal.shiftregs_pattern[0] <<= 1;
 					ppu_internal.shiftregs_pattern[1] <<= 1;
+					ppu_internal.shiftreg_attribute[0] <<= 1;
+					ppu_internal.shiftreg_attribute[1] <<= 1;
 
 					// draw to framebuffer?
-					framebuffer[scanline * 256 + beam] = (palentry * 64) | (palentry * 64) << 8;
-					framebuffer[scanline * 256 + beam] |= (ppumask.emp_blu ? 0x0100 : 0) |
-						(ppumask.emp_grn ? 0x0200 : 0) |
-						(ppumask.emp_red ? 0x0400 : 0);
+					if (beam<256) {
+						framebuffer[scanline << 8 | beam] = color; // (palentry << 4) | (palentry << 4) << 8;
+						framebuffer[scanline << 8 | beam] |= (ppumask.emp_blu ? 0x0100 : 0) |
+							(ppumask.emp_grn ? 0x0200 : 0) |
+							(ppumask.emp_red ? 0x0400 : 0);
+
+						// spr_pix>0 just render for now.
+						if (ppu_internal.spr_pix > 0) {
+							framebuffer[scanline << 8 | beam] = ppu_internal.spr_pix_pal;
+							ppu_internal.spr_pix = 0;
+						}						
+					}
 				}
-				else framebuffer[scanline * 256 + beam] = 0xFFFF;
+				else framebuffer[scanline << 8 | beam] = vram.read(0x00, 0x3F00);
+				if ((scanline == oam[0].y) && (beam == oam[0].x+2)) ppustatus.sprite_0_hit = true;	// fake it for now.
 				beam++;
 			}
 		}
@@ -310,7 +433,7 @@ int		ppu::rundevice(int ticks) {
 			}
 			if ((cycle >= 280) && (cycle <= 304)) {
 				// reload v register from parts of the t register.
-				if (ppumask.showbg | ppumask.showspr) {
+				if (ppumask.showbg || ppumask.showspr) {
 					ppu_internal.v_register = (ppu_internal.v_register & ~0x7BE0) | (ppu_internal.t_register & 0x7BE0);
 				}
 			}
@@ -319,7 +442,6 @@ int		ppu::rundevice(int ticks) {
 		// Scanline..
 		if (cycle == 339) {
 			scanline++;
-			if (scanline == 30) ppustatus.sprite_0_hit = true;	// fake it for now.
 			beam = 0;
 			// framebuffer done.
 			if (scanline == 240) {
@@ -342,22 +464,22 @@ int		ppu::rundevice(int ticks) {
 void	ppu::set_char_rom(bus_device *vdata) {
 	// first remove any linked rom/rams!
 	// it is destructive.
-	vbus->removedevice_select_base(0x0000);
+	vbus.removedevice_select_base(0x0000);
 	// reregister
-	vbus->registerdevice(vdata);
+	vbus.registerdevice(vdata);
 }
 
 void	ppu::configure_vertical_mirror() {
-	vram->resetpins_to_default();
+	vram.resetpins_to_default();
 }
 
 void	ppu::configure_horizontal_mirror() {
-	vram->resetpins_to_default();
-	vram->swappins(10, 11);
-	vram->groundpin(10);
+	vram.resetpins_to_default();
+	vram.swappins(10, 11);
+	vram.groundpin(10);
 }
 
-void	ppu::dma(byte *data, bool is_output) {
+void	ppu::dma(byte *data, bool is_output, bool started) {
 	if (is_output) {
 		char * buf = (char *)oam;
 		buf[oamaddr++] = *data;
@@ -374,12 +496,9 @@ bool	ppu::isFrameReady() {
 	return retval;
 }
 
-ppu::~ppu() {
-}
-
 // PPU RAM
-ppuram::ppuram() {
-	strcpy_s(this->get_device_descriptor(), MAX_DESCRIPTOR_LENGTH, "PPU mainram 2k");
+ppuram::ppuram() : bus_device() {
+	strcpy_s(get_device_descriptor(), MAX_DESCRIPTOR_LENGTH, "PPU mainram 2k");
 	ram = (byte *)malloc(0x800);
 	devicestart = 0x2000;
 	deviceend = 0x3EFF;
@@ -399,8 +518,8 @@ byte	ppuram::read(int addr, int addr_from_base) {
 }
 
 // PPU PAL RAM
-ppu_pal_ram::ppu_pal_ram() {
-	strcpy_s(this->get_device_descriptor(), MAX_DESCRIPTOR_LENGTH, "PPU palette RAM 32 bytes");
+ppu_pal_ram::ppu_pal_ram() : bus_device() {
+	strcpy_s(get_device_descriptor(), MAX_DESCRIPTOR_LENGTH, "PPU palette RAM 32 bytes");
 	ram = (byte *)malloc(0x20);
 	devicestart = 0x3F00;
 	deviceend = 0x3FFF;
