@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "apu.h"
 
+#include <iostream>
+
 apu::apu() {
 	strcpy_s(this->get_device_descriptor(), MAX_DESCRIPTOR_LENGTH, "NES APU Device");
 	devicestart = 0x4000;
@@ -49,12 +51,31 @@ void	apu::write(int addr, int addr_from_base, byte data) {
 		case PULSE_LCL_TIMER:
 			pulse[pulse_sel].timer = (pulse[pulse_sel].timer & 0x00FF) | ((data & 0x07) << 8);
 			pulse[pulse_sel].length_counter = (data & 0xF8) >> 3;
+			pulse[pulse_sel].duty_pos = 0; // restart sequencer.
+			pulse[pulse_sel].envelope_reload = true; // restart envelope
 			break;
 		}
+	}
+	switch (addr_from_base) {
+	case TRIANGLE_LC_SETUP:
+		triangle.triangle_loop = (data & 0x80) > 0;
+		triangle.triangle_length = data & 0x7F;
+		break;
+	case TRIANGLE_TIMER:
+		triangle.timer = (triangle.timer & 0x0700) | data;
+		break;
+	case TRIANGLE_LCL_TIMER:
+		triangle.timer = (triangle.timer & 0x00FF) | ((data & 0x07) << 8);
+		triangle.length_counter = (data & 0xF8) >> 3;
+		triangle.triangle_counter_reload = true;
+		break;
 	}
 }
 
 int		apu::rundevice(int ticks) {
+	pulse[0].update_timers();
+	pulse[1].update_timers();
+	triangle.update_timers();
 	return ticks;
 }
 
@@ -121,4 +142,35 @@ byte	pulse_generator::readsample() {
 	if (!constant_volume) output_level = envelope_out;
 	bool duty_out = (1 << (7 - duty_pos)) & duty_cycle_osc[duty_cycle];
 	return duty_out ? output_level : 0;
+}
+
+void	triangle_generator::update_timers() {
+	// counter(s)
+	if (timer_counter == 0) {
+		timer_counter = timer;
+		// do we need to clock the sequencer?
+		if ((triangle_length > 0) && (length_counter > 0)) sequencer++;
+		if (sequencer == sizeof(triangle_osc)) sequencer = 0;
+	}
+	else timer_counter--;
+}
+
+void	triangle_generator::half_clock() {
+	// length counter.
+	if (!triangle_loop && (length_counter > 0)) length_counter--;
+}
+
+void	triangle_generator::quarter_clock() {
+	// another length counter??
+	if (triangle_counter_reload) {
+		triangle_length_counter = triangle_length;
+	}
+	else {
+		triangle_length_counter--;
+	}
+	if (!triangle_loop) triangle_counter_reload = false;
+}
+
+byte	triangle_generator::readsample() {
+	return triangle_osc[sequencer];
 }
