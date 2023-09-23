@@ -9,6 +9,7 @@
 
 #include "..\bus\bus.h"
 
+// pulse generators
 #define PULSE_DUTY_CYCLE_LCH_VOLENV			0x00
 #define PULSE_SWEEP							0x01
 #define PULSE_TIMER							0x02
@@ -16,24 +17,48 @@
 #define PULSE1								0x00
 #define PULSE2								0x04
 
+// triangle generator
 #define TRIANGLE_LC_SETUP					0x08
 #define TRIANGLE_TIMER						0x0A
 #define TRIANGLE_LCL_TIMER					0x0B
 
+// noise generator
+#define NOISE_LCH_VOLENV					0x0C
+#define NOISE_LOOP_PERIOD					0x0E
+#define NOISE_LENGTH_COUNTER				0x0F
+
+// DMC
+#define DMC_IRQ_LOOP_FREQ					0x10
+#define DMC_LOAD_COUNTER					0x11
+#define DMC_SAMPLE_ADDR						0x12
+#define DMC_SAMPLE_LENGTH					0x13
+
+// APU ports.
+#define APU_STATUS_REGISTER					0x15
+#define APU_FRAME_COUNTER					0x17
+
+
 // magic tables
-static const unsigned __int8 duty_cycle_osc[] = {
+static const byte duty_cycle_osc[] = {
 	0x01, 0x03, 0x0F, 0xFC
 };
 
-static const unsigned __int8 triangle_osc[] = {
+static const byte triangle_osc[] = {
 	0x0F, 0x0E, 0x0D, 0x0C, 0x0B, 0x0A, 0x09, 0x08, 0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, 0x00,
 	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F
+};
+
+static const word noise_periods[] = {
+	0x0004, 0x0008, 0x0010, 0x0020, 0x0040, 0x0060, 0x0080, 0x00A0,
+	0x00CA, 0x00FE, 0x017C, 0x01FC, 0x02FA, 0x03F8, 0x07F2, 0x0FE4
 };
 
 // audio generators.
 class pulse_generator {
 public:
 	// values.
+	bool	enabled;
+
 	byte	duty_cycle;
 	byte	duty_pos;
 	bool	envelope_loop;
@@ -64,6 +89,8 @@ public:
 class triangle_generator {
 public:
 	// values
+	bool	enabled;
+
 	bool	triangle_loop;
 	byte	length_counter;	
 	byte	triangle_length;
@@ -79,11 +106,43 @@ public:
 	byte	readsample();
 };
 
+class noise_generator {
+public:
+	// values
+	bool	enabled;
+
+	bool	envelope_loop;
+	bool	constant_volume;
+	byte	volume_envelope;
+	byte	envelope_out;
+	bool	envelope_reload;
+	byte	envelope_count;
+	bool	noise_loop;
+	byte	noise_period;
+	byte	length_counter;
+	word	timer_counter;
+	word	noise_shift_reg = 0x01;
+	// functions
+	void	update_timers();
+	void	half_clock();
+	void	quarter_clock();
+	void	envelopes();
+	byte	readsample();
+};
+
 // classes
 class apu : public bus_device {
 private:
 	pulse_generator		pulse[2];		// pulse generators.
 	triangle_generator	triangle;		// triangle generator.
+	noise_generator		noise;			// noise generator.
+
+	bool				frame_irq, dmc_irq;			// irq
+	bool				five_step_mode;
+	bool				inhibit_irq;
+
+	void				half_clock();
+	void				quarter_clock();
 
 public:
 	apu();

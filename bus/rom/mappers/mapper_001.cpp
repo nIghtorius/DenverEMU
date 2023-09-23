@@ -7,7 +7,7 @@
 
 // ROM side.
 mmc1_rom::mmc1_rom() {
-	strcpy_s(this->get_device_descriptor(), MAX_DESCRIPTOR_LENGTH, "Denver MMC1 (mapper 001)");
+	strcpy_s(get_device_descriptor(), MAX_DESCRIPTOR_LENGTH, "Denver MMC1 (mapper 001)");
 	mmc1ram = (char *)malloc(8192);
 }
 

@@ -4,7 +4,7 @@
 #include <iostream>
 
 apu::apu() {
-	strcpy_s(this->get_device_descriptor(), MAX_DESCRIPTOR_LENGTH, "NES APU Device");
+	strcpy_s(get_device_descriptor(), MAX_DESCRIPTOR_LENGTH, "Denver 2A03 APU Device");
 	devicestart = 0x4000;
 	deviceend = 0x401F;
 	devicemask = 0x401F;
@@ -22,6 +22,18 @@ apu::~apu() {
 }
 
 byte	apu::read(int addr, int addr_from_base) {
+	switch (addr_from_base) {
+	case APU_STATUS_REGISTER:
+		byte result = (dmc_irq ? 0x80 : 0) |
+			(frame_irq ? 0x40 : 0) |
+			(pulse[0].length_counter ? 0x01 : 0) |
+			(pulse[1].length_counter ? 0x02 : 0) |
+			(triangle.length_counter ? 0x04 : 0) |
+			(noise.length_counter ? 0x08 : 0);
+		frame_irq = false;
+		return result;
+		break;
+	}
 	return BUS_OPEN_BUS;
 }
 
@@ -69,14 +81,53 @@ void	apu::write(int addr, int addr_from_base, byte data) {
 		triangle.length_counter = (data & 0xF8) >> 3;
 		triangle.triangle_counter_reload = true;
 		break;
+	case NOISE_LCH_VOLENV:
+		noise.envelope_loop = (data & 0x20) > 0;
+		noise.constant_volume = (data & 0x10) > 0;
+		noise.volume_envelope = (data & 0x0F);
+		noise.envelope_reload = true;
+		break;
+	case NOISE_LOOP_PERIOD:
+		noise.noise_loop = (data & 0x80) > 0;
+		noise.noise_period = (data & 0x0F);
+		break;
+	case NOISE_LENGTH_COUNTER:
+		noise.length_counter = (data & 0xF1) >> 3;
+		break;		
+	case APU_STATUS_REGISTER:
+		pulse[0].enabled =	(data & 0x01) > 0;
+		pulse[1].enabled =	(data & 0x02) > 0;
+		triangle.enabled =	(data & 0x04) > 0;
+		noise.enabled = (data & 0x08) > 0;
+		//dmc.enabled = (data & 0x10) > 0;
+		break;
+	case APU_FRAME_COUNTER:
+		five_step_mode = (data & 0x80) > 0;
+		inhibit_irq = (data & 0x40) > 0;
+		if (inhibit_irq) frame_irq = false;
+		if (five_step_mode) {
+			half_clock();
+			quarter_clock();
+		}
 	}
 }
 
 int		apu::rundevice(int ticks) {
-	pulse[0].update_timers();
-	pulse[1].update_timers();
-	triangle.update_timers();
 	return ticks;
+}
+
+void	apu::half_clock() {
+	pulse[0].half_clock();
+	pulse[1].half_clock();
+	triangle.half_clock();
+	noise.half_clock();
+}
+
+void	apu::quarter_clock() {
+	pulse[0].quarter_clock();
+	pulse[1].quarter_clock();
+	triangle.quarter_clock();
+	noise.quarter_clock();
 }
 
 // generators.
@@ -148,9 +199,8 @@ void	triangle_generator::update_timers() {
 	// counter(s)
 	if (timer_counter == 0) {
 		timer_counter = timer;
-		// do we need to clock the sequencer?
-		if ((triangle_length > 0) && (length_counter > 0)) sequencer++;
-		if (sequencer == sizeof(triangle_osc)) sequencer = 0;
+		// do we need to clock the sequencer? use modulus 32 to keep it in the 0-31 range without branching.
+		if ((triangle_length > 0) && (length_counter > 0)) sequencer = (sequencer + 1) % 32;
 	}
 	else timer_counter--;
 }
@@ -173,4 +223,56 @@ void	triangle_generator::quarter_clock() {
 
 byte	triangle_generator::readsample() {
 	return triangle_osc[sequencer];
+}
+
+void	noise_generator::update_timers() {
+	if (timer_counter == 0) {
+		// reset timer period.
+		timer_counter = noise_periods[noise_period];
+		// compute feedback.
+		byte	feedback = noise_shift_reg & 0x01;
+		if (noise_loop) {
+			feedback ^= (noise_shift_reg & 0x40) >> 6;
+		}
+		else {
+			feedback ^= (noise_shift_reg & 0x02) >> 1;
+		}
+		noise_shift_reg >>= 1;
+		noise_shift_reg |= feedback << 14;
+	}
+	else {
+		timer_counter--;
+	}
+}
+
+void	noise_generator::half_clock() {
+	// length counter.
+	if (!envelope_loop && (length_counter > 0)) length_counter--;
+}
+
+void	noise_generator::quarter_clock() {
+	envelopes();
+}
+
+void	noise_generator::envelopes() {
+	if (envelope_reload) {
+		envelope_count = volume_envelope;
+		envelope_out = 0x0F;
+		envelope_reload = false;
+		return;
+	}
+	if (envelope_count > 0) {
+		envelope_count--;
+	}
+	else {
+		envelope_count = volume_envelope;
+		envelope_out = (envelope_out > 0) ? envelope_out - 1 : ((envelope_loop ? 0x0F : envelope_out));
+	}
+}
+
+byte	noise_generator::readsample() {
+	if (!(noise_shift_reg & 0x01)) return 0;
+	if (length_counter == 0) return 0;
+	if (constant_volume) return volume_envelope;
+	return envelope_out;
 }
