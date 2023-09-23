@@ -8,6 +8,7 @@
 #pragma once
 
 #include "..\bus\bus.h"
+#include <vector>
 
 // pulse generators
 #define PULSE_DUTY_CYCLE_LCH_VOLENV			0x00
@@ -37,6 +38,10 @@
 #define APU_STATUS_REGISTER					0x15
 #define APU_FRAME_COUNTER					0x17
 
+// steps
+#define APU_CLK_QUARTER						0x01
+#define APU_CLK_HALF						0x02
+#define APU_FRMCNT_RESET					0x04
 
 // magic tables
 static const byte duty_cycle_osc[] = {
@@ -51,6 +56,14 @@ static const byte triangle_osc[] = {
 static const word noise_periods[] = {
 	0x0004, 0x0008, 0x0010, 0x0020, 0x0040, 0x0060, 0x0080, 0x00A0,
 	0x00CA, 0x00FE, 0x017C, 0x01FC, 0x02FA, 0x03F8, 0x07F2, 0x0FE4
+};
+
+static const word step_four_seq[] = {
+	7457, 0x01, 14913, 0x03, 22371, 0x01, 29829, 0x03, 29830, 0x04
+};
+
+static const word step_five_seq[] = {
+	7457, 0x01, 14913, 0x03, 22371, 0x01, 29829, 0x00, 37281, 0x03, 33254, 0x04
 };
 
 // audio generators.
@@ -137,6 +150,9 @@ private:
 	triangle_generator	triangle;		// triangle generator.
 	noise_generator		noise;			// noise generator.
 
+	float				pulse_muxtable[32];
+	float				tnd_table[204];
+
 	bool				frame_irq, dmc_irq;			// irq
 	bool				five_step_mode;
 	bool				inhibit_irq;
@@ -144,9 +160,22 @@ private:
 	void				half_clock();
 	void				quarter_clock();
 
+	int					framecycle = 0;
+	int					frame_counter = 0;
+
+	int					sample_buffer_counter = 0;
+
+	float				mux(byte p1, byte p2, byte tri, byte noi, byte dmc);
+	void				ready_sample_audio();
+
 public:
 	apu();
 	~apu();
+
+	std::vector<float>		sampleBuffer;		// Muxed Samples are written to it.
+	int						max_sample_buffer = 2;
+	int						sample_rate = 44100;		// sampling rate, default 44100hz
+	
 	byte	read(int addr, int addr_from_base);
 	void	write(int addr, int addr_from_base, byte data);
 	int		rundevice(int ticks);

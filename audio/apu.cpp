@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "apu.h"
+#include <SDL.h>
 
 #include <iostream>
 
@@ -15,10 +16,23 @@ apu::apu() {
 
 	// clocking info.
 	tick_rate = 3;	// make it same as cpu. tick_rate is a divider against tick_rate 1
+
+	// prepare audio mux table.
+	for (int i = 0; i < 32; i++) {
+		pulse_muxtable[i] = 95.52f / (8128.0f / (i + 100));
+	}
+
+	for (int i = 0; i < 204; i++) {
+		tnd_table[i] = 163.67f / (24239.0f / (i + 100));
+	}
 }
 
 apu::~apu() {
 
+}
+
+float	apu::mux(byte p1, byte p2, byte tri, byte noi, byte dmc) {
+	return pulse_muxtable[p1 + p2] + tnd_table[3 * tri + 2 * noi + dmc];
 }
 
 byte	apu::read(int addr, int addr_from_base) {
@@ -113,7 +127,60 @@ void	apu::write(int addr, int addr_from_base, byte data) {
 }
 
 int		apu::rundevice(int ticks) {
+	if (ticks == 0) return 0;
+	while (ticks--) {
+		// run the frame counter.
+		word ctrigger = five_step_mode ? step_five_seq[frame_counter << 1] : step_four_seq[frame_counter << 1];
+		byte cclock = five_step_mode ? (byte)step_five_seq[(frame_counter << 1) | 1] : (byte)step_four_seq[(frame_counter << 1) | 1];
+
+		if (framecycle == ctrigger) {
+			frame_counter++;
+			if (cclock & APU_CLK_QUARTER) {
+				quarter_clock();
+			}
+			if (cclock & APU_CLK_HALF) {
+				half_clock();
+			}
+			if (cclock & APU_FRMCNT_RESET) {
+				framecycle = -1;
+				frame_irq = (!inhibit_irq && !five_step_mode);
+				frame_counter = 0;
+				sample_buffer_counter++;
+				if (sample_buffer_counter == max_sample_buffer) {
+					// do audio trigger and stuff.
+					ready_sample_audio();
+
+					// clear samplebuffer.
+					sampleBuffer.clear();
+
+					// reset counter.
+					sample_buffer_counter = 0;
+				}
+			}
+		}
+
+		// clock the osc's.
+		if (framecycle % 2) pulse[0].update_timers();
+		if (framecycle % 2) pulse[1].update_timers();
+		triangle.update_timers();	// <-- check this.
+		if (framecycle % 2) noise.update_timers();
+		// dmc.update_timers();
+
+		// get sample(s)
+		byte p1 = pulse[0].enabled ? pulse[0].readsample() : 0;
+		byte p2 = pulse[1].enabled ? pulse[1].readsample() : 0;
+		byte tr = triangle.enabled ? triangle.readsample() : 0;
+		byte no = noise.enabled ? noise.readsample() : 0;
+		//byte dm = dmc.enabled ? dmc.readsample() : 0;
+		sampleBuffer.push_back(mux(p1, p2, tr, no, 0));
+
+		framecycle++;
+	}
 	return ticks;
+}
+
+void	apu::ready_sample_audio() {
+
 }
 
 void	apu::half_clock() {
