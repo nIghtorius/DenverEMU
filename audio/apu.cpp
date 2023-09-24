@@ -164,7 +164,7 @@ int		apu::rundevice(int ticks) {
 		word ctrigger = five_step_mode ? step_five_seq[frame_counter << 1] : step_four_seq[frame_counter << 1];
 		byte cclock = five_step_mode ? (byte)step_five_seq[(frame_counter << 1) | 1] : (byte)step_four_seq[(frame_counter << 1) | 1];
 
-		if (framecycle == ctrigger*2) {
+		if (framecycle >= ctrigger*2) {
 			frame_counter++;
 			if (cclock & APU_CLK_QUARTER) {
 				quarter_clock();

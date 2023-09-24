@@ -43,6 +43,9 @@
     <Filter Include="Source Files\emulation\audio">
       <UniqueIdentifier>{bab6d04a-3d5b-415a-9809-2100737101b0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\emulation\bus\cart">
+      <UniqueIdentifier>{328fb934-cfb6-44fb-995e-2fb9f4ff2ab4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -87,6 +90,9 @@
     <ClInclude Include="audio\audio.h">
       <Filter>Source Files\emulation\audio</Filter>
     </ClInclude>
+    <ClInclude Include="bus\cart\cart.h">
+      <Filter>Source Files\emulation\bus\cart</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -130,6 +136,9 @@
     </ClCompile>
     <ClCompile Include="audio\audio.cpp">
       <Filter>Source Files\emulation\audio</Filter>
+    </ClCompile>
+    <ClCompile Include="bus\cart\cart.cpp">
+      <Filter>Source Files\emulation\bus\cart</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

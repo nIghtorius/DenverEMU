@@ -67,7 +67,8 @@ void	bus::emulate_bus_conflicts(bool enable) {
 }
 
 void	bus::registerdevice(bus_device *device) {
-	devices.push_back(device);
+	if (device != NULL)
+		devices.push_back(device);
 }
 
 void	bus::removedevice_select_base(int baseaddr) {

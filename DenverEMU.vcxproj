@@ -171,6 +171,7 @@
     <ClInclude Include="audio\apu.h" />
     <ClInclude Include="audio\audio.h" />
     <ClInclude Include="bus\bus.h" />
+    <ClInclude Include="bus\cart\cart.h" />
     <ClInclude Include="bus\debug\debug6k.h" />
     <ClInclude Include="bus\ram\mainram.h" />
     <ClInclude Include="bus\rom\mappers\mapper_001.h" />
@@ -187,6 +188,7 @@
     <ClCompile Include="audio\apu.cpp" />
     <ClCompile Include="audio\audio.cpp" />
     <ClCompile Include="bus\bus.cpp" />
+    <ClCompile Include="bus\cart\cart.cpp" />
     <ClCompile Include="bus\debug\debug6k.cpp" />
     <ClCompile Include="bus\ram\mainram.cpp" />
     <ClCompile Include="bus\rom\mappers\mapper_001.cpp" />

@@ -465,7 +465,7 @@ void	ppu::set_char_rom(bus_device *vdata) {
 	// first remove any linked rom/rams!
 	// it is destructive.
 	vbus.removedevice_select_base(0x0000);
-	// reregister
+	// reregister	
 	vbus.registerdevice(vdata);
 }
 
