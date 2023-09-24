@@ -1,0 +1,107 @@
+#include "stdafx.h"
+#include "audio.h"
+#include <vector>
+#include <SDL.h>
+#include <iostream>	
+
+audio_player::audio_player() {
+	// setup audio (SDL)
+	SDL_AudioSpec desired;
+	desired.samples = MAX_BUFFER_AUDIO; // int16 is 2 bytes.
+	desired.channels = 1;
+	desired.format = AUDIO_S16;
+	desired.freq = 44100;
+	desired.silence = 0;
+	desired.callback = audio_player::sdl_aud_callback;
+	desired.userdata = this;
+
+	aud = SDL_OpenAudioDevice(NULL, 0, &desired, NULL, NULL);
+
+	SDL_PauseAudioDevice(aud, 0);
+}
+
+void	audio_player::sdl_aud_callback(void * const data, unsigned __int8* const stream, const int len)
+{
+	// get *audio_player* object from data.
+	const auto aud_player_callback = reinterpret_cast<audio_player*>(data);
+
+	// check buffer is full enough, otherwise mute.
+	SDL_memset(stream, 0, len);
+
+	if (aud_player_callback->samples_in_buffer < MAX_BUFFER_AUDIO) {
+		return;
+	}
+
+	// copy data to stream.
+	memcpy(stream, (void *)&aud_player_callback->buffer[0], len);
+
+	// shift buffers
+	__int16 buf2[MAX_BUFFER_AUDIO * 4];	
+	memcpy(&buf2[0], (void *)&aud_player_callback->buffer[MAX_BUFFER_AUDIO], (aud_player_callback->samples_in_buffer - MAX_BUFFER_AUDIO) * 2);
+	memcpy((void *)&aud_player_callback->buffer[0], &buf2[0], (aud_player_callback->samples_in_buffer - MAX_BUFFER_AUDIO) * 2);
+
+	// drop length.
+	aud_player_callback->samples_in_buffer -= MAX_BUFFER_AUDIO;
+}
+
+audio_player::~audio_player() {
+	SDL_CloseAudioDevice(aud);
+}
+
+void	audio_player::register_audible_device(audio_device *dev) {
+	audibles.push_back(dev);
+}
+
+void	audio_player::play_audio() {
+	// test if devices are registered, when no. No need to play as there is none.
+	if (audibles.size() == 0) return;
+	// test if audio frame is ready. test only first device they should become ready together.
+	if (!audibles[0]->audio_frame_ready) return;
+
+	// everything is ready. let's mux everything together.
+	final_mux.clear();
+
+	for (int i = 0; i < audibles[0]->sample_buffer.size(); i++) {
+		float input = 0.0f;
+		for (auto audible : audibles) {
+			input += audible->sample_buffer[i];
+		}
+		input /= audibles.size();
+		final_mux.push_back(input);
+	}
+	
+	for (auto audible : audibles) {
+		audible->sample_buffer.clear();
+		audible->audio_frame_ready = false;
+	}
+
+	send_sampledata_to_audio_device();
+}
+
+void	audio_player::send_sampledata_to_audio_device() {
+	float samples_to_target = 1789777 / (float)sample_rate;
+	// supersampling. final version with lowpass.
+	float	samples = 0;
+	int		outsamples = 0;
+	int sib_bk = samples_in_buffer;
+
+	while (samples < final_mux.size()) {
+		float sample = 0;
+		if (samples + samples_to_target > final_mux.size()) samples_to_target = final_mux.size() - samples;
+		for (int i = (int)trunc(samples); i < -1 + (int)trunc(samples + samples_to_target); i++) {
+			sample += 0.1f * (final_mux[i] - sample);
+		}
+		buffer[samples_in_buffer + outsamples] = -16384 + (int)trunc(sample * 32768);
+		samples += samples_to_target;
+		outsamples++;
+	}
+	outsamples--;
+
+	// buffer has the data and outsamples has the number of samples.
+	samples_in_buffer += outsamples;
+
+	// flush buffer.
+	while (samples_in_buffer > MAX_BUFFER_AUDIO) {
+		SDL_Delay(1);
+	}
+}

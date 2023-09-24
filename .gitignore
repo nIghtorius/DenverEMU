@@ -1,4 +1,5 @@
 *.nes
+*.raw
 Debug\*
 Release\*
 x64\*

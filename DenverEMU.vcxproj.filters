@@ -84,6 +84,9 @@
     <ClInclude Include="video\ppu.h">
       <Filter>Source Files\emulation\video</Filter>
     </ClInclude>
+    <ClInclude Include="audio\audio.h">
+      <Filter>Source Files\emulation\audio</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -124,6 +127,9 @@
     </ClCompile>
     <ClCompile Include="video\nesvideo.cpp">
       <Filter>Source Files\emulation\video</Filter>
+    </ClCompile>
+    <ClCompile Include="audio\audio.cpp">
+      <Filter>Source Files\emulation\audio</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

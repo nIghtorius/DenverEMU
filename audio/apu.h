@@ -14,6 +14,7 @@
 #pragma once
 
 #include "..\bus\bus.h"
+#include "audio.h"
 #include <vector>
 #include <fstream>
 
@@ -96,7 +97,7 @@ public:
 	byte	volume_envelope;
 	word	timer;
 	word	timer_counter;	// counts to 0 and resets to .timer
-	byte	length_counter;
+	word	length_counter;
 	bool	sweep_enable;
 	byte	sweep_divider;
 	byte	sweep_div_count;
@@ -122,7 +123,7 @@ public:
 	bool	enabled;
 
 	bool	triangle_length_loop;
-	byte	length_counter;	
+	word	length_counter;	
 	byte	triangle_length;
 	byte	triangle_length_counter;
 	bool	triangle_counter_reload;
@@ -149,7 +150,7 @@ public:
 	byte	envelope_count;
 	bool	noise_loop;
 	byte	noise_period;
-	byte	length_counter;
+	word	length_counter;
 	word	timer_counter;
 	word	noise_shift_reg = 0x01;
 	// functions
@@ -189,7 +190,7 @@ public:
 };
 
 // classes
-class apu : public bus_device {
+class apu : public audio_device {
 private:
 	pulse_generator		pulse[2];		// pulse generators.
 	triangle_generator	triangle;		// triangle generator.
@@ -212,20 +213,11 @@ private:
 	int					sample_buffer_counter = 0;
 
 	float				mux(byte p1, byte p2, byte tri, byte noi, byte dmc);
-	void				ready_sample_audio();
-
-	__int16					buffer[4096];
-
-	std::ofstream		debugfile;
 
 public:
 	apu();
 	~apu();
 
-	std::vector<float>		sampleBuffer;		// Muxed Samples are written to it.
-	int						max_sample_buffer = 4;
-	int						sample_rate = 44100;		// sampling rate, default 44100hz
-	
 	byte	read(int addr, int addr_from_base);
 	void	write(int addr, int addr_from_base, byte data);
 	int		rundevice(int ticks);

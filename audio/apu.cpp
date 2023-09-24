@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "apu.h"
-#include <SDL.h>
 #include <iostream>
 
 apu::apu() {
@@ -28,7 +27,7 @@ apu::apu() {
 	}
 
 	// some debug code.
-	debugfile.open ("apudata.raw", std::ios::binary | std::ios::out);
+	//debugfile.open ("apudata.raw", std::ios::binary | std::ios::out);
 }
 
 apu::~apu() {
@@ -165,7 +164,7 @@ int		apu::rundevice(int ticks) {
 		word ctrigger = five_step_mode ? step_five_seq[frame_counter << 1] : step_four_seq[frame_counter << 1];
 		byte cclock = five_step_mode ? (byte)step_five_seq[(frame_counter << 1) | 1] : (byte)step_four_seq[(frame_counter << 1) | 1];
 
-		if (framecycle == ctrigger) {
+		if (framecycle == ctrigger*2) {
 			frame_counter++;
 			if (cclock & APU_CLK_QUARTER) {
 				quarter_clock();
@@ -180,10 +179,13 @@ int		apu::rundevice(int ticks) {
 				sample_buffer_counter++;
 				if (sample_buffer_counter == max_sample_buffer) {
 					// do audio trigger and stuff.
-					ready_sample_audio();
+					//ready_sample_audio();
+
+					// tell audio_player when sample data is ready to go.
+					audio_frame_ready = true;	// will be reset to false when picked up.
 
 					// clear samplebuffer.
-					sampleBuffer.clear();
+					//sample_buffer.clear();
 
 					// reset counter.
 					sample_buffer_counter = 0;
@@ -205,7 +207,7 @@ int		apu::rundevice(int ticks) {
 		byte no = noise.enabled ? noise.readsample() : 0;
 		byte dm = dmc.enabled ? dmc.readsample() : 0;
 
-		sampleBuffer.push_back(mux(p1, p2, tr, no, dm));
+		sample_buffer.push_back(mux(p1, p2, tr, no, dm));
 
 		framecycle++;
 
@@ -218,27 +220,6 @@ int		apu::rundevice(int ticks) {
 void	apu::attach_to_memory_bus(bus *mbus)
 {
 	dmc.mainbus = mbus;
-}
-
-void	apu::ready_sample_audio() {
-	float samples_to_target = 1789777 / (float)sample_rate;
-	// supersampling. final version with lowpass.
-	float	samples = 0;
-	int		outsamples = 0;
-
-	while (samples < sampleBuffer.size()) {
-		float sample = 0;
-		if (samples + samples_to_target > sampleBuffer.size()) samples_to_target = sampleBuffer.size() - samples;
-		for (int i = (int)trunc(samples); i < -1 + (int)trunc(samples + samples_to_target); i++) {
-			sample += 0.1f * (sampleBuffer[i] - sample);
-		}
-		buffer[outsamples] = -16384 + (int)trunc(sample * 32768);
-		samples += samples_to_target;
-		outsamples++;
-	}
-
-	outsamples--;
-	debugfile.write((char *)&buffer, sizeof(__int16)*outsamples);
 }
 
 void	apu::half_clock() {
@@ -325,7 +306,7 @@ void	triangle_generator::update_timers() {
 	if (timer_counter == 0) {
 		timer_counter = timer;
 		// do we need to clock the sequencer? use modulus 32 to keep it in the 0-31 range without branching.
-		if ((triangle_length > 0) && (length_counter > 0) && (timer >= 3)) sequencer = (sequencer + 1) % 32;
+		if ((triangle_length_counter > 0) && (length_counter > 0) && (timer >= 3)) sequencer = (sequencer + 1) % 32;
 	}
 	else timer_counter--;
 }
