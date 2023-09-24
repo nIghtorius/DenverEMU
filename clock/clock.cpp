@@ -100,15 +100,31 @@ void fastclock::step() {
 			this->cpudevice->rundevice(1);
 		}
 		this->ppudevice->rundevice(1536);
+		this->apudevice->rundevice(512);
 	}
 	int actualcputicks = this->cpudevice->rundevice(1);	
 	if (this->ppudevice != NULL) this->ppudevice->rundevice(actualcputicks);
-	if (this->apudevice != NULL) this->apudevice->rundevice(actualcputicks);
+	if (this->apudevice != NULL) this->apudevice->rundevice(actualcputicks/3);
 }
 
 void fastclock::run() {
 	// make it all run.
 	while (1) {
-		step();
+		//  run cpu 1 step.
+		byte dmabyte;
+		if (this->cpudevice == NULL) return;
+		if (this->cpudevice->in_dma_mode) {
+			while (this->cpudevice->in_dma_mode) {
+				this->cpudevice->dma(&dmabyte, false, false);
+				this->ppudevice->dma(&dmabyte, true, cpudevice->dma_start);
+				cpudevice->dma_start = false;
+				this->cpudevice->rundevice(1);
+			}
+			this->ppudevice->rundevice(1536);
+			this->apudevice->rundevice(512);
+		}
+		int actualcputicks = this->cpudevice->rundevice(1);
+		if (this->ppudevice != NULL) this->ppudevice->rundevice(actualcputicks);
+		if (this->apudevice != NULL) this->apudevice->rundevice(actualcputicks/3);
 	}
 }

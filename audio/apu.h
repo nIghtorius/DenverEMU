@@ -3,12 +3,19 @@
 	NES APU (Audio Processing Unit)
 	(c) 2023 P. Santing
 
+
+	ToDo:
+
+		Move mixing code out of the APU and make a seperate module.
+		This is required because of expansion audio such as VRC6/VRC7/Namco/MMC5 etc.
+
 */
 
 #pragma once
 
 #include "..\bus\bus.h"
 #include <vector>
+#include <fstream>
 
 // pulse generators
 #define PULSE_DUTY_CYCLE_LCH_VOLENV			0x00
@@ -30,7 +37,7 @@
 
 // DMC
 #define DMC_IRQ_LOOP_FREQ					0x10
-#define DMC_LOAD_COUNTER					0x11
+#define DMC_DLOAD							0x11
 #define DMC_SAMPLE_ADDR						0x12
 #define DMC_SAMPLE_LENGTH					0x13
 
@@ -59,11 +66,21 @@ static const word noise_periods[] = {
 };
 
 static const word step_four_seq[] = {
-	7457, 0x01, 14913, 0x03, 22371, 0x01, 29829, 0x03, 29830, 0x04
+	3728, 0x01, 7096, 0x03, 11185, 0x01, 14914, 0x03, 14915, 0x04
 };
 
 static const word step_five_seq[] = {
-	7457, 0x01, 14913, 0x03, 22371, 0x01, 29829, 0x00, 37281, 0x03, 33254, 0x04
+	3728, 0x01, 7096, 0x03, 11185, 0x01, 14914, 0x00, 18640, 0x03, 18641, 0x04
+};
+
+static const byte apu_length_table[] = {
+	10, 254, 20, 2, 40, 4, 80, 6, 160, 8, 60, 10, 12, 26, 14,
+	12, 16, 24, 18, 48, 20, 96, 22, 192, 24, 72, 26, 16, 18, 32, 30
+};
+
+static const word dmc_table[] = {
+	0x01AC, 0x017C, 0x0154, 0x0140, 0x011E, 0x00FE, 0x00E2, 0x00D6, 
+	0x00BE, 0x00A0, 0x008E, 0x0080, 0x006A, 0x0054,	0x0048, 0x0036
 };
 
 // audio generators.
@@ -104,7 +121,7 @@ public:
 	// values
 	bool	enabled;
 
-	bool	triangle_loop;
+	bool	triangle_length_loop;
 	byte	length_counter;	
 	byte	triangle_length;
 	byte	triangle_length_counter;
@@ -143,17 +160,46 @@ public:
 	byte	readsample();
 };
 
+class dmc_generator {
+public:
+	// values
+	bool	enabled;
+
+	bool	irq_enable;
+	bool	irq_asserted = false;
+	bool	dmc_loop;
+	word	rate;
+	byte	direct_out;
+	word	sample_addr;
+	word	sample_addr_counter;
+	word	sample_length_load;
+	word	sample_length;
+	word	count;
+	byte	sample_buffer;
+	bool	sample_buffer_ready;
+	bool	silent;
+	byte	sample_shift_register;
+	byte	bits_in_sample_remaining;
+
+	bus					*mainbus;
+
+	// functions
+	byte	readsample();
+	void	update_timers();
+};
+
 // classes
 class apu : public bus_device {
 private:
 	pulse_generator		pulse[2];		// pulse generators.
 	triangle_generator	triangle;		// triangle generator.
 	noise_generator		noise;			// noise generator.
+	dmc_generator		dmc;
 
 	float				pulse_muxtable[32];
 	float				tnd_table[204];
 
-	bool				frame_irq, dmc_irq;			// irq
+	bool				frame_irq_asserted; // irq
 	bool				five_step_mode;
 	bool				inhibit_irq;
 
@@ -168,15 +214,20 @@ private:
 	float				mux(byte p1, byte p2, byte tri, byte noi, byte dmc);
 	void				ready_sample_audio();
 
+	__int16					buffer[4096];
+
+	std::ofstream		debugfile;
+
 public:
 	apu();
 	~apu();
 
 	std::vector<float>		sampleBuffer;		// Muxed Samples are written to it.
-	int						max_sample_buffer = 2;
+	int						max_sample_buffer = 4;
 	int						sample_rate = 44100;		// sampling rate, default 44100hz
 	
 	byte	read(int addr, int addr_from_base);
 	void	write(int addr, int addr_from_base, byte data);
 	int		rundevice(int ticks);
+	void	attach_to_memory_bus(bus *mbus);
 };

@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "apu.h"
 #include <SDL.h>
-
 #include <iostream>
 
 apu::apu() {
@@ -17,14 +16,19 @@ apu::apu() {
 	// clocking info.
 	tick_rate = 3;	// make it same as cpu. tick_rate is a divider against tick_rate 1
 
+	float maxnum = 0.0f;
+
 	// prepare audio mux table.
 	for (int i = 0; i < 32; i++) {
-		pulse_muxtable[i] = 95.52f / (8128.0f / (i + 100));
+		pulse_muxtable[i] = -1.175196850393701f + (95.52f / (8128.0f / (i + 100)));
 	}
 
 	for (int i = 0; i < 204; i++) {
-		tnd_table[i] = 163.67f / (24239.0f / (i + 100));
+		tnd_table[i] = -0.6752341268204134f + (163.67f / (24239.0f / (i + 100)));
 	}
+
+	// some debug code.
+	debugfile.open ("apudata.raw", std::ios::binary | std::ios::out);
 }
 
 apu::~apu() {
@@ -38,13 +42,13 @@ float	apu::mux(byte p1, byte p2, byte tri, byte noi, byte dmc) {
 byte	apu::read(int addr, int addr_from_base) {
 	switch (addr_from_base) {
 	case APU_STATUS_REGISTER:
-		byte result = (dmc_irq ? 0x80 : 0) |
-			(frame_irq ? 0x40 : 0) |
+		byte result = (dmc.irq_asserted ? 0x80 : 0) |
+			(frame_irq_asserted ? 0x40 : 0) |
 			(pulse[0].length_counter ? 0x01 : 0) |
 			(pulse[1].length_counter ? 0x02 : 0) |
 			(triangle.length_counter ? 0x04 : 0) |
 			(noise.length_counter ? 0x08 : 0);
-		frame_irq = false;
+		frame_irq_asserted = false;
 		return result;
 		break;
 	}
@@ -76,7 +80,7 @@ void	apu::write(int addr, int addr_from_base, byte data) {
 			break;
 		case PULSE_LCL_TIMER:
 			pulse[pulse_sel].timer = (pulse[pulse_sel].timer & 0x00FF) | ((data & 0x07) << 8);
-			pulse[pulse_sel].length_counter = (data & 0xF8) >> 3;
+			pulse[pulse_sel].length_counter = apu_length_table[(data & 0xF8) >> 3];
 			pulse[pulse_sel].duty_pos = 0; // restart sequencer.
 			pulse[pulse_sel].envelope_reload = true; // restart envelope
 			break;
@@ -84,7 +88,7 @@ void	apu::write(int addr, int addr_from_base, byte data) {
 	}
 	switch (addr_from_base) {
 	case TRIANGLE_LC_SETUP:
-		triangle.triangle_loop = (data & 0x80) > 0;
+		triangle.triangle_length_loop = (data & 0x80) > 0;
 		triangle.triangle_length = data & 0x7F;
 		break;
 	case TRIANGLE_TIMER:
@@ -92,37 +96,65 @@ void	apu::write(int addr, int addr_from_base, byte data) {
 		break;
 	case TRIANGLE_LCL_TIMER:
 		triangle.timer = (triangle.timer & 0x00FF) | ((data & 0x07) << 8);
-		triangle.length_counter = (data & 0xF8) >> 3;
+		triangle.length_counter = apu_length_table[(data & 0xF8) >> 3];
 		triangle.triangle_counter_reload = true;
 		break;
 	case NOISE_LCH_VOLENV:
 		noise.envelope_loop = (data & 0x20) > 0;
 		noise.constant_volume = (data & 0x10) > 0;
 		noise.volume_envelope = (data & 0x0F);
-		noise.envelope_reload = true;
 		break;
 	case NOISE_LOOP_PERIOD:
 		noise.noise_loop = (data & 0x80) > 0;
 		noise.noise_period = (data & 0x0F);
 		break;
 	case NOISE_LENGTH_COUNTER:
-		noise.length_counter = (data & 0xF1) >> 3;
-		break;		
+		noise.length_counter = apu_length_table[(data & 0xF8) >> 3];
+		noise.envelope_reload = true;
+		break;
+	case DMC_IRQ_LOOP_FREQ:
+		dmc.irq_enable = (data & 0x80) > 0;
+		dmc.dmc_loop = (data & 0x40) > 0;
+		dmc.rate = dmc_table[(data & 0x0F)];
+		if (!dmc.irq_enable) dmc.irq_asserted = false;
+		dmc.count = 1;
+		break;
+	case DMC_DLOAD:
+		dmc.direct_out = (data & 0x7F);
+		break;
+	case DMC_SAMPLE_ADDR:
+		dmc.sample_addr = 0xC000 + (data << 6);
+		dmc.sample_addr_counter = dmc.sample_addr;
+		dmc.sample_buffer_ready = false;
+		break;
+	case DMC_SAMPLE_LENGTH:
+		dmc.sample_length_load = (data << 4) | 1;
+		if (dmc.sample_length == 0) dmc.sample_length = dmc.sample_length_load;
+		break;
 	case APU_STATUS_REGISTER:
 		pulse[0].enabled =	(data & 0x01) > 0;
 		pulse[1].enabled =	(data & 0x02) > 0;
 		triangle.enabled =	(data & 0x04) > 0;
 		noise.enabled = (data & 0x08) > 0;
-		//dmc.enabled = (data & 0x10) > 0;
+		dmc.enabled = (data & 0x10) > 0;
+		if (!dmc.enabled) {
+			dmc.sample_length = 0;
+			dmc.count = 1;
+		}
+		else {
+			if (dmc.sample_length == 0) dmc.sample_length = dmc.sample_length_load;
+		}
+		dmc.irq_asserted = false;
 		break;
 	case APU_FRAME_COUNTER:
 		five_step_mode = (data & 0x80) > 0;
 		inhibit_irq = (data & 0x40) > 0;
-		if (inhibit_irq) frame_irq = false;
+		if (inhibit_irq) frame_irq_asserted = false;
 		if (five_step_mode) {
 			half_clock();
 			quarter_clock();
 		}
+		break;
 	}
 }
 
@@ -143,7 +175,7 @@ int		apu::rundevice(int ticks) {
 			}
 			if (cclock & APU_FRMCNT_RESET) {
 				framecycle = -1;
-				frame_irq = (!inhibit_irq && !five_step_mode);
+				frame_irq_asserted = (!inhibit_irq && !five_step_mode);
 				frame_counter = 0;
 				sample_buffer_counter++;
 				if (sample_buffer_counter == max_sample_buffer) {
@@ -162,25 +194,51 @@ int		apu::rundevice(int ticks) {
 		// clock the osc's.
 		if (framecycle % 2) pulse[0].update_timers();
 		if (framecycle % 2) pulse[1].update_timers();
-		triangle.update_timers();	// <-- check this.
+		triangle.update_timers();	// full speed clock.
 		if (framecycle % 2) noise.update_timers();
-		// dmc.update_timers();
+		dmc.update_timers();		// full speed clock.
 
 		// get sample(s)
 		byte p1 = pulse[0].enabled ? pulse[0].readsample() : 0;
 		byte p2 = pulse[1].enabled ? pulse[1].readsample() : 0;
 		byte tr = triangle.enabled ? triangle.readsample() : 0;
 		byte no = noise.enabled ? noise.readsample() : 0;
-		//byte dm = dmc.enabled ? dmc.readsample() : 0;
-		sampleBuffer.push_back(mux(p1, p2, tr, no, 0));
+		byte dm = dmc.enabled ? dmc.readsample() : 0;
+
+		sampleBuffer.push_back(mux(p1, p2, tr, no, dm));
 
 		framecycle++;
+
+		// check interrupts.
+		this->irq_enable = frame_irq_asserted || dmc.irq_asserted;
 	}
 	return ticks;
 }
 
-void	apu::ready_sample_audio() {
+void	apu::attach_to_memory_bus(bus *mbus)
+{
+	dmc.mainbus = mbus;
+}
 
+void	apu::ready_sample_audio() {
+	float samples_to_target = 1789777 / (float)sample_rate;
+	// supersampling. final version with lowpass.
+	float	samples = 0;
+	int		outsamples = 0;
+
+	while (samples < sampleBuffer.size()) {
+		float sample = 0;
+		if (samples + samples_to_target > sampleBuffer.size()) samples_to_target = sampleBuffer.size() - samples;
+		for (int i = (int)trunc(samples); i < -1 + (int)trunc(samples + samples_to_target); i++) {
+			sample += 0.1f * (sampleBuffer[i] - sample);
+		}
+		buffer[outsamples] = -16384 + (int)trunc(sample * 32768);
+		samples += samples_to_target;
+		outsamples++;
+	}
+
+	outsamples--;
+	debugfile.write((char *)&buffer, sizeof(__int16)*outsamples);
 }
 
 void	apu::half_clock() {
@@ -267,14 +325,14 @@ void	triangle_generator::update_timers() {
 	if (timer_counter == 0) {
 		timer_counter = timer;
 		// do we need to clock the sequencer? use modulus 32 to keep it in the 0-31 range without branching.
-		if ((triangle_length > 0) && (length_counter > 0)) sequencer = (sequencer + 1) % 32;
+		if ((triangle_length > 0) && (length_counter > 0) && (timer >= 3)) sequencer = (sequencer + 1) % 32;
 	}
 	else timer_counter--;
 }
 
 void	triangle_generator::half_clock() {
 	// length counter.
-	if (!triangle_loop && (length_counter > 0)) length_counter--;
+	if (!triangle_length_loop && (length_counter > 0)) length_counter--;
 }
 
 void	triangle_generator::quarter_clock() {
@@ -283,9 +341,9 @@ void	triangle_generator::quarter_clock() {
 		triangle_length_counter = triangle_length;
 	}
 	else {
-		triangle_length_counter--;
+		triangle_length_counter = (triangle_length_counter > 0) ? triangle_length_counter - 1 : 0;
 	}
-	if (!triangle_loop) triangle_counter_reload = false;
+	if (!triangle_length_loop) triangle_counter_reload = false;
 }
 
 byte	triangle_generator::readsample() {
@@ -297,15 +355,14 @@ void	noise_generator::update_timers() {
 		// reset timer period.
 		timer_counter = noise_periods[noise_period];
 		// compute feedback.
-		byte	feedback = noise_shift_reg & 0x01;
+		word	feedback = noise_shift_reg & 0x01;
 		if (noise_loop) {
 			feedback ^= (noise_shift_reg & 0x40) >> 6;
 		}
 		else {
 			feedback ^= (noise_shift_reg & 0x02) >> 1;
 		}
-		noise_shift_reg >>= 1;
-		noise_shift_reg |= feedback << 14;
+		noise_shift_reg = (feedback << 14) | ((noise_shift_reg >> 1) & 0x7FFF);
 	}
 	else {
 		timer_counter--;
@@ -342,4 +399,56 @@ byte	noise_generator::readsample() {
 	if (length_counter == 0) return 0;
 	if (constant_volume) return volume_envelope;
 	return envelope_out;
+}
+
+byte	dmc_generator::readsample() {
+	return direct_out;
+}
+
+void	dmc_generator::update_timers() {
+	count--;
+	if (count < 2) {
+		count = rate;
+		if ((bits_in_sample_remaining > 0) & !silent) {
+			if (sample_shift_register & 0x01) {
+				if (direct_out <= 127) direct_out += 2;
+			}
+			else {
+				if (direct_out >= 2) direct_out -= 2;
+			}
+			sample_shift_register >>= 1;
+			bits_in_sample_remaining--;
+		}
+		if ((bits_in_sample_remaining == 0) || silent) {
+			bits_in_sample_remaining = 8;
+			if (!sample_buffer_ready) {
+				silent = true;
+			}
+			else {
+				silent = false;
+				sample_shift_register = sample_buffer;
+				sample_buffer_ready = false;
+			}
+		}
+	}
+
+	// get sample.
+	if (!sample_buffer_ready) {
+		if (sample_length > 0) {
+			sample_buffer = mainbus->readmemory(sample_addr_counter);
+			sample_buffer_ready = true;
+			sample_addr_counter = (sample_addr_counter == 0xFFFF) ? 0x8000 : sample_addr_counter + 1;
+			sample_length--;
+			if (sample_length == 0) {
+				if (dmc_loop) {
+					sample_length = sample_length_load;
+					sample_addr_counter = sample_addr;
+				}
+				else {
+					if (irq_enable) irq_asserted = true;
+					return;
+				}
+			}
+		}
+	}
 }
