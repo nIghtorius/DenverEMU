@@ -8,13 +8,14 @@
 
 #pragma once
 
-#include "..\bus.h"
-#include "..\..\video\ppu.h"
+#include "../bus.h"
+#include "../../video/ppu.h"
+#include <cstdint>
 
 // mappers.
-#include "..\rom\rom.h"
-#include "..\rom\mappers\mapper_001.h"
-#include "..\rom\mappers\mapper_002.h"
+#include "../rom/rom.h"
+#include "../rom/mappers/mapper_001.h"
+#include "../rom/mappers/mapper_002.h"
 
 // end of mappers.
 
@@ -40,7 +41,7 @@
 
 #pragma pack (push, 1)
 struct nes_header_raw {
-	unsigned __int32	header_signature;
+	std::uint32_t		header_signature;
 	byte				program_blocks;
 	byte				char_blocks;	 // 0 = RAM
 	byte				flags1;

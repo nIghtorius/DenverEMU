@@ -14,7 +14,7 @@
 
 #pragma once
 
-#include "..\bus.h"
+#include "../bus.h"
 class vrom : public bus_device {
 private:
 public:

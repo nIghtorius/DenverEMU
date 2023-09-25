@@ -21,7 +21,7 @@
 
 #pragma once
 
-#include "..\rom.h"		// also includes the basic 8kB vram class.
+#include "../rom.h"		// also includes the basic 8kB vram class.
 
 class uxrom : public rom {
 private:

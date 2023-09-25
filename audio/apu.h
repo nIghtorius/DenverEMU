@@ -13,7 +13,7 @@
 
 #pragma once
 
-#include "..\bus\bus.h"
+#include "../bus/bus.h"
 #include "audio.h"
 #include <vector>
 #include <fstream>

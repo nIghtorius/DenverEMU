@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "mapper_001.h"
 
 #include <iostream>

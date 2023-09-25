@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "ppu.h"
 #include <malloc.h>
 #include <iostream>

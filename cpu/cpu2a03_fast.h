@@ -5,7 +5,7 @@
 
 */
 #pragma once
-#include "..\bus\bus.h"
+#include "../bus/bus.h"
 
 // memory handling MACROs
 #define	_mem_immediate		regs.pc

@@ -6,6 +6,7 @@
 #pragma once
 
 #include <vector>
+#include <cstdint>
 
 #define		MAX_DESCRIPTOR_LENGTH	128
 #define		BUS_OPEN_BUS			0xF0
@@ -20,8 +21,8 @@
 	the adresses can also be also masked (recommended to do so for example: mirroring)
 */
 
-typedef	unsigned __int16 word;
-typedef unsigned __int8  byte;
+typedef	std::uint16_t word;
+typedef std::uint8_t  byte;
 
 struct buslayout {
 	char pins[16];

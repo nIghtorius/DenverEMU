@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "audio.h"
 #include <vector>
 #include <SDL.h>
@@ -20,7 +19,7 @@ audio_player::audio_player() {
 	SDL_PauseAudioDevice(aud, 0);
 }
 
-void	audio_player::sdl_aud_callback(void * const data, unsigned __int8* const stream, const int len)
+void	audio_player::sdl_aud_callback(void * const data, std::uint8_t* const stream, const int len)
 {
 	// get *audio_player* object from data.
 	const auto aud_player_callback = reinterpret_cast<audio_player*>(data);
@@ -36,7 +35,7 @@ void	audio_player::sdl_aud_callback(void * const data, unsigned __int8* const st
 	memcpy(stream, (void *)&aud_player_callback->buffer[0], len);
 
 	// shift buffers
-	__int16 buf2[MAX_BUFFER_AUDIO * 4];	
+	std::int16_t buf2[MAX_BUFFER_AUDIO * 4];	
 	memcpy(&buf2[0], (void *)&aud_player_callback->buffer[MAX_BUFFER_AUDIO], (aud_player_callback->samples_in_buffer - MAX_BUFFER_AUDIO) * 2);
 	memcpy((void *)&aud_player_callback->buffer[0], &buf2[0], (aud_player_callback->samples_in_buffer - MAX_BUFFER_AUDIO) * 2);
 

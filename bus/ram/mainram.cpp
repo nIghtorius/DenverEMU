@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "mainram.h"
 #include <malloc.h>
 #include <iostream>

@@ -1,7 +1,6 @@
-#include "stdafx.h"
 #include "cpu2a03_fast.h"
 #include <iostream>
-#include <intrin.h>
+#include <cstdint>
 
 cpu2a03_fast::cpu2a03_fast() {
 	// initialize cpu.
@@ -1762,7 +1761,6 @@ void cpu2a03_fast::write(int addr, int addr_from_base, byte data) {
 }
 
 void cpu2a03_fast::dma(byte *data, bool is_output, bool started) {
-	if ((dma_cycle > 0) && (dma_cycle < 0x100) && (dma_count == 0xFF)) __debugbreak();
 	if (!is_output) {
 		//std::cout << "dma(" << std::dec << (int)dma_count << ") -- addr: " << std::hex << "0x" << (int)(dma_high << 8 | (255 - dma_count)); 
 		*data = mbus->readmemory(dma_high << 8 | (255 - dma_count));

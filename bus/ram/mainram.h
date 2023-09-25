@@ -4,7 +4,7 @@
 */
 
 #pragma once
-#include "..\..\bus\bus.h"
+#include "../../bus/bus.h"
 class mainram :	public bus_device
 {
 	byte *ram;

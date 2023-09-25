@@ -21,7 +21,7 @@
 
 #pragma once
 
-#include "..\rom.h"		// also includes the basic 8kB vram class.
+#include "../rom.h"		// also includes the basic 8kB vram class.
 
 #define	MMC1_CONTROL					0x00
 #define MMC1_CHRBANK0					0x01

@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include <malloc.h>
 #include <string.h>
 #include "bus.h"

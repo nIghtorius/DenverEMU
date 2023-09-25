@@ -17,7 +17,7 @@
 #pragma once
 
 #include <vector>
-#include "..\bus\bus.h"
+#include "../bus/bus.h"
 #include <fstream>
 #include <SDL.h>
 
@@ -37,9 +37,9 @@ private:
 	std::vector<audio_device *>	audibles;
 	std::vector<float> final_mux;
 	SDL_AudioDeviceID aud;
-	__int16		buffer[MAX_BUFFER_AUDIO * 4];	// 4 times the "requirement"
+	std::int16_t buffer[MAX_BUFFER_AUDIO * 4];	// 4 times the "requirement"
 	void	send_sampledata_to_audio_device();
-	static void sdl_aud_callback(void * const data, unsigned __int8 * const stream, const int len);
+	static void sdl_aud_callback(void * const data, std::uint8_t * const stream, const int len);
 public:
 	int		sample_rate = SAMPLE_RATE;
 	int		samples_in_buffer = 0;

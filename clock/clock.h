@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "..\bus\bus.h"
+#include "../bus/bus.h"
 #include <vector>
 
 class clock

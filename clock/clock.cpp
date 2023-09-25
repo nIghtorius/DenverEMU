@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "clock.h"
 #include <iostream>
 

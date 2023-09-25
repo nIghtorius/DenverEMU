@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "mapper_002.h"
 
 // implementation of UxROM (mapper_002.h)

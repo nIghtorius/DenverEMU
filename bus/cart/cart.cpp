@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "cart.h"
 #include <fstream>
 
@@ -8,7 +7,7 @@
 nes_header_data		parse_nes_header(nes_header_raw &ines) {
 	// 0x1A54454E
 	nes_header_data	data;
-	data.valid_nes_header = (ines.header_signature == (unsigned __int32)0x1A53454E);
+	data.valid_nes_header = (ines.header_signature == (std::uint32_t)0x1A53454E);
 	data.programsize = (int)ines.program_blocks * 16384;
 	data.charsize = (int)ines.char_blocks * 8192;
 	data.mirror_vertical = (ines.flags1 & INES_F1_MIRRORING) > 0;
@@ -74,7 +73,7 @@ cartridge::cartridge(const char *filename, ppu *ppu_device, bus *mainbus) {
 			ppu_device->configure_vertical_mirror();
 		}
 		else {
-			ppu_device->configure_vertical_mirror();
+			ppu_device->configure_horizontal_mirror();
 		}
 	}
 
