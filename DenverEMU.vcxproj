@@ -179,8 +179,6 @@
     <ClInclude Include="bus\rom\rom.h" />
     <ClInclude Include="clock\clock.h" />
     <ClInclude Include="cpu\cpu2a03_fast.h" />
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="targetver.h" />
     <ClInclude Include="video\nesvideo.h" />
     <ClInclude Include="video\ppu.h" />
   </ItemGroup>
@@ -197,12 +195,6 @@
     <ClCompile Include="clock\clock.cpp" />
     <ClCompile Include="cpu\cpu2a03_fast.cpp" />
     <ClCompile Include="DenverEMU.cpp" />
-    <ClCompile Include="stdafx.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="video\nesvideo.cpp" />
     <ClCompile Include="video\ppu.cpp" />
   </ItemGroup>
