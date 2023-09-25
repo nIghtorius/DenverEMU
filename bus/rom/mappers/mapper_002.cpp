@@ -19,7 +19,7 @@ void uxrom::write(int addr, int addr_from_base, byte data)
 	bank = data & 0x07;	// last 3 bits.
 }
 
-void uxrom::set_rom_data(byte *data, size_t size)
+void uxrom::set_rom_data(byte *data, std::size_t size)
 {
 	devicestart = 0x8000;
 	deviceend = 0xFFFF;

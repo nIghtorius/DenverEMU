@@ -11,7 +11,7 @@ rom::rom() {
 rom::~rom() {
 }
 
-void rom::set_rom_data(byte *data, size_t size) {
+void rom::set_rom_data(byte *data, std::size_t size) {
 	this->romdata = data;
 	this->romsize = (int)size;
 	// extra logic for 16kB / 32kB roms.
@@ -39,7 +39,7 @@ vrom::vrom() {
 vrom::~vrom() {
 }
 
-void vrom::set_rom_data(byte *data, size_t size) {
+void vrom::set_rom_data(byte *data, std::size_t size) {
 	this->romdata = data;
 	this->romsize = (int)size;
 	devicemask = ((int)size - 1);

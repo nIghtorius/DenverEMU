@@ -97,7 +97,7 @@ void mmc1_rom::write(int addr, int addr_from_base, byte data)
 	}	
 }
 
-void mmc1_rom::set_rom_data(byte *data, size_t size)
+void mmc1_rom::set_rom_data(byte *data, std::size_t size)
 {
 	devicestart = 0x6000;
 	deviceend = 0xFFFF;
@@ -138,7 +138,7 @@ void mmc1_vrom::write(int addr, int addr_from_base, byte data)
 	if (ram_mode) ram[addr_from_base] = data;
 }
 
-void mmc1_vrom::set_rom_data(byte *data, size_t size)
+void mmc1_vrom::set_rom_data(byte *data, std::size_t size)
 {
 	devicestart = 0x0000;
 	deviceend = 0x1FFF;

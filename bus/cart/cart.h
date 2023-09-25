@@ -56,8 +56,8 @@ struct nes_header_raw {
 struct nes_header_data {
 	// <nes 2.0
 	bool				valid_nes_header;		// false is signature mismatch.
-	size_t				programsize;
-	size_t				charsize;
+	std::size_t			programsize;
+	std::size_t			charsize;
 	bool				mirror_vertical;//false is horizontal
 	bool				has_battery;
 	bool				has_trainer;

@@ -1,12 +1,16 @@
 #include <malloc.h>
 #include <string.h>
 #include "bus.h"
-
 #include <iostream>
+
+#ifdef __linux__ 
+int	strcpy_s(char *destination, std::size_t length, const char *source) {
+	return strcpy(destination, source);
+}
+#endif
 
 bus::bus() {
 }
-
 
 bus::~bus() {
 	// free all connected devices.
@@ -71,7 +75,7 @@ void	bus::registerdevice(bus_device *device) {
 }
 
 void	bus::removedevice_select_base(int baseaddr) {
-	for (size_t i = 0; i < devices.size(); i++) {
+	for (std::size_t i = 0; i < devices.size(); i++) {
 		if (devices[i]->devicestart == baseaddr) {
 			devices.erase(devices.begin() + i);
 			return;
