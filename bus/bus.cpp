@@ -4,7 +4,7 @@
 #include <iostream>
 
 #ifdef __linux__ 
-int	strcpy_s(char *destination, std::size_t length, const char *source) {
+char *	strcpy_s(char *destination, std::size_t length, const char *source) {
 	return strcpy(destination, source);
 }
 #endif

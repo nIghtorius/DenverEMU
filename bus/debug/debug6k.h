@@ -1,5 +1,5 @@
 #pragma once
-#include "..\..\bus\bus.h"
+#include "../../bus/bus.h"
 
 // debugger for blargg test roms (singles)
 

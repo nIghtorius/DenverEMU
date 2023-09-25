@@ -8,6 +8,7 @@
 #include <vector>
 #include <cstdint>
 #include <string.h>
+#include <malloc.h>
 
 #define		MAX_DESCRIPTOR_LENGTH	128
 #define		BUS_OPEN_BUS			0xF0
@@ -30,7 +31,7 @@ struct buslayout {
 };
 
 #ifdef __linux__
-int	strcpy_s(char *destination, std::size_t length, const char *source);
+char *	strcpy_s(char *destination, std::size_t length, const char *source);
 #endif
 
 // basic device can have bus. not always.
