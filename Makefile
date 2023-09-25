@@ -10,7 +10,7 @@ rwildcard=$(wildcard $1) $(foreach d,$1,$(call rwildcard,$(addsuffix /$(notdir $
 CC = g++
 
 LINKERFLAG = -lSDL2
-COMPILERFLAG = -I /home/peter/projects/sdl/SDL/include/ -c -g -O3
+COMPILERFLAG = -I /home/peter/projects/sdl/SDL/include/ -c -g -O3 -Ofast -finline-functions -m64 -funroll-loops
 
 SRCS := $(call rwildcard,./*.cpp)
 BINS := $(SRCS:%.cpp=%.o)
@@ -25,5 +25,5 @@ clean:
 	@echo "Cleaning up..."
 	rm -rvf ${BINS}
 	rm ./denver
-	
+
 
