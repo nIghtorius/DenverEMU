@@ -21,7 +21,7 @@
 #include <fstream>
 #include <SDL.h>
 
-#define MAX_BUFFER_AUDIO		2048
+#define MAX_BUFFER_AUDIO		1024
 #define SAMPLE_RATE				44100
 
 // classes

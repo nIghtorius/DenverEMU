@@ -96,18 +96,12 @@ int main()
 
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
 	SDL_Window* win = SDL_CreateWindow("Denver project", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1024, 960, SDL_WINDOW_RESIZABLE);
-	SDL_Delay (200);
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
 	SDL_Renderer* rend = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
 	SDL_Texture * tex = SDL_CreateTexture(rend, SDL_PIXELFORMAT_RGB565, SDL_TEXTUREACCESS_STREAMING, 256, 240);
 	// Audio (SDL/denver)
 	audio_player *audio = new audio_player();
 	audio->register_audible_device(_DENVER_APU);
-
-    for (size_t i = 0; i < 100; i++)
-    {
-        SDL_PumpEvents();
-    }
 
 	// coldboot the cpu.
 	std::cout << "Booting CPU.. " << std::endl;

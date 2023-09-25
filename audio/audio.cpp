@@ -101,6 +101,6 @@ void	audio_player::send_sampledata_to_audio_device() {
 
 	// flush buffer.
 	while (samples_in_buffer > MAX_BUFFER_AUDIO) {
-		SDL_Delay(1);
+		SDL_PumpEvents();
 	}
 }
