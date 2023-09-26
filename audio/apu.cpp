@@ -50,7 +50,7 @@ byte	apu::read(int addr, int addr_from_base) {
 		return result;
 		break;
 	}
-	return BUS_OPEN_BUS;
+	return 0;
 }
 
 void	apu::write(int addr, int addr_from_base, byte data) {

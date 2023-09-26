@@ -46,6 +46,9 @@
     <Filter Include="Source Files\emulation\bus\cart">
       <UniqueIdentifier>{328fb934-cfb6-44fb-995e-2fb9f4ff2ab4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\emulation\controller">
+      <UniqueIdentifier>{1d64b183-47a4-4781-81ba-7f488e58e7e6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="audio\apu.h">
@@ -86,6 +89,9 @@
     </ClInclude>
     <ClInclude Include="bus\cart\cart.h">
       <Filter>Source Files\emulation\bus\cart</Filter>
+    </ClInclude>
+    <ClInclude Include="controller\joypad.h">
+      <Filter>Source Files\emulation\controller</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -130,6 +136,9 @@
     </ClCompile>
     <ClCompile Include="bus\cart\cart.cpp">
       <Filter>Source Files\emulation\bus\cart</Filter>
+    </ClCompile>
+    <ClCompile Include="controller\joypad.cpp">
+      <Filter>Source Files\emulation\controller</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -178,6 +178,7 @@
     <ClInclude Include="bus\rom\mappers\mapper_002.h" />
     <ClInclude Include="bus\rom\rom.h" />
     <ClInclude Include="clock\clock.h" />
+    <ClInclude Include="controller\joypad.h" />
     <ClInclude Include="cpu\cpu2a03_fast.h" />
     <ClInclude Include="video\nesvideo.h" />
     <ClInclude Include="video\ppu.h" />
@@ -193,6 +194,7 @@
     <ClCompile Include="bus\rom\mappers\mapper_002.cpp" />
     <ClCompile Include="bus\rom\rom.cpp" />
     <ClCompile Include="clock\clock.cpp" />
+    <ClCompile Include="controller\joypad.cpp" />
     <ClCompile Include="cpu\cpu2a03_fast.cpp" />
     <ClCompile Include="DenverEMU.cpp" />
     <ClCompile Include="video\nesvideo.cpp" />

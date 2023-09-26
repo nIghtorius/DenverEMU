@@ -19,6 +19,7 @@
 #include "bus/cart/cart.h"	// cartridge.
 #include "audio/audio.h"
 #include "video/nesvideo.h"
+#include "controller/joypad.h"
 #include <iostream>
 #include <fstream>
 #include <malloc.h>
@@ -106,20 +107,24 @@ int main()
 	// coldboot the cpu.
 	std::cout << "Booting CPU.. " << std::endl;
 	//_DENVER_CPU->coldboot();
-	
+
+	joypad joys;
+	joys.set_default_configs();
+	nes_2a03_joyports * _DENVER_CTRL = new nes_2a03_joyports(&joys);
+	_DENVER_BUS->registerdevice(_DENVER_CTRL);	// add to the bus.
+
 	// run emulation.
 	std::cout << "Executing emulation.." << std::endl << std::hex;
 
-	// will malloc die here too?
-	char * ptr = (char *)malloc (32768);	// for funsies.
-
 	// test cart.h
-	cartridge *cart = new cartridge("mm2.nes", _DENVER_PPU, _DENVER_BUS);
+	cartridge *cart = new cartridge("mario.nes", _DENVER_PPU, _DENVER_BUS);
 
 	std::cout << "CART mm2 loaded, devices are" << std::endl;
 	_DENVER_BUS->reportdevices();
 	std::cout << "on APU_BUS it is" << std::endl;
 	_DENVER_PPU->vbus.reportdevices();
+
+	_DENVER_BUS->readmemory(0x4016);
 
 
 	_DENVER_CPU->coldboot();
@@ -149,8 +154,17 @@ int main()
 
 		SDL_Event event;
 		if (SDL_PollEvent(&event)) {
-			if (event.type == SDL_QUIT) keeprunning = false;
+			switch (event.type) {
+			case SDL_QUIT:
+				keeprunning = false;
+				break;
+			case SDL_KEYDOWN:
+			case SDL_KEYUP:
+				joys.process_kb_event(&event);
+				break;
+			}
 		}
+
 		if (_DENVER_PPU->isFrameReady()) {
 			_NESVIDEO->process_ppu_image((std::uint16_t *)_DENVER_PPU->getFrameBuffer());
 			
@@ -161,7 +175,7 @@ int main()
 			SDL_RenderPresent(rend);
 			audio->play_audio();
 
-			frames++;
+			frames++;	
 
 			//SDL_Delay(16); 
 		}
