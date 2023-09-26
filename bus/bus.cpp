@@ -104,12 +104,11 @@ bool	bus::irq_pulled() {
 void	bus::reportdevices() {
 	// this reports (dumps to console) all the connected devices with their names and allocation points.
 	for (bus_device* dev : devices) {
-		std::cout << "registered device [" << dev->get_device_descriptor() << "]" << std::endl;
-		std::cout << "-------------------------------------------------------------------------------" << std::endl;
-		std::cout << std::hex << "device operating range is [0x" << dev->devicestart << " - 0x" << dev->deviceend << "]" << std::endl;
-		std::cout << "device adressing mask is 0x" << dev->devicemask << std::endl;
-		std::cout << "device reports size is 0x" << (dev->deviceend - dev->devicestart) << " bytes" << std::endl;
-		std::cout << "full bus emulation required? " << (dev->processlayout ? "yes" : "no") << std::endl << std::endl;
+		std::cout << "[" << dev->get_device_descriptor() << "] ";
+		std::cout << std::hex << "[0x" << dev->devicestart << " - 0x" << dev->deviceend << "]";
+		std::cout << " [MASK 0x" << dev->devicemask << "] ";
+		std::cout << " [SIZE 0x" << (dev->deviceend - dev->devicestart) << "] [FB:";
+		std::cout << (dev->processlayout ? "yes" : "no") << "]" << std::endl;
 	}
 }
 
