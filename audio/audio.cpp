@@ -27,15 +27,13 @@ void	audio_player::sdl_aud_callback(void * const data, std::uint8_t* const strea
 	// check buffer is full enough, otherwise mute.
 	SDL_memset(stream, 0, len);
 
-	if (aud_player_callback->samples_in_buffer < MAX_BUFFER_AUDIO) {
-		return;
-	}
+	if (aud_player_callback->samples_in_buffer < MAX_BUFFER_AUDIO) return;
 
 	// copy data to stream.
 	memcpy(stream, (void *)&aud_player_callback->buffer[0], len);
 
 	// shift buffers
-	std::int16_t buf2[MAX_BUFFER_AUDIO * 4];	
+	std::int16_t buf2[MAX_BUFFER_AUDIO * 2 * NES_FRAMES];	
 	memcpy(&buf2[0], (void *)&aud_player_callback->buffer[MAX_BUFFER_AUDIO], (aud_player_callback->samples_in_buffer - MAX_BUFFER_AUDIO) * 2);
 	memcpy((void *)&aud_player_callback->buffer[0], &buf2[0], (aud_player_callback->samples_in_buffer - MAX_BUFFER_AUDIO) * 2);
 
@@ -45,6 +43,11 @@ void	audio_player::sdl_aud_callback(void * const data, std::uint8_t* const strea
 
 audio_player::~audio_player() {
 	SDL_CloseAudioDevice(aud);
+}
+
+bool	audio_player::has_enough_samples() {
+	// checks NES_FRAMES * samples_per_frame is met.
+	return samples_in_buffer >= samples_per_frame * NES_FRAMES;
 }
 
 void	audio_player::register_audible_device(audio_device *dev) {
@@ -95,12 +98,13 @@ void	audio_player::send_sampledata_to_audio_device() {
 		outsamples++;
 	}
 	outsamples--;
+	if (outsamples >= samples_per_frame) samples_per_frame = outsamples;
 
 	// buffer has the data and outsamples has the number of samples.
 	samples_in_buffer += outsamples;
 
 	// flush buffer.
-	while (samples_in_buffer > MAX_BUFFER_AUDIO) {
+	while (has_enough_samples()) {
 		SDL_PumpEvents();
 	}
 }
