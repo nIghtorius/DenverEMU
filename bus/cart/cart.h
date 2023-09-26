@@ -49,7 +49,7 @@ struct nes_header_raw {
 	byte				flags3;
 	byte				flags4;
 	byte				flags5;
-	byte				reserved[5];
+	byte				reserved[21];
 };
 #pragma pack (pop)
 

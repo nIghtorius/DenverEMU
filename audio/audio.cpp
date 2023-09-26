@@ -14,9 +14,7 @@ audio_player::audio_player() {
 	desired.callback = audio_player::sdl_aud_callback;
 	desired.userdata = this;
 
-	aud = SDL_OpenAudioDevice(NULL, 0, &desired, NULL, NULL);
-
-	SDL_PauseAudioDevice(aud, 0);
+	aud = SDL_OpenAudioDevice(NULL, 0, &desired, NULL, 0);
 }
 
 void	audio_player::sdl_aud_callback(void * const data, std::uint8_t* const stream, const int len)
@@ -33,7 +31,7 @@ void	audio_player::sdl_aud_callback(void * const data, std::uint8_t* const strea
 	memcpy(stream, (void *)&aud_player_callback->buffer[0], len);
 
 	// shift buffers
-	std::int16_t buf2[MAX_BUFFER_AUDIO * 2 * NES_FRAMES];	
+	std::int16_t buf2[MAX_BUFFER_AUDIO * 4 * NES_FRAMES];	
 	memcpy(&buf2[0], (void *)&aud_player_callback->buffer[MAX_BUFFER_AUDIO], (aud_player_callback->samples_in_buffer - MAX_BUFFER_AUDIO) * 2);
 	memcpy((void *)&aud_player_callback->buffer[0], &buf2[0], (aud_player_callback->samples_in_buffer - MAX_BUFFER_AUDIO) * 2);
 
@@ -108,3 +106,9 @@ void	audio_player::send_sampledata_to_audio_device() {
 		SDL_PumpEvents();
 	}
 }
+
+void	audio_player::startplayback() {
+	SDL_PauseAudioDevice(aud, 0);	
+}
+
+

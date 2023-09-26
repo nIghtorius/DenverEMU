@@ -21,9 +21,9 @@
 #include <fstream>
 #include <SDL.h>
 
-#define MAX_BUFFER_AUDIO		1024
+#define MAX_BUFFER_AUDIO		773
 #define SAMPLE_RATE				44100
-#define NES_FRAMES				15
+#define NES_FRAMES				5
 
 // classes
 class audio_device : public bus_device {
@@ -38,7 +38,7 @@ private:
 	std::vector<audio_device *>	audibles;
 	std::vector<float> final_mux;
 	SDL_AudioDeviceID aud;
-	std::int16_t buffer[MAX_BUFFER_AUDIO * 2 * NES_FRAMES];	// 4 times the "requirement"
+	std::int16_t buffer[MAX_BUFFER_AUDIO * 4 * NES_FRAMES];	// 4 times the "requirement"
 	void	send_sampledata_to_audio_device();
 	static void sdl_aud_callback(void * const data, std::uint8_t * const stream, const int len);
 public:
@@ -52,4 +52,5 @@ public:
 	void	register_audible_device(audio_device *dev);
 	void	play_audio();
 	bool	has_enough_samples();
+	void	startplayback();
 };

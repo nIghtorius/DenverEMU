@@ -141,6 +141,8 @@ int main()
 
 	std::cout << "Starting emulation..." << std::endl;
 
+	audio->startplayback();
+
 	while (keeprunning) {
 		_DENVER_CLK->step();	
 		//_DENVER_PPU->rundevice(_DENVER_CPU->rundevice(1));
