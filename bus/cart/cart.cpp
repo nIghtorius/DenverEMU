@@ -1,5 +1,6 @@
 #include "cart.h"
 #include <fstream>
+#include <iostream>
 
 // implementation.
 
@@ -57,6 +58,12 @@ cartridge::cartridge(const char *filename, ppu *ppu_device, bus *mainbus) {
 	// load program data
 	void * program_data = malloc(nes.programsize);
 	void * char_data = malloc(16);
+
+	if (!program_data || !char_data) {	
+		std::cout << "Failed to reserve memory for cartridge file." << std::endl;
+		return;
+	}
+
 	nesfile.read((char*)program_data, nes.programsize);
 
 	// load character data.
