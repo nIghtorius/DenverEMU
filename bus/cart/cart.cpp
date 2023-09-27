@@ -38,7 +38,9 @@ nes_header_data		parse_nes_header(nes_header_raw &ines) {
 
 cartridge::cartridge(const char *filename, ppu *ppu_device, bus *mainbus) {
 	charram = new vram();
-	
+
+	std::cout << "Loading cartridge: " << filename << std::endl;
+
 	// load & parse NES file.
 	std::ifstream	nesfile;
 	nesfile.open(filename, std::ios::binary | std::ios::in);
@@ -53,6 +55,14 @@ cartridge::cartridge(const char *filename, ppu *ppu_device, bus *mainbus) {
 	// do nothing is header is not valid. 
 	if (!nes.valid_nes_header) {
 		return;
+	}
+
+	std::cout << "cartridge is valid." << std::endl;
+	std::cout << "Program size: " << std::dec << (int)nes.programsize << " bytes.." << std::endl;
+	if (nes.charsize > 0) {
+		std::cout << "Charrom size: " << (int)nes.charsize << " bytes.." << std::endl;
+	} else {
+		std::cout << "Cartridge contains VRAM" << std::endl;
 	}
 
 	// load program data
@@ -77,12 +87,20 @@ cartridge::cartridge(const char *filename, ppu *ppu_device, bus *mainbus) {
 	// configure mirroring.
 	if (!nes.no_mirroring) {
 		if (nes.mirror_vertical) {
+			std::cout << "Cartridge uses vertical mirroring" << std::endl;
 			ppu_device->configure_vertical_mirror();
 		}
 		else {
+			std::cout << "Cartridge uses horizontal mirroring" << std::endl;
 			ppu_device->configure_horizontal_mirror();
 		}
 	}
+
+	if (nes.has_battery) std::cout << "Cartridge has battery pack" << std::endl;
+	if (nes.has_prg_ram) std::cout << "Cartridge has program ram" << std::endl;
+	if (nes.has_trainer) std::cout << "Cartridge has trainer prg" << std::endl;
+
+	std::cout << "Cartridge mapper is: " << nes.mapper << std::endl;
 
 	// initialize loader.
 	switch (nes.mapper) {
@@ -124,6 +142,9 @@ cartridge::cartridge(const char *filename, ppu *ppu_device, bus *mainbus) {
 			else {
 				character = charram;
 			}
+			break;
+		default:
+			std::cout << "Mapper is unknown to me" << std::endl;
 			break;
 	}
 
