@@ -18,7 +18,6 @@
 
 #include <vector>
 #include "../bus/bus.h"
-#include <fstream>
 #include <SDL.h>
 
 #define MAX_BUFFER_AUDIO		773

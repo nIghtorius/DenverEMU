@@ -100,6 +100,7 @@ int main()
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
 	SDL_Renderer* rend = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
 	SDL_Texture * tex = SDL_CreateTexture(rend, SDL_PIXELFORMAT_RGB565, SDL_TEXTUREACCESS_STREAMING, 256, 240);
+	
 	// Audio (SDL/denver)
 	audio_player *audio = new audio_player();
 	audio->register_audible_device(_DENVER_APU);
@@ -123,9 +124,6 @@ int main()
 	_DENVER_BUS->reportdevices();
 	std::cout << "on APU_BUS it is" << std::endl;
 	_DENVER_PPU->vbus.reportdevices();
-
-	_DENVER_BUS->readmemory(0x4016);
-
 
 	_DENVER_CPU->coldboot();
 	_DENVER_CPU->log_register();

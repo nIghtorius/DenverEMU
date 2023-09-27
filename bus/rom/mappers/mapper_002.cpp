@@ -10,7 +10,7 @@ byte uxrom::read(int addr, int addr_from_base)
 {
 	return addr_from_base >= 0x4000 ? 
 		romdata[(addr & 0x3FFF) | lastbank] : 
-		romdata[(bank << 14) | addr_from_base];
+		romdata[(bank << 14) %romsize | addr_from_base];
 }
 
 void uxrom::write(int addr, int addr_from_base, byte data)
