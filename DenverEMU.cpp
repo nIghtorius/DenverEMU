@@ -233,6 +233,8 @@ int main()
 	bool btrue = true;
 	bool *p_open = &btrue;
 
+	glGenTextures(1, &tex);
+
 	while (keeprunning) {
 
 		_DENVER_CLK->step();	
@@ -268,14 +270,13 @@ int main()
 			//SDL_RenderCopyEx(rend, tex, NULL, NULL, 15, NULL, SDL_RendererFlip{ SDL_FLIP_VERTICAL });
 			//SDL_RenderPresent(rend);
 			//glActiveTexture(GL_TEXTURE1);
-			glDeleteTextures(1, &tex);
-			glGenTextures(1, &tex);
+			//glDeleteTextures(1, &tex);
+			//glGenTextures(1, &tex);
 			glBindTexture(GL_TEXTURE_2D, tex);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 			glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 256, 240, 0, GL_RGBA, GL_UNSIGNED_BYTE, (GLvoid *)_NESVIDEO->getFrame());
-
 			// 1. Menu bar
 			{
 				static bool opt_fullscreen = true;
@@ -361,9 +362,6 @@ int main()
 				static int counter = 0;
 
 				ImGui::Begin("NES");                          // Create a window called "Hello, world!" and append into it.	
-
-				ImGuiIO& io = ImGui::GetIO();
-				ImTextureID texje = io.Fonts->TexID;				
 
 				ImGui::Image((void *)(intptr_t)tex, ImGui::GetContentRegionAvail());
 
