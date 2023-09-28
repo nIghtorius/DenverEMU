@@ -49,6 +49,15 @@
     <Filter Include="Source Files\emulation\controller">
       <UniqueIdentifier>{1d64b183-47a4-4781-81ba-7f488e58e7e6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\imgui">
+      <UniqueIdentifier>{185a079d-e0b4-450c-ac05-d6cd65618109}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\imgui\backends">
+      <UniqueIdentifier>{2efac999-0491-4eb7-ba7a-32a3f446bc50}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\imgui\backends\vulkan">
+      <UniqueIdentifier>{dedb2310-1e13-47c1-bbd0-ce2b34cc9955}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="audio\apu.h">
@@ -92,6 +101,39 @@
     </ClInclude>
     <ClInclude Include="controller\joypad.h">
       <Filter>Source Files\emulation\controller</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imconfig.h">
+      <Filter>Source Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imgui.h">
+      <Filter>Source Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imgui_internal.h">
+      <Filter>Source Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imstb_rectpack.h">
+      <Filter>Source Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imstb_textedit.h">
+      <Filter>Source Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imstb_truetype.h">
+      <Filter>Source Files\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\backends\imgui_impl_opengl3.h">
+      <Filter>Source Files\imgui\backends</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\backends\imgui_impl_opengl3_loader.h">
+      <Filter>Source Files\imgui\backends</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\backends\imgui_impl_sdl2.h">
+      <Filter>Source Files\imgui\backends</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\backends\imgui_impl_sdlrenderer2.h">
+      <Filter>Source Files\imgui\backends</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\backends\imgui_impl_opengl2.h">
+      <Filter>Source Files\imgui\backends</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -140,5 +182,43 @@
     <ClCompile Include="controller\joypad.cpp">
       <Filter>Source Files\emulation\controller</Filter>
     </ClCompile>
+    <ClCompile Include="imgui\imgui.cpp">
+      <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_demo.cpp">
+      <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_draw.cpp">
+      <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_tables.cpp">
+      <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_widgets.cpp">
+      <Filter>Source Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\backends\imgui_impl_opengl3.cpp">
+      <Filter>Source Files\imgui\backends</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\backends\imgui_impl_sdl2.cpp">
+      <Filter>Source Files\imgui\backends</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\backends\imgui_impl_sdlrenderer2.cpp">
+      <Filter>Source Files\imgui\backends</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\backends\imgui_impl_opengl2.cpp">
+      <Filter>Source Files\imgui\backends</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="imgui\backends\vulkan\generate_spv.sh">
+      <Filter>Source Files\imgui\backends\vulkan</Filter>
+    </None>
+    <None Include="imgui\backends\vulkan\glsl_shader.frag">
+      <Filter>Source Files\imgui\backends\vulkan</Filter>
+    </None>
+    <None Include="imgui\backends\vulkan\glsl_shader.vert">
+      <Filter>Source Files\imgui\backends\vulkan</Filter>
+    </None>
   </ItemGroup>
 </Project>

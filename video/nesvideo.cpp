@@ -1,9 +1,10 @@
 #include "nesvideo.h"
 #include <malloc.h>
 #include <cstdint>
+#include <stdlib.h>
 
 nesvideo::nesvideo() {
-	displaybuffer = (std::uint16_t *)malloc(122880); // buffer is 256x240 16 bits.
+	displaybuffer = (std::uint32_t *)malloc(245760); // buffer is 256x240 16 bits.
 }
 
 nesvideo::~nesvideo() {
@@ -27,9 +28,9 @@ void nesvideo::process_ppu_image(std::uint16_t * ppu_image) {
 		
 		std::int32_t idx = pixel * 3;
 
-		std::uint16_t framepixel = ((ntscpalette[idx] >> 3) << 11) |
-			((ntscpalette[idx + 1] >> 2) << 5) |
-			((ntscpalette[idx + 2] >> 3));
+		std::uint32_t framepixel = 0xFF000000 | ((ntscpalette[idx+2]) << 16) |
+			((ntscpalette[idx + 1]) << 8) |
+			((ntscpalette[idx]));
 
 		displaybuffer[x] = framepixel;
 	}
