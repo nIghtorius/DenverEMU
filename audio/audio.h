@@ -10,7 +10,16 @@
 	*	std::vector<float> member where samples can be stored.
 	
 	Also has a class that groups all known audio devices together for a process called
-	"final muxing" combining all audio from all linked audio devices together.
+	"final muxing" which combines all audio from all linked audio devices together
+	and then converts it into a INT16 audio stream to be played back. And then it waits
+	a single frame audio playback for frame pacing synchronisation.
+
+	before playing sound. It buffers up to NES_FRAMES frames of audio before playing back.
+	keep in mind. When setting a higher SAMPLE_RATE be sure to increase the MAX_BUFFER_AUDIO.
+	because the playback routine does not check if the buffers are big enough. at high samples rate
+	you do run fast out of buffer. 
+
+	The recommended buffer size is 773 * (SAMPLE_RATE / 44100)
 
 */
 
@@ -20,9 +29,9 @@
 #include "../bus/bus.h"
 #include <SDL.h>
 
-#define MAX_BUFFER_AUDIO		773
 #define SAMPLE_RATE				44100
 #define NES_FRAMES				5
+#define MAX_BUFFER_AUDIO		773 * (SAMPLE_RATE / 44100)
 
 // classes
 class audio_device : public bus_device {

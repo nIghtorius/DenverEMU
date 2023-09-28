@@ -9,7 +9,7 @@ audio_player::audio_player() {
 	desired.samples = MAX_BUFFER_AUDIO; // int16 is 2 bytes.
 	desired.channels = 1;
 	desired.format = AUDIO_S16;
-	desired.freq = 44100;
+	desired.freq = SAMPLE_RATE;
 	desired.silence = 0;
 	desired.callback = audio_player::sdl_aud_callback;
 	desired.userdata = this;
