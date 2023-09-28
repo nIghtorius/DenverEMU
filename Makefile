@@ -9,8 +9,8 @@ rwildcard=$(wildcard $1) $(foreach d,$1,$(call rwildcard,$(addsuffix /$(notdir $
 
 CC = g++
 
-LINKERFLAG = -lSDL2
-COMPILERFLAG = -I /home/peter/projects/sdl/SDL/include/ -c -g -O3 -Ofast -finline-functions -m64 -funroll-loops
+LINKERFLAG = -lSDL2 -lGL
+COMPILERFLAG = -I /home/peter/projects/sdl/SDL/include/ -I imgui -I imgui/backends -c -g -O3 -Ofast -finline-functions -m64 -funroll-loops
 
 SRCS := $(call rwildcard,./*.cpp)
 BINS := $(SRCS:%.cpp=%.o)
