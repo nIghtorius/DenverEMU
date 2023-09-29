@@ -112,4 +112,6 @@ void	audio_player::startplayback() {
 	SDL_PauseAudioDevice(aud, 0);	
 }
 
-
+void	audio_player::stopplayback() {
+	SDL_PauseAudioDevice(aud, 1);
+}

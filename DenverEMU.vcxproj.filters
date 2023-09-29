@@ -58,6 +58,9 @@
     <Filter Include="Source Files\imgui\backends\vulkan">
       <UniqueIdentifier>{dedb2310-1e13-47c1-bbd0-ce2b34cc9955}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\emulation\emulator">
+      <UniqueIdentifier>{9b0ed31e-1723-48a0-b915-6585929bc900}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="audio\apu.h">
@@ -135,6 +138,9 @@
     <ClInclude Include="imgui\backends\imgui_impl_opengl2.h">
       <Filter>Source Files\imgui\backends</Filter>
     </ClInclude>
+    <ClInclude Include="emulator\nes.h">
+      <Filter>Source Files\emulation\emulator</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DenverEMU.cpp">
@@ -208,6 +214,9 @@
     </ClCompile>
     <ClCompile Include="imgui\backends\imgui_impl_opengl2.cpp">
       <Filter>Source Files\imgui\backends</Filter>
+    </ClCompile>
+    <ClCompile Include="emulator\nes.cpp">
+      <Filter>Source Files\emulation\emulator</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

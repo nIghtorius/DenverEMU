@@ -180,6 +180,7 @@
     <ClInclude Include="clock\clock.h" />
     <ClInclude Include="controller\joypad.h" />
     <ClInclude Include="cpu\cpu2a03_fast.h" />
+    <ClInclude Include="emulator\nes.h" />
     <ClInclude Include="imgui\backends\imgui_impl_opengl2.h" />
     <ClInclude Include="imgui\backends\imgui_impl_opengl3.h" />
     <ClInclude Include="imgui\backends\imgui_impl_opengl3_loader.h" />
@@ -208,6 +209,7 @@
     <ClCompile Include="controller\joypad.cpp" />
     <ClCompile Include="cpu\cpu2a03_fast.cpp" />
     <ClCompile Include="DenverEMU.cpp" />
+    <ClCompile Include="emulator\nes.cpp" />
     <ClCompile Include="imgui\backends\imgui_impl_opengl2.cpp" />
     <ClCompile Include="imgui\backends\imgui_impl_opengl3.cpp" />
     <ClCompile Include="imgui\backends\imgui_impl_sdl2.cpp" />

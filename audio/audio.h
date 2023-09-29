@@ -62,4 +62,5 @@ public:
 	void	play_audio();
 	bool	has_enough_samples();
 	void	startplayback();
+	void	stopplayback();
 };
