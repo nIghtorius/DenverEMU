@@ -390,44 +390,13 @@ int main()
 					ImGui::Image((void *)(intptr_t)tex, ImGui::GetContentRegionAvail());
 					ImGui::End();
 				}
-				//ImGui::Image((void *)(intptr_t)tex, ImGui::GetContentRegionAvail());
 			}
 
 			frames++;	
 
 			ImGui::Render();
-			
-			/*
-			glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
-			//glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
-			//glClear(GL_COLOR_BUFFER_BIT);
-			glEnable(GL_TEXTURE_2D);
-			glBindTexture(GL_TEXTURE_2D, tex);
-			glDisable(GL_LIGHTING);
-
-			// Set up ortographic projection
-			glMatrixMode(GL_PROJECTION);
-			glPushMatrix();
-			glLoadIdentity();
-			glOrtho(0, io.DisplaySize.x, 0, io.DisplaySize.y, -1, 1);
-
-			glBegin(GL_QUADS);
-			glTexCoord2f(0, 0); glVertex2f(0, 0);
-			glTexCoord2f(0, -1); glVertex2f(0, io.DisplaySize.x);
-			glTexCoord2f(1, -1); glVertex2f(io.DisplaySize.y, io.DisplaySize.x);
-			glTexCoord2f(1, 0); glVertex2f(io.DisplaySize.y, 0);
-			glEnd();
-
-			// Reset Projection Matrix
-			glPopMatrix();
-			glDisable(GL_TEXTURE_2D);
-			glEnable(GL_LIGHTING);
-			*/
 			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-			// Update and Render additional Platform Windows
-			// (Platform functions may change the current OpenGL context, so we save/restore it to make it easier to paste this code elsewhere.
-			//  For this specific demo app we could also call SDL_GL_MakeCurrent(window, gl_context) directly)
 			if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 			{
 				SDL_Window* backup_current_window = SDL_GL_GetCurrentWindow();
@@ -439,19 +408,7 @@ int main()
 
 			SDL_GL_SwapWindow(win);
 			audio->play_audio();
-
-
-			//SDL_Delay(16); 
 		}
-		/*
-		if (frames == 60) {
-			time = SDL_GetTicks() - time;
-			float fps = 60 / ((float)time / 1000);
-			std::cout << "Current FPS: " << std::dec << fps << std::endl;
-			frames = 0;
-			time = SDL_GetTicks();
-		}*/
-		// Rendering
 	}
 
 	std::cout << "Emulation ended..." << std::endl;

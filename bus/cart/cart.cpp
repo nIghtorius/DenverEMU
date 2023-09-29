@@ -43,6 +43,9 @@ nes_header_data		parse_nes_header(nes_header_raw &ines) {
 cartridge::cartridge(const char *filename, ppu *ppu_device, bus *mainbus) {
 	std::cout << "Loading cartridge: " << filename << std::endl;
 
+	program = NULL;
+	character = NULL;
+
 	// load & parse NES file.
 	std::ifstream	nesfile;
 	nesfile.open(filename, std::ios::binary | std::ios::in);
