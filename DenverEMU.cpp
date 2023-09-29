@@ -142,7 +142,7 @@ int main()
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 
-	SDL_Window* win = SDL_CreateWindow("Denver project", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1024, 960, SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL | SDL_WINDOW_ALLOW_HIGHDPI);
+	SDL_Window* win = SDL_CreateWindow("Denver - NES Emulator - Alpha version", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1024, 960, SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL | SDL_WINDOW_ALLOW_HIGHDPI);
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
 	SDL_GLContext gl_context = SDL_GL_CreateContext(win);
 	SDL_GL_MakeCurrent(win, gl_context);
@@ -277,7 +277,7 @@ int main()
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 			glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 256, 240, 0, GL_RGBA, GL_UNSIGNED_BYTE, (GLvoid *)_NESVIDEO->getFrame());
-			// 1. Menu bar
+			/*// 1. Menu bar
 			{
 				static bool opt_fullscreen = true;
 				static bool opt_padding = false;
@@ -335,7 +335,7 @@ int main()
 						ImGui::DockBuilderSetNodeSize(dockspace_id, ImGui::GetWindowSize());
 						ImGuiID dockspace_main_id = dockspace_id;
 						ImGui::DockBuilderDockWindow("Hello, world!", dockspace_main_id);
-					}*/
+					}
 				}
 				else
 				{
@@ -351,21 +351,106 @@ int main()
 					}
 					ImGui::EndMenuBar();
 				}
-
 				ImGui::End();
-			}
+			}*/
 
 
 			// 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
 			{
 				static float f = 0.0f;
 				static int counter = 0;
+				/*
+				if (ImGui::BeginMainMenuBar()) {
+					if (ImGui::BeginMenu("File")) {
+						if (ImGui::MenuItem("Close", "Ctrl+X", false)) {
+							keeprunning = false;
+						}
+						ImGui::EndMenu();
+					}
+					ImGui::EndMainMenuBar();
+				}
+				*/
+				ImGuiViewportP* viewport = (ImGuiViewportP*)(void*)ImGui::GetMainViewport();
+				ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_MenuBar;
+				float height = ImGui::GetFrameHeight();
 
-				ImGui::Begin("NES");                          // Create a window called "Hello, world!" and append into it.	
+				if (ImGui::BeginViewportSideBar("##SecondaryMenuBar", viewport, ImGuiDir_Up, height, window_flags)) {
+					if (ImGui::BeginMenuBar()) {
+						if (ImGui::BeginMenu("File")) {
 
-				ImGui::Image((void *)(intptr_t)tex, ImGui::GetContentRegionAvail());
+							ImGui::MenuItem("Open file", "Ctrl+O", false);
+							if (ImGui::BeginMenu("Recent")) {
+								ImGui::MenuItem("dtales.nes");
+								ImGui::MenuItem("mm2.nes");
+								ImGui::MenuItem("mm1.nes");
+								ImGui::MenuItem("cv.nes");
+								ImGui::EndMenu();
+							}
+							ImGui::Separator();
+							if (ImGui::BeginMenu("Save state")) {
+								ImGui::MenuItem("state #1");
+								ImGui::MenuItem("state #2");
+								ImGui::MenuItem("state #3");
+								ImGui::MenuItem("state #4");
+								ImGui::MenuItem("state #5");
+								ImGui::MenuItem("state #6");
+								ImGui::EndMenu();
+							}
+							if (ImGui::BeginMenu("Load state")) {
+								ImGui::MenuItem("state #1");
+								ImGui::MenuItem("state #2");
+								ImGui::MenuItem("state #3");
+								ImGui::MenuItem("state #4");
+								ImGui::MenuItem("state #5");
+								ImGui::MenuItem("state #6");
+								ImGui::EndMenu();
+							}
+							ImGui::Separator();
+							if (ImGui::MenuItem("Close", "Ctrl+X", false)) {
+								keeprunning = false;
+							}
+							ImGui::EndMenu();
+						}
+						if (ImGui::BeginMenu("Configuration")) {
+							if (ImGui::MenuItem("Controllers", NULL, false)) {
 
-				ImGui::End();
+							}
+							ImGui::EndMenu();
+						}
+						if (ImGui::BeginMenu("Emulation")) {
+							ImGui::MenuItem("Reset CPU", "Ctrl+R");
+							ImGui::Separator();
+							if (ImGui::BeginMenu("Debugging")) {
+								ImGui::MenuItem("PPU Viewer");
+								ImGui::MenuItem("Memory viewer");
+								ImGui::MenuItem("Disassembler");
+								ImGui::MenuItem("Stack viewer");
+								ImGui::MenuItem("APU Viewer");
+								ImGui::EndMenu();
+							}
+							ImGui::Separator();
+							ImGui::MenuItem("Rewind 5 seconds", "Alt+BkUp");
+							ImGui::EndMenu();
+						}
+
+						ImGui::EndMenuBar();
+					}
+					ImGui::End();
+				}
+
+				if (ImGui::BeginViewportSideBar("##MainStatusBar", viewport, ImGuiDir_Down, height, window_flags)) {
+					if (ImGui::BeginMenuBar()) {
+						ImGui::Text("Happy status bar");
+						ImGui::EndMenuBar();
+					}
+					ImGui::End();
+				}
+
+				if (ImGui::BeginViewportSideBar("##NES", viewport, ImGuiDir_Up, io.DisplaySize.y - height*2, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings)) {
+					ImGui::Image((void *)(intptr_t)tex, ImGui::GetContentRegionAvail());
+					ImGui::End();
+				}
+				//ImGui::Image((void *)(intptr_t)tex, ImGui::GetContentRegionAvail());
 			}
 
 			// 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
@@ -394,10 +479,33 @@ int main()
 			frames++;	
 
 			ImGui::Render();
+			
+			/*
 			glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
-			glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
-			glClear(GL_COLOR_BUFFER_BIT);
+			//glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
+			//glClear(GL_COLOR_BUFFER_BIT);
+			glEnable(GL_TEXTURE_2D);
+			glBindTexture(GL_TEXTURE_2D, tex);
+			glDisable(GL_LIGHTING);
 
+			// Set up ortographic projection
+			glMatrixMode(GL_PROJECTION);
+			glPushMatrix();
+			glLoadIdentity();
+			glOrtho(0, io.DisplaySize.x, 0, io.DisplaySize.y, -1, 1);
+
+			glBegin(GL_QUADS);
+			glTexCoord2f(0, 0); glVertex2f(0, 0);
+			glTexCoord2f(0, -1); glVertex2f(0, io.DisplaySize.x);
+			glTexCoord2f(1, -1); glVertex2f(io.DisplaySize.y, io.DisplaySize.x);
+			glTexCoord2f(1, 0); glVertex2f(io.DisplaySize.y, 0);
+			glEnd();
+
+			// Reset Projection Matrix
+			glPopMatrix();
+			glDisable(GL_TEXTURE_2D);
+			glEnable(GL_LIGHTING);
+			*/
 			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 			// Update and Render additional Platform Windows
