@@ -380,7 +380,10 @@ int main()
 
 				if (ImGui::BeginViewportSideBar("##MainStatusBar", viewport, ImGuiDir_Down, height, window_flags)) {
 					if (ImGui::BeginMenuBar()) {
-						ImGui::Text("Emulation running. %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+						ImVec4 color = { 0xAA, 0xAA, 0xAA, 0xFF };
+						if (io.Framerate < 59.5) color = { 0xFF, 0, 0, 0xFF };
+						if (io.Framerate > 61) color = { 0x00, 0xFF, 0, 0xFF };
+						ImGui::TextColored(color, "Emulation running. %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
 						ImGui::EndMenuBar();
 					}
 					ImGui::End();
