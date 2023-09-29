@@ -76,3 +76,7 @@ void vram::write(int addr, int addr_from_base, byte data) {
 byte vram::read(int addr, int addr_from_base) {
 	return ram[addr_from_base];
 }
+
+void vram::reset() {
+	memset(ram, 0, 8192);
+}

@@ -52,6 +52,7 @@ public:
 	virtual	int		rundevice(int ticks); // returns the amount of ticks it actually did.
 	char *			get_device_descriptor();
 	virtual	void	dma(byte *data, bool is_output, bool started);
+	virtual void	reset();
 };
 
 // a device connected to a bus.
@@ -76,12 +77,12 @@ public:
 class bus {
 private:
 	int		address;
-	std::vector<bus_device *> devices;
 	bool	no_bus_conflicts = false;		// default we do not emulate bus conflicts, it is costly.
 public:	
 	bus();
 	~bus();
 	// general reading/writing.
+	std::vector<bus_device *> devices;
 	void	writememory(int addr, byte data);
 	byte	readmemory(int addr);
 	word	readmemory_as_word(int addr);
@@ -97,4 +98,5 @@ public:
 	// reports (cout)
 	void	reportdevices();
 	void	emulate_bus_conflicts(bool enable);	// emulate busconflicts? (true is slower)
+	void	busreset();
 };

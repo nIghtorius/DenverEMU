@@ -1738,6 +1738,9 @@ void cpu2a03_fast::coldboot() {
 		throw new std::runtime_error("cpu2a03_fast::coldboot() called without defined memory bus!\r\nPlease assign memory bus before calling coldboot()");
 		return;
 	}
+
+	mbus->busreset();
+
 	regs.pc = mbus->readmemory_as_word(vector_reset);
 	regs.sp = 0xFD;
 	regs.sr = cf_interrupt | cf_break | 0x20;
@@ -1745,6 +1748,8 @@ void cpu2a03_fast::coldboot() {
 	regs.x = 0x00;
 	regs.y = 0x00;
 	regs.ac = 0x00;
+	in_dma_mode = false;
+	
 	error_state = false;
 }
 

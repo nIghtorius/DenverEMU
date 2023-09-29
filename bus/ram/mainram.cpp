@@ -27,4 +27,8 @@ byte mainram::read(int addr, int addr_from_base) {
 	return ram[addr_from_base];
 }
 
+void mainram::reset() {
+	memset(ram, 0x00, 0x0800);
+}
+
 // that's it.. al there is needed to emulate system ram

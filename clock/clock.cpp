@@ -99,7 +99,7 @@ void fastclock::step() {
 			this->cpudevice->rundevice(1);
 		}
 		this->ppudevice->rundevice(1536);
-		this->apudevice->rundevice(512);
+		if (this->apudevice) apudevice->rundevice(512);
 	}
 	int actualcputicks = this->cpudevice->rundevice(1);	
 	if (this->ppudevice != NULL) this->ppudevice->rundevice(actualcputicks);

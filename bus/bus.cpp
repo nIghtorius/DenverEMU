@@ -101,6 +101,12 @@ bool	bus::irq_pulled() {
 	return false;
 }
 
+void	bus::busreset() {
+	for (auto device : devices) {
+		device->reset();
+	}
+}
+
 void	bus::reportdevices() {
 	// this reports (dumps to console) all the connected devices with their names and allocation points.
 	for (bus_device* dev : devices) {
@@ -191,4 +197,8 @@ device::~device() {
 
 int device::rundevice(int ticks) {
 	return ticks;	// dummy device return same amount of ticks as told to process.
+}
+
+void device::reset() {
+
 }

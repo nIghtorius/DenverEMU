@@ -201,6 +201,10 @@ int main()
 
 	// test cart.h
 	cartridge *cart = new cartridge("mario.nes", _DENVER_PPU, _DENVER_BUS);
+	delete cart;
+	cart = new cartridge("zelda.nes", _DENVER_PPU, _DENVER_BUS);
+	delete cart;
+	cart = new cartridge("js.nes", _DENVER_PPU, _DENVER_BUS);
 
 	std::cout << "CART mm2 loaded, devices are" << std::endl;
 	_DENVER_BUS->reportdevices();
@@ -238,7 +242,6 @@ int main()
 	while (keeprunning) {
 
 		_DENVER_CLK->step();	
-		//_DENVER_PPU->rundevice(_DENVER_CPU->rundevice(1));
 
 		SDL_Event event;
 		ImGui_ImplSDL2_ProcessEvent(&event);
@@ -285,10 +288,26 @@ int main()
 
 							ImGui::MenuItem("Open file", "Ctrl+O", false);
 							if (ImGui::BeginMenu("Recent")) {
-								ImGui::MenuItem("dtales.nes");
-								ImGui::MenuItem("mm2.nes");
-								ImGui::MenuItem("mm1.nes");
-								ImGui::MenuItem("cv.nes");
+								if (ImGui::MenuItem("dtales.nes")) {
+									delete cart;
+									cart = new cartridge("dtales.nes", _DENVER_PPU, _DENVER_BUS);
+									_DENVER_CPU->coldboot();
+								}
+								if (ImGui::MenuItem("mm2.nes")) {
+									delete cart;
+									cart = new cartridge("mm2.nes", _DENVER_PPU, _DENVER_BUS);
+									_DENVER_CPU->coldboot();
+								}
+								if (ImGui::MenuItem("megaman.nes")) {
+									delete cart;
+									cart = new cartridge("megaman.nes", _DENVER_PPU, _DENVER_BUS);
+									_DENVER_CPU->coldboot();
+								}
+								if (ImGui::MenuItem("cv.nes")) {
+									delete cart;
+									cart = new cartridge("cv.nes", _DENVER_PPU, _DENVER_BUS);
+									_DENVER_CPU->coldboot();
+								}
 								ImGui::EndMenu();
 							}
 							ImGui::Separator();
@@ -323,7 +342,10 @@ int main()
 							ImGui::EndMenu();
 						}
 						if (ImGui::BeginMenu("Emulation")) {
-							if (ImGui::MenuItem("Reset CPU", "Ctrl+R")) {
+							if (ImGui::MenuItem("Soft reset CPU", "Ctrl+R")) {
+								_DENVER_CPU->reset();
+							}
+							if (ImGui::MenuItem("Hard reset CPU", "Ctrl+H")) {
 								_DENVER_CPU->coldboot();
 							}
 							ImGui::Separator();
@@ -333,6 +355,21 @@ int main()
 								ImGui::MenuItem("Disassembler");
 								ImGui::MenuItem("Stack viewer");
 								ImGui::MenuItem("APU Viewer");
+								if (ImGui::BeginMenu("Denver virtual devices")) {
+									ImGui::SeparatorText("CPU BUS");
+									for (auto device : _DENVER_BUS->devices) {
+										if (ImGui::MenuItem(device->get_device_descriptor())) {
+											device->reset();
+										}
+									}
+									ImGui::SeparatorText("PPU BUS");
+									for (auto device : _DENVER_PPU->vbus.devices) {
+										if (ImGui::MenuItem(device->get_device_descriptor())) {
+											device->reset();
+										}
+									}
+									ImGui::EndMenu();
+								}
 								ImGui::EndMenu();
 							}
 							ImGui::Separator();
