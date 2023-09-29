@@ -249,6 +249,9 @@ int main()
 				break;
 			case SDL_KEYDOWN:
 			case SDL_KEYUP:
+				if (event.key.keysym.scancode == 0x35) {
+					audio->boostspeed = (event.type == SDL_KEYDOWN);
+				}
 				joys.process_kb_event(&event);
 				break;
 			}
@@ -265,111 +268,13 @@ int main()
 			_NESVIDEO->process_ppu_image((std::uint16_t *)_DENVER_PPU->getFrameBuffer());
 
 			// SDL stuff.
-			//SDL_UpdateTexture(tex, NULL, (void *)_NESVIDEO->getFrame(), 512);
-			//SDL_RenderCopy(rend, tex, NULL, NULL);
-			//SDL_RenderCopyEx(rend, tex, NULL, NULL, 15, NULL, SDL_RendererFlip{ SDL_FLIP_VERTICAL });
-			//SDL_RenderPresent(rend);
-			//glActiveTexture(GL_TEXTURE1);
-			//glDeleteTextures(1, &tex);
-			//glGenTextures(1, &tex);
 			glBindTexture(GL_TEXTURE_2D, tex);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 			glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 256, 240, 0, GL_RGBA, GL_UNSIGNED_BYTE, (GLvoid *)_NESVIDEO->getFrame());
-			/*// 1. Menu bar
+
 			{
-				static bool opt_fullscreen = true;
-				static bool opt_padding = false;
-				static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
-
-				// We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
-				// because it would be confusing to have two docking targets within each others.
-				ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
-				if (opt_fullscreen)
-				{
-					const ImGuiViewport* viewport = ImGui::GetMainViewport();
-					ImGui::SetNextWindowPos(viewport->WorkPos);
-					ImGui::SetNextWindowSize(viewport->WorkSize);
-					ImGui::SetNextWindowViewport(viewport->ID);
-					ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-					ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-					window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-					window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
-				}
-				else
-				{
-					dockspace_flags &= ~ImGuiDockNodeFlags_PassthruCentralNode;
-				}
-
-				// When using ImGuiDockNodeFlags_PassthruCentralNode, DockSpace() will render our background
-				// and handle the pass-thru hole, so we ask Begin() to not render a background.
-				if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
-					window_flags |= ImGuiWindowFlags_NoBackground;
-
-				// Important: note that we proceed even if Begin() returns false (aka window is collapsed).
-				// This is because we want to keep our DockSpace() active. If a DockSpace() is inactive,
-				// all active windows docked into it will lose their parent and become undocked.
-				// We cannot preserve the docking relationship between an active window and an inactive docking, otherwise
-				// any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
-				if (!opt_padding)
-					ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-				ImGui::Begin("DockSpace Demo", p_open, window_flags);
-				if (!opt_padding)
-					ImGui::PopStyleVar();
-
-				if (opt_fullscreen)
-					ImGui::PopStyleVar(2);
-
-				// Submit the DockSpace
-				ImGuiIO& io = ImGui::GetIO();
-				if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
-				{
-					ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
-					ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
-					/*
-					if (first_time) {
-						first_time = false;
-						ImGui::DockBuilderRemoveNode(dockspace_id);
-						ImGui::DockBuilderAddNode(dockspace_id, dockspace_flags | ImGuiDockNodeFlags_DockSpace);
-						ImGui::DockBuilderSetNodeSize(dockspace_id, ImGui::GetWindowSize());
-						ImGuiID dockspace_main_id = dockspace_id;
-						ImGui::DockBuilderDockWindow("Hello, world!", dockspace_main_id);
-					}
-				}
-				else
-				{
-					//ShowDockingDisabledMessage();
-				}
-
-				if (ImGui::BeginMenuBar()) {
-					if (ImGui::BeginMenu("File")) {
-						if (ImGui::MenuItem("Close", "Ctrl+X", false)) {
-							keeprunning = false;
-						}
-						ImGui::EndMenu();
-					}
-					ImGui::EndMenuBar();
-				}
-				ImGui::End();
-			}*/
-
-
-			// 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
-			{
-				static float f = 0.0f;
-				static int counter = 0;
-				/*
-				if (ImGui::BeginMainMenuBar()) {
-					if (ImGui::BeginMenu("File")) {
-						if (ImGui::MenuItem("Close", "Ctrl+X", false)) {
-							keeprunning = false;
-						}
-						ImGui::EndMenu();
-					}
-					ImGui::EndMainMenuBar();
-				}
-				*/
 				ImGuiViewportP* viewport = (ImGuiViewportP*)(void*)ImGui::GetMainViewport();
 				ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_MenuBar;
 				float height = ImGui::GetFrameHeight();
@@ -418,7 +323,9 @@ int main()
 							ImGui::EndMenu();
 						}
 						if (ImGui::BeginMenu("Emulation")) {
-							ImGui::MenuItem("Reset CPU", "Ctrl+R");
+							if (ImGui::MenuItem("Reset CPU", "Ctrl+R")) {
+								_DENVER_CPU->coldboot();
+							}
 							ImGui::Separator();
 							if (ImGui::BeginMenu("Debugging")) {
 								ImGui::MenuItem("PPU Viewer");
@@ -440,7 +347,7 @@ int main()
 
 				if (ImGui::BeginViewportSideBar("##MainStatusBar", viewport, ImGuiDir_Down, height, window_flags)) {
 					if (ImGui::BeginMenuBar()) {
-						ImGui::Text("Happy status bar");
+						ImGui::Text("Emulation running. %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
 						ImGui::EndMenuBar();
 					}
 					ImGui::End();
@@ -451,29 +358,6 @@ int main()
 					ImGui::End();
 				}
 				//ImGui::Image((void *)(intptr_t)tex, ImGui::GetContentRegionAvail());
-			}
-
-			// 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
-			{
-				static float f = 0.0f;
-				static int counter = 0;
-
-				ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.				
-
-				ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-				//ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
-				//ImGui::Checkbox("Another Window", &show_another_window);
-
-				ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-				ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
-
-				if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-					counter++;
-				ImGui::SameLine();
-				ImGui::Text("counter = %d", counter);
-
-				ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
-				ImGui::End();
 			}
 
 			frames++;	
