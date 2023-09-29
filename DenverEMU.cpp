@@ -201,10 +201,6 @@ int main()
 
 	// test cart.h
 	cartridge *cart = new cartridge("mario.nes", _DENVER_PPU, _DENVER_BUS);
-	delete cart;
-	cart = new cartridge("zelda.nes", _DENVER_PPU, _DENVER_BUS);
-	delete cart;
-	cart = new cartridge("js.nes", _DENVER_PPU, _DENVER_BUS);
 
 	std::cout << "CART mm2 loaded, devices are" << std::endl;
 	_DENVER_BUS->reportdevices();
