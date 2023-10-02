@@ -305,6 +305,7 @@ int		ppu::rundevice(int ticks) {
 					}					
 					if (ix > 7) pattern_address += 8;
 					pattern_address += (ltile << 4) + ix;
+					if (ppu_internal.n > 7) std::cout << "internal.n overflowed n>7\n";
 					ppu_internal.shiftreg_spr_pattern_hi[ppu_internal.n] = vbus.readmemory(pattern_address + 8);
 					ppu_internal.shiftreg_spr_counter[ppu_internal.n] = ppu_internal.secoam[ppu_internal.n].x;
 					ppu_internal.n++;	// eval to next sprite in seconday oam. this will never go over 7, because eval will stop earlier.
