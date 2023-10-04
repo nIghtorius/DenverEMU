@@ -90,20 +90,20 @@ void fastclock::setdevices(device *cpu, device *ppu, device *apu) {
 void fastclock::step() {
 	//  run cpu 1 step.
 	byte dmabyte;
-	if (this->cpudevice == NULL) return;
-	if (this->cpudevice->in_dma_mode) {
-		while (this->cpudevice->in_dma_mode) {
-			this->cpudevice->dma(&dmabyte, false, false);
-			this->ppudevice->dma(&dmabyte, true, cpudevice->dma_start);
+	if (cpudevice == NULL) return;
+	if (cpudevice->in_dma_mode) {
+		while (cpudevice->in_dma_mode) {
+			cpudevice->dma(&dmabyte, false, false);
+			if (ppudevice) ppudevice->dma(&dmabyte, true, cpudevice->dma_start);
 			cpudevice->dma_start = false;
-			this->cpudevice->rundevice(1);
+			cpudevice->rundevice(1);
 		}
-		this->ppudevice->rundevice(1536);
-		if (this->apudevice) apudevice->rundevice(512);
+		if (ppudevice) ppudevice->rundevice(1536);
+		if (apudevice) apudevice->rundevice(512);
 	}
-	int actualcputicks = this->cpudevice->rundevice(1);	
-	if (this->ppudevice != NULL) this->ppudevice->rundevice(actualcputicks);
-	if (this->apudevice != NULL) this->apudevice->rundevice(actualcputicks/3);
+	int actualcputicks = cpudevice->rundevice(1);	
+	if (ppudevice) ppudevice->rundevice(actualcputicks);
+	if (apudevice) apudevice->rundevice(actualcputicks/3);
 }
 
 void fastclock::run() {
@@ -111,19 +111,19 @@ void fastclock::run() {
 	while (1) {
 		//  run cpu 1 step.
 		byte dmabyte;
-		if (this->cpudevice == NULL) return;
-		if (this->cpudevice->in_dma_mode) {
-			while (this->cpudevice->in_dma_mode) {
-				this->cpudevice->dma(&dmabyte, false, false);
-				this->ppudevice->dma(&dmabyte, true, cpudevice->dma_start);
+		if (cpudevice == NULL) return;
+		if (cpudevice->in_dma_mode) {
+			while (cpudevice->in_dma_mode) {
+				cpudevice->dma(&dmabyte, false, false);
+				if (ppudevice) ppudevice->dma(&dmabyte, true, cpudevice->dma_start);
 				cpudevice->dma_start = false;
-				this->cpudevice->rundevice(1);
+				cpudevice->rundevice(1);
 			}
-			this->ppudevice->rundevice(1536);
-			this->apudevice->rundevice(512);
+			ppudevice->rundevice(1536);
+			if (apudevice) apudevice->rundevice(512);
 		}
-		int actualcputicks = this->cpudevice->rundevice(1);
-		if (this->ppudevice != NULL) this->ppudevice->rundevice(actualcputicks);
-		if (this->apudevice != NULL) this->apudevice->rundevice(actualcputicks/3);
+		int actualcputicks = cpudevice->rundevice(1);	
+		if (ppudevice) ppudevice->rundevice(actualcputicks);
+		if (apudevice) apudevice->rundevice(actualcputicks/3);
 	}
 }

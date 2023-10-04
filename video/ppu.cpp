@@ -31,6 +31,13 @@ ppu::~ppu() {
 	vbus.removedevice_select_base(vram.devicestart);
 }
 
+void ppu::write_state_dump (const char *filename) {
+		std::ofstream ppu_dump;
+		ppu_dump.open(filename, std::ios::binary | std::ios::out);
+		ppu_dump.write((char *)&ppu_internal, sizeof(ppu_render_state));
+		ppu_dump.close();
+}
+
 
 byte	ppu::read(int addr, int addr_from_base) {
 	// registers
@@ -305,7 +312,13 @@ int		ppu::rundevice(int ticks) {
 					}					
 					if (ix > 7) pattern_address += 8;
 					pattern_address += (ltile << 4) + ix;
-					if (ppu_internal.n > 7) std::cout << "internal.n overflowed n>7\n";
+					if (ppu_internal.n > 7) {
+						// should not happen, but happens on the linux port. reason unknown, windows version never happens.
+						std::cout << "internal.n overflowed n>7, value n = " << std::dec << (int)ppu_internal.n << " @ cycle step: " << (int)cycle << "\n";
+						std::cout << "dump file: ppu_internal_regs_state.dmp written\n";
+						write_state_dump ("ppu_internal_regs_state.dmp");
+						exit(-1);
+					}
 					ppu_internal.shiftreg_spr_pattern_hi[ppu_internal.n] = vbus.readmemory(pattern_address + 8);
 					ppu_internal.shiftreg_spr_counter[ppu_internal.n] = ppu_internal.secoam[ppu_internal.n].x;
 					ppu_internal.n++;	// eval to next sprite in seconday oam. this will never go over 7, because eval will stop earlier.
@@ -494,6 +507,12 @@ bool	ppu::isFrameReady() {
 	bool retval = frameready;
 	frameready = false;
 	return retval;
+}
+
+void	ppu::reset() {
+	/*std::cout << "PPU has reset" << std::endl;
+	cycle = 0;
+	memset (&ppu_internal, 0, sizeof (ppu_render_state));*/
 }
 
 // PPU RAM

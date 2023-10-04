@@ -70,7 +70,7 @@ void	bus::emulate_bus_conflicts(bool enable) {
 }
 
 void	bus::registerdevice(bus_device *device) {
-	if (device != NULL)
+	if (device)
 		devices.push_back(device);
 }
 

@@ -129,6 +129,7 @@ int main()
 	glGenTextures(1, &tex);
 
 	nes_emulator * denver = new nes_emulator();
+	denver->load_cartridge("dtales.nes");
 
 	while (!denver->hasquit()) {
 		denver->run_till_frame_ready([](SDL_Event *cbev){

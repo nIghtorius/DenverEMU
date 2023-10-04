@@ -6,6 +6,7 @@
 */
 
 #include "nes.h"
+#include <iostream>
 
 nes_emulator::nes_emulator() {
 	// setup the emulator.
@@ -63,8 +64,11 @@ void	nes_emulator::cold_reset() {
 }
 
 void	nes_emulator::run_till_frame_ready(void (*callback)(SDL_Event*)) {
-	while (!ppu_device->isFrameReady()) {
+	int frames = 1;
+	while (!ppu_device->isFrameReady()) {		
+	//while (!frames%600==0) {
 		clock->step();
+		frames++;
 		SDL_Event event;
 		if (SDL_PollEvent(&event)) {
 			if (callback) callback(&event);
@@ -83,7 +87,7 @@ void	nes_emulator::run_till_frame_ready(void (*callback)(SDL_Event*)) {
 		}
 	}
 	// frame is ready.. generate frame.
-	video_out->process_ppu_image((std::uint16_t *)ppu_device->getFrameBuffer());
+	if (ppu_device) video_out->process_ppu_image((std::uint16_t *)ppu_device->getFrameBuffer());
 }
 
 void	nes_emulator::sync_audio() {
@@ -107,6 +111,7 @@ void	nes_emulator::stop() {
 }
 
 void	nes_emulator::load_cartridge(const char * filename) {
+	ppu_device->write_state_dump("ppu_state_before_cart.dmp");
 	if (cart) delete cart;
 	cart = new cartridge(filename, ppu_device, mainbus);
 	cpu_2a03->coldboot();
