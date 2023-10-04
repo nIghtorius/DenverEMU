@@ -10,7 +10,7 @@ rwildcard=$(wildcard $1) $(foreach d,$1,$(call rwildcard,$(addsuffix /$(notdir $
 CC = g++
 
 LINKERFLAG = -lSDL2 -lGL
-COMPILERFLAG = -I imgui -I imgui/backends -c -O3 -Ofast -Wformat `sdl2-config --cflags`
+COMPILERFLAG = -I imgui -I imgui/backends -c -O2 -Wformat `sdl2-config --cflags`
 
 SRCS := $(call rwildcard,./*.cpp)
 BINS := $(SRCS:%.cpp=%.o)
@@ -26,4 +26,6 @@ clean:
 	rm -rvf ${BINS}
 	rm ./denver
 
+sources:
+	@echo "Source files: ${SRCS}" 
 

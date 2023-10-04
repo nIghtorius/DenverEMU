@@ -127,17 +127,17 @@ cartridge::cartridge(const char *filename, ppu *ppu_device, bus *mainbus) {
 		case 1:
 			// MMC1_ROM
 			program = new mmc1_rom();
-			program->set_rom_data((byte *)program_data, nes.programsize);
 			character = new mmc1_vrom();	//mmc1 vrom also emulated vram.
+			// mmc1 linking.
+			reinterpret_cast<mmc1_rom*>(program)->link_vrom(reinterpret_cast<mmc1_vrom*>(character));
+			reinterpret_cast<mmc1_vrom*>(character)->link_ppu_bus(&ppu_device->vram);
+			program->set_rom_data((byte *)program_data, nes.programsize);
 			if (has_char_data) {
 				character->set_rom_data((byte *)char_data, nes.charsize);
 			}
 			else {
 				reinterpret_cast<mmc1_vrom*>(character)->is_ram(true);
 			}
-			// mmc1 linking.
-			reinterpret_cast<mmc1_rom*>(program)->link_vrom(reinterpret_cast<mmc1_vrom*>(character));
-			reinterpret_cast<mmc1_vrom*>(character)->link_ppu_bus(&ppu_device->vram);
 			break;
 		case 2:
 			// UXROM
