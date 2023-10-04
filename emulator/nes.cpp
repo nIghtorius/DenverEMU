@@ -11,7 +11,7 @@
 nes_emulator::nes_emulator() {
 	// setup the emulator.
 	mainbus = new bus();
-	clock = new fastclock();
+	//clock = new fastclock();
 	cpu_2a03 = new cpu2a03_fast();
 	nesram = new mainram();
 	ppu_device = new ppu();
@@ -23,7 +23,7 @@ nes_emulator::nes_emulator() {
 	cart = NULL;
 
 	// configure links.
-	clock->setdevices(cpu_2a03, ppu_device, apu_device);
+	clock.setdevices(cpu_2a03, ppu_device, apu_device);
 	mainbus->registerdevice(cpu_2a03);
 	mainbus->registerdevice(nesram);
 	mainbus->registerdevice(ppu_device);
@@ -52,7 +52,7 @@ nes_emulator::~nes_emulator() {
 	delete audio;
 	delete mainbus;	// also kills the linked devices.
 	delete joydefs;
-	delete clock;
+	//delete clock;
 	delete video_out;
 }
 
@@ -68,7 +68,7 @@ void	nes_emulator::run_till_frame_ready(void (*callback)(SDL_Event*)) {
 	int frames = 1;
 	while (!ppu_device->isFrameReady()) {		
 	//while (!frames%600==0) {
-		clock->step();
+		clock.step();
 		frames++;
 		SDL_Event event;
 		if (SDL_PollEvent(&event)) {

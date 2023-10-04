@@ -32,7 +32,7 @@ class nes_emulator {
 private:
 	cartridge			* cart;
 	cpu2a03_fast		* cpu_2a03;
-	fastclock			* clock;
+	fastclock			clock;	// trying clock non heap, maybe some speed?
 	mainram				* nesram;
 	audio_player		* audio;
 	joypad				* joydefs;
