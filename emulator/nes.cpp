@@ -16,6 +16,7 @@ nes_emulator::nes_emulator() {
 	nesram = new mainram();
 	ppu_device = new ppu();
 	apu_device = new apu();
+	apu_device->attach_to_memory_bus(mainbus);
 	audio = new audio_player();
 	joydefs = new joypad();
 	controllers = new nes_2a03_joyports(joydefs);
