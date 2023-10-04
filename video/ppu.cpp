@@ -76,6 +76,7 @@ byte	ppu::read(int addr, int addr_from_base) {
 void	ppu::write(int addr, int addr_from_base, byte data) {
 	// update latch
 	latch = data;
+	//std::cout << "ppu_register_write: 0x" << std::hex << (int)addr_from_base << ", data: 0x" << (int)data << "\n";
 	// registers.
 	if (addr_from_base == PPU_PPUCTRL_PORT) {
 		ppu_internal.t_register &= ~0xC00;
@@ -93,8 +94,15 @@ void	ppu::write(int addr, int addr_from_base, byte data) {
 		ppumask.emp_grn = (data & PPU_EMP_GREEN) > 0;
 		ppumask.emp_red = (data & PPU_EMP_RED) > 0;
 		ppumask.grayscale = (data & PPU_GREYSCALE) > 0;
+		bool	prev_state_show = ppumask.showbg || ppumask.showspr;
 		ppumask.showbg = (data & PPU_SHOW_BG) > 0;
 		ppumask.showspr = (data & PPU_SHOW_SPR) > 0;
+		if ((ppumask.showbg || ppumask.showspr) && !prev_state_show) {
+			// reset rendering pipeline evaluators.
+			ppu_internal.n = 0;
+			ppu_internal.sn = 0;
+			ppu_internal.m = 0;
+		}
 		ppumask.spr8lt = (data & PPU_SPR_L8P) > 0;
 	}
 	// OAMADDR register (0x03)
