@@ -101,7 +101,7 @@ void fastclock::step() {
 		if (ppudevice) ppudevice->rundevice(1536);
 		if (apudevice) apudevice->rundevice(512);
 	}
-	int actualcputicks = cpudevice->rundevice(1);	
+	int actualcputicks = cpudevice->rundevice(cyclespersync);	
 	if (ppudevice) ppudevice->rundevice(actualcputicks);
 	if (apudevice) apudevice->rundevice(actualcputicks/3);
 }
@@ -122,8 +122,12 @@ void fastclock::run() {
 			ppudevice->rundevice(1536);
 			if (apudevice) apudevice->rundevice(512);
 		}
-		int actualcputicks = cpudevice->rundevice(1);	
+		int actualcputicks = cpudevice->rundevice(cyclespersync);	
 		if (ppudevice) ppudevice->rundevice(actualcputicks);
 		if (apudevice) apudevice->rundevice(actualcputicks/3);
 	}
+}
+
+void fastclock::set_sync_cycle_in_ppucycles(int ppucycles) {
+	cyclespersync = ppucycles;
 }

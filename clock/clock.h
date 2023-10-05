@@ -32,10 +32,12 @@ private:
 	device *cpudevice;
 	device *ppudevice;
 	device *apudevice;
+	int	cyclespersync = 1;
 public:
 	fastclock();
 	~fastclock();
 	void step();
 	void run();
 	void setdevices(device *cpu, device *ppu, device *apu);
+	void set_sync_cycle_in_ppucycles(int ppucycles);
 };

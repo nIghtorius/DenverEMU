@@ -19,6 +19,8 @@
 #include "imgui_impl_sdl2.h"
 #include "imgui_impl_opengl3.h"
 
+#include "denvergui/dengui_main.h"
+
 #include <SDL.h>
 #if defined(IMGUI_IMPL_OPENGL_ES2)
 #include <SDL_opengles2.h>
@@ -26,15 +28,13 @@
 #include <SDL_opengl.h>
 #endif
 
-#define		DENVER_VERSION		"0.1 beta"
+#define		DENVER_VERSION		"0.2 alpha"
 #undef main
 
 int main()
 {
 	/*
 		Print Shield
-
-		THIS IS TESTCODE. NOT FINAL PRODUCT. HENCE THE UGLINESS!
 	*/
 
 	std::cout << "Project Denver version " << DENVER_VERSION << std::endl << "(c) 2018 P. Santing aka nIghtorius" << std::endl << std::endl;
@@ -151,119 +151,7 @@ int main()
 		glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 256, 240, 0, GL_RGBA, GL_UNSIGNED_BYTE, (GLvoid *)nesframe->texture);
 
-		{
-			ImGuiViewportP* viewport = (ImGuiViewportP*)(void*)ImGui::GetMainViewport();
-			ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_MenuBar;
-			float height = ImGui::GetFrameHeight();
-
-			if (ImGui::BeginViewportSideBar("##SecondaryMenuBar", viewport, ImGuiDir_Up, height, window_flags)) {
-				if (ImGui::BeginMenuBar()) {
-					if (ImGui::BeginMenu("File")) {
-
-						ImGui::MenuItem("Open file", "Ctrl+O", false);
-						if (ImGui::BeginMenu("Recent")) {
-							if (ImGui::MenuItem("dtales.nes")) {
-								denver->load_cartridge("dtales.nes");
-							}
-							if (ImGui::MenuItem("mm2.nes")) {
-								denver->load_cartridge("mm2.nes");
-							}
-							if (ImGui::MenuItem("megaman.nes")) {
-								denver->load_cartridge("megaman.nes");
-							}
-							if (ImGui::MenuItem("cv.nes")) {
-								denver->load_cartridge("cv.nes");
-							}
-							ImGui::EndMenu();
-						}
-						ImGui::Separator();
-						if (ImGui::BeginMenu("Save state")) {
-							ImGui::MenuItem("state #1");
-							ImGui::MenuItem("state #2");
-							ImGui::MenuItem("state #3");
-							ImGui::MenuItem("state #4");
-							ImGui::MenuItem("state #5");
-							ImGui::MenuItem("state #6");
-							ImGui::EndMenu();
-						}
-						if (ImGui::BeginMenu("Load state")) {
-							ImGui::MenuItem("state #1");
-							ImGui::MenuItem("state #2");
-							ImGui::MenuItem("state #3");
-							ImGui::MenuItem("state #4");
-							ImGui::MenuItem("state #5");
-							ImGui::MenuItem("state #6");
-							ImGui::EndMenu();
-						}
-						ImGui::Separator();
-						if (ImGui::MenuItem("Close", "Ctrl+X", false)) {
-							denver->stop();
-						}
-						ImGui::EndMenu();
-					}
-					if (ImGui::BeginMenu("Configuration")) {
-						if (ImGui::MenuItem("Controllers", NULL, false)) {
-
-						}
-						ImGui::EndMenu();
-					}
-					if (ImGui::BeginMenu("Emulation")) {
-						if (ImGui::MenuItem("Soft reset CPU", "Ctrl+R")) {
-							denver->reset();
-						}
-						if (ImGui::MenuItem("Hard reset CPU", "Ctrl+H")) {
-							denver->cold_reset();
-						}
-						ImGui::Separator();
-						if (ImGui::BeginMenu("Debugging")) {
-							ImGui::MenuItem("PPU Viewer");
-							ImGui::MenuItem("Memory viewer");
-							ImGui::MenuItem("Disassembler");
-							ImGui::MenuItem("Stack viewer");
-							ImGui::MenuItem("APU Viewer");
-							if (ImGui::BeginMenu("Denver virtual devices")) {
-								ImGui::SeparatorText("CPU BUS");
-								for (auto device : denver->mainbus->devices) {
-									if (ImGui::MenuItem(device->get_device_descriptor())) {
-										device->reset();
-									}
-								}
-								ImGui::SeparatorText("PPU BUS");
-								for (auto device : denver->ppu_device->vbus.devices) {
-									if (ImGui::MenuItem(device->get_device_descriptor())) {
-										device->reset();
-									}
-								}
-								ImGui::EndMenu();
-							}
-							ImGui::EndMenu();
-						}
-						ImGui::Separator();
-						ImGui::MenuItem("Rewind 5 seconds", "Alt+BkUp");
-						ImGui::EndMenu();
-					}
-
-					ImGui::EndMenuBar();
-				}
-				ImGui::End();
-			}
-
-			if (ImGui::BeginViewportSideBar("##MainStatusBar", viewport, ImGuiDir_Down, height, window_flags)) {
-				if (ImGui::BeginMenuBar()) {
-					ImVec4 color = { 0xAA, 0xAA, 0xAA, 0xFF };
-					if (io.Framerate < 59.5) color = { 0xFF, 0, 0, 0xFF };
-					if (io.Framerate > 61) color = { 0x00, 0xFF, 0, 0xFF };
-					ImGui::TextColored(color, "Emulation running. %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
-					ImGui::EndMenuBar();
-				}
-				ImGui::End();
-			}
-
-			if (ImGui::BeginViewportSideBar("##NES", viewport, ImGuiDir_Up, io.DisplaySize.y - height*2, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings)) {
-				ImGui::Image((void *)(intptr_t)tex, ImGui::GetContentRegionAvail());
-				ImGui::End();
-			}
-		}
+		denvergui::render_main(denver, tex);
 
 		frames++;	
 
