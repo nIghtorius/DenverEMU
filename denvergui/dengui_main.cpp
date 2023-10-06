@@ -168,7 +168,7 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex) {
 		ImGui::Image((void *)(intptr_t)tex, ImVec2{ width_x, height_y });
 		ImGui::End();
 	}
-	ImGui::PopStyleVar(2);
+	ImGui::PopStyleVar(1);
 
 	if (ImGui::BeginViewportSideBar("##MainStatusBar", viewport, ImGuiDir_Down, height, window_flags)) {
 		if (ImGui::BeginMenuBar()) {
