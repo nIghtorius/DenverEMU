@@ -64,6 +64,15 @@
     <Filter Include="Source Files\emulation\denvergui">
       <UniqueIdentifier>{2f5a33a4-758e-4974-a63f-f2845756403c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\emulation\imguifiledialog">
+      <UniqueIdentifier>{4e9ec349-7f67-4ad5-a597-25673ccbe61e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\emulation\imguifiledialog\dirent">
+      <UniqueIdentifier>{7917e7b9-b0f2-4d0c-a4c5-58eec5abee04}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\emulation\imguifiledialog\stb">
+      <UniqueIdentifier>{b1903931-d69c-430a-9bc4-444ef9216935}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="audio\apu.h">
@@ -147,6 +156,21 @@
     <ClInclude Include="denvergui\dengui_main.h">
       <Filter>Source Files\emulation\denvergui</Filter>
     </ClInclude>
+    <ClInclude Include="imguifiledialog\ImGuiFileDialog.h">
+      <Filter>Source Files\emulation\imguifiledialog</Filter>
+    </ClInclude>
+    <ClInclude Include="imguifiledialog\ImGuiFileDialogConfig.h">
+      <Filter>Source Files\emulation\imguifiledialog</Filter>
+    </ClInclude>
+    <ClInclude Include="imguifiledialog\dirent\dirent.h">
+      <Filter>Source Files\emulation\imguifiledialog\dirent</Filter>
+    </ClInclude>
+    <ClInclude Include="imguifiledialog\stb\stb_image.h">
+      <Filter>Source Files\emulation\imguifiledialog\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="imguifiledialog\stb\stb_image_resize.h">
+      <Filter>Source Files\emulation\imguifiledialog\stb</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DenverEMU.cpp">
@@ -226,6 +250,9 @@
     </ClCompile>
     <ClCompile Include="denvergui\dengui_main.cpp">
       <Filter>Source Files\emulation\denvergui</Filter>
+    </ClCompile>
+    <ClCompile Include="imguifiledialog\ImGuiFileDialog.cpp">
+      <Filter>Source Files\emulation\imguifiledialog</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -116,7 +116,6 @@ int main()
 	ImGui_ImplSDL2_InitForOpenGL(win, gl_context);
 	ImGui_ImplOpenGL3_Init(glsl_version);
 
-	int frames = 0;
 	int time = SDL_GetTicks();
 
 	std::cout << "Starting emulation..." << std::endl;
@@ -152,8 +151,6 @@ int main()
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 256, 240, 0, GL_RGBA, GL_UNSIGNED_BYTE, (GLvoid *)nesframe->texture);
 
 		denvergui::render_main(denver, tex);
-
-		frames++;	
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

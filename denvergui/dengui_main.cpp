@@ -1,6 +1,8 @@
 #include "dengui_main.h"
 #include "imgui.h"
 #include "imgui_internal.h"
+#include "../imguifiledialog/ImGuiFileDialog.h"
+#include <iostream>
 
 void	denvergui::render_main (nes_emulator *denver, GLuint tex) {
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
@@ -8,11 +10,25 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex) {
 	ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_MenuBar;
 	float height = ImGui::GetFrameHeight();
 
-	if (ImGui::BeginViewportSideBar("##SecondaryMenuBar", viewport, ImGuiDir_Up, height, window_flags)) {
+	// file dialogs.
+	if (ImGuiFileDialog::Instance()->Display("nesfile", ImGuiWindowFlags_NoCollapse, ImVec2{ 700.0f, 500.0f })) {
+		if (ImGuiFileDialog::Instance()->IsOk()) {
+			std::cout << "ImGuiFileDialog: " << ImGuiFileDialog::Instance()->GetFilePathName() << std::endl;
+			// load the cart.
+			denver->load_cartridge(ImGuiFileDialog::Instance()->GetFilePathName().c_str());
+			denver->cold_reset();
+		}
+		ImGuiFileDialog::Instance()->Close();
+	}
+
+	if (ImGui::BeginViewportSideBar("##SecondaryMenuBar", viewport, ImGuiDir_Up, height, window_flags)) 
+	{
 		if (ImGui::BeginMenuBar()) {
 			if (ImGui::BeginMenu("File")) {
+				if (ImGui::MenuItem("Open file", "Ctrl+O")) {
+					ImGuiFileDialog::Instance()->OpenDialog("nesfile", "Select NES file", "All compatible files{.nes,.nsf},NES roms{.nes},NES music{.nsf}", ".", 1, nullptr, ImGuiFileDialogFlags_Modal);
+				}
 
-				ImGui::MenuItem("Open file", "Ctrl+O", false);
 				if (ImGui::BeginMenu("Recent")) {
 					if (ImGui::MenuItem("dtales.nes")) {
 						denver->load_cartridge("dtales.nes");
@@ -115,18 +131,15 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex) {
 		ImGui::End();
 	}
 
-	if (ImGui::BeginViewportSideBar("##MainStatusBar", viewport, ImGuiDir_Down, height, window_flags)) {
-		if (ImGui::BeginMenuBar()) {
-			ImVec4 color = { 0xAA, 0xAA, 0xAA, 0xFF };
-			if (io.Framerate < 59.5) color = { 0xFF, 0, 0, 0xFF };
-			if (io.Framerate > 61) color = { 0x00, 0xFF, 0, 0xFF };
-			ImGui::TextColored(color, "Emulation running. %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
-			ImGui::EndMenuBar();
-		}
-		ImGui::End();
-	}
-
-	if (ImGui::BeginViewportSideBar("##NES", viewport, ImGuiDir_Up, io.DisplaySize.y - height * 2, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings)) {
+	//if (ImGui::BeginViewportSideBar("##NES", viewport, ImGuiDir_Left, io.DisplaySize.y - height * 2, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings)) 
+	ImVec2 startRendering = ImGui::GetMainViewport()->Pos;
+	ImVec2 sizeRendering = ImGui::GetMainViewport()->WorkSize;
+	startRendering.y += height;
+	ImGui::SetNextWindowPos(startRendering);
+	ImGui::SetNextWindowSize(sizeRendering);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+	if (ImGui::Begin("##NES", NULL, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoResize)) 
+	{
 		// compute where the image has to come. for now its the 4:3 renderer, later on we implement
 		// the 8:7 renderer.
 
@@ -153,7 +166,18 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex) {
 
 		ImGui::SetCursorPosX(start_x);
 		ImGui::Image((void *)(intptr_t)tex, ImVec2{ width_x, height_y });
+		ImGui::End();
+	}
+	ImGui::PopStyleVar(2);
 
+	if (ImGui::BeginViewportSideBar("##MainStatusBar", viewport, ImGuiDir_Down, height, window_flags)) {
+		if (ImGui::BeginMenuBar()) {
+			ImVec4 color = { 0xAA, 0xAA, 0xAA, 0xFF };
+			if (io.Framerate < 59.5) color = { 0xFF, 0, 0, 0xFF };
+			if (io.Framerate > 61) color = { 0x00, 0xFF, 0, 0xFF };
+			ImGui::TextColored(color, "Emulation running. %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+			ImGui::EndMenuBar();
+		}
 		ImGui::End();
 	}
 

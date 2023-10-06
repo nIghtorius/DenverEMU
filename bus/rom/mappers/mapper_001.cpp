@@ -34,8 +34,8 @@ void mmc1_rom::update_banks() {
 	case MMC1_PRG_32K_MODE:
 	case MMC1_PRG_32K_MODE2:
 		bank = state.prgbank >> 1;
-		prg8000 = &romdata[(bank << 15)%(romsize - 32768)];
-		prgC000 = &romdata[(bank << 15)%(romsize - 32768) | 0x4000];
+		prg8000 = &romdata[(bank << 15)%(romsize)];
+		prgC000 = &romdata[(bank << 15)%(romsize) | 0x4000];
 		break;
 	case MMC1_PRG_FIRSTBANK_FIX_8000:
 		bank = state.prgbank;

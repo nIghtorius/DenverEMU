@@ -182,6 +182,11 @@
     <ClInclude Include="cpu\cpu2a03_fast.h" />
     <ClInclude Include="denvergui\dengui_main.h" />
     <ClInclude Include="emulator\nes.h" />
+    <ClInclude Include="imguifiledialog\dirent\dirent.h" />
+    <ClInclude Include="imguifiledialog\ImGuiFileDialog.h" />
+    <ClInclude Include="imguifiledialog\ImGuiFileDialogConfig.h" />
+    <ClInclude Include="imguifiledialog\stb\stb_image.h" />
+    <ClInclude Include="imguifiledialog\stb\stb_image_resize.h" />
     <ClInclude Include="imgui\backends\imgui_impl_opengl2.h" />
     <ClInclude Include="imgui\backends\imgui_impl_opengl3.h" />
     <ClInclude Include="imgui\backends\imgui_impl_opengl3_loader.h" />
@@ -212,6 +217,7 @@
     <ClCompile Include="DenverEMU.cpp" />
     <ClCompile Include="denvergui\dengui_main.cpp" />
     <ClCompile Include="emulator\nes.cpp" />
+    <ClCompile Include="imguifiledialog\ImGuiFileDialog.cpp" />
     <ClCompile Include="imgui\backends\imgui_impl_opengl2.cpp" />
     <ClCompile Include="imgui\backends\imgui_impl_opengl3.cpp" />
     <ClCompile Include="imgui\backends\imgui_impl_sdl2.cpp" />
