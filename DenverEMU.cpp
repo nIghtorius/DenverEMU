@@ -128,7 +128,10 @@ int main()
 	glGenTextures(1, &tex);
 
 	nes_emulator * denver = new nes_emulator();
-	denver->load_cartridge("dtales.nes");
+	denver->load_cartridge("mario.nes");
+
+	denvergui::denvergui_state windowstates;
+	windowstates.show_apu_debugger = false;
 
 	while (!denver->hasquit()) {
 		denver->run_till_frame_ready([](SDL_Event *cbev){
@@ -150,7 +153,7 @@ int main()
 		glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 256, 240, 0, GL_RGBA, GL_UNSIGNED_BYTE, (GLvoid *)nesframe->texture);
 
-		denvergui::render_main(denver, tex);
+		denvergui::render_main(denver, tex, &windowstates);
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

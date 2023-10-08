@@ -192,11 +192,6 @@ public:
 // classes
 class apu : public audio_device {
 private:
-	pulse_generator		pulse[2];		// pulse generators.
-	triangle_generator	triangle;		// triangle generator.
-	noise_generator		noise;			// noise generator.
-	dmc_generator		dmc;
-
 	float				pulse_muxtable[32];
 	float				tnd_table[204];
 
@@ -218,8 +213,14 @@ public:
 	apu();
 	~apu();
 
+	pulse_generator		pulse[2];		// pulse generators.
+	triangle_generator	triangle;		// triangle generator.
+	noise_generator		noise;			// noise generator.
+	dmc_generator		dmc;			// delta modulation (sampling)
+
 	byte	read(int addr, int addr_from_base);
 	void	write(int addr, int addr_from_base, byte data);
 	int		rundevice(int ticks);
 	void	attach_to_memory_bus(bus *mbus);
+	void	reset();
 };

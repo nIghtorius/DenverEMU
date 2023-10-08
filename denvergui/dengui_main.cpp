@@ -4,7 +4,9 @@
 #include "../imguifiledialog/ImGuiFileDialog.h"
 #include <iostream>
 
-void	denvergui::render_main (nes_emulator *denver, GLuint tex) {
+#pragma warning(disable : 4996)
+
+void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *state) {
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
 	ImGuiViewportP* viewport = (ImGuiViewportP*)(void*)ImGui::GetMainViewport();
 	ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_MenuBar;
@@ -21,6 +23,102 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex) {
 		ImGuiFileDialog::Instance()->Close();
 	}
 
+	// apu dialog.
+	if (state->show_apu_debugger) {
+		ImGui::SetNextWindowSize(ImVec2{500.0f, 400.0f});
+		if (ImGui::Begin("APU debugger", &state->show_apu_debugger, ImGuiWindowFlags_NoResize)) {
+			ImGui::BeginTabBar("##aputabs");
+			if (ImGui::BeginTabItem("Pulse #1")) {
+				char buf[16];
+				ImGui::Text("Enabled: %s", (denver->apu_device->pulse[0].enabled ? "Yes" : "No"));
+				ImGui::Text("Duty cycle: %d", denver->apu_device->pulse[0].duty_cycle);
+				ImGui::Text("Dyte position: %d", denver->apu_device->pulse[0].duty_pos);
+				ImGui::Text("Envelope loop: %s", (denver->apu_device->pulse[0].envelope_loop ? "Yes" : "No"));
+				ImGui::Text("Contant volume: %s", (denver->apu_device->pulse[0].constant_volume ? "Yes" : "No"));
+				ImGui::Text("Volume / Envelope");
+				float vol = (1.0f / 15.0f)*(float)denver->apu_device->pulse[0].volume_envelope;
+				sprintf(buf, "%d/15", denver->apu_device->pulse[0].volume_envelope);
+				ImGui::ProgressBar(vol, ImVec2{ 0, 0 }, buf);
+				ImGui::Text("Timer: %d", denver->apu_device->pulse[0].timer);
+				ImGui::Text("Length Counter: %d", denver->apu_device->pulse[0].length_counter);
+				ImGui::Text("Sweeping: %s", (denver->apu_device->pulse[0].sweep_enable ? "Yes" : "No"));
+				ImGui::Text("Sweep divider: %d", denver->apu_device->pulse[0].sweep_divider);
+				ImGui::Text("Sweep negation: %s", (denver->apu_device->pulse[0].sweep_negate ? "Yes" : "No"));
+				ImGui::Text("Envelope Count: %d", denver->apu_device->pulse[0].envelope_count);
+				ImGui::Text("Env_Out");
+				float envout = (1.0f / 15.0f)*(float)denver->apu_device->pulse[0].envelope_out;
+				sprintf(buf, "%d/15", denver->apu_device->pulse[0].envelope_out);
+				ImGui::ProgressBar(envout, ImVec2{ 0, 0 }, buf);
+				ImGui::EndTabItem();
+			}
+			if (ImGui::BeginTabItem("Pulse #2")) {
+				char buf[16];
+				ImGui::Text("Enabled: %s", (denver->apu_device->pulse[1].enabled ? "Yes" : "No"));
+				ImGui::Text("Duty cycle: %d", denver->apu_device->pulse[1].duty_cycle);
+				ImGui::Text("Dyte position: %d", denver->apu_device->pulse[1].duty_pos);
+				ImGui::Text("Envelope loop: %s", (denver->apu_device->pulse[1].envelope_loop ? "Yes" : "No"));
+				ImGui::Text("Contant volume: %s", (denver->apu_device->pulse[1].constant_volume ? "Yes" : "No"));
+				ImGui::Text("Volume / Envelope");
+				float vol = (1.0f / 15.0f)*(float)denver->apu_device->pulse[1].volume_envelope;
+				sprintf(buf, "%d/15", denver->apu_device->pulse[1].volume_envelope);
+				ImGui::ProgressBar(vol, ImVec2{ 0, 0 }, buf);
+				ImGui::Text("Timer: %d", denver->apu_device->pulse[1].timer);
+				ImGui::Text("Length Counter: %d", denver->apu_device->pulse[1].length_counter);
+				ImGui::Text("Sweeping: %s", (denver->apu_device->pulse[1].sweep_enable ? "Yes" : "No"));
+				ImGui::Text("Sweep divider: %d", denver->apu_device->pulse[1].sweep_divider);
+				ImGui::Text("Sweep negation: %s", (denver->apu_device->pulse[1].sweep_negate ? "Yes" : "No"));
+				ImGui::Text("Envelope Count: %d", denver->apu_device->pulse[1].envelope_count);
+				ImGui::Text("Env_Out");
+				float envout = (1.0f / 15.0f)*(float)denver->apu_device->pulse[1].envelope_out;
+				sprintf(buf, "%d/15", denver->apu_device->pulse[1].envelope_out);
+				ImGui::ProgressBar(envout, ImVec2{ 0, 0 }, buf);
+				ImGui::EndTabItem();
+			}
+			if (ImGui::BeginTabItem("Triangle")) {
+				ImGui::Text("Enabled: %s", (denver->apu_device->triangle.enabled ? "Yes" : "No"));
+				ImGui::Text("Triangle Length Loop: %d", denver->apu_device->triangle.triangle_length);
+				ImGui::Text("Length Counter: %d", denver->apu_device->triangle.length_counter);
+				ImGui::Text("Timer: %d", denver->apu_device->triangle.timer);
+				ImGui::Text("Sequencer: %d", denver->apu_device->triangle.sequencer);
+				ImGui::EndTabItem();
+			}
+			if (ImGui::BeginTabItem("Noise")) {
+				char buf[16];
+				ImGui::Text("Enabled: %s", (denver->apu_device->noise.enabled ? "Yes" : "No"));
+				ImGui::Text("Envelope loop: %s", (denver->apu_device->noise.envelope_loop ? "Yes" : "No"));
+				ImGui::Text("Constant Volume: %s", (denver->apu_device->noise.constant_volume ? "Yes" : "No"));
+				ImGui::Text("Volume Envelope");
+				float vol = (1.0f / 15.0f)*(float)denver->apu_device->noise.volume_envelope;
+				sprintf(buf, "%d/15", denver->apu_device->noise.volume_envelope);
+				ImGui::ProgressBar(vol, ImVec2{ 0, 0 }, buf);
+				ImGui::Text("Volume Envelope");
+				float envvol = (1.0f / 15.0f)*(float)denver->apu_device->noise.envelope_out;
+				sprintf(buf, "%d/15", denver->apu_device->noise.envelope_out);
+				ImGui::ProgressBar(envvol, ImVec2{ 0, 0 }, buf);
+				ImGui::Text("Noise loop: %s", (denver->apu_device->noise.noise_loop ? "Yes" : "No"));
+				ImGui::Text("Noise period: %d", denver->apu_device->noise.noise_period);
+				ImGui::Text("Length Counter: %d", denver->apu_device->noise.length_counter);
+				ImGui::Text("Noise shift register: %d", denver->apu_device->noise.noise_shift_reg);
+				ImGui::EndTabItem();
+			}
+			if (ImGui::BeginTabItem("DMC")) {
+				ImGui::Text("Enabled: %s", (denver->apu_device->dmc.enabled ? "Yes" : "No"));
+				ImGui::Text("Asserting IRQ: %s", (denver->apu_device->dmc.irq_asserted ? "Yes" : "No"));
+				ImGui::Text("IRQ Enabled: %s", (denver->apu_device->dmc.irq_enable ? "Yes" : "No"));
+				ImGui::Text("Rate: %d", denver->apu_device->dmc.rate);
+				ImGui::Text("Output level: %d", denver->apu_device->dmc.direct_out);
+				ImGui::Text("Sample address: %#04X", denver->apu_device->dmc.sample_addr);
+				ImGui::Text("Sample length: %d", denver->apu_device->dmc.sample_length_load);
+				ImGui::Text("Sample buffer: %d", denver->apu_device->dmc.sample_buffer);
+				ImGui::Text("Silent: %s", (denver->apu_device->dmc.silent ? "Yes" : "No"));
+				ImGui::Text("Sample Shift Register: %d", denver->apu_device->dmc.sample_shift_register);
+				ImGui::EndTabItem();
+			}
+			ImGui::EndTabBar();
+			ImGui::End();
+		}
+	}
+	
 	if (ImGui::BeginViewportSideBar("##SecondaryMenuBar", viewport, ImGuiDir_Up, height, window_flags)) 
 	{
 		if (ImGui::BeginMenuBar()) {
@@ -103,7 +201,9 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex) {
 					ImGui::MenuItem("Memory viewer");
 					ImGui::MenuItem("Disassembler");
 					ImGui::MenuItem("Stack viewer");
-					ImGui::MenuItem("APU Viewer");
+					if (ImGui::MenuItem("APU Viewer")) {
+						state->show_apu_debugger = true;
+					}
 					if (ImGui::BeginMenu("Denver virtual devices")) {
 						ImGui::SeparatorText("CPU BUS");
 						for (auto device : denver->mainbus->devices) {
@@ -138,7 +238,7 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex) {
 	ImGui::SetNextWindowPos(startRendering);
 	ImGui::SetNextWindowSize(sizeRendering);
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-	if (ImGui::Begin("##NES", NULL, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoResize)) 
+	if (ImGui::Begin("NES Game", NULL, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoResize || ImGuiWindowFlags_NoInputs)) 
 	{
 		// compute where the image has to come. for now its the 4:3 renderer, later on we implement
 		// the 8:7 renderer.
