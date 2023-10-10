@@ -2,6 +2,11 @@
 #include <fstream>
 #include <iostream>
 
+// mappers
+#include "../rom/mappers/mapper_001.h"
+#include "../rom/mappers/mapper_002.h"
+#include "../rom/mappers/mapper_003.h"
+
 // implementation.
 
 // base functions
@@ -148,6 +153,20 @@ void	cartridge::readstream(std::istream &nesfile, ppu *ppu_device, bus *mainbus)
 			character = charram;
 		}
 		break;
+	case 3:
+		// CNROM
+		program = new cnrom();
+		program->set_rom_data((byte *)program_data, nes.programsize);
+		if (has_char_data) {
+			character = new cnvrom();
+			character->set_rom_data((byte *)char_data, nes.charsize);
+			reinterpret_cast<cnrom*>(program)->link_vrom(reinterpret_cast<cnvrom*>(character));
+		}
+		else {
+			charram = new vram();
+			character = charram;	// should not happen.
+		}
+		break;
 	default:
 		std::cout << "Mapper is unknown to me" << std::endl;
 		break;
@@ -169,15 +188,10 @@ cartridge::cartridge(std::istream &stream, ppu *ppu_device, bus *mainbus) {
 
 cartridge::cartridge(const char *filename, ppu *ppu_device, bus *mainbus) {
 	std::cout << "Loading cartridge: " << filename << std::endl;
-
 	// load & parse NES file.
 	std::ifstream	nesfile;
 	nesfile.open(filename, std::ios::binary | std::ios::in);
-
 	readstream(nesfile, ppu_device, mainbus);
-
-	std::cout << (std::uint64_t)program << std::endl;
-
 	nesfile.close();
 }
 

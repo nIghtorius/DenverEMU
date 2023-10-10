@@ -186,6 +186,9 @@
     <ClInclude Include="emulator\denverlogo.h">
       <Filter>Source Files\emulation\emulator</Filter>
     </ClInclude>
+    <ClInclude Include="bus\rom\mappers\mapper_003.h">
+      <Filter>Source Files\emulation\bus\rom\mappers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DenverEMU.cpp">
@@ -274,6 +277,9 @@
     </ClCompile>
     <ClCompile Include="package\2a03.cpp">
       <Filter>Source Files\emulation\package</Filter>
+    </ClCompile>
+    <ClCompile Include="bus\rom\mappers\mapper_003.cpp">
+      <Filter>Source Files\emulation\bus\rom\mappers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

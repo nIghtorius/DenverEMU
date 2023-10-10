@@ -16,8 +16,6 @@
 
 // mappers.
 #include "../rom/rom.h"
-#include "../rom/mappers/mapper_001.h"
-#include "../rom/mappers/mapper_002.h"
 
 // end of mappers.
 
