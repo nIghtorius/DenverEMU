@@ -12,6 +12,7 @@
 
 #include <stdint.h>
 #include "../../bus/bus.h"
+#include <string>
 
 enum operand_types {
 	acc, absolute, absx, absy, imm, impl, ind, xind, indy, rel, zpg, zpgx, zpgy
