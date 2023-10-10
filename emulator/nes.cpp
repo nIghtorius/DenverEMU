@@ -6,7 +6,27 @@
 */
 
 #include "nes.h"
+#include "denverlogo.h"
 #include <iostream>
+#include <sstream>
+
+struct imembuf : std::streambuf
+{
+	imembuf(const char* base, size_t size)
+	{
+		char* p(const_cast<char*>(base));
+		this->setg(p, p, p + size);
+	}
+};
+
+struct imemstream : virtual imembuf, std::istream
+{
+	imemstream(const char* mem, size_t size) :
+		imembuf(mem, size),
+		std::istream(static_cast<std::streambuf*>(this))
+	{
+	}
+};
 
 nes_emulator::nes_emulator() {
 	// setup the emulator.
@@ -120,5 +140,11 @@ void	nes_emulator::stop() {
 void	nes_emulator::load_cartridge(const char * filename) {
 	if (cart) delete cart;
 	cart = new cartridge(filename, ppu_device, mainbus);
+	nes_2a03->cpu_2a03.coldboot();
+}
+
+void	nes_emulator::load_logo() {
+	imemstream data(denverlogo, sizeof(denverlogo));
+	cart = new cartridge(data, ppu_device, mainbus);
 	nes_2a03->cpu_2a03.coldboot();
 }

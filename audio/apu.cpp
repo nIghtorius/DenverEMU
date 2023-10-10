@@ -135,6 +135,12 @@ void	apu::write(int addr, int addr_from_base, byte data) {
 		triangle.enabled =	(data & 0x04) > 0;
 		noise.enabled = (data & 0x08) > 0;
 		dmc.enabled = (data & 0x10) > 0;
+		
+		pulse[0].length_counter = pulse[0].enabled ? pulse[0].length_counter : 0;
+		pulse[1].length_counter = pulse[1].enabled ? pulse[1].length_counter : 0;
+		triangle.length_counter = triangle.enabled ? triangle.length_counter : 0;
+		noise.length_counter = noise.enabled ? noise.length_counter : 0;
+
 		if (!dmc.enabled) {
 			dmc.sample_length = 0;
 			dmc.count = 1;
@@ -151,7 +157,7 @@ void	apu::write(int addr, int addr_from_base, byte data) {
 		if (five_step_mode) {
 			half_clock();
 			quarter_clock();
-		}
+		}		
 		break;
 	}
 }
@@ -193,6 +199,7 @@ int		apu::rundevice(int ticks) {
 				framecycle = -1;
 				frame_irq_asserted = (!inhibit_irq && !five_step_mode);
 				frame_counter = 0;
+				audioframes = 0;
 				sample_buffer_counter++;
 				if (sample_buffer_counter >= max_sample_buffer) {
 					// do audio trigger and stuff.
@@ -207,6 +214,15 @@ int		apu::rundevice(int ticks) {
 					// reset counter.
 					sample_buffer_counter = 0;
 				}
+			}
+		}
+
+		if (audioframes >= five_step_mode ? 37282 : 29830) {
+			audioframes = 0;
+			sample_buffer_counter++;
+			if (sample_buffer_counter >= max_sample_buffer) {
+				audio_frame_ready = true;
+				sample_buffer_counter = 0;
 			}
 		}
 
@@ -227,6 +243,7 @@ int		apu::rundevice(int ticks) {
 		sample_buffer.push_back(mux(p1, p2, tr, no, dm));
 
 		framecycle++;
+		audioframes++;
 
 		// check interrupts.
 		this->irq_enable = frame_irq_asserted || dmc.irq_asserted;

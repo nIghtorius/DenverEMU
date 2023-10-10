@@ -1,0 +1,356 @@
+                                ; main program to run when denver starts.
+                                ; what it does:
+                                ; 	* shows the denver logo.
+                                
+                                ;
+                                
+                                ; Header (NROM)
+      4E 45 53 1A               	.db "NES", $1A
+      01                        	.db 1
+      01                        	.db 1
+      01                        	.db $01
+      00                        	.db $00
+                                	.fillvalue 0
+      00 00 00 00 00 00 00 00   	.align 16	
+                                	
+                                ; rom start
+                                	.fillvalue 	$FF
+                                	.org		$C000
+0C000                           
+0C000                           
+0C000                           ; Resources
+0C000                           
+0C000                           include "libraries\ppu.s"
+0C000                           ; *******************************
+0C000                           ; ** Global NES PPU code
+0C000                           ; ** written by Peter Santing
+0C000                           
+0C000                           initppu:				; initializes the graphicschip of the NES incl. WARMUP
+0C000 A2 00                     	ldx		#$00
+0C002 8E 00 20                  	stx		$2000		; write $00 to reg $2000 (addr-increment is 1)
+0C005 8E 01 20                  	stx 	$2001
+0C008 2C 02 20                  	bit		$2002
+0C00B 2C 02 20                  -	bit		$2002
+0C00E 10 FB                     	bpl		-
+0C010 2C 02 20                  -	bit		$2002
+0C013 10 FB                     	bpl		-
+0C015 60                        	rts
+0C016                           	
+0C016                           load_raw_ppu_data:		; input ZPAGE: 00, 01 == ADDR NAMETABLE
+0C016                           						;			   02, 03 == ADDR ATTRIB	
+0C016                           	
+0C016                           	;	Nametable Data.
+0C016 A9 20                     	lda		#$20
+0C018 8D 06 20                  	sta		$2006
+0C01B A9 00                     	lda		#$00
+0C01D 8D 06 20                  	sta		$2006
+0C020 A0 00                     	ldy		#0		
+0C022 A2 04                     	ldx		#4
+0C024 B1 00                     -	lda		($00), y
+0C026 8D 07 20                  	sta		$2007
+0C029 C8                        	iny
+0C02A D0 F8                     	bne		-
+0C02C E6 01                     	inc		$01
+0C02E CA                        	dex
+0C02F D0 F3                     	bne		-
+0C031                           	;	Attribute Data.
+0C031 A9 23                     	lda		#$23
+0C033 8D 06 20                  	sta		$2006
+0C036 A9 C0                     	lda		#$c0
+0C038 8D 06 20                  	sta		$2006
+0C03B A0 00                     	ldy		#$00
+0C03D B1 02                     -	lda		($02), y
+0C03F 8D 07 20                  	sta		$2007
+0C042 C8                        	iny
+0C043 C0 41                     	cpy		#$41
+0C045 D0 F6                     	bne		-
+0C047 60                        	rts
+0C048                           
+0C048                           	; Macro definition
+0C048                           	MACRO	LoadScene	NameTable,	AttributeTable
+0C048                           		lda		#<NameTable
+0C048                           		sta		$00
+0C048                           		lda		#>NameTable
+0C048                           		sta		$01
+0C048                           		lda		#<AttributeTable
+0C048                           		sta		$02
+0C048                           		lda		#>AttributeTable
+0C048                           		sta		$03
+0C048                           		jsr		load_raw_ppu_data
+0C048                           	ENDM
+0C048                           	
+0C048                           LoadCompressedScene:
+0C048                           	;	Nametable Data.
+0C048 18                        		clc
+0C049 A5 02                     		lda		$02
+0C04B 8D 06 20                  		sta		$2006
+0C04E A5 03                     		lda		$03
+0C050 8D 06 20                  		sta		$2006
+0C053 A0 00                     		ldy		#0	
+0C055 B1 00                     -		lda		($00), y		; load repeat value (1--255, 0=EOP)
+0C057 F0 19                     		beq		+++
+0C059 AA                        		tax						; store this in X
+0C05A C8                        		iny						; increment Y
+0C05B F0 0D                     		beq 	+				; increase page.
+0C05D B1 00                     ---		lda		($00), y		; load tile
+0C05F 8D 07 20                  --		sta		$2007
+0C062 CA                        		dex
+0C063 D0 FA                     		bne 	--				; loop until X = 0!
+0C065 C8                        		iny
+0C066 F0 06                     		beq		++				; increase page
+0C068 D0 EB                     ----	bne		-				; start over again.
+0C06A E6 01                     +		inc		$01
+0C06C 90 EF                     		bcc		---
+0C06E E6 01                     ++		inc		$01
+0C070 90 F6                     		bcc		----
+0C072 60                        +++		rts
+0C073                           
+0C073                           	; Macro definition
+0C073                           	MACRO	LoadRLEScene	TableAddr, Graphic
+0C073                           		lda		#<Graphic
+0C073                           		sta		$00
+0C073                           		lda		#>Graphic
+0C073                           		sta		$01
+0C073                           		lda		#<TableAddr
+0C073                           		sta		$03
+0C073                           		lda		#>TableAddr
+0C073                           		sta		$02
+0C073                           		jsr		LoadCompressedScene
+0C073                           	ENDM
+0C073                           	
+0C073                           LoadPal:		; load palette (PTR = $00)
+0C073 A9 3F                     	lda		#$3F
+0C075 8D 06 20                  	sta		$2006
+0C078 A9 00                     	lda		#$00
+0C07A 8D 06 20                  	sta		$2006
+0C07D A0 00                     	ldy		#$00
+0C07F B1 00                     -	lda		($00), y
+0C081 8D 07 20                  	sta		$2007
+0C084 C8                        	iny
+0C085 C0 20                     	cpy		#$20
+0C087 D0 F6                     	bne		-
+0C089 60                        	rts
+0C08A                           
+0C08A                           	MACRO	LoadPalette	PaletteData
+0C08A                           		lda		#<PaletteData
+0C08A                           		sta		$00
+0C08A                           		lda		#>PaletteData
+0C08A                           		sta		$01
+0C08A                           		jsr		LoadPal
+0C08A                           	ENDM
+0C08A                           	
+0C08A                           Enable_PPU_Rendering:
+0C08A AD 02 20                  	lda		$2002
+0C08D A9 1E                     	lda		#$1E
+0C08F 8D 01 20                  	sta		$2001
+0C092 60                        	rts
+0C093                           	
+0C093                           Disable_PPU_Rendering:
+0C093 AD 02 20                  	lda		$2002
+0C096 A9 00                     	lda		#$00
+0C098 8D 01 20                  	sta		$2001
+0C09B 60                        	rts
+0C09C                           	
+0C09C                           Reset_Scroll_Regs:
+0C09C A9 00                     	lda		#$00
+0C09E 8D 05 20                  	sta		$2005
+0C0A1 8D 05 20                  	sta		$2005
+0C0A4 60                        	rts
+0C0A5                           	
+0C0A5                           	MACRO	SetScroll	x, y
+0C0A5                           		lda	#x
+0C0A5                           		sta	$2005
+0C0A5                           		lda	#y
+0C0A5                           		sta	$2005
+0C0A5                           	ENDM
+0C0A5                           	
+0C0A5                           	MACRO	SetScrollEx	y, x
+0C0A5                           		lda		#$00
+0C0A5                           		sta		$2006
+0C0A5                           		lda		#x
+0C0A5                           		and		#%11000111
+0C0A5                           		sta		$2005
+0C0A5                           		lda		#y
+0C0A5                           		tax
+0C0A5                           		and		#%00000111
+0C0A5                           		sta		$2005
+0C0A5                           		lda		#x
+0C0A5                           		and		#%00111000
+0C0A5                           		asl
+0C0A5                           		asl
+0C0A5                           		sta		$00
+0C0A5                           		txa
+0C0A5                           		and		#%11111000
+0C0A5                           		lsr
+0C0A5                           		lsr
+0C0A5                           		lsr
+0C0A5                           		and		$00
+0C0A5                           		sta		$2006
+0C0A5                           	ENDM
+0C0A5                           	
+0C0A5                           Enable_NMI:
+0C0A5 A9 88                     	lda		#$88
+0C0A7 8D 00 20                  	sta		$2000
+0C0AA 60                        	rts
+0C0AB                           	
+0C0AB                           Reset_OAM:
+0C0AB A2 00                     	ldx		#$00
+0C0AD A9 F0                     	lda		#$F0
+0C0AF 9D 00 05                  -	sta		$0500, x
+0C0B2 E8                        	inx
+0C0B3 D0 FA                     	bne 	-
+0C0B5 60                        	rts
+0C0B6                           	
+0C0B6                           	MACRO	SetSprite	index, xpos, ypos, tile, attr
+0C0B6                           		SprY = $0500 + index * 4
+0C0B6                           		SprX = SprY + 3
+0C0B6                           		SprT = SprY + 1
+0C0B6                           		SprA = SprY + 2
+0C0B6                           		lda		#xpos
+0C0B6                           		sta		SprX
+0C0B6                           		lda		#ypos
+0C0B6                           		sta		SprY
+0C0B6                           		lda		#attr
+0C0B6                           		sta		SprA
+0C0B6                           		lda		#tile
+0C0B6                           		sta		SprT
+0C0B6                           	ENDM
+0C0B6                           	
+0C0B6                           Update_Sprite_Buffer:
+0C0B6 A9 00                     	lda		#$00
+0C0B8 8D 03 20                  	sta		$2003
+0C0BB A9 05                     	lda		#$05
+0C0BD 8D 14 40                  	sta		$4014 ;		OAM DMA.
+0C0C0 60                        	rts
+0C0C1                           
+0C0C1                           Write_Text:	;; write text (pointer $0000), PPU-address need to be set. UNSAFE registers are lost.
+0C0C1 A0 00                     		ldy		#0
+0C0C3 B1 00                     -		lda		($00), y
+0C0C5 F0 13                     		beq		+
+0C0C7 C9 20                     		cmp		#32		;space
+0C0C9 F0 10                     		beq		++
+0C0CB C9 41                     		cmp		#65		;A-Z		
+0C0CD B0 10                     		bcs		+++
+0C0CF C9 30                     		cmp		#$30	;0-9
+0C0D1 B0 10                     		bcs		++++
+0C0D3 8D 07 20                  --		sta		$2007
+0C0D6 C8                        		iny
+0C0D7 18                        		clc
+0C0D8 90 E9                     		bcc		-
+0C0DA 60                        +		rts
+0C0DB A9 00                     ++		lda		#0
+0C0DD B0 F4                     		bcs		--		; special case space #32
+0C0DF E9 31                     +++		sbc		#$31
+0C0E1 B0 F0                     		bcs		--		; special case "TEXT"
+0C0E3 E9 30                     ++++	sbc		#$30
+0C0E5 B0 EC                     		bcs		--		; special case "01234"		
+0C0E7                           
+0C0E7                           
+0C0E7                           	MACRO	WriteText_XY x, y, text
+0C0E7                           		Addr = $2000 + y * 32 + x
+0C0E7                           		lda #>Addr
+0C0E7                           		sta	$2006
+0C0E7                           		lda #<Addr
+0C0E7                           		sta	$2006
+0C0E7                           		lda	#<text
+0C0E7                           		sta	$00
+0C0E7                           		lda	#>text
+0C0E7                           		sta $01
+0C0E7                           		jsr	Write_Text
+0C0E7                           	ENDM
+0C0E7                           	
+0C0E7                           	MACRO	WriteText_Addr Addr, text
+0C0E7                           		SetPPUAddr		Addr
+0C0E7                           		lda	#<text
+0C0E7                           		sta	$00
+0C0E7                           		lda	#>text
+0C0E7                           		sta $01
+0C0E7                           		jsr	Write_Text
+0C0E7                           	ENDM	
+0C0E7                           	
+0C0E7                           	MACRO	WriteText text
+0C0E7                           		lda #<text
+0C0E7                           		sta $00
+0C0E7                           		lda #>text
+0C0E7                           		sta $01
+0C0E7                           		jsr	Write_Text
+0C0E7                           	ENDM
+0C0E7                           	
+0C0E7                           	MACRO	SetPosition x, y
+0C0E7                           		Addr = $2000 + y * 32 + x
+0C0E7                           		lda #>Addr
+0C0E7                           		sta $2006
+0C0E7                           		lda #<Addr
+0C0E7                           		sta $2006
+0C0E7                           	ENDM
+0C0E7                           	
+0C0E7                           	MACRO	SetTextPointer text
+0C0E7                           		lda #<text
+0C0E7                           		sta $00
+0C0E7                           		lda #>text
+0C0E7                           		sta $01
+0C0E7                           	ENDM		
+0C0E7                           	0C0E7                           
+0C0E7                           mainscreen:
+0C0E7 B7 00 01 01 01 02 01 03.. 	incbin "denverlogo.rle"
+0C286                           pal:
+0C286 0F 1A 30 30 0F 01 21 31.. 	incbin "denverlogo.pal"
+0C296 0F 1A 30 30 0F 01 21 31.. 	incbin "denverlogo.pal"
+0C2A6                           
+0C2A6                           reset:
+0C2A6                           	; init cpu/stack
+0C2A6 78                        	sei
+0C2A7 A2 FF                     	ldx	#$ff
+0C2A9 9A                        	txs
+0C2AA                           
+0C2AA                           	; init ppu
+0C2AA 20 00 C0                  	jsr initppu
+0C2AD                           	
+0C2AD                           	; load screen
+0C2AD                           	LoadRLEScene	$2000, mainscreen
+0C2AD A9 E7                     		lda		#<mainscreen
+0C2AF 85 00                     		sta		$00
+0C2B1 A9 C0                     		lda		#>mainscreen
+0C2B3 85 01                     		sta		$01
+0C2B5 A9 00                     		lda		#<$2000
+0C2B7 85 03                     		sta		$03
+0C2B9 A9 20                     		lda		#>$2000
+0C2BB 85 02                     		sta		$02
+0C2BD 20 48 C0                  		jsr		LoadCompressedScene
+0C2C0                           	LoadPalette	pal
+0C2C0 A9 86                     		lda		#<pal
+0C2C2 85 00                     		sta		$00
+0C2C4 A9 C2                     		lda		#>pal
+0C2C6 85 01                     		sta		$01
+0C2C8 20 73 C0                  		jsr		LoadPal
+0C2CB                           
+0C2CB 20 8A C0                  	jsr	Enable_PPU_Rendering
+0C2CE 20 AB C0                  	jsr	Reset_OAM
+0C2D1 20 A5 C0                  	jsr		Enable_NMI
+0C2D4                           
+0C2D4                           loop:
+0C2D4 4C D4 C2                  	jmp loop
+0C2D7                           
+0C2D7                           nmi:
+0C2D7                           	SetScroll	0, 0
+0C2D7 A9 00                     		lda	#0
+0C2D9 8D 05 20                  		sta	$2005
+0C2DC A9 00                     		lda	#0
+0C2DE 8D 05 20                  		sta	$2005
+0C2E1 20 9C C0                  	jsr	Reset_Scroll_Regs
+0C2E4 40                        	rti
+0C2E5                           
+0C2E5                           
+0C2E5                           ; vectors
+0C2E5                           
+0C2E5                           	.fillvalue $ff
+0C2E5 FF FF FF FF FF FF FF FF.. 	.org $fffa
+0FFFA D7 C2                     	.dw	nmi
+0FFFC A6 C2                     	.dw	reset
+0FFFE 00 00                     	.dw	0
+10000                           
+10000                           ;char rom
+10000                           
+10000                           	.fillvalue	$00
+10000 00 00 00 00 00 00 00 00.. 	incbin "denverlogo.chr"
+10B20 00 00 00 00 00 00 00 00.. 	.align 8192

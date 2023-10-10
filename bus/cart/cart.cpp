@@ -40,16 +40,11 @@ nes_header_data		parse_nes_header(nes_header_raw &ines) {
 
 // classes
 
-cartridge::cartridge(const char *filename, ppu *ppu_device, bus *mainbus) {
-	std::cout << "Loading cartridge: " << filename << std::endl;
+void	cartridge::readstream(std::istream &nesfile, ppu *ppu_device, bus *mainbus) {
 
 	program = NULL;
 	character = NULL;
 
-	// load & parse NES file.
-	std::ifstream	nesfile;
-	nesfile.open(filename, std::ios::binary | std::ios::in);
-	
 	nes_header_raw nes_hdr;
 	nesfile.read((char *)&nes_hdr, 16);
 
@@ -66,7 +61,8 @@ cartridge::cartridge(const char *filename, ppu *ppu_device, bus *mainbus) {
 	std::cout << "Program size: " << std::dec << (int)nes.programsize << " bytes.." << std::endl;
 	if (nes.charsize > 0) {
 		std::cout << "Charrom size: " << (int)nes.charsize << " bytes.." << std::endl;
-	} else {
+	}
+	else {
 		std::cout << "Cartridge contains VRAM" << std::endl;
 	}
 
@@ -74,7 +70,7 @@ cartridge::cartridge(const char *filename, ppu *ppu_device, bus *mainbus) {
 	void * program_data = malloc(nes.programsize);
 	void * char_data = malloc(16);
 
-	if (!program_data || !char_data) {	
+	if (!program_data || !char_data) {
 		std::cout << "Failed to reserve memory for cartridge file." << std::endl;
 		return;
 	}
@@ -111,50 +107,50 @@ cartridge::cartridge(const char *filename, ppu *ppu_device, bus *mainbus) {
 
 	// initialize loader.
 	switch (nes.mapper) {
-		case 0: 
-			// NROM.
-			program = new rom();
-			program->set_rom_data((byte *)program_data, nes.programsize);
-			if (has_char_data) {
-				character = new vrom();
-				character->set_rom_data((byte *)char_data, nes.charsize);
-			}
-			else {
-				charram = new vram();
-				character = charram;
-			}
-			break;
-		case 1:
-			// MMC1_ROM
-			program = new mmc1_rom();
-			character = new mmc1_vrom();	//mmc1 vrom also emulated vram.
-			// mmc1 linking.
-			reinterpret_cast<mmc1_rom*>(program)->link_vrom(reinterpret_cast<mmc1_vrom*>(character));
-			reinterpret_cast<mmc1_vrom*>(character)->link_ppu_bus(&ppu_device->vram);
-			program->set_rom_data((byte *)program_data, nes.programsize);
-			if (has_char_data) {
-				character->set_rom_data((byte *)char_data, nes.charsize);
-			}
-			else {
-				reinterpret_cast<mmc1_vrom*>(character)->is_ram(true);
-			}
-			break;
-		case 2:
-			// UXROM
-			program = new uxrom();
-			program->set_rom_data((byte *)program_data, nes.programsize);
-			if (has_char_data) {
-				character = new vrom();
-				character->set_rom_data((byte *)char_data, nes.charsize);
-			}
-			else {
-				charram = new vram();
-				character = charram;
-			}
-			break;
-		default:
-			std::cout << "Mapper is unknown to me" << std::endl;
-			break;
+	case 0:
+		// NROM.
+		program = new rom();
+		program->set_rom_data((byte *)program_data, nes.programsize);
+		if (has_char_data) {
+			character = new vrom();
+			character->set_rom_data((byte *)char_data, nes.charsize);
+		}
+		else {
+			charram = new vram();
+			character = charram;
+		}
+		break;
+	case 1:
+		// MMC1_ROM
+		program = new mmc1_rom();
+		character = new mmc1_vrom();	//mmc1 vrom also emulated vram.
+		// mmc1 linking.
+		reinterpret_cast<mmc1_rom*>(program)->link_vrom(reinterpret_cast<mmc1_vrom*>(character));
+		reinterpret_cast<mmc1_vrom*>(character)->link_ppu_bus(&ppu_device->vram);
+		program->set_rom_data((byte *)program_data, nes.programsize);
+		if (has_char_data) {
+			character->set_rom_data((byte *)char_data, nes.charsize);
+		}
+		else {
+			reinterpret_cast<mmc1_vrom*>(character)->is_ram(true);
+		}
+		break;
+	case 2:
+		// UXROM
+		program = new uxrom();
+		program->set_rom_data((byte *)program_data, nes.programsize);
+		if (has_char_data) {
+			character = new vrom();
+			character->set_rom_data((byte *)char_data, nes.charsize);
+		}
+		else {
+			charram = new vram();
+			character = charram;
+		}
+		break;
+	default:
+		std::cout << "Mapper is unknown to me" << std::endl;
+		break;
 	}
 
 	// link roms..
@@ -164,6 +160,25 @@ cartridge::cartridge(const char *filename, ppu *ppu_device, bus *mainbus) {
 	// link busses.
 	m_bus = mainbus;
 	l_ppu = ppu_device;
+}
+
+cartridge::cartridge(std::istream &stream, ppu *ppu_device, bus *mainbus) {
+	std::cout << "Loading cartridge from memory 0x" << std::hex << (std::uint64_t)&stream << std::endl;
+	readstream(stream, ppu_device, mainbus);
+}
+
+cartridge::cartridge(const char *filename, ppu *ppu_device, bus *mainbus) {
+	std::cout << "Loading cartridge: " << filename << std::endl;
+
+	// load & parse NES file.
+	std::ifstream	nesfile;
+	nesfile.open(filename, std::ios::binary | std::ios::in);
+
+	readstream(nesfile, ppu_device, mainbus);
+
+	std::cout << (std::uint64_t)program << std::endl;
+
+	nesfile.close();
 }
 
 cartridge::~cartridge() {

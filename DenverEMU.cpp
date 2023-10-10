@@ -33,12 +33,6 @@
 #define		DENVER_VERSION		"0.2 alpha"
 #undef main
 
-struct denverstate {
-	void * denver;
-	void * tex;
-	void * windowstate;
-};
-
 int main()
 {
 	/*
@@ -138,7 +132,7 @@ int main()
 	glGenTextures(1, &tex);
 
 	nes_emulator * denver = new nes_emulator();
-	denver->load_cartridge("mario.nes");
+	denver->load_logo();
 
 	denvergui::denvergui_state windowstates;
 	windowstates.show_apu_debugger = false;
@@ -146,6 +140,7 @@ int main()
 	// disassemble 0x8000 (10 instructions)
 	disassembler disasm;
 
+	/*
 	disasm.set_mainbus(denver->mainbus);
 	disasm.set_address(0x8000);
 	word addr = 0x8000;
@@ -155,7 +150,7 @@ int main()
 		std::cout << dis << std::endl;
 		addr += disasm.last_instruction_size;
 	}
-
+	*/
 	/*
 	while (!denver->hasquit()) {
 		denver->run_till_frame_ready([](SDL_Event *cbev){

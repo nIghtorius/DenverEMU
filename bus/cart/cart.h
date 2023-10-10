@@ -11,6 +11,8 @@
 #include "../bus.h"
 #include "../../video/ppu.h"
 #include <cstdint>
+#include <iostream>
+#include <istream>
 
 // mappers.
 #include "../rom/rom.h"
@@ -83,8 +85,10 @@ private:
 	vrom	*character;
 	ppu		*l_ppu;
 	bus		*m_bus;
+	void	readstream(std::istream &stream, ppu *ppu_device, bus *mainbus);
 public:
 	bool	is_valid;
 	cartridge(const char *filename, ppu *ppu_device, bus *mainbus);
+	cartridge(std::istream &stream, ppu *ppu_device, bus *mainbus);
 	~cartridge();
 };

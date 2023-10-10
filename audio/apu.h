@@ -75,7 +75,7 @@ static const word step_five_seq[] = {
 };
 
 static const byte apu_length_table[] = {
-	10, 254, 20, 2, 40, 4, 80, 6, 160, 8, 60, 10, 12, 26, 14,
+	10, 254, 20, 2, 40, 4, 80, 6, 160, 8, 60, 10, 14, 12, 26, 14,
 	12, 16, 24, 18, 48, 20, 96, 22, 192, 24, 72, 26, 16, 18, 32, 30
 };
 
@@ -203,6 +203,7 @@ private:
 	void				quarter_clock();
 
 	int					framecycle = 0;
+	int					audioframes = 0;
 	int					frame_counter = 0;
 
 	int					sample_buffer_counter = 0;

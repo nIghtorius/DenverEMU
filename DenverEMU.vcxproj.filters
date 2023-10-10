@@ -183,6 +183,9 @@
     <ClInclude Include="package\2a03.h">
       <Filter>Source Files\emulation\package</Filter>
     </ClInclude>
+    <ClInclude Include="emulator\denverlogo.h">
+      <Filter>Source Files\emulation\emulator</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DenverEMU.cpp">

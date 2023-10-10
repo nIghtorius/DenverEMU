@@ -44,12 +44,13 @@ public:
 class audio_player {
 private:
 	std::vector<audio_device *>	audibles;
-	std::vector<float> final_mux;
 	SDL_AudioDeviceID aud;
 	std::int16_t buffer[MAX_BUFFER_AUDIO * 4 * NES_FRAMES];	// 4 times the "requirement"
 	void	send_sampledata_to_audio_device();
 	static void sdl_aud_callback(void * const data, std::uint8_t * const stream, const int len);
 public:
+	std::vector<float> final_mux;
+
 	int		sample_rate = SAMPLE_RATE;
 	int		samples_in_buffer = 0;
 	bool	samples_is_played = false;

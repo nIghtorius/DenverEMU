@@ -55,6 +55,7 @@ public:
 	void reset();
 
 	void load_cartridge(const char * filename);
+	void load_logo();
 
 	nes_frame_tex	*	returnFrameAsTexture();
 
