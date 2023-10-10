@@ -80,6 +80,7 @@ void	audio_player::play_audio() {
 
 void	audio_player::send_sampledata_to_audio_device() {
 	float samples_to_target = 1789777 / (float)sample_rate;
+	if (boostspeed) samples_to_target = (3579554*2) / (float)sample_rate;
 	// supersampling. final version with lowpass.
 	float	samples = 0;
 	int		outsamples = 0;
@@ -111,4 +112,6 @@ void	audio_player::startplayback() {
 	SDL_PauseAudioDevice(aud, 0);	
 }
 
-
+void	audio_player::stopplayback() {
+	SDL_PauseAudioDevice(aud, 1);
+}

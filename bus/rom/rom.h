@@ -37,6 +37,7 @@ public:
 	~vram();
 	virtual void	write(int addr, int addr_from_base, byte data);
 	virtual byte	read(int addr, int addr_from_base);
+	void			reset();
 };
 
 class rom : public bus_device {

@@ -54,6 +54,7 @@ public:
 	int		samples_in_buffer = 0;
 	bool	samples_is_played = false;
 	int		samples_per_frame = 0;
+	bool	boostspeed = false;
 
 	audio_player();
 	~audio_player();
@@ -61,4 +62,5 @@ public:
 	void	play_audio();
 	bool	has_enough_samples();
 	void	startplayback();
+	void	stopplayback();
 };

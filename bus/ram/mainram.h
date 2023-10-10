@@ -14,5 +14,6 @@ public:
 	~mainram();
 	void	write(int addr, int addr_from_base, byte data);
 	byte	read(int addr, int addr_from_base);
+	void	reset();
 };
 

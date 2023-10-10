@@ -70,8 +70,10 @@ void	bus::emulate_bus_conflicts(bool enable) {
 }
 
 void	bus::registerdevice(bus_device *device) {
-	if (device != NULL)
+	if (device) {
 		devices.push_back(device);
+		device->_attach_to_bus(this);
+	}
 }
 
 void	bus::removedevice_select_base(int baseaddr) {
@@ -99,6 +101,12 @@ bool	bus::irq_pulled() {
 		if (device->irq_enable) return true;	// device should pull up IRQ not the interrupted device, therefore only report.
 	}
 	return false;
+}
+
+void	bus::busreset() {
+	for (auto device : devices) {
+		device->reset();
+	}
 }
 
 void	bus::reportdevices() {
@@ -178,6 +186,10 @@ byte bus_device::read(int addr, int addr_from_base) {
 	return 0x00;
 }
 
+void bus_device::_attach_to_bus(bus * attachedbus) {
+	devicebus = attachedbus;
+}
+
 device::device() {
 	ticksdone = 0;
 	tickstodo = 0;
@@ -191,4 +203,8 @@ device::~device() {
 
 int device::rundevice(int ticks) {
 	return ticks;	// dummy device return same amount of ticks as told to process.
+}
+
+void device::reset() {
+
 }

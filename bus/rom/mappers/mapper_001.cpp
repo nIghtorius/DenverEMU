@@ -34,17 +34,17 @@ void mmc1_rom::update_banks() {
 	case MMC1_PRG_32K_MODE:
 	case MMC1_PRG_32K_MODE2:
 		bank = state.prgbank >> 1;
-		prg8000 = &romdata[(bank << 15)%romsize];
-		prgC000 = &romdata[(bank << 15)%romsize | 0x4000];
+		prg8000 = &romdata[(bank << 15)%(romsize)];
+		prgC000 = &romdata[(bank << 15)%(romsize) | 0x4000];
 		break;
 	case MMC1_PRG_FIRSTBANK_FIX_8000:
 		bank = state.prgbank;
 		prg8000 = &romdata[0];
-		prgC000 = &romdata[(bank << 14)%romsize];
+		prgC000 = &romdata[(bank << 14)%(romsize)];
 		break;
 	case MMC1_PRG_LASTBANK_FIX_C000:
 		bank = state.prgbank;
-		prg8000 = &romdata[(bank << 14)%romsize];
+		prg8000 = &romdata[(bank << 14)%(romsize)];
 		prgC000 = &romdata[romsize - 0x4000];
 		break;
 	}
@@ -177,14 +177,14 @@ void mmc1_vrom::update_banks(mmc1_state &state) {
 	switch (state.chr_bank_mode) {
 	case MMC1_CHR_8K_MODE:
 		bank = state.chrbank0 >> 1;
-		chr0000 = &romdata[(bank << 13)%romsize]; // 8 kB blocks.
-		chr1000 = &romdata[(bank << 13)%romsize | 0x1000];
+		chr0000 = &romdata[(bank << 13)%(romsize-4096)]; // 8 kB blocks.
+		chr1000 = &romdata[(bank << 13)%(romsize-4096) | 0x1000];
 		break;
 	case MMC1_CHR_4K_MODE:
 		bank = state.chrbank0;
-		chr0000 = &romdata[(bank << 12)%romsize]; // 4kB blocks.
+		chr0000 = &romdata[(bank << 12)%(romsize)]; // 4kB blocks.
 		bank = state.chrbank1;
-		chr1000 = &romdata[(bank << 12)%romsize]; // 4kB blocks.
+		chr1000 = &romdata[(bank << 12)%(romsize)]; // 4kB blocks.
 		break;
 	}
 }

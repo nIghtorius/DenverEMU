@@ -56,7 +56,7 @@ byte	apu::read(int addr, int addr_from_base) {
 void	apu::write(int addr, int addr_from_base, byte data) {
 	if (addr_from_base < 0x08) {
 		// pulse channels.
-		int pulse_sel = (addr_from_base & PULSE2) > 0;
+		int pulse_sel = (addr_from_base & PULSE2) >> 2;
 		byte cmd = addr_from_base & 0x03;
 		switch (cmd) {
 		case PULSE_DUTY_CYCLE_LCH_VOLENV:
@@ -64,13 +64,13 @@ void	apu::write(int addr, int addr_from_base, byte data) {
 			pulse[pulse_sel].envelope_loop = (data & 0x20) > 0;
 			pulse[pulse_sel].constant_volume = (data & 0x10) > 0;
 			pulse[pulse_sel].volume_envelope = data & 0x0F;
-			pulse[pulse_sel].envelope_reload = true;
+			//pulse[pulse_sel].envelope_reload = true;
 			break;
 		case PULSE_SWEEP:
-			pulse[pulse_sel].sweep_enable = (data & 0x80) > 0;
+			pulse[pulse_sel].sweep_enable = ((data & 0x80) > 0) && ((data & 0x07) != 0);
 			pulse[pulse_sel].sweep_divider = (data & 0x70) >> 4;
 			pulse[pulse_sel].sweep_negate = (data & 0x08) > 0;
-			pulse[pulse_sel].sweep_shift = (data & 0x07);
+			pulse[pulse_sel].sweep_shift = (data & 0x07);			
 			pulse[pulse_sel].sweep_reload = true;
 			break;
 		case PULSE_TIMER:
@@ -156,6 +156,24 @@ void	apu::write(int addr, int addr_from_base, byte data) {
 	}
 }
 
+void	apu::reset() {
+	for (int i = 0; i < 2; i++) {
+		pulse[i].timer = 0;
+		pulse[i].enabled = false;
+		pulse[i].length_counter = 0;
+		pulse[i].sweep_div_count = 0;
+		pulse[i].envelope_count = 0;
+	}
+	triangle.enabled = false;
+	triangle.length_counter = 0;
+	triangle.triangle_length_counter = 0;
+	noise.enabled = false;
+	noise.length_counter = 0;
+	noise.volume_envelope = 0;
+	dmc.enabled = false;
+	dmc.direct_out = 0;
+}
+
 int		apu::rundevice(int ticks) {
 	if (ticks == 0) return 0;
 	while (ticks--) {
@@ -176,7 +194,7 @@ int		apu::rundevice(int ticks) {
 				frame_irq_asserted = (!inhibit_irq && !five_step_mode);
 				frame_counter = 0;
 				sample_buffer_counter++;
-				if (sample_buffer_counter == max_sample_buffer) {
+				if (sample_buffer_counter >= max_sample_buffer) {
 					// do audio trigger and stuff.
 					//ready_sample_audio();
 
@@ -216,9 +234,9 @@ int		apu::rundevice(int ticks) {
 	return ticks;
 }
 
-void	apu::attach_to_memory_bus(bus *mbus)
-{
-	dmc.mainbus = mbus;
+void	apu::_attach_to_bus (bus * attachedbus) {
+	dmc.mainbus = attachedbus;
+	devicebus = attachedbus;
 }
 
 void	apu::half_clock() {
@@ -246,14 +264,15 @@ void	pulse_generator::update_timers() {
 }
 
 void	pulse_generator::sweep() {
-	if (!sweep_enable) return;
-	if ((timer < 8) || (!sweep_negate && (timer >= 0x078B))) return;
-	if (sweep_div_count > 0) {
-		sweep_div_count--;
-	}
-	else {
-		sweep_div_count = sweep_divider;
-		timer = sweep_negate ? timer - ((timer >> sweep_shift) + (int)pulse2) : timer + (timer >> sweep_shift);
+	if ((sweep_enable) && ((timer > 8) || (sweep_negate && (timer < 0x078B)))) 
+	{
+		if (sweep_div_count > 0) {
+			sweep_div_count--;
+		}
+		else {
+			sweep_div_count = sweep_divider;
+			timer = sweep_negate ? timer - ((timer >> sweep_shift) + (int)pulse2) : timer + (timer >> sweep_shift);
+		}
 	}
 	if (sweep_reload) {
 		sweep_reload = false;
@@ -266,14 +285,13 @@ void	pulse_generator::envelopes() {
 		envelope_count = volume_envelope;
 		envelope_out = 0x0F;
 		envelope_reload = false;
-		return;
 	}
 	if (envelope_count > 0) {
 		envelope_count--;
 	}
 	else {
 		envelope_count = volume_envelope;
-		envelope_out = (envelope_out > 0) ? envelope_out - 1 : ((envelope_loop ? 0x0F : envelope_out));
+		envelope_out = (envelope_out > 0) ? envelope_out - 1 : ((envelope_loop ? 0x0F : 0));
 	}
 }
 
@@ -295,7 +313,7 @@ byte	pulse_generator::readsample() {
 
 	// constant volume or envelope out?
 	byte	output_level = volume_envelope;
-	if (!constant_volume) output_level = envelope_out;
+	if (!constant_volume) output_level = envelope_out;	
 	bool duty_out = (1 << (7 - duty_pos)) & duty_cycle_osc[duty_cycle];
 	return duty_out ? output_level : 0;
 }

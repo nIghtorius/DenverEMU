@@ -19,6 +19,10 @@ nes_header_data		parse_nes_header(nes_header_raw &ines) {
 	byte mapper = ((ines.flags1 & INES_F1_LO_NIB_MAPPER_NO) >> 4) |
 		((ines.flags2 & INES_F2_HI_NIB_MAPPER_NO));
 
+	if ((ines.flags2 & INES_F2_NES20_BITPATTERN) == INES_F2_ARCHAIC_ID)
+		mapper &= 0x0F;		// shave off high nibble (archiac nes file, only 4 bit support for mapper)
+
+
 	data.mapper = (int)mapper;
 	data.vs_unisystem = (ines.flags2 & INES_F2_VS_UNISYSTEM) > 0;
 	data.has_playchoice = (ines.flags2 & INES_F2_PLAYCHOICE) > 0;
@@ -37,9 +41,10 @@ nes_header_data		parse_nes_header(nes_header_raw &ines) {
 // classes
 
 cartridge::cartridge(const char *filename, ppu *ppu_device, bus *mainbus) {
-	charram = new vram();
-
 	std::cout << "Loading cartridge: " << filename << std::endl;
+
+	program = NULL;
+	character = NULL;
 
 	// load & parse NES file.
 	std::ifstream	nesfile;
@@ -102,6 +107,8 @@ cartridge::cartridge(const char *filename, ppu *ppu_device, bus *mainbus) {
 
 	std::cout << "Cartridge mapper is: " << nes.mapper << std::endl;
 
+	vram *charram;
+
 	// initialize loader.
 	switch (nes.mapper) {
 		case 0: 
@@ -113,23 +120,24 @@ cartridge::cartridge(const char *filename, ppu *ppu_device, bus *mainbus) {
 				character->set_rom_data((byte *)char_data, nes.charsize);
 			}
 			else {
+				charram = new vram();
 				character = charram;
 			}
 			break;
 		case 1:
 			// MMC1_ROM
 			program = new mmc1_rom();
-			program->set_rom_data((byte *)program_data, nes.programsize);
 			character = new mmc1_vrom();	//mmc1 vrom also emulated vram.
+			// mmc1 linking.
+			reinterpret_cast<mmc1_rom*>(program)->link_vrom(reinterpret_cast<mmc1_vrom*>(character));
+			reinterpret_cast<mmc1_vrom*>(character)->link_ppu_bus(&ppu_device->vram);
+			program->set_rom_data((byte *)program_data, nes.programsize);
 			if (has_char_data) {
 				character->set_rom_data((byte *)char_data, nes.charsize);
 			}
 			else {
 				reinterpret_cast<mmc1_vrom*>(character)->is_ram(true);
 			}
-			// mmc1 linking.
-			reinterpret_cast<mmc1_rom*>(program)->link_vrom(reinterpret_cast<mmc1_vrom*>(character));
-			reinterpret_cast<mmc1_vrom*>(character)->link_ppu_bus(&ppu_device->vram);
 			break;
 		case 2:
 			// UXROM
@@ -140,6 +148,7 @@ cartridge::cartridge(const char *filename, ppu *ppu_device, bus *mainbus) {
 				character->set_rom_data((byte *)char_data, nes.charsize);
 			}
 			else {
+				charram = new vram();
 				character = charram;
 			}
 			break;
@@ -165,7 +174,6 @@ cartridge::~cartridge() {
 	if (l_ppu != NULL) {
 		l_ppu->set_char_rom(NULL);
 	}
-	delete charram;
 	if (program != NULL) delete program;
 	if (character != NULL) delete character;
 }

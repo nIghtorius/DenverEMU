@@ -8,6 +8,7 @@
 
 #pragma once
 #include "../bus/bus.h"	// it is a bus device.
+#include <functional>
 
 #define		PPU_PPUCTRL_PORT				0x00
 #define		PPU_PPUMASK_PORT				0x01
@@ -143,7 +144,7 @@ private:
 	int						cycle;		// ppu cycle 
 	word*					framebuffer;	// holds the frame buffer (16 bits, because PPU is 9 bits)
 	bool					frameready;
-	byte					prt2007buffer;
+	byte					prt2007buffer;	
 
 public:
 	bus						vbus;		// vbus = videobus.
@@ -151,6 +152,10 @@ public:
 	ppuram					vram;
 	oamentry				oam[64];
 	byte					oamaddr;
+
+	// callback function (in order to speed things up)
+	std::function<void()>	callback = nullptr;
+
 	ppu();
 	~ppu();
 	byte					read(int addr, int addr_from_base);
@@ -162,4 +167,6 @@ public:
 	void					dma(byte *data, bool is_output, bool started);
 	void*					getFrameBuffer();
 	bool					isFrameReady();	// when true next call will be false unless the frame is ready again.
+	void					reset();
+	void 					write_state_dump (const char *filename);
 };

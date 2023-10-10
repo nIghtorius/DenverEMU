@@ -31,6 +31,13 @@ ppu::~ppu() {
 	vbus.removedevice_select_base(vram.devicestart);
 }
 
+void ppu::write_state_dump (const char *filename) {
+		std::ofstream ppu_dump;
+		ppu_dump.open(filename, std::ios::binary | std::ios::out);
+		ppu_dump.write((char *)&ppu_internal, sizeof(ppu_render_state));
+		ppu_dump.close();
+}
+
 
 byte	ppu::read(int addr, int addr_from_base) {
 	// registers
@@ -69,6 +76,7 @@ byte	ppu::read(int addr, int addr_from_base) {
 void	ppu::write(int addr, int addr_from_base, byte data) {
 	// update latch
 	latch = data;
+	//std::cout << "ppu_register_write: 0x" << std::hex << (int)addr_from_base << ", data: 0x" << (int)data << "\n";
 	// registers.
 	if (addr_from_base == PPU_PPUCTRL_PORT) {
 		ppu_internal.t_register &= ~0xC00;
@@ -86,8 +94,15 @@ void	ppu::write(int addr, int addr_from_base, byte data) {
 		ppumask.emp_grn = (data & PPU_EMP_GREEN) > 0;
 		ppumask.emp_red = (data & PPU_EMP_RED) > 0;
 		ppumask.grayscale = (data & PPU_GREYSCALE) > 0;
+		bool	prev_state_show = ppumask.showbg || ppumask.showspr;
 		ppumask.showbg = (data & PPU_SHOW_BG) > 0;
 		ppumask.showspr = (data & PPU_SHOW_SPR) > 0;
+		if ((ppumask.showbg || ppumask.showspr) && !prev_state_show) {
+			// reset rendering pipeline evaluators.
+			ppu_internal.n = 0;
+			ppu_internal.sn = 0;
+			ppu_internal.m = 0;
+		}
 		ppumask.spr8lt = (data & PPU_SPR_L8P) > 0;
 	}
 	// OAMADDR register (0x03)
@@ -208,9 +223,8 @@ int		ppu::rundevice(int ticks) {
 						int scancomp = (scanline == 261) ? -1 : scanline;
 						if ((ppu_internal.sn < 8) && !ppu_internal.oam_evald) ppu_internal.secoam[ppu_internal.sn].y = ppu_internal.buffer_oam_read;
 						ppu_internal.oam_copy =
-							(scancomp >= ppu_internal.buffer_oam_read) &&
-							(scancomp < (int)ppu_internal.buffer_oam_read + (ppuctrl.sprites_8x16 ? 16 : 8));
-							
+							((scancomp >= ppu_internal.buffer_oam_read) &&
+							(scancomp < (int)ppu_internal.buffer_oam_read + (ppuctrl.sprites_8x16 ? 16 : 8))) && (scancomp < 239);
 						if (ppu_internal.oam_copy && (ppu_internal.sn >= 8)) {
 							// sprite overflow.
 							ppustatus.sprite_overflow = true;
@@ -305,6 +319,13 @@ int		ppu::rundevice(int ticks) {
 					}					
 					if (ix > 7) pattern_address += 8;
 					pattern_address += (ltile << 4) + ix;
+					if (ppu_internal.n > 7) {
+						// should not happen, but happens on the linux port. reason unknown, windows version never happens.
+						std::cout << "internal.n overflowed n>7, value n = " << std::dec << (int)ppu_internal.n << " @ cycle step: " << (int)cycle << "\n";
+						std::cout << "dump file: ppu_internal_regs_state.dmp written\n";
+						write_state_dump ("ppu_internal_regs_state.dmp");
+						exit(-1);
+					}
 					ppu_internal.shiftreg_spr_pattern_hi[ppu_internal.n] = vbus.readmemory(pattern_address + 8);
 					ppu_internal.shiftreg_spr_counter[ppu_internal.n] = ppu_internal.secoam[ppu_internal.n].x;
 					ppu_internal.n++;	// eval to next sprite in seconday oam. this will never go over 7, because eval will stop earlier.
@@ -444,7 +465,8 @@ int		ppu::rundevice(int ticks) {
 			beam = 0;
 			// framebuffer done.
 			if (scanline == 240) {
-				frameready = true;
+				frameready = true; // frame is ready also check the callback.
+				if (callback) callback();
 			}
 			if (scanline == 262) {
 				scanline = 0;
@@ -493,6 +515,12 @@ bool	ppu::isFrameReady() {
 	bool retval = frameready;
 	frameready = false;
 	return retval;
+}
+
+void	ppu::reset() {
+	/*std::cout << "PPU has reset" << std::endl;
+	cycle = 0;
+	memset (&ppu_internal, 0, sizeof (ppu_render_state));*/
 }
 
 // PPU RAM

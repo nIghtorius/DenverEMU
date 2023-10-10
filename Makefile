@@ -9,8 +9,8 @@ rwildcard=$(wildcard $1) $(foreach d,$1,$(call rwildcard,$(addsuffix /$(notdir $
 
 CC = g++
 
-LINKERFLAG = -lSDL2
-COMPILERFLAG = -I /home/peter/projects/sdl/SDL/include/ -c -g -O3 -Ofast -finline-functions -m64 -funroll-loops
+LINKERFLAG = -lSDL2 -lGL
+COMPILERFLAG = -I imgui -I imgui/backends -c -O2 -ggdb -Wformat `sdl2-config --cflags`
 
 SRCS := $(call rwildcard,./*.cpp)
 BINS := $(SRCS:%.cpp=%.o)
@@ -26,4 +26,6 @@ clean:
 	rm -rvf ${BINS}
 	rm ./denver
 
+sources:
+	@echo "Source files: ${SRCS}" 
 

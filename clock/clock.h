@@ -12,6 +12,7 @@
 #pragma once
 
 #include "../bus/bus.h"
+#include "../package/2a03.h"
 #include <vector>
 
 class clock
@@ -31,11 +32,13 @@ class fastclock {
 private:
 	device *cpudevice;
 	device *ppudevice;
-	device *apudevice;
+	int	cyclespersync = 1;
 public:
+	bool	running;
 	fastclock();
 	~fastclock();
 	void step();
 	void run();
-	void setdevices(device *cpu, device *ppu, device *apu);
+	void setdevices(device *cpu, device *ppu);
+	void set_sync_cycle_in_ppucycles(int ppucycles);
 };

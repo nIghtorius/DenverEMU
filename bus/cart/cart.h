@@ -30,6 +30,7 @@
 #define		INES_F2_PLAYCHOICE						0x02
 #define		INES_F2_NES20_BITPATTERN				0x0C
 #define		INES_F2_HI_NIB_MAPPER_NO				0xF0
+#define		INES_F2_ARCHAIC_ID						0x04
 
 #define		INES_F3_PROGRAM_RAM						0xFF
 
@@ -80,7 +81,6 @@ class cartridge {
 private:
 	rom		*program;
 	vrom	*character;
-	vram	*charram;
 	ppu		*l_ppu;
 	bus		*m_bus;
 public:

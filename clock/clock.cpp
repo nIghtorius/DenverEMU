@@ -81,49 +81,49 @@ fastclock::fastclock() {
 fastclock::~fastclock() {
 }
 
-void fastclock::setdevices(device *cpu, device *ppu, device *apu) {
+void fastclock::setdevices(device *cpu, device *ppu) {
 	this->cpudevice = cpu;
 	this->ppudevice = ppu;
-	this->apudevice = apu;
 }
 
 void fastclock::step() {
 	//  run cpu 1 step.
 	byte dmabyte;
-	if (this->cpudevice == NULL) return;
-	if (this->cpudevice->in_dma_mode) {
-		while (this->cpudevice->in_dma_mode) {
-			this->cpudevice->dma(&dmabyte, false, false);
-			this->ppudevice->dma(&dmabyte, true, cpudevice->dma_start);
+	if (cpudevice == NULL) return;
+	if (cpudevice->in_dma_mode) {
+		while (cpudevice->in_dma_mode) {
+			cpudevice->dma(&dmabyte, false, false);
+			if (ppudevice) ppudevice->dma(&dmabyte, true, cpudevice->dma_start);
 			cpudevice->dma_start = false;
-			this->cpudevice->rundevice(1);
+			cpudevice->rundevice(1);
 		}
-		this->ppudevice->rundevice(1536);
-		this->apudevice->rundevice(512);
+		if (ppudevice) ppudevice->rundevice(1536);
 	}
-	int actualcputicks = this->cpudevice->rundevice(1);	
-	if (this->ppudevice != NULL) this->ppudevice->rundevice(actualcputicks);
-	if (this->apudevice != NULL) this->apudevice->rundevice(actualcputicks/3);
+	int actualcputicks = cpudevice->rundevice(cyclespersync);	
+	if (ppudevice) ppudevice->rundevice(actualcputicks);
 }
 
 void fastclock::run() {
 	// make it all run.
-	while (1) {
+	running = true;
+	while (running) {
 		//  run cpu 1 step.
 		byte dmabyte;
-		if (this->cpudevice == NULL) return;
-		if (this->cpudevice->in_dma_mode) {
-			while (this->cpudevice->in_dma_mode) {
-				this->cpudevice->dma(&dmabyte, false, false);
-				this->ppudevice->dma(&dmabyte, true, cpudevice->dma_start);
+		if (cpudevice == NULL) return;
+		if (cpudevice->in_dma_mode) {
+			while (cpudevice->in_dma_mode) {
+				cpudevice->dma(&dmabyte, false, false);
+				if (ppudevice) ppudevice->dma(&dmabyte, true, cpudevice->dma_start);
 				cpudevice->dma_start = false;
-				this->cpudevice->rundevice(1);
+				cpudevice->rundevice(1);
 			}
-			this->ppudevice->rundevice(1536);
-			this->apudevice->rundevice(512);
+			ppudevice->rundevice(1536);
 		}
-		int actualcputicks = this->cpudevice->rundevice(1);
-		if (this->ppudevice != NULL) this->ppudevice->rundevice(actualcputicks);
-		if (this->apudevice != NULL) this->apudevice->rundevice(actualcputicks/3);
+		int actualcputicks = cpudevice->rundevice(cyclespersync);	
+		if (ppudevice) ppudevice->rundevice(actualcputicks);
 	}
+}
+
+void fastclock::set_sync_cycle_in_ppucycles(int ppucycles) {
+	cyclespersync = ppucycles;
 }
