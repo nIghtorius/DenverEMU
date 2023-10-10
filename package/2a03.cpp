@@ -48,12 +48,12 @@ int		package_2a03::rundevice(int ticks) {
 	// leading device is the CPU.
 	int cputicks = cpu_2a03.rundevice(ticks);
 	apu_2a03.rundevice(cputicks / 3);	// cpu responds in ppu ticks, divide 3 to get cpu ticks.
-	in_dma_mode = cpu_2a03.in_dma_mode;
+	in_dma_mode = cpu_2a03.in_dma_mode; // take the dma status from the cpu object.
 	return cputicks;
 }
 
 void	package_2a03::dma(byte *data, bool is_output, bool started) {
-	cpu_2a03.dma(data, is_output, started);
+	cpu_2a03.dma(data, is_output, started);	// forward dma mode to the cpu.
 }
 
 void	package_2a03::_attach_to_bus(bus * attachedbus) {

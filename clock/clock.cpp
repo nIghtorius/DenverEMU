@@ -105,7 +105,8 @@ void fastclock::step() {
 
 void fastclock::run() {
 	// make it all run.
-	while (1) {
+	running = true;
+	while (running) {
 		//  run cpu 1 step.
 		byte dmabyte;
 		if (cpudevice == NULL) return;

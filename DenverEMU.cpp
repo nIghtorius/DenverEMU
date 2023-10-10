@@ -33,6 +33,12 @@
 #define		DENVER_VERSION		"0.2 alpha"
 #undef main
 
+struct denverstate {
+	void * denver;
+	void * tex;
+	void * windowstate;
+};
+
 int main()
 {
 	/*
@@ -148,7 +154,7 @@ int main()
 		addr += disasm.last_instruction_size;
 	}
 
-
+	/*
 	while (!denver->hasquit()) {
 		denver->run_till_frame_ready([](SDL_Event *cbev){
 			ImGui_ImplSDL2_ProcessEvent(cbev);
@@ -185,7 +191,53 @@ int main()
 
 		SDL_GL_SwapWindow(win);
 		denver->sync_audio();
-	}
+	}*/
+
+	// new call back code. set callback to the ppu.
+	denver->ppu_device->callback = ([&] () {
+		SDL_Event event;
+		while (SDL_PollEvent(&event)) {
+			ImGui_ImplSDL2_ProcessEvent(&event);
+			switch (event.type) {
+			case SDL_QUIT:
+				denver->clock.running = false;
+				break;
+			case SDL_KEYDOWN:
+			case SDL_KEYUP:
+				if (event.key.keysym.scancode == 0x35) {
+					denver->audio->boostspeed = (event.type == SDL_KEYDOWN);
+				}
+				denver->joydefs->process_kb_event(&event);
+				break;
+			}
+		}
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplSDL2_NewFrame();
+		ImGui::NewFrame();
+		denver->prepare_frame();
+		nes_frame_tex * nesframe = denver->returnFrameAsTexture();
+		glBindTexture(GL_TEXTURE_2D, tex);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 256, 240, 0, GL_RGBA, GL_UNSIGNED_BYTE, (GLvoid *)nesframe->texture);
+		denvergui::render_main(denver, tex, &windowstates);
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+		{
+			SDL_Window* backup_current_window = SDL_GL_GetCurrentWindow();
+			SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
+			ImGui::UpdatePlatformWindows();
+			ImGui::RenderPlatformWindowsDefault();
+			SDL_GL_MakeCurrent(backup_current_window, backup_current_context);
+		}
+
+		SDL_GL_SwapWindow(win);
+		denver->sync_audio();
+	});
+
+	denver->fast_run_callback();
 
 	std::cout << "Emulation ended..." << std::endl;
 

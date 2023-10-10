@@ -34,6 +34,7 @@ private:
 	device *ppudevice;
 	int	cyclespersync = 1;
 public:
+	bool	running;
 	fastclock();
 	~fastclock();
 	void step();

@@ -8,6 +8,7 @@
 
 #pragma once
 #include "../bus/bus.h"	// it is a bus device.
+#include <functional>
 
 #define		PPU_PPUCTRL_PORT				0x00
 #define		PPU_PPUMASK_PORT				0x01
@@ -151,6 +152,10 @@ public:
 	ppuram					vram;
 	oamentry				oam[64];
 	byte					oamaddr;
+
+	// callback function (in order to speed things up)
+	std::function<void()>	callback = nullptr;
+
 	ppu();
 	~ppu();
 	byte					read(int addr, int addr_from_base);

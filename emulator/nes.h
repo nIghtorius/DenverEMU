@@ -34,8 +34,6 @@ private:
 	cartridge			* cart;
 	//cpu2a03_fast		* cpu_2a03;
 	mainram				* nesram;
-	audio_player		* audio;
-	joypad				* joydefs;
 	//nes_2a03_joyports	* controllers;
 	bool				quit = false;
 	nesvideo			* video_out;
@@ -47,6 +45,8 @@ public:
 	ppu				* ppu_device;
 	bus				* mainbus;
 	fastclock		  clock;	// trying clock non heap, maybe some speed?
+	joypad				* joydefs;
+	audio_player		* audio;
 
 	nes_emulator();
 	~nes_emulator();
@@ -59,9 +59,12 @@ public:
 	nes_frame_tex	*	returnFrameAsTexture();
 
 	void run_till_frame_ready(void(*callback)(SDL_Event*));
+	void fast_run_callback();
 	void sync_audio();
 
 	bool hasquit();
 	void stop();
+
+	void prepare_frame();
 };
 
