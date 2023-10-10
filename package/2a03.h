@@ -30,5 +30,5 @@ public:
 	void	set_joydefs(joypad * joydefs);
 	void	reset();
 	void	dma(byte *data, bool is_output, bool started);
-	void	_attach_to_bus(bus * attachedbus);
+	virtual void	_attach_to_bus(bus * attachedbus);
 };

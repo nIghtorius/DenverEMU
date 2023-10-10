@@ -11,9 +11,6 @@ apu::apu() {
 	pulse[0].pulse2 = false;
 	pulse[1].pulse2 = true;
 
-	// initialize dmc
-	dmc.mainbus = devicebus;
-
 	// clocking info.
 	tick_rate = 3;	// make it same as cpu. tick_rate is a divider against tick_rate 1
 
@@ -235,6 +232,11 @@ int		apu::rundevice(int ticks) {
 		this->irq_enable = frame_irq_asserted || dmc.irq_asserted;
 	}
 	return ticks;
+}
+
+void	apu::_attach_to_bus (bus * attachedbus) {
+	dmc.mainbus = attachedbus;
+	devicebus = attachedbus;
 }
 
 void	apu::half_clock() {

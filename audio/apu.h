@@ -222,4 +222,5 @@ public:
 	void	write(int addr, int addr_from_base, byte data);
 	int		rundevice(int ticks);
 	void	reset();
+	virtual void	_attach_to_bus (bus * attachedbus);
 };

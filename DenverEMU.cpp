@@ -91,7 +91,9 @@ int main()
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
 	SDL_GLContext gl_context = SDL_GL_CreateContext(win);
 	SDL_GL_MakeCurrent(win, gl_context);
-	SDL_GL_SetSwapInterval(0); // Enable vsync
+	if (SDL_GL_SetSwapInterval(0)) {
+		std::cout << "Unable to disable Vsync" << std::endl;
+	}
 
 	GLuint tex;
 	// Texture.
