@@ -9,17 +9,17 @@
 
 // memory handling MACROs
 #define	_mem_immediate		regs.pc
-#define	_mem_zero			mbus->readmemory (regs.pc)
-#define _mem_zero_x			(mbus->readmemory (regs.pc) + regs.x) & 0xFF
-#define _mem_zero_y			(mbus->readmemory (regs.pc) + regs.y) & 0xFF
-#define _mem_absolute		mbus->readmemory_as_word (regs.pc)
-#define _mem_absolute_x		word(mbus->readmemory_as_word (regs.pc) + regs.x)
-#define _mem_absolute_y		word(mbus->readmemory_as_word (regs.pc) + regs.y)
-#define _mem_index_x		mbus->readmemory_as_word_wrap ((mbus->readmemory (regs.pc) + regs.x) & 0xFF)
-#define _mem_index_y		word(mbus->readmemory_as_word_wrap ((mbus->readmemory (regs.pc))) + regs.y)
-#define _mem_index_y_inc	(mbus->readmemory_as_word_wrap (mbus->readmemory (regs.pc)) & 0xFF00) != ((mbus->readmemory_as_word_wrap ((mbus->readmemory (regs.pc))) + regs.y) & 0xFF00)
-#define _mem_relative		(!(mbus->readmemory (regs.pc) & 0x80)) ? regs.pc + mbus->readmemory (regs.pc) + 1: regs.pc - ((128 - word(mbus->readmemory (regs.pc)) - 1) & 0x7F)
-#define _mem_indexed		mbus->readmemory_as_word_wrap (mbus->readmemory_as_word(regs.pc))
+#define	_mem_zero			devicebus->readmemory (regs.pc)
+#define _mem_zero_x			(devicebus->readmemory (regs.pc) + regs.x) & 0xFF
+#define _mem_zero_y			(devicebus->readmemory (regs.pc) + regs.y) & 0xFF
+#define _mem_absolute		devicebus->readmemory_as_word (regs.pc)
+#define _mem_absolute_x		word(devicebus->readmemory_as_word (regs.pc) + regs.x)
+#define _mem_absolute_y		word(devicebus->readmemory_as_word (regs.pc) + regs.y)
+#define _mem_index_x		devicebus->readmemory_as_word_wrap ((devicebus->readmemory (regs.pc) + regs.x) & 0xFF)
+#define _mem_index_y		word(devicebus->readmemory_as_word_wrap ((devicebus->readmemory (regs.pc))) + regs.y)
+#define _mem_index_y_inc	(devicebus->readmemory_as_word_wrap (devicebus->readmemory (regs.pc)) & 0xFF00) != ((devicebus->readmemory_as_word_wrap ((devicebus->readmemory (regs.pc))) + regs.y) & 0xFF00)
+#define _mem_relative		(!(devicebus->readmemory (regs.pc) & 0x80)) ? regs.pc + devicebus->readmemory (regs.pc) + 1: regs.pc - ((128 - word(devicebus->readmemory (regs.pc)) - 1) & 0x7F)
+#define _mem_indexed		devicebus->readmemory_as_word_wrap (devicebus->readmemory_as_word(regs.pc))
 
 // processor flags
 #define cf_negative			0x80
@@ -67,7 +67,6 @@ private:
 	int		dma_cycle;
 	byte	dma_high;
 	byte	dma_count;
-	bus		*mbus;
 
 public:	
 	bool	error_state;
@@ -76,9 +75,6 @@ public:
 	int		rundevice(int ticks);
 	void	reset();
 	void	coldboot();
-
-	// memory setup
-	void	definememorybus(bus *membus);
 
 	//stack
 	void	pushstack_word(word data);
@@ -96,4 +92,3 @@ public:
 	void	log_register();
 	void	set_pc(word addr);
 };
-

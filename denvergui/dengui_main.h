@@ -2,7 +2,6 @@
 
 #include "../emulator/nes.h"
 
-
 namespace denvergui {
 	struct denvergui_state {
 		bool show_apu_debugger;

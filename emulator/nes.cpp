@@ -12,34 +12,34 @@ nes_emulator::nes_emulator() {
 	// setup the emulator.
 	mainbus = new bus();
 	//clock = new fastclock();
-	cpu_2a03 = new cpu2a03_fast();
+	//cpu_2a03 = new cpu2a03_fast();
+	nes_2a03 = new package_2a03();
 	nesram = new mainram();
 	ppu_device = new ppu();
-	apu_device = new apu();
-	apu_device->attach_to_memory_bus(mainbus);
+	//apu_device = new apu();
 	audio = new audio_player();
 	joydefs = new joypad();
-	controllers = new nes_2a03_joyports(joydefs);
+	//controllers = new nes_2a03_joyports(joydefs);
+	nes_2a03->set_joydefs(joydefs);
 	cart = NULL;
 
 	// configure links.
-	clock.setdevices(cpu_2a03, ppu_device, apu_device);
-	mainbus->registerdevice(cpu_2a03);
+	clock.setdevices(nes_2a03, ppu_device);
+	//mainbus->registerdevice(cpu_2a03);
+	mainbus->registerdevice(nes_2a03);
 	mainbus->registerdevice(nesram);
 	mainbus->registerdevice(ppu_device);
-	mainbus->registerdevice(apu_device);
-	mainbus->registerdevice(controllers);
+	//mainbus->registerdevice(apu_device);
+	//mainbus->registerdevice(controllers);
 	mainbus->emulate_bus_conflicts(true);
+	
 
 	// configure audio.
 	audio->boostspeed = false;
-	audio->register_audible_device(apu_device);	
+	audio->register_audible_device(&nes_2a03->apu_2a03);
 
 	// configure video.
 	video_out = new nesvideo();
-
-	// configure cpu bus.
-	cpu_2a03->definememorybus(mainbus);
 
 	// start audio.
 	audio->startplayback();
@@ -57,11 +57,11 @@ nes_emulator::~nes_emulator() {
 }
 
 void	nes_emulator::reset() {
-	cpu_2a03->reset();
+	nes_2a03->cpu_2a03.reset();
 }
 
 void	nes_emulator::cold_reset() {
-	cpu_2a03->coldboot();
+	nes_2a03->cpu_2a03.coldboot();
 }
 
 void	nes_emulator::run_till_frame_ready(void (*callback)(SDL_Event*)) {
@@ -115,5 +115,5 @@ void	nes_emulator::load_cartridge(const char * filename) {
 	ppu_device->write_state_dump("ppu_state_before_cart.dmp");
 	if (cart) delete cart;
 	cart = new cartridge(filename, ppu_device, mainbus);
-	cpu_2a03->coldboot();
+	nes_2a03->cpu_2a03.coldboot();
 }

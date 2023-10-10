@@ -81,10 +81,9 @@ fastclock::fastclock() {
 fastclock::~fastclock() {
 }
 
-void fastclock::setdevices(device *cpu, device *ppu, device *apu) {
+void fastclock::setdevices(device *cpu, device *ppu) {
 	this->cpudevice = cpu;
 	this->ppudevice = ppu;
-	this->apudevice = apu;
 }
 
 void fastclock::step() {
@@ -99,11 +98,9 @@ void fastclock::step() {
 			cpudevice->rundevice(1);
 		}
 		if (ppudevice) ppudevice->rundevice(1536);
-		if (apudevice) apudevice->rundevice(512);
 	}
 	int actualcputicks = cpudevice->rundevice(cyclespersync);	
 	if (ppudevice) ppudevice->rundevice(actualcputicks);
-	if (apudevice) apudevice->rundevice(actualcputicks/3);
 }
 
 void fastclock::run() {
@@ -120,11 +117,9 @@ void fastclock::run() {
 				cpudevice->rundevice(1);
 			}
 			ppudevice->rundevice(1536);
-			if (apudevice) apudevice->rundevice(512);
 		}
 		int actualcputicks = cpudevice->rundevice(cyclespersync);	
 		if (ppudevice) ppudevice->rundevice(actualcputicks);
-		if (apudevice) apudevice->rundevice(actualcputicks/3);
 	}
 }
 

@@ -73,6 +73,12 @@
     <Filter Include="Source Files\emulation\imguifiledialog\stb">
       <UniqueIdentifier>{b1903931-d69c-430a-9bc4-444ef9216935}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\emulation\cpu\tools">
+      <UniqueIdentifier>{92bc349d-392e-4996-9f6f-338321039e9f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\emulation\package">
+      <UniqueIdentifier>{75a1da77-654b-4e13-8d7e-799c3f78c0c9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="audio\apu.h">
@@ -171,6 +177,12 @@
     <ClInclude Include="imguifiledialog\stb\stb_image_resize.h">
       <Filter>Source Files\emulation\imguifiledialog\stb</Filter>
     </ClInclude>
+    <ClInclude Include="cpu\tools\2a03_disasm.h">
+      <Filter>Source Files\emulation\cpu\tools</Filter>
+    </ClInclude>
+    <ClInclude Include="package\2a03.h">
+      <Filter>Source Files\emulation\package</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DenverEMU.cpp">
@@ -253,6 +265,12 @@
     </ClCompile>
     <ClCompile Include="imguifiledialog\ImGuiFileDialog.cpp">
       <Filter>Source Files\emulation\imguifiledialog</Filter>
+    </ClCompile>
+    <ClCompile Include="cpu\tools\2a03_disasm.cpp">
+      <Filter>Source Files\emulation\cpu\tools</Filter>
+    </ClCompile>
+    <ClCompile Include="package\2a03.cpp">
+      <Filter>Source Files\emulation\package</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

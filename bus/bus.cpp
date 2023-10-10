@@ -70,8 +70,10 @@ void	bus::emulate_bus_conflicts(bool enable) {
 }
 
 void	bus::registerdevice(bus_device *device) {
-	if (device)
+	if (device) {
 		devices.push_back(device);
+		device->_attach_to_bus(this);
+	}
 }
 
 void	bus::removedevice_select_base(int baseaddr) {
@@ -182,6 +184,10 @@ void bus_device::write(int addr, int addr_from_base, byte data) {
 
 byte bus_device::read(int addr, int addr_from_base) {
 	return 0x00;
+}
+
+void bus_device::_attach_to_bus(bus * attachedbus) {
+	devicebus = attachedbus;
 }
 
 device::device() {

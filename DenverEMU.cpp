@@ -13,6 +13,7 @@
 #include <fstream>
 #include <malloc.h>
 #include <exception>
+#include <string>
 
 #include "imgui.h"
 #include "imgui_internal.h"
@@ -20,6 +21,7 @@
 #include "imgui_impl_opengl3.h"
 
 #include "denvergui/dengui_main.h"
+#include "cpu/tools/2a03_disasm.h"
 
 #include <SDL.h>
 #if defined(IMGUI_IMPL_OPENGL_ES2)
@@ -132,6 +134,20 @@ int main()
 
 	denvergui::denvergui_state windowstates;
 	windowstates.show_apu_debugger = false;
+
+	// disassemble 0x8000 (10 instructions)
+	disassembler disasm;
+
+	disasm.set_mainbus(denver->mainbus);
+	disasm.set_address(0x8000);
+	word addr = 0x8000;
+	for (int i = 0; i < 10; i++) {
+		std::cout << std::hex << (int)addr << " ";
+		std::string dis = disasm.disassemble();
+		std::cout << dis << std::endl;
+		addr += disasm.last_instruction_size;
+	}
+
 
 	while (!denver->hasquit()) {
 		denver->run_till_frame_ready([](SDL_Event *cbev){

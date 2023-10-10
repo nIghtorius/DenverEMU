@@ -20,6 +20,7 @@
 #include "../video/ppu.h"
 #include "../video/nesvideo.h"
 #include "../controller/joypad.h"
+#include "../package/2a03.h"
 #include <SDL_opengl.h>
 
 struct nes_frame_tex {
@@ -31,17 +32,18 @@ struct nes_frame_tex {
 class nes_emulator {
 private:
 	cartridge			* cart;
-	cpu2a03_fast		* cpu_2a03;
+	//cpu2a03_fast		* cpu_2a03;
 	mainram				* nesram;
 	audio_player		* audio;
 	joypad				* joydefs;
-	nes_2a03_joyports	* controllers;
+	//nes_2a03_joyports	* controllers;
 	bool				quit = false;
 	nesvideo			* video_out;
 	nes_frame_tex		frame;
 
 public:
-	apu				* apu_device;
+	//apu				* apu_device;
+	package_2a03		* nes_2a03;
 	ppu				* ppu_device;
 	bus				* mainbus;
 	fastclock		  clock;	// trying clock non heap, maybe some speed?

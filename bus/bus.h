@@ -55,6 +55,8 @@ public:
 	virtual void	reset();
 };
 
+class bus;
+
 // a device connected to a bus.
 class bus_device: public device	{	// we base the bus device off the device class.
 public:
@@ -62,6 +64,7 @@ public:
 	int		devicestart;
 	int		deviceend;
 	int		devicemask;
+	bus		*devicebus;
 	buslayout	pinout;
 	bus_device();
 	virtual ~bus_device();
@@ -72,6 +75,7 @@ public:
 	void			resetpins_to_default();
 	virtual void	write(int addr, int addr_from_base, byte data);
 	virtual	byte	read(int addr, int addr_from_base);
+	virtual void	_attach_to_bus(bus * attachedbus);
 };
 
 class bus {

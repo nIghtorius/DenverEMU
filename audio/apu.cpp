@@ -11,6 +11,9 @@ apu::apu() {
 	pulse[0].pulse2 = false;
 	pulse[1].pulse2 = true;
 
+	// initialize dmc
+	dmc.mainbus = devicebus;
+
 	// clocking info.
 	tick_rate = 3;	// make it same as cpu. tick_rate is a divider against tick_rate 1
 
@@ -194,7 +197,7 @@ int		apu::rundevice(int ticks) {
 				frame_irq_asserted = (!inhibit_irq && !five_step_mode);
 				frame_counter = 0;
 				sample_buffer_counter++;
-				if (sample_buffer_counter == max_sample_buffer) {
+				if (sample_buffer_counter >= max_sample_buffer) {
 					// do audio trigger and stuff.
 					//ready_sample_audio();
 
@@ -232,11 +235,6 @@ int		apu::rundevice(int ticks) {
 		this->irq_enable = frame_irq_asserted || dmc.irq_asserted;
 	}
 	return ticks;
-}
-
-void	apu::attach_to_memory_bus(bus *mbus)
-{
-	dmc.mainbus = mbus;
 }
 
 void	apu::half_clock() {

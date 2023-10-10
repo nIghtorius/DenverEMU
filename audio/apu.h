@@ -221,6 +221,5 @@ public:
 	byte	read(int addr, int addr_from_base);
 	void	write(int addr, int addr_from_base, byte data);
 	int		rundevice(int ticks);
-	void	attach_to_memory_bus(bus *mbus);
 	void	reset();
 };
