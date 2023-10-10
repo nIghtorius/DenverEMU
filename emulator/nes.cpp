@@ -144,7 +144,7 @@ void	nes_emulator::load_cartridge(const char * filename) {
 }
 
 void	nes_emulator::load_logo() {
-	imemstream data(denverlogo, sizeof(denverlogo));
+	imemstream data((char *)denverlogo, sizeof(denverlogo));
 	cart = new cartridge(data, ppu_device, mainbus);
 	nes_2a03->cpu_2a03.coldboot();
 }
