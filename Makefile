@@ -7,19 +7,19 @@
 
 rwildcard=$(wildcard $1) $(foreach d,$1,$(call rwildcard,$(addsuffix /$(notdir $d),$(wildcard $(dir $d)*))))
 
-CC = g++
+CXX = c++
 
-LINKERFLAG = -lSDL2 -lGL
-COMPILERFLAG = -I imgui -I imgui/backends -c -O2 -ggdb -Wformat `sdl2-config --cflags`
+CXXFLAGS = -I imgui -I imgui/backends -c -O3 -Ofast -Wformat `sdl2-config --cflags`
+LDFLAGS = -lSDL2 -lGL
 
 SRCS := $(call rwildcard,./*.cpp)
 BINS := $(SRCS:%.cpp=%.o)
 
 all: denver
 denver: ${BINS}
-	${CC} -o denver ${BINS} ${LINKERFLAG}
+	${CXX} -o denver ${BINS} ${LDFLAGS}
 %.o: %.cpp
-	${CC} ${COMPILERFLAG} $< -o $@
+	${CXX} ${CXXFLAGS} $< -o $@
 
 clean:
 	@echo "Cleaning up..."

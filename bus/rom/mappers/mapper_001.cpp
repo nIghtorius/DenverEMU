@@ -6,7 +6,7 @@
 
 // ROM side.
 mmc1_rom::mmc1_rom() {
-	strcpy_s(get_device_descriptor(), MAX_DESCRIPTOR_LENGTH, "Denver MMC1 (mapper 001)");
+	strncpy(get_device_descriptor(), "Denver MMC1 (mapper 001)", MAX_DESCRIPTOR_LENGTH);
 	mmc1ram = (char *)malloc(8192);
 }
 
@@ -117,7 +117,7 @@ void mmc1_rom::link_vrom(mmc1_vrom *vrom) {
 
 // VROM side.
 mmc1_vrom::mmc1_vrom() {
-	strcpy_s(this->get_device_descriptor(), MAX_DESCRIPTOR_LENGTH, "Denver MMC1 (mapper 001) - VROM");
+	strncpy(this->get_device_descriptor(), "Denver MMC1 (mapper 001) - VROM", MAX_DESCRIPTOR_LENGTH);
 	ram = (byte *)malloc(8192);	// reserve 8192 of RAM for MMC1 (may not be used, can be used)
 }
 

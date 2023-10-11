@@ -3,7 +3,7 @@
 // implementation of UxROM (mapper_002.h)
 
 uxrom::uxrom() {
-	strcpy_s(get_device_descriptor(), MAX_DESCRIPTOR_LENGTH, "Denver UxROM (mapper 002)");
+	strncpy(get_device_descriptor(), "Denver UxROM (mapper 002)", MAX_DESCRIPTOR_LENGTH);
 }
 
 byte uxrom::read(int addr, int addr_from_base)
