@@ -92,7 +92,7 @@ void	audio_player::send_sampledata_to_audio_device() {
 		for (int i = (int)trunc(samples); i < -1 + (int)trunc(samples + samples_to_target); i++) {
 			sample += 0.1f * (final_mux[i] - sample);
 		}
-		buffer[samples_in_buffer + outsamples] = -16384 + (int)trunc(sample * 32768);
+		buffer[samples_in_buffer + outsamples] = -16384 + (int)trunc(sample * 16384);
 		samples += samples_to_target;
 		outsamples++;
 	}

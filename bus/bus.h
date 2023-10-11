@@ -8,7 +8,7 @@
 #include <vector>
 #include <cstdint>
 #include <string.h>
-#include <malloc.h>
+#include <cstdlib>
 
 #define		MAX_DESCRIPTOR_LENGTH	128
 #define		BUS_OPEN_BUS			0xF0
@@ -29,10 +29,6 @@ typedef std::uint8_t  byte;
 struct buslayout {
 	char pins[16];
 };
-
-#ifdef __linux__
-char *	strcpy_s(char *destination, std::size_t length, const char *source);
-#endif
 
 // basic device can have bus. not always.
 class device {

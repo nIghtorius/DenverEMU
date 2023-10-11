@@ -2,9 +2,11 @@
 #include <iostream>
 #include <cstdint>
 
+#pragma warning(disable : 4996)
+
 cpu2a03_fast::cpu2a03_fast() {
 	// initialize cpu.
-	strcpy_s(get_device_descriptor(), MAX_DESCRIPTOR_LENGTH, "Denver 2a03 CPU (fast emulation)");
+	strncpy(get_device_descriptor(), "Denver 2a03 CPU (fast emulation)", MAX_DESCRIPTOR_LENGTH);
 	regs.pc = 0x0000;
 	regs.sp = 0xFD;
 	regs.sr = cf_interrupt | cf_break | 0x20;

@@ -1,11 +1,13 @@
 #include "debug6k.h"
 #include <iostream>
 
+#pragma warning(disable : 4996)
+
 debug6k::debug6k() {
 	devicestart = 0x6000;	// start of device.
 	deviceend = 0x6FFF;		// end of device.
 	devicemask = 0x6FFF;	
-	strcpy_s(get_device_descriptor(), MAX_DESCRIPTOR_LENGTH, "Denver blargg 0x6000 debugger");
+	strncpy(get_device_descriptor(), "Denver blargg 0x6000 debugger", MAX_DESCRIPTOR_LENGTH);
 }
 
 
@@ -17,7 +19,7 @@ void debug6k::write(int addr, int addr_from_base, byte data) {
 }
 
 bogusdevice::bogusdevice() {
-	strcpy_s(get_device_descriptor(), MAX_DESCRIPTOR_LENGTH, "Device that does 2 clocks per clock request");
+	strncpy(get_device_descriptor(), "Device that does 2 clocks per clock request", MAX_DESCRIPTOR_LENGTH);
 	tick_rate = 2;
 }
 

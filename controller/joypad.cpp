@@ -3,6 +3,8 @@
 #include "joypad.h"
 #include <iostream>
 
+#pragma warning(disable : 4996)
+
 joypad::joypad() {
 	set_default_configs();
 	for (int i = 0; i < MAX_CONTROLLERS; i++) {
@@ -52,14 +54,14 @@ bool	joypad::pulse_read_out(int controller_id) {
 }
 
 nes_2a03_joyports::nes_2a03_joyports() {
-	strcpy_s(get_device_descriptor(), MAX_DESCRIPTOR_LENGTH, "Denver Controller 4016-4017");
+	strncpy(get_device_descriptor(), "Denver Controller 4016-4017", MAX_DESCRIPTOR_LENGTH);
 	devicestart = 0x4000;
 	deviceend = 0x401F;
 	devicemask = 0x401F;
 }
 
 nes_2a03_joyports::nes_2a03_joyports(joypad * ctrl) {
-	strcpy_s(get_device_descriptor(), MAX_DESCRIPTOR_LENGTH, "Denver Controller 4016-4017");
+	strncpy(get_device_descriptor(), "Denver Controller 4016-4017", MAX_DESCRIPTOR_LENGTH);
 	devicestart = 0x4000;
 	deviceend = 0x401F;
 	devicemask = 0x401F;

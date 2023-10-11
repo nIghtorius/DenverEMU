@@ -11,7 +11,6 @@
 #include "emulator/nes.h"
 #include <iostream>
 #include <fstream>
-#include <malloc.h>
 #include <exception>
 #include <string>
 
@@ -138,7 +137,7 @@ int main()
 	windowstates.show_apu_debugger = false;
 
 	// disassemble 0x8000 (10 instructions)
-	disassembler disasm;
+	//disassembler disasm;
 
 	/*
 	disasm.set_mainbus(denver->mainbus);
@@ -151,45 +150,6 @@ int main()
 		addr += disasm.last_instruction_size;
 	}
 	*/
-	/*
-	while (!denver->hasquit()) {
-		denver->run_till_frame_ready([](SDL_Event *cbev){
-			ImGui_ImplSDL2_ProcessEvent(cbev);
-		});
-
-		// Start the Dear ImGui frame
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplSDL2_NewFrame();
-		ImGui::NewFrame();
-
-		//_NESVIDEO->process_ppu_image((std::uint16_t *)_DENVER_PPU->getFrameBuffer());
-		nes_frame_tex * nesframe = denver->returnFrameAsTexture();
-
-		// SDL stuff.
-		glBindTexture(GL_TEXTURE_2D, tex);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 256, 240, 0, GL_RGBA, GL_UNSIGNED_BYTE, (GLvoid *)nesframe->texture);
-
-		denvergui::render_main(denver, tex, &windowstates);
-
-		ImGui::Render();
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-		{
-			SDL_Window* backup_current_window = SDL_GL_GetCurrentWindow();
-			SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
-			ImGui::UpdatePlatformWindows();
-			ImGui::RenderPlatformWindowsDefault();
-			SDL_GL_MakeCurrent(backup_current_window, backup_current_context);
-		}
-
-		SDL_GL_SwapWindow(win);
-		denver->sync_audio();
-	}*/
-
 	// new call back code. set callback to the ppu.
 	denver->ppu_device->callback = ([&] () {
 		SDL_Event event;

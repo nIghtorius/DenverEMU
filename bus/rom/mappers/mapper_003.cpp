@@ -1,10 +1,12 @@
 #include "mapper_003.h"
 #include <iostream>
 
+#pragma warning(disable : 4996)
+
 // implementation of CNROM (mapper_003.h)
 
 cnvrom::cnvrom() {
-	strcpy_s(get_device_descriptor(), MAX_DESCRIPTOR_LENGTH, "Denver CNROM (mapper 003)");
+	strncpy(get_device_descriptor(), "Denver CNROM (mapper 003)", MAX_DESCRIPTOR_LENGTH);
 }
 
 byte	cnvrom::read(int addr, int addr_from_base) {

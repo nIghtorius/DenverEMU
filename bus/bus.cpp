@@ -1,13 +1,9 @@
-#include <malloc.h>
-#include <string.h>
+#include <cstdlib>
+#include <string>
 #include "bus.h"
 #include <iostream>
 
-#ifdef __linux__ 
-char *	strcpy_s(char *destination, std::size_t length, const char *source) {
-	return strcpy(destination, source);
-}
-#endif
+#pragma warning(disable : 4996)
 
 bus::bus() {
 }
@@ -121,7 +117,7 @@ void	bus::reportdevices() {
 }
 
 bus_device::bus_device() {
-	strcpy_s(get_device_descriptor(), MAX_DESCRIPTOR_LENGTH, "Denver Base I/O Device");
+	strncpy(get_device_descriptor(), "Denver Base I/O Device", MAX_DESCRIPTOR_LENGTH);
 	devicestart = 0x0000;
 	deviceend = 0xFFFF;
 	devicemask = 0xFFFF;
@@ -191,10 +187,10 @@ void bus_device::_attach_to_bus(bus * attachedbus) {
 }
 
 device::device() {
+	devicedescriptor = (char *)malloc(MAX_DESCRIPTOR_LENGTH);	// reserve 128 bytes.
+	strncpy(get_device_descriptor(), "Denver Base Device", MAX_DESCRIPTOR_LENGTH);
 	ticksdone = 0;
 	tickstodo = 0;
-	devicedescriptor = (char *)malloc(MAX_DESCRIPTOR_LENGTH);	// reserve 128 bytes.
-	strcpy_s(devicedescriptor, MAX_DESCRIPTOR_LENGTH, "Denver Base Device");	// default device name for debugging.
 }
 
 device::~device() {

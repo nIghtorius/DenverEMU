@@ -1,8 +1,11 @@
 #include "rom.h"
 
+#pragma warning(disable : 4996)
+
+
 rom::rom() {
 	// default to 16K rom with mirrored 0xC000 (to 0x8000)
-	strcpy_s(this->get_device_descriptor(), MAX_DESCRIPTOR_LENGTH, "NROM 0x00 ROM");
+	strncpy(this->get_device_descriptor(), "NROM 0x00 ROM", MAX_DESCRIPTOR_LENGTH);
 	devicestart = 0x8000;
 	deviceend = 0xFFFF;
 	devicemask = 0xBFFF;	// 1011 1111 1111 1111
@@ -30,7 +33,7 @@ byte rom::read(int addr, int addr_from_base) {
 }
 
 vrom::vrom() {
-	strcpy_s(this->get_device_descriptor(), MAX_DESCRIPTOR_LENGTH, "NROM 0x00 VROM");
+	strncpy(this->get_device_descriptor(), "NROM 0x00 VROM", MAX_DESCRIPTOR_LENGTH);
 	devicestart = 0x0000;
 	deviceend = 0x1FFF;
 	devicemask = 0x1FFF;
@@ -58,7 +61,7 @@ void vrom::link_ppu_bus(bus_device *ppu_bus) {
 }
 
 vram::vram() {
-	strcpy_s(this->get_device_descriptor(), MAX_DESCRIPTOR_LENGTH, "NROM 0x00 VRAM");
+	strncpy(this->get_device_descriptor(), "NROM 0x00 VRAM", MAX_DESCRIPTOR_LENGTH);
 	devicestart = 0x0000;
 	deviceend = 0x1fff;
 	devicemask = 0x1fff;

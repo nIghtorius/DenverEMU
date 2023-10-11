@@ -6,8 +6,10 @@
 
 #include "2a03.h"
 
+#pragma warning(disable : 4996)
+
 package_2a03::package_2a03() {
-	strcpy_s(get_device_descriptor(), MAX_DESCRIPTOR_LENGTH, "2A03 Package (CPU, APU, CTRL)");
+	strncpy(get_device_descriptor(), "2A03 Package (CPU, APU, CTRL)", MAX_DESCRIPTOR_LENGTH);
 	devicestart = 0x4000;
 	deviceend = 0x401F;
 	devicemask = 0x401F;

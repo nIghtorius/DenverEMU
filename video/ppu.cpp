@@ -1,14 +1,14 @@
 #include "ppu.h"
-#include <malloc.h>
+#include <cstdlib>
 #include <iostream>
 #include <fstream>
-
-
 #include <thread>
 #include <chrono>
 
+#pragma warning(disable : 4996)
+
 ppu::ppu() : bus_device () {
-	strcpy_s(get_device_descriptor(), MAX_DESCRIPTOR_LENGTH, "Denver PPU Unit");
+	strncpy(get_device_descriptor(), "Denver PPU Unit", MAX_DESCRIPTOR_LENGTH);
 	devicestart = 0x2000;
 	deviceend = 0x3FFF;
 	devicemask = 0x2007;
@@ -518,14 +518,17 @@ bool	ppu::isFrameReady() {
 }
 
 void	ppu::reset() {
-	/*std::cout << "PPU has reset" << std::endl;
+	std::cout << "PPU has reset" << std::endl;
 	cycle = 0;
-	memset (&ppu_internal, 0, sizeof (ppu_render_state));*/
+	memset (&ppu_internal, 0, sizeof (ppu_render_state));
+	nmi_enable = false;
+	irq_enable = false;
+	ppuctrl.do_nmi = false;
 }
 
 // PPU RAM
 ppuram::ppuram() : bus_device() {
-	strcpy_s(get_device_descriptor(), MAX_DESCRIPTOR_LENGTH, "PPU mainram 2k");
+	strncpy(get_device_descriptor(), "PPU mainram 2k", MAX_DESCRIPTOR_LENGTH);
 	ram = (byte *)malloc(0x800);
 	devicestart = 0x2000;
 	deviceend = 0x3EFF;
@@ -546,7 +549,7 @@ byte	ppuram::read(int addr, int addr_from_base) {
 
 // PPU PAL RAM
 ppu_pal_ram::ppu_pal_ram() : bus_device() {
-	strcpy_s(get_device_descriptor(), MAX_DESCRIPTOR_LENGTH, "PPU palette RAM 32 bytes");
+	strncpy(get_device_descriptor(), "PPU palette RAM 32 bytes", MAX_DESCRIPTOR_LENGTH);
 	ram = (byte *)malloc(0x20);
 	devicestart = 0x3F00;
 	deviceend = 0x3FFF;

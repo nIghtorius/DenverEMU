@@ -1,8 +1,10 @@
 #include "apu.h"
 #include <iostream>
 
+#pragma warning(disable : 4996)
+
 apu::apu() {
-	strcpy_s(get_device_descriptor(), MAX_DESCRIPTOR_LENGTH, "Denver 2A03 APU Device");
+	strncpy(get_device_descriptor(), "Denver 2A03 APU Device", MAX_DESCRIPTOR_LENGTH);
 	devicestart = 0x4000;
 	deviceend = 0x401F;
 	devicemask = 0x401F;
@@ -202,22 +204,14 @@ int		apu::rundevice(int ticks) {
 				audioframes = 0;
 				sample_buffer_counter++;
 				if (sample_buffer_counter >= max_sample_buffer) {
-					// do audio trigger and stuff.
-					//ready_sample_audio();
-
 					// tell audio_player when sample data is ready to go.
 					audio_frame_ready = true;	// will be reset to false when picked up.
-
-					// clear samplebuffer.
-					//sample_buffer.clear();
-
-					// reset counter.
 					sample_buffer_counter = 0;
 				}
 			}
 		}
 
-		if (audioframes >= five_step_mode ? 37282 : 29830) {
+		if (audioframes >= (five_step_mode ? 37282 : 29830)) {
 			audioframes = 0;
 			sample_buffer_counter++;
 			if (sample_buffer_counter >= max_sample_buffer) {

@@ -1,7 +1,6 @@
 #include "nesvideo.h"
-#include <malloc.h>
+#include <cstdlib>
 #include <cstdint>
-#include <stdlib.h>
 
 nesvideo::nesvideo() {
 	displaybuffer = (std::uint32_t *)malloc(245760); // buffer is 256x240 16 bits.
