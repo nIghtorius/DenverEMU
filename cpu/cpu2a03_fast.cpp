@@ -39,7 +39,7 @@ void cpu2a03_fast::write_cpu_log() {
 	// <pc> <disassemble> <regs>
 	*cpu_log << std::hex << "0x" << (int)addr << " " << line_to_exec << " ";
 	*cpu_log << "r.ac=" << (int)regs.ac << ", r.x=" << (int)regs.x << ", r.y="
-		<< (int)regs.y << ", r.sp=" << (int)regs.sp << ", r.sr=" << (int)regs.sr;		
+		<< (int)regs.y << ", r.sp=" << (int)regs.sp << ", r.sr=" << (int)regs.sr << std::endl;
 }
 
 void cpu2a03_fast::set_pc(word addr) {
@@ -1796,6 +1796,7 @@ void cpu2a03_fast::write_execution_log() {
 	if (cpu_log) return;
 	cpu_log = new std::ofstream("cpu_exec_log.txt", std::ios::out);
 	*cpu_log << "Denver CPU log\n\n";
+	disasm.set_mainbus(devicebus);
 }
 
 void cpu2a03_fast::stop_execution_log() {

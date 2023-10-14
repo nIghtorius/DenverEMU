@@ -16,10 +16,15 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *
 	// file dialogs.
 	if (ImGuiFileDialog::Instance()->Display("nesfile", ImGuiWindowFlags_NoCollapse, ImVec2{ 700.0f, 500.0f })) {
 		if (ImGuiFileDialog::Instance()->IsOk()) {
+			denver->nes_2a03->cpu_2a03.stop_execution_log();
 			std::cout << "ImGuiFileDialog: " << ImGuiFileDialog::Instance()->GetFilePathName() << std::endl;
 			// load the cart.
 			denver->load_cartridge(ImGuiFileDialog::Instance()->GetFilePathName().c_str());
 			denver->cold_reset();
+			if (state->write_exec_log) {
+				denver->nes_2a03->cpu_2a03.write_execution_log();
+				state->write_exec_log = false;
+			}
 		}
 		ImGuiFileDialog::Instance()->Close();
 	}
@@ -141,12 +146,7 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *
 		if (ImGui::BeginMenuBar()) {
 			if (ImGui::BeginMenu("File")) {
 				if (ImGui::MenuItem("Open file", "Ctrl+O")) {
-					denver->nes_2a03->cpu_2a03.stop_execution_log();
 					ImGuiFileDialog::Instance()->OpenDialog("nesfile", "Select NES file", "All compatible files{.nes,.nsf},NES roms{.nes},NES music{.nsf}", ".", 1, nullptr, ImGuiFileDialogFlags_Modal);
-					if (state->write_exec_log) {
-						denver->nes_2a03->cpu_2a03.write_execution_log();
-						state->write_exec_log = false;
-					}
 				}
 
 				if (ImGui::BeginMenu("Recent")) {
