@@ -10,6 +10,9 @@ namespace denvergui {
 		bool apu_tab_tri;
 		bool apu_tab_noi;
 		bool apu_tab_dmc;
+		
+		// debugging.
+		bool write_exec_log;
 	};
 
 	void	render_main (nes_emulator *denver,  GLuint tex, denvergui_state *state);

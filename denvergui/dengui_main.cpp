@@ -141,7 +141,12 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *
 		if (ImGui::BeginMenuBar()) {
 			if (ImGui::BeginMenu("File")) {
 				if (ImGui::MenuItem("Open file", "Ctrl+O")) {
+					denver->nes_2a03->cpu_2a03.stop_execution_log();
 					ImGuiFileDialog::Instance()->OpenDialog("nesfile", "Select NES file", "All compatible files{.nes,.nsf},NES roms{.nes},NES music{.nsf}", ".", 1, nullptr, ImGuiFileDialogFlags_Modal);
+					if (state->write_exec_log) {
+						denver->nes_2a03->cpu_2a03.write_execution_log();
+						state->write_exec_log = false;
+					}
 				}
 
 				if (ImGui::BeginMenu("Recent")) {
@@ -218,6 +223,9 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *
 					ImGui::MenuItem("Memory viewer");
 					ImGui::MenuItem("Disassembler");
 					ImGui::MenuItem("Stack viewer");
+					if (ImGui::MenuItem("Write exec log after new cartridge")) {
+						state->write_exec_log = true;
+					}
 					if (ImGui::MenuItem("APU Viewer")) {
 						state->show_apu_debugger = true;
 					}

@@ -28,6 +28,20 @@ cpu2a03_fast::~cpu2a03_fast() {
 void cpu2a03_fast::log_register() {
 }
 
+void cpu2a03_fast::write_cpu_log() {
+	// logging makes emulation slower, but helpful debugging issues.
+	// first we want the disassemble.
+	int addr = regs.pc;
+	disasm.set_address(addr);
+	std::string line_to_exec = disasm.disassemble();
+
+	// now we write
+	// <pc> <disassemble> <regs>
+	*cpu_log << std::hex << "0x" << (int)addr << " " << line_to_exec << " ";
+	*cpu_log << "r.ac=" << (int)regs.ac << ", r.x=" << (int)regs.x << ", r.y="
+		<< (int)regs.y << ", r.sp=" << (int)regs.sp << ", r.sr=" << (int)regs.sr;		
+}
+
 void cpu2a03_fast::set_pc(word addr) {
 	regs.pc = addr;
 }
@@ -67,7 +81,10 @@ int cpu2a03_fast::rundevice(int ticks) {
 
 int	cpu2a03_fast::rundevice_internal (int ticks) {
 	int	actualticks = 0;
-	
+
+	// log state?
+	if (cpu_log) write_cpu_log();
+
 	// check dma mode
 	if (in_dma_mode) {
 		if (dma_cycle == 1) {
@@ -1773,4 +1790,17 @@ void cpu2a03_fast::dma(byte *data, bool is_output, bool started) {
 		//std::cout << ", read byte : 0x" << (int)*data << std::dec << " | dma_cycle: " << dma_cycle << std::endl;
 		dma_count--;
 	}
+}
+
+void cpu2a03_fast::write_execution_log() {
+	if (cpu_log) return;
+	cpu_log = new std::ofstream("cpu_exec_log.txt", std::ios::out);
+	*cpu_log << "Denver CPU log\n\n";
+}
+
+void cpu2a03_fast::stop_execution_log() {
+	if (!cpu_log) return;
+	cpu_log->close();
+	delete cpu_log;
+	cpu_log = nullptr;
 }

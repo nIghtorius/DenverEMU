@@ -155,6 +155,8 @@ public:
 	oamentry				oam[64];
 	byte					oamaddr;
 
+	int						ppu_cycles_per_frame;
+
 	// callback function (in order to speed things up)
 	std::function<void()>	callback = nullptr;
 

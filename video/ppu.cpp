@@ -493,8 +493,12 @@ int		ppu::rundevice(int ticks) {
 			}
 		}
 		cycle++; 
+		ppu_cycles_per_frame++;
 		if (cycle == 341) {			
 			cycle = 0;
+			if (scanline == 0) {
+				ppu_cycles_per_frame = 0;
+			}
 		}
 	}
 	return ticks;	// assume ticks in = ticks out.

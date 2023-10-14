@@ -6,6 +6,8 @@
 */
 #pragma once
 #include "../bus/bus.h"
+#include <fstream>
+#include "tools/2a03_disasm.h"
 
 // memory handling MACROs
 #define	_mem_immediate		regs.pc
@@ -62,11 +64,15 @@ private:
 	void	opc_ld_(byte &rdata, byte data);
 	void	opc_cmp(byte rdata, byte data);
 	int		rundevice_internal(int ticks);
+	void	write_cpu_log();
 
 	cpuregs	regs;
 	int		dma_cycle;
 	byte	dma_high;
 	byte	dma_count;
+
+	std::ofstream	*cpu_log = nullptr;
+	disassembler	disasm;
 
 public:	
 	bool	error_state;
@@ -91,4 +97,6 @@ public:
 	//debug
 	void	log_register();
 	void	set_pc(word addr);
+	void	write_execution_log();
+	void	stop_execution_log();
 };
