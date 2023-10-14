@@ -234,11 +234,16 @@ int		ppu::rundevice(int ticks) {
 					if (ppu_internal.oam_copy) {
 						if ((ppu_internal.sn < 8) && !ppu_internal.oam_evald) {
 							switch (ppu_internal.m) {
-							case 0x01:	ppu_internal.secoam[ppu_internal.sn].tile = ppu_internal.buffer_oam_read;
+							case 0x01:	
+								ppu_internal.secoam[ppu_internal.sn].tile = ppu_internal.buffer_oam_read;
 								break;
-							case 0x02:	ppu_internal.secoam[ppu_internal.sn].attr = ppu_internal.buffer_oam_read;
+							case 0x02:	
+								ppu_internal.secoam[ppu_internal.sn].attr = ppu_internal.buffer_oam_read;
+								// infuse spr 0 status into the attr (internal use only)
+								if (ppu_internal.n == 0) ppu_internal.secoam[ppu_internal.sn].attr |= OAM_SPR_INTERNAL_ONLY_SPR0F;
 								break;
-							case 0x03:	ppu_internal.secoam[ppu_internal.sn].x = ppu_internal.buffer_oam_read;
+							case 0x03:	
+								ppu_internal.secoam[ppu_internal.sn].x = ppu_internal.buffer_oam_read;
 								break;
 							}
 						}
@@ -365,7 +370,7 @@ int		ppu::rundevice(int ticks) {
 			if ((cycle >= 0) && (cycle <= 259)) {
 				if (ppumask.showspr) {
 					// decrement counters.
-					for (int i = 0; i < 8; i++) {
+					for (int i = 7; i >= 0; i--) {
 						// check if count is zero then render the pattern buffers.
 						if (ppu_internal.shiftreg_spr_counter[i] == 0) {
 							// we can get the pixel two ways depending on OAM_SPR_ATTR_FLIP_VER
@@ -389,6 +394,8 @@ int		ppu::rundevice(int ticks) {
 							byte spr_palette = (ppu_internal.shiftreg_spr_latch[i] & OAM_SPR_ATTR_PALETTE);
 							if (pix > 0) {
 								ppu_internal.spr_pix = pix;
+								if ((ppu_internal.shiftreg_spr_latch[i] & OAM_SPR_PRIORITY) > 0) ppu_internal.spr_pix |= 0x80;
+								if ((ppu_internal.shiftreg_spr_latch[i] & OAM_SPR_INTERNAL_ONLY_SPR0F) > 0) ppu_internal.spr_pix |= OAM_SPR_INTERNAL_ONLY_SPR0F;
 								ppu_internal.spr_pix_pal = vpal.read(0, 0x10 | spr_palette << 2 | pix);
 							}
 						}
@@ -420,6 +427,10 @@ int		ppu::rundevice(int ticks) {
 					ppu_internal.shiftreg_attribute[0] <<= 1;
 					ppu_internal.shiftreg_attribute[1] <<= 1;
 
+					// check disabled 8 left pixels.
+					if ((!ppumask.bg8lt) && (beam < 8)) color = vpal.read(0, 0);
+					if ((!ppumask.spr8lt) && (beam < 8)) ppu_internal.spr_pix = 0;
+
 					// draw to framebuffer?
 					if (beam<256) {
 						framebuffer[scanline << 8 | beam] = color; // (palentry << 4) | (palentry << 4) << 8;
@@ -428,14 +439,19 @@ int		ppu::rundevice(int ticks) {
 							(ppumask.emp_red ? 0x0400 : 0);
 
 						// spr_pix>0 just render for now.
-						if (ppu_internal.spr_pix > 0) {
+						bool renderpixel = ((palentry == 0) && (ppu_internal.spr_pix > 0) ||
+							(palentry > 0) && ((ppu_internal.spr_pix & 0x80) == 0) && ((ppu_internal.spr_pix & 0x03) > 0));
+						if (renderpixel) {
 							framebuffer[scanline << 8 | beam] = ppu_internal.spr_pix_pal;
-							ppu_internal.spr_pix = 0;
 						}						
+						// check for spr 0
+						if (((ppu_internal.spr_pix & 0x3) > 0) && (palentry != 0)) {
+							if (ppu_internal.spr_pix & OAM_SPR_INTERNAL_ONLY_SPR0F) ppustatus.sprite_0_hit = true;
+						}
+						ppu_internal.spr_pix = 0;
 					}
 				}
-				else framebuffer[scanline << 8 | beam] = vram.read(0x00, 0x3F00);
-				if ((scanline == oam[0].y) && (beam == oam[0].x+2)) ppustatus.sprite_0_hit = true;	// fake it for now.
+				else framebuffer[scanline << 8 | beam] = vpal.read(0, 0);
 				beam++;
 			}
 		}

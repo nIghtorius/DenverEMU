@@ -1,6 +1,5 @@
 #include "nesvideo.h"
 #include <cstdlib>
-#include <cstdint>
 
 nesvideo::nesvideo() {
 	displaybuffer = (std::uint32_t *)malloc(245760); // buffer is 256x240 16 bits.
@@ -34,3 +33,9 @@ void nesvideo::process_ppu_image(std::uint16_t * ppu_image) {
 		displaybuffer[x] = framepixel;
 	}
 }
+
+void nesvideo::add_overscan_borders() {
+	for (int i = 0; i < 2048; i++) displaybuffer[i] = 0;
+	for (int i = 59392; i < 61440; i++) displaybuffer[i] = 0;
+}
+

@@ -156,7 +156,9 @@ void	mmc3_rom::set_rom_data(byte *data, std::size_t size) {
 
 void	mmc3_rom::link_vrom(mmc3_vrom * m3vrom) {
 	vrom = m3vrom;
-	if (vrom) vrom->update_banks(&state);
+	if (vrom) {
+		vrom->update_banks(&state);
+	}
 }
 
 int		mmc3_rom::rundevice(int ticks) {

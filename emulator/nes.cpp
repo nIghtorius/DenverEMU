@@ -113,7 +113,10 @@ void	nes_emulator::fast_run_callback() {
 }
 
 void	nes_emulator::prepare_frame() {
-	if (ppu_device) video_out->process_ppu_image((std::uint16_t *)ppu_device->getFrameBuffer());
+	if (ppu_device) {
+		video_out->process_ppu_image((std::uint16_t *)ppu_device->getFrameBuffer());
+		video_out->add_overscan_borders();
+	}
 }
 
 void	nes_emulator::sync_audio() {

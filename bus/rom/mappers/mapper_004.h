@@ -41,25 +41,7 @@ struct mmc3_state {
 	bool	irq_reload;
 };
 
-class mmc3_vrom : public vrom {
-private:
-	byte	*chr0000;
-	byte	*chr0400;
-	byte	*chr0800;
-	byte	*chr0c00;
-	byte	*chr1000;
-	byte	*chr1400;
-	byte	*chr1800;
-	byte	*chr1c00;
-	word	ppuaddr;
-public:
-	mmc3_vrom();
-	void	update_banks(mmc3_state *state);
-	virtual	byte	read(int addr, int addr_from_base);
-	virtual	void	write(int addr, int addr_from_base, byte data);
-	virtual void	set_rom_data(byte *data, std::size_t size);
-	word			fetch_ppu_addr();
-};
+class mmc3_vrom;
 
 class mmc3_rom : public rom {
 private:
@@ -82,3 +64,25 @@ public:
 	void			write_banks(byte data);
 	void			update_banks();
 };
+
+class mmc3_vrom : public vrom {
+private:
+	byte	*chr0000;
+	byte	*chr0400;
+	byte	*chr0800;
+	byte	*chr0c00;
+	byte	*chr1000;
+	byte	*chr1400;
+	byte	*chr1800;
+	byte	*chr1c00;
+	word	ppuaddr;
+public:
+	mmc3_vrom();
+	mmc3_rom		*rom;
+	void			update_banks(mmc3_state *state);
+	virtual	byte	read(int addr, int addr_from_base);
+	virtual	void	write(int addr, int addr_from_base, byte data);
+	virtual void	set_rom_data(byte *data, std::size_t size);
+	word			fetch_ppu_addr();
+};
+
