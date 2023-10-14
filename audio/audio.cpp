@@ -61,15 +61,21 @@ void	audio_player::play_audio() {
 	// everything is ready. let's mux everything together.
 	final_mux.clear();
 
+	float avg_center = 0.0f;
+
 	for (int i = 0; i < audibles[0]->sample_buffer.size(); i++) {
 		float input = 0.0f;
 		for (auto audible : audibles) {
 			input += audible->sample_buffer[i];
 		}
 		input /= audibles.size();
+		avg_center += input;
 		final_mux.push_back(input);
 	}
 	
+	avg_center /= (float)audibles[0]->sample_buffer.size();
+	average_mix = avg_center;
+
 	for (auto audible : audibles) {
 		audible->sample_buffer.clear();
 		audible->audio_frame_ready = false;

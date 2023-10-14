@@ -176,6 +176,7 @@
     <ClInclude Include="bus\rom\mappers\mapper_001.h" />
     <ClInclude Include="bus\rom\mappers\mapper_002.h" />
     <ClInclude Include="bus\rom\mappers\mapper_003.h" />
+    <ClInclude Include="bus\rom\mappers\mapper_004.h" />
     <ClInclude Include="bus\rom\rom.h" />
     <ClInclude Include="clock\clock.h" />
     <ClInclude Include="controller\joypad.h" />
@@ -214,6 +215,7 @@
     <ClCompile Include="bus\rom\mappers\mapper_001.cpp" />
     <ClCompile Include="bus\rom\mappers\mapper_002.cpp" />
     <ClCompile Include="bus\rom\mappers\mapper_003.cpp" />
+    <ClCompile Include="bus\rom\mappers\mapper_004.cpp" />
     <ClCompile Include="bus\rom\rom.cpp" />
     <ClCompile Include="clock\clock.cpp" />
     <ClCompile Include="controller\joypad.cpp" />

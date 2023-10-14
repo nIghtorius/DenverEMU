@@ -41,10 +41,10 @@ nes_emulator::nes_emulator() {
 	joydefs = new joypad();
 	//controllers = new nes_2a03_joyports(joydefs);
 	nes_2a03->set_joydefs(joydefs);
-	cart = NULL;
+	cart = nullptr;
 
 	// configure links.
-	clock.setdevices(nes_2a03, ppu_device);
+	clock.setdevices(nes_2a03, ppu_device, nullptr);
 	//mainbus->registerdevice(cpu_2a03);
 	mainbus->registerdevice(nes_2a03);
 	mainbus->registerdevice(nesram);
@@ -140,11 +140,13 @@ void	nes_emulator::stop() {
 void	nes_emulator::load_cartridge(const char * filename) {
 	if (cart) delete cart;
 	cart = new cartridge(filename, ppu_device, mainbus);
+	clock.setdevices(nes_2a03, ppu_device, cart->program);
 	nes_2a03->cpu_2a03.coldboot();
 }
 
 void	nes_emulator::load_logo() {
 	imemstream data((char *)denverlogo, sizeof(denverlogo));
 	cart = new cartridge(data, ppu_device, mainbus);
+	clock.setdevices(nes_2a03, ppu_device, cart->program);
 	nes_2a03->cpu_2a03.coldboot();
 }

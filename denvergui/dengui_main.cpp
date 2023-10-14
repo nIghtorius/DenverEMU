@@ -123,9 +123,11 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *
 				ImGui::TreePop();
 			}
 			if (ImGui::TreeNode("Live Sample Data")) {
-				int s = denver->audio->final_mux.size();
-				float * graph = &denver->audio->final_mux[0];			
-				ImGui::PlotLines("Sample", graph, s, 0, NULL, -0.3f, 1.0f, ImVec2{0, 80.0f});
+				int s = (int)denver->audio->final_mux.size();
+				float * graph = &denver->audio->final_mux[0];		
+				float lb = denver->audio->average_mix - 0.7f;
+				float hb = denver->audio->average_mix + 0.7f;
+				ImGui::PlotLines("Sample", graph, s, 0, NULL, lb, hb, ImVec2{0, 160.0f});
 				ImGui::Separator();
 				ImGui::TreePop();
 			}

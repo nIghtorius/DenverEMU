@@ -132,7 +132,7 @@ public:
 };
 
 class ppu : public bus_device {
-private:
+public:
 	ppu_ctrl_register		ppuctrl;
 	ppu_mask_register		ppumask;
 	ppu_status_register		ppustatus;

@@ -81,9 +81,10 @@ fastclock::fastclock() {
 fastclock::~fastclock() {
 }
 
-void fastclock::setdevices(device *cpu, device *ppu) {
+void fastclock::setdevices(device *cpu, device *ppu, device *rom) {
 	this->cpudevice = cpu;
 	this->ppudevice = ppu;
+	this->romdevice = rom;
 }
 
 void fastclock::step() {
@@ -95,11 +96,13 @@ void fastclock::step() {
 			cpudevice->dma(&dmabyte, false, false);
 			if (ppudevice) ppudevice->dma(&dmabyte, true, cpudevice->dma_start);
 			cpudevice->dma_start = false;
-			cpudevice->rundevice(1);
+			int ticks = cpudevice->rundevice(1);
+			if (romdevice) romdevice->rundevice(ticks / 3);			
 		}
 		if (ppudevice) ppudevice->rundevice(1536);
 	}
 	int actualcputicks = cpudevice->rundevice(cyclespersync);	
+	if (romdevice) romdevice->rundevice(actualcputicks / 3);
 	if (ppudevice) ppudevice->rundevice(actualcputicks);
 }
 
@@ -115,11 +118,13 @@ void fastclock::run() {
 				cpudevice->dma(&dmabyte, false, false);
 				if (ppudevice) ppudevice->dma(&dmabyte, true, cpudevice->dma_start);
 				cpudevice->dma_start = false;
-				cpudevice->rundevice(1);
+				int ticks = cpudevice->rundevice(1);
+				if (romdevice) romdevice->rundevice(ticks / 3);
 			}
 			ppudevice->rundevice(1536);
 		}
 		int actualcputicks = cpudevice->rundevice(cyclespersync);	
+		if (romdevice) romdevice->rundevice(actualcputicks / 3);
 		if (ppudevice) ppudevice->rundevice(actualcputicks);
 	}
 }

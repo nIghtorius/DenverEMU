@@ -208,6 +208,8 @@ private:
 
 	int					sample_buffer_counter = 0;
 
+	int					ldm;
+
 	float				mux(byte p1, byte p2, byte tri, byte noi, byte dmc);
 
 public:

@@ -32,6 +32,7 @@ class fastclock {
 private:
 	device *cpudevice;
 	device *ppudevice;
+	device *romdevice;
 	int	cyclespersync = 1;
 public:
 	bool	running;
@@ -39,6 +40,6 @@ public:
 	~fastclock();
 	void step();
 	void run();
-	void setdevices(device *cpu, device *ppu);
+	void setdevices(device *cpu, device *ppu, device *rom);
 	void set_sync_cycle_in_ppucycles(int ppucycles);
 };

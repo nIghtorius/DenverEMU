@@ -1,6 +1,7 @@
 #include "mapper_001.h"
-
 #include <iostream>
+
+#pragma warning(disable : 4996)
 
 // implementation of MMC1 (mapper_001.h)
 

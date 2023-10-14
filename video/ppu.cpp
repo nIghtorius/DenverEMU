@@ -271,11 +271,11 @@ int		ppu::rundevice(int ticks) {
 				byte cs = (cycle - 1) % 8;
 				if (cs == 1) {
 					// do garbage nametable read.
-					ppu_internal.shiftreg_nametable = vbus.readmemory(0x2000 | (ppu_internal.v_register & 0x0FFF));
+					//ppu_internal.shiftreg_nametable = vbus.readmemory(0x2000 | (ppu_internal.v_register & 0x0FFF));
 				}
 				else if (cs == 3) {
 					// do garbage nametable read.
-					ppu_internal.shiftreg_nametable = vbus.readmemory(0x2000 | (ppu_internal.v_register & 0x0FFF));
+					//ppu_internal.shiftreg_nametable = vbus.readmemory(0x2000 | (ppu_internal.v_register & 0x0FFF));
 					ppu_internal.shiftreg_spr_latch[ppu_internal.n] = ppu_internal.secoam[ppu_internal.n].attr;
 				}
 				else if (cs == 5) {
@@ -297,6 +297,7 @@ int		ppu::rundevice(int ticks) {
 					}
 					if (ix > 7) pattern_address += 8;
 					pattern_address += (ltile << 4) + ix;
+					if (pattern_address >= 0x1FF8) pattern_address = 0x1FF8; //clamp it.
 					ppu_internal.shiftreg_spr_pattern_lo[ppu_internal.n] = vbus.readmemory(pattern_address);
 					ppu_internal.shiftreg_spr_counter[ppu_internal.n] = ppu_internal.secoam[ppu_internal.n].x;
 				}
@@ -319,6 +320,7 @@ int		ppu::rundevice(int ticks) {
 					}					
 					if (ix > 7) pattern_address += 8;
 					pattern_address += (ltile << 4) + ix;
+					if (pattern_address >= 0x1FF8) pattern_address = 0x1FF8; //clamp it.
 					if (ppu_internal.n > 7) {
 						// should not happen, but happens on the linux port. reason unknown, windows version never happens.
 						std::cout << "internal.n overflowed n>7, value n = " << std::dec << (int)ppu_internal.n << " @ cycle step: " << (int)cycle << "\n";

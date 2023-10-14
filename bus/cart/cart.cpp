@@ -6,6 +6,7 @@
 #include "../rom/mappers/mapper_001.h"
 #include "../rom/mappers/mapper_002.h"
 #include "../rom/mappers/mapper_003.h"
+#include "../rom/mappers/mapper_004.h"
 
 // implementation.
 
@@ -167,6 +168,23 @@ void	cartridge::readstream(std::istream &nesfile, ppu *ppu_device, bus *mainbus)
 			character = charram;	// should not happen.
 		}
 		break;
+	case 4:
+		// MMC3
+		program = new mmc3_rom();
+		character = new mmc3_vrom();
+		// mmc3 linking.
+		reinterpret_cast<mmc3_rom*>(program)->link_vrom(reinterpret_cast<mmc3_vrom*>(character));
+		reinterpret_cast<mmc3_vrom*>(character)->link_ppu_bus(&ppu_device->vram);
+		program->set_rom_data((byte *)program_data, nes.programsize);
+		if (has_char_data) {
+			character->set_rom_data((byte *)char_data, nes.charsize);
+		}
+		else {
+			// RAM based MMC3?
+			charram = new vram();
+			character = charram;			
+		}
+		break;
 	default:
 		std::cout << "Mapper is unknown to me" << std::endl;
 		break;
@@ -175,6 +193,10 @@ void	cartridge::readstream(std::istream &nesfile, ppu *ppu_device, bus *mainbus)
 	// link roms..
 	mainbus->registerdevice(program);
 	ppu_device->set_char_rom(character);
+
+	// reset vector.
+	std::cout << "ROM Reset vector: 0x" << std::hex << (int)mainbus->readmemory_as_word(0xfffc) << std::endl;
+
 
 	// link busses.
 	m_bus = mainbus;

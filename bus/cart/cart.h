@@ -79,13 +79,13 @@ struct nes_header_data {
 
 class cartridge {
 private:
-	rom		*program;
-	vrom	*character;
 	ppu		*l_ppu;
 	bus		*m_bus;
 	void	readstream(std::istream &stream, ppu *ppu_device, bus *mainbus);
 public:
 	bool	is_valid;
+	rom		*program;
+	vrom	*character;
 	cartridge(const char *filename, ppu *ppu_device, bus *mainbus);
 	cartridge(std::istream &stream, ppu *ppu_device, bus *mainbus);
 	~cartridge();

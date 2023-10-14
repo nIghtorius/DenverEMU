@@ -1,5 +1,7 @@
 #include "mapper_002.h"
 
+#pragma warning(disable : 4996)
+
 // implementation of UxROM (mapper_002.h)
 
 uxrom::uxrom() {

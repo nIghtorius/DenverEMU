@@ -232,9 +232,9 @@ int		apu::rundevice(int ticks) {
 		byte p2 = pulse[1].enabled ? pulse[1].readsample() : 0;
 		byte tr = triangle.enabled ? triangle.readsample() : 0;
 		byte no = noise.enabled ? noise.readsample() : 0;
-		byte dm = dmc.enabled ? dmc.readsample() : 0;
+		ldm = dmc.enabled ? dmc.readsample() : ldm;
 
-		sample_buffer.push_back(mux(p1, p2, tr, no, dm));
+		sample_buffer.push_back(mux(p1, p2, tr, no, ldm));
 
 		framecycle++;
 		audioframes++;

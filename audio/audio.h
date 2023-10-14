@@ -50,7 +50,7 @@ private:
 	static void sdl_aud_callback(void * const data, std::uint8_t * const stream, const int len);
 public:
 	std::vector<float> final_mux;
-
+	float	average_mix;
 	int		sample_rate = SAMPLE_RATE;
 	int		samples_in_buffer = 0;
 	bool	samples_is_played = false;

@@ -76,11 +76,11 @@ public:
 
 class bus {
 private:
-	int		address;
 	bool	no_bus_conflicts = false;		// default we do not emulate bus conflicts, it is costly.
 public:	
 	bus();
 	~bus();
+	int		address;
 	// general reading/writing.
 	std::vector<bus_device *> devices;
 	void	writememory(int addr, byte data);
