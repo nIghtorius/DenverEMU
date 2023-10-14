@@ -36,8 +36,8 @@ private:
 	char	*devicedescriptor;
 public:
 	int		tick_rate;	// sets the tick rate. for example: if ppu rate 1 then cpu rate is 3. ( for each 3 ppu ticks there is one cpu tick )
-	bool	irq_enable;	// device IRQ
-	bool	nmi_enable;
+	bool	irq_enable = false;	// device IRQ
+	bool	nmi_enable = false;
 	int		ticker;
 	int		tickstodo;
 	int		ticksdone;

@@ -108,14 +108,6 @@ int	cpu2a03_fast::rundevice_internal (int ticks) {
 	}
 	// IRQ
 	if ((devicebus->irq_pulled()) && ((regs.sr & cf_interrupt) == 0)) {
-
-		// who has interrupt?
-		for (auto device : devicebus->devices) {
-			if (device->irq_enable) {
-				std::cout << "IRQ up: " << device->get_device_descriptor() << std::endl;
-			}
-		}
-
 		pushstack_word(regs.pc);
 		pushstack_byte(regs.sr & ~0x10);
 		regs.sr |= cf_interrupt;
