@@ -148,6 +148,8 @@ public:
 	bool					frameready;
 	byte					prt2007buffer;	
 
+	void					snap_state_for_debugger();
+
 public:
 	bus						vbus;		// vbus = videobus.
 	ppu_pal_ram				vpal;
@@ -155,7 +157,17 @@ public:
 	oamentry				oam[64];
 	byte					oamaddr;
 
+	ppu_ctrl_register		dbg_ppuctrl;
+	ppu_mask_register		dbg_ppumask;
+	ppu_status_register		dbg_ppustatus;
+	ppu_render_state		dbg_ppuint;
+
+	byte					dbg_latch, dbg_p2007buf;
+	word					dbg_ppuaddr;
+	int						dbg_sl, dbg_beam;	
+
 	int						ppu_cycles_per_frame;
+	int						capture_cycle = 82180;
 
 	// callback function (in order to speed things up)
 	std::function<void()>	callback = nullptr;

@@ -4,7 +4,11 @@
 
 namespace denvergui {
 	struct denvergui_state {
-		bool show_apu_debugger;
+		// dialog states.
+		bool show_apu_debugger = false;
+		bool show_cpu_debugger = false;
+		bool show_ppu_debugger = false;
+
 		bool apu_tab_pulse1;
 		bool apu_tab_pulse2;
 		bool apu_tab_tri;
@@ -12,7 +16,10 @@ namespace denvergui {
 		bool apu_tab_dmc;
 		
 		// debugging.
-		bool write_exec_log;
+		bool write_exec_log = false;
+
+		// cpu viewer.
+		int	disasm_start = 0x8000;
 	};
 
 	void	render_main (nes_emulator *denver,  GLuint tex, denvergui_state *state);

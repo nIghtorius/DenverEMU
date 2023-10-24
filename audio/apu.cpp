@@ -26,9 +26,6 @@ apu::apu() {
 	for (int i = 0; i < 204; i++) {
 		tnd_table[i] = -0.6752341268204134f + (163.67f / (24239.0f / (i + 100)));
 	}
-
-	// some debug code.
-	//debugfile.open ("apudata.raw", std::ios::binary | std::ios::out);
 }
 
 apu::~apu() {

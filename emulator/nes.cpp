@@ -31,28 +31,20 @@ struct imemstream : virtual imembuf, std::istream
 nes_emulator::nes_emulator() {
 	// setup the emulator.
 	mainbus = new bus();
-	//clock = new fastclock();
-	//cpu_2a03 = new cpu2a03_fast();
 	nes_2a03 = new package_2a03();
 	nesram = new mainram();
 	ppu_device = new ppu();
-	//apu_device = new apu();
 	audio = new audio_player();
 	joydefs = new joypad();
-	//controllers = new nes_2a03_joyports(joydefs);
 	nes_2a03->set_joydefs(joydefs);
 	cart = nullptr;
 
 	// configure links.
 	clock.setdevices(nes_2a03, ppu_device, nullptr);
-	//mainbus->registerdevice(cpu_2a03);
 	mainbus->registerdevice(nes_2a03);
 	mainbus->registerdevice(nesram);
 	mainbus->registerdevice(ppu_device);
-	//mainbus->registerdevice(apu_device);
-	//mainbus->registerdevice(controllers);
 	mainbus->emulate_bus_conflicts(true);
-	
 
 	// configure audio.
 	audio->boostspeed = false;
@@ -72,7 +64,6 @@ nes_emulator::~nes_emulator() {
 	delete audio;
 	delete mainbus;	// also kills the linked devices.
 	delete joydefs;
-	//delete clock;
 	delete video_out;
 }
 
@@ -120,7 +111,7 @@ void	nes_emulator::prepare_frame() {
 }
 
 void	nes_emulator::sync_audio() {
-	audio->play_audio();	// blocking call, releases when a frame of audio has been player (16.66ms NTSC)
+	audio->play_audio();	// blocking call, releases when a frame of audio has been played (16.66ms NTSC)
 }
 
 nes_frame_tex * nes_emulator::returnFrameAsTexture() {

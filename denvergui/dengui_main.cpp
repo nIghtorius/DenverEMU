@@ -3,6 +3,7 @@
 #include "imgui_internal.h"
 #include "../imguifiledialog/ImGuiFileDialog.h"
 #include "../package/2a03.h"
+#include "gui_debuggers.h"
 #include <iostream>
 
 #pragma warning(disable : 4996)
@@ -29,116 +30,19 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *
 		ImGuiFileDialog::Instance()->Close();
 	}
 
+	// cpu dialog
+	if (state->show_cpu_debugger) {
+		render_cpuviewer(denver, state);
+	}
+
 	// apu dialog.
 	if (state->show_apu_debugger) {
-		if (ImGui::Begin("APU debugger", &state->show_apu_debugger, 0)) {
-			//ImGui::BeginTabBar("##aputabs");
-			if (ImGui::TreeNode("Pulse #1")) {
-				char buf[16];
-				ImGui::Text("Enabled: %s", (denver->nes_2a03->apu_2a03.pulse[0].enabled ? "Yes" : "No"));
-				ImGui::Text("Duty cycle: %d", denver->nes_2a03->apu_2a03.pulse[0].duty_cycle);
-				ImGui::Text("Dyte position: %d", denver->nes_2a03->apu_2a03.pulse[0].duty_pos);
-				ImGui::Text("Envelope loop: %s", (denver->nes_2a03->apu_2a03.pulse[0].envelope_loop ? "Yes" : "No"));
-				ImGui::Text("Contant volume: %s", (denver->nes_2a03->apu_2a03.pulse[0].constant_volume ? "Yes" : "No"));
-				ImGui::Text("Volume / Envelope");
-				float vol = (1.0f / 15.0f)*(float)denver->nes_2a03->apu_2a03.pulse[0].volume_envelope;
-				sprintf(buf, "%d/15", denver->nes_2a03->apu_2a03.pulse[0].volume_envelope);
-				ImGui::ProgressBar(vol, ImVec2{ 0, 0 }, buf);
-				ImGui::Text("Timer: %d", denver->nes_2a03->apu_2a03.pulse[0].timer);
-				ImGui::Text("Length Counter: %d", denver->nes_2a03->apu_2a03.pulse[0].length_counter);
-				ImGui::Text("Sweeping: %s", (denver->nes_2a03->apu_2a03.pulse[0].sweep_enable ? "Yes" : "No"));
-				ImGui::Text("Sweep divider: %d", denver->nes_2a03->apu_2a03.pulse[0].sweep_divider);
-				ImGui::Text("Sweep negation: %s", (denver->nes_2a03->apu_2a03.pulse[0].sweep_negate ? "Yes" : "No"));
-				ImGui::Text("Envelope Count: %d", denver->nes_2a03->apu_2a03.pulse[0].envelope_count);
-				ImGui::Text("Envelope Out");
-				float envout = (1.0f / 15.0f)*(float)denver->nes_2a03->apu_2a03.pulse[0].envelope_out;
-				sprintf(buf, "%d/15", denver->nes_2a03->apu_2a03.pulse[0].envelope_out);
-				ImGui::ProgressBar(envout, ImVec2{ 0, 0 }, buf);
-				ImGui::Separator();
-				ImGui::TreePop();
-			}
-			if (ImGui::TreeNode("Pulse #2")) {
-				char buf[16];
-				ImGui::Text("Enabled: %s", (denver->nes_2a03->apu_2a03.pulse[1].enabled ? "Yes" : "No"));
-				ImGui::Text("Duty cycle: %d", denver->nes_2a03->apu_2a03.pulse[1].duty_cycle);
-				ImGui::Text("Dyte position: %d", denver->nes_2a03->apu_2a03.pulse[1].duty_pos);
-				ImGui::Text("Envelope loop: %s", (denver->nes_2a03->apu_2a03.pulse[1].envelope_loop ? "Yes" : "No"));
-				ImGui::Text("Contant volume: %s", (denver->nes_2a03->apu_2a03.pulse[1].constant_volume ? "Yes" : "No"));
-				ImGui::Text("Volume / Envelope");
-				float vol = (1.0f / 15.0f)*(float)denver->nes_2a03->apu_2a03.pulse[1].volume_envelope;
-				sprintf(buf, "%d/15", denver->nes_2a03->apu_2a03.pulse[1].volume_envelope);
-				ImGui::ProgressBar(vol, ImVec2{ 0, 0 }, buf);
-				ImGui::Text("Timer: %d", denver->nes_2a03->apu_2a03.pulse[1].timer);
-				ImGui::Text("Length Counter: %d", denver->nes_2a03->apu_2a03.pulse[1].length_counter);
-				ImGui::Text("Sweeping: %s", (denver->nes_2a03->apu_2a03.pulse[1].sweep_enable ? "Yes" : "No"));
-				ImGui::Text("Sweep divider: %d", denver->nes_2a03->apu_2a03.pulse[1].sweep_divider);
-				ImGui::Text("Sweep negation: %s", (denver->nes_2a03->apu_2a03.pulse[1].sweep_negate ? "Yes" : "No"));
-				ImGui::Text("Envelope Count: %d", denver->nes_2a03->apu_2a03.pulse[1].envelope_count);
-				ImGui::Text("Envelope Out");
-				float envout = (1.0f / 15.0f)*(float)denver->nes_2a03->apu_2a03.pulse[1].envelope_out;
-				sprintf(buf, "%d/15", denver->nes_2a03->apu_2a03.pulse[1].envelope_out);
-				ImGui::ProgressBar(envout, ImVec2{ 0, 0 }, buf);
-				ImGui::Separator();
-				ImGui::TreePop();
-			}
-			if (ImGui::TreeNode("Triangle")) {
-				ImGui::Text("Enabled: %s", (denver->nes_2a03->apu_2a03.triangle.enabled ? "Yes" : "No"));
-				ImGui::Text("Triangle Length Loop: %d", denver->nes_2a03->apu_2a03.triangle.triangle_length);
-				ImGui::Text("Triangle Length Counter: %d", denver->nes_2a03->apu_2a03.triangle.triangle_length_counter);
-				ImGui::Text("Length Counter: %d", denver->nes_2a03->apu_2a03.triangle.length_counter);
-				ImGui::Text("Triangle Length Loop: %s", (denver->nes_2a03->apu_2a03.triangle.triangle_length_loop ? "Yes" : "No"));
-				ImGui::Text("Triangle Length Reload: %s", (denver->nes_2a03->apu_2a03.triangle.triangle_counter_reload ? "Yes" : "No"));
-				ImGui::Text("Timer: %d", denver->nes_2a03->apu_2a03.triangle.timer);
-				ImGui::Text("Sequencer: %d", denver->nes_2a03->apu_2a03.triangle.sequencer);
-				ImGui::Separator();
-				ImGui::TreePop();
-			}
-			if (ImGui::TreeNode("Noise")) {
-				char buf[16];
-				ImGui::Text("Enabled: %s", (denver->nes_2a03->apu_2a03.noise.enabled ? "Yes" : "No"));
-				ImGui::Text("Envelope loop: %s", (denver->nes_2a03->apu_2a03.noise.envelope_loop ? "Yes" : "No"));
-				ImGui::Text("Constant Volume: %s", (denver->nes_2a03->apu_2a03.noise.constant_volume ? "Yes" : "No"));
-				ImGui::Text("Volume Envelope");
-				float vol = (1.0f / 15.0f)*(float)denver->nes_2a03->apu_2a03.noise.volume_envelope;
-				sprintf(buf, "%d/15", denver->nes_2a03->apu_2a03.noise.volume_envelope);
-				ImGui::ProgressBar(vol, ImVec2{ 0, 0 }, buf);
-				ImGui::Text("Envelope Out");
-				float envvol = (1.0f / 15.0f)*(float)denver->nes_2a03->apu_2a03.noise.envelope_out;
-				sprintf(buf, "%d/15", denver->nes_2a03->apu_2a03.noise.envelope_out);
-				ImGui::ProgressBar(envvol, ImVec2{ 0, 0 }, buf);
-				ImGui::Text("Noise loop: %s", (denver->nes_2a03->apu_2a03.noise.noise_loop ? "Yes" : "No"));
-				ImGui::Text("Noise period: %d", denver->nes_2a03->apu_2a03.noise.noise_period);
-				ImGui::Text("Length Counter: %d", denver->nes_2a03->apu_2a03.noise.length_counter);
-				ImGui::Text("Noise shift register: %d", denver->nes_2a03->apu_2a03.noise.noise_shift_reg);
-				ImGui::Separator();
-				ImGui::TreePop();
-			}
-			if (ImGui::TreeNode("DMC")) {
-				ImGui::Text("Enabled: %s", (denver->nes_2a03->apu_2a03.dmc.enabled ? "Yes" : "No"));
-				ImGui::Text("Asserting IRQ: %s", (denver->nes_2a03->apu_2a03.dmc.irq_asserted ? "Yes" : "No"));
-				ImGui::Text("IRQ Enabled: %s", (denver->nes_2a03->apu_2a03.dmc.irq_enable ? "Yes" : "No"));
-				ImGui::Text("Rate: %d", denver->nes_2a03->apu_2a03.dmc.rate);
-				ImGui::Text("Output level: %d", denver->nes_2a03->apu_2a03.dmc.direct_out);
-				ImGui::Text("Sample address: %#04X", denver->nes_2a03->apu_2a03.dmc.sample_addr);
-				ImGui::Text("Sample length: %d", denver->nes_2a03->apu_2a03.dmc.sample_length_load);
-				ImGui::Text("Sample buffer: %d", denver->nes_2a03->apu_2a03.dmc.sample_buffer);
-				ImGui::Text("Silent: %s", (denver->nes_2a03->apu_2a03.dmc.silent ? "Yes" : "No"));
-				ImGui::Text("Sample Shift Register: %d", denver->nes_2a03->apu_2a03.dmc.sample_shift_register);
-				ImGui::Separator();
-				ImGui::TreePop();
-			}
-			if (ImGui::TreeNode("Live Sample Data")) {
-				int s = (int)denver->audio->final_mux.size();
-				float * graph = &denver->audio->final_mux[0];		
-				float lb = denver->audio->average_mix - 0.7f;
-				float hb = denver->audio->average_mix + 0.7f;
-				ImGui::PlotLines("Sample", graph, s, 0, NULL, lb, hb, ImVec2{0, 160.0f});
-				ImGui::Separator();
-				ImGui::TreePop();
-			}
-			//ImGui::EndTabBar();
-			ImGui::End();
-		}
+		render_apuviewer(denver, state);
+	}
+
+	// ppu dialog
+	if (state->show_ppu_debugger) {
+		render_ppuviewer(denver, state);
 	}
 	
 	if (ImGui::BeginViewportSideBar("##SecondaryMenuBar", viewport, ImGuiDir_Up, height, window_flags)) 
@@ -219,9 +123,13 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *
 				}
 				ImGui::Separator();
 				if (ImGui::BeginMenu("Debugging")) {
-					ImGui::MenuItem("PPU Viewer");
+					if (ImGui::MenuItem("PPU Viewer")) {
+						state->show_ppu_debugger = true;
+					}
 					ImGui::MenuItem("Memory viewer");
-					ImGui::MenuItem("Disassembler");
+					if (ImGui::MenuItem("CPU viewer")) {
+						state->show_cpu_debugger = true;
+					}
 					ImGui::MenuItem("Stack viewer");
 					if (ImGui::MenuItem("Write exec log after new cartridge")) {
 						state->write_exec_log = true;

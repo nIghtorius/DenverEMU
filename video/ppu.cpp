@@ -10,8 +10,8 @@
 ppu::ppu() : bus_device () {
 	strncpy(get_device_descriptor(), "Denver PPU Unit", MAX_DESCRIPTOR_LENGTH);
 	devicestart = 0x2000;
-	deviceend = 0x3FFF;
-	devicemask = 0x2007;
+	deviceend = 0x2FFF;
+	devicemask = 0x2FFF;
 	tick_rate = 0x1;
 	// make bus
 	// Palette RAM
@@ -76,7 +76,6 @@ byte	ppu::read(int addr, int addr_from_base) {
 void	ppu::write(int addr, int addr_from_base, byte data) {
 	// update latch
 	latch = data;
-	//std::cout << "ppu_register_write: 0x" << std::hex << (int)addr_from_base << ", data: 0x" << (int)data << "\n";
 	// registers.
 	if (addr_from_base == PPU_PPUCTRL_PORT) {
 		ppu_internal.t_register &= ~0xC00;
@@ -441,6 +440,7 @@ int		ppu::rundevice(int ticks) {
 						// spr_pix>0 just render for now.
 						bool renderpixel = ((palentry == 0) && (ppu_internal.spr_pix > 0) ||
 							(palentry > 0) && ((ppu_internal.spr_pix & 0x80) == 0) && ((ppu_internal.spr_pix & 0x03) > 0));
+
 						if (renderpixel) {
 							framebuffer[scanline << 8 | beam] = ppu_internal.spr_pix_pal;
 						}						
@@ -492,8 +492,15 @@ int		ppu::rundevice(int ticks) {
 				ppu_internal.odd_even_frame = !ppu_internal.odd_even_frame;
 			}
 		}
+
+		// snap cycle?
+		if (ppu_cycles_per_frame == capture_cycle) {
+			snap_state_for_debugger();
+		}
+
 		cycle++; 
 		ppu_cycles_per_frame++;
+
 		if (cycle == 341) {			
 			cycle = 0;
 			if (scanline == 0) {
@@ -502,6 +509,21 @@ int		ppu::rundevice(int ticks) {
 		}
 	}
 	return ticks;	// assume ticks in = ticks out.
+}
+
+void	ppu::snap_state_for_debugger() {
+	// snaps all render values to a buffer for debugging purposes.
+	// copy ctrl registers.
+	memcpy(&dbg_ppuctrl, &ppuctrl, sizeof(ppu_ctrl_register));
+	memcpy(&dbg_ppumask, &ppumask, sizeof(ppu_mask_register));
+	memcpy(&dbg_ppustatus, &ppustatus, sizeof(ppu_status_register));
+	memcpy(&dbg_ppuint, &ppu_internal, sizeof(ppu_render_state));
+	// copy emulation registers (those are not official)
+	dbg_latch = latch;
+	dbg_p2007buf = prt2007buffer;
+	dbg_ppuaddr = ppuaddr;
+	dbg_sl = scanline;
+	dbg_beam = beam;
 }
 
 void	ppu::set_char_rom(bus_device *vdata) {

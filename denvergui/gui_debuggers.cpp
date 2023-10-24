@@ -1,0 +1,334 @@
+#include "gui_debuggers.h"
+#include "imgui.h"
+#include <string>
+
+#pragma warning(disable : 4996)
+
+// implementation
+
+void	denvergui::render_apuviewer(nes_emulator *denver, denvergui_state *state) {
+	if (ImGui::Begin("APU debugger", &state->show_apu_debugger, 0)) {
+		if (ImGui::TreeNode("Pulse #1")) {
+			char buf[16];
+			ImGui::Text("Enabled: %s", (denver->nes_2a03->apu_2a03.pulse[0].enabled ? "Yes" : "No"));
+			ImGui::Text("Duty cycle: %d", denver->nes_2a03->apu_2a03.pulse[0].duty_cycle);
+			ImGui::Text("Dyte position: %d", denver->nes_2a03->apu_2a03.pulse[0].duty_pos);
+			ImGui::Text("Envelope loop: %s", (denver->nes_2a03->apu_2a03.pulse[0].envelope_loop ? "Yes" : "No"));
+			ImGui::Text("Contant volume: %s", (denver->nes_2a03->apu_2a03.pulse[0].constant_volume ? "Yes" : "No"));
+			ImGui::Text("Volume / Envelope");
+			float vol = (1.0f / 15.0f)*(float)denver->nes_2a03->apu_2a03.pulse[0].volume_envelope;
+			sprintf(buf, "%d/15", denver->nes_2a03->apu_2a03.pulse[0].volume_envelope);
+			ImGui::ProgressBar(vol, ImVec2{ 0, 0 }, buf);
+			ImGui::Text("Timer: %d", denver->nes_2a03->apu_2a03.pulse[0].timer);
+			ImGui::Text("Length Counter: %d", denver->nes_2a03->apu_2a03.pulse[0].length_counter);
+			ImGui::Text("Sweeping: %s", (denver->nes_2a03->apu_2a03.pulse[0].sweep_enable ? "Yes" : "No"));
+			ImGui::Text("Sweep divider: %d", denver->nes_2a03->apu_2a03.pulse[0].sweep_divider);
+			ImGui::Text("Sweep negation: %s", (denver->nes_2a03->apu_2a03.pulse[0].sweep_negate ? "Yes" : "No"));
+			ImGui::Text("Envelope Count: %d", denver->nes_2a03->apu_2a03.pulse[0].envelope_count);
+			ImGui::Text("Envelope Out");
+			float envout = (1.0f / 15.0f)*(float)denver->nes_2a03->apu_2a03.pulse[0].envelope_out;
+			sprintf(buf, "%d/15", denver->nes_2a03->apu_2a03.pulse[0].envelope_out);
+			ImGui::ProgressBar(envout, ImVec2{ 0, 0 }, buf);
+			ImGui::Separator();
+			ImGui::TreePop();
+		}
+		if (ImGui::TreeNode("Pulse #2")) {
+			char buf[16];
+			ImGui::Text("Enabled: %s", (denver->nes_2a03->apu_2a03.pulse[1].enabled ? "Yes" : "No"));
+			ImGui::Text("Duty cycle: %d", denver->nes_2a03->apu_2a03.pulse[1].duty_cycle);
+			ImGui::Text("Dyte position: %d", denver->nes_2a03->apu_2a03.pulse[1].duty_pos);
+			ImGui::Text("Envelope loop: %s", (denver->nes_2a03->apu_2a03.pulse[1].envelope_loop ? "Yes" : "No"));
+			ImGui::Text("Contant volume: %s", (denver->nes_2a03->apu_2a03.pulse[1].constant_volume ? "Yes" : "No"));
+			ImGui::Text("Volume / Envelope");
+			float vol = (1.0f / 15.0f)*(float)denver->nes_2a03->apu_2a03.pulse[1].volume_envelope;
+			sprintf(buf, "%d/15", denver->nes_2a03->apu_2a03.pulse[1].volume_envelope);
+			ImGui::ProgressBar(vol, ImVec2{ 0, 0 }, buf);
+			ImGui::Text("Timer: %d", denver->nes_2a03->apu_2a03.pulse[1].timer);
+			ImGui::Text("Length Counter: %d", denver->nes_2a03->apu_2a03.pulse[1].length_counter);
+			ImGui::Text("Sweeping: %s", (denver->nes_2a03->apu_2a03.pulse[1].sweep_enable ? "Yes" : "No"));
+			ImGui::Text("Sweep divider: %d", denver->nes_2a03->apu_2a03.pulse[1].sweep_divider);
+			ImGui::Text("Sweep negation: %s", (denver->nes_2a03->apu_2a03.pulse[1].sweep_negate ? "Yes" : "No"));
+			ImGui::Text("Envelope Count: %d", denver->nes_2a03->apu_2a03.pulse[1].envelope_count);
+			ImGui::Text("Envelope Out");
+			float envout = (1.0f / 15.0f)*(float)denver->nes_2a03->apu_2a03.pulse[1].envelope_out;
+			sprintf(buf, "%d/15", denver->nes_2a03->apu_2a03.pulse[1].envelope_out);
+			ImGui::ProgressBar(envout, ImVec2{ 0, 0 }, buf);
+			ImGui::Separator();
+			ImGui::TreePop();
+		}
+		if (ImGui::TreeNode("Triangle")) {
+			ImGui::Text("Enabled: %s", (denver->nes_2a03->apu_2a03.triangle.enabled ? "Yes" : "No"));
+			ImGui::Text("Triangle Length Loop: %d", denver->nes_2a03->apu_2a03.triangle.triangle_length);
+			ImGui::Text("Triangle Length Counter: %d", denver->nes_2a03->apu_2a03.triangle.triangle_length_counter);
+			ImGui::Text("Length Counter: %d", denver->nes_2a03->apu_2a03.triangle.length_counter);
+			ImGui::Text("Triangle Length Loop: %s", (denver->nes_2a03->apu_2a03.triangle.triangle_length_loop ? "Yes" : "No"));
+			ImGui::Text("Triangle Length Reload: %s", (denver->nes_2a03->apu_2a03.triangle.triangle_counter_reload ? "Yes" : "No"));
+			ImGui::Text("Timer: %d", denver->nes_2a03->apu_2a03.triangle.timer);
+			ImGui::Text("Sequencer: %d", denver->nes_2a03->apu_2a03.triangle.sequencer);
+			ImGui::Separator();
+			ImGui::TreePop();
+		}
+		if (ImGui::TreeNode("Noise")) {
+			char buf[16];
+			ImGui::Text("Enabled: %s", (denver->nes_2a03->apu_2a03.noise.enabled ? "Yes" : "No"));
+			ImGui::Text("Envelope loop: %s", (denver->nes_2a03->apu_2a03.noise.envelope_loop ? "Yes" : "No"));
+			ImGui::Text("Constant Volume: %s", (denver->nes_2a03->apu_2a03.noise.constant_volume ? "Yes" : "No"));
+			ImGui::Text("Volume Envelope");
+			float vol = (1.0f / 15.0f)*(float)denver->nes_2a03->apu_2a03.noise.volume_envelope;
+			sprintf(buf, "%d/15", denver->nes_2a03->apu_2a03.noise.volume_envelope);
+			ImGui::ProgressBar(vol, ImVec2{ 0, 0 }, buf);
+			ImGui::Text("Envelope Out");
+			float envvol = (1.0f / 15.0f)*(float)denver->nes_2a03->apu_2a03.noise.envelope_out;
+			sprintf(buf, "%d/15", denver->nes_2a03->apu_2a03.noise.envelope_out);
+			ImGui::ProgressBar(envvol, ImVec2{ 0, 0 }, buf);
+			ImGui::Text("Noise loop: %s", (denver->nes_2a03->apu_2a03.noise.noise_loop ? "Yes" : "No"));
+			ImGui::Text("Noise period: %d", denver->nes_2a03->apu_2a03.noise.noise_period);
+			ImGui::Text("Length Counter: %d", denver->nes_2a03->apu_2a03.noise.length_counter);
+			ImGui::Text("Noise shift register: %d", denver->nes_2a03->apu_2a03.noise.noise_shift_reg);
+			ImGui::Separator();
+			ImGui::TreePop();
+		}
+		if (ImGui::TreeNode("DMC")) {
+			ImGui::Text("Enabled: %s", (denver->nes_2a03->apu_2a03.dmc.enabled ? "Yes" : "No"));
+			ImGui::Text("Asserting IRQ: %s", (denver->nes_2a03->apu_2a03.dmc.irq_asserted ? "Yes" : "No"));
+			ImGui::Text("IRQ Enabled: %s", (denver->nes_2a03->apu_2a03.dmc.irq_enable ? "Yes" : "No"));
+			ImGui::Text("Rate: %d", denver->nes_2a03->apu_2a03.dmc.rate);
+			ImGui::Text("Output level: %d", denver->nes_2a03->apu_2a03.dmc.direct_out);
+			ImGui::Text("Sample address: %#04X", denver->nes_2a03->apu_2a03.dmc.sample_addr);
+			ImGui::Text("Sample length: %d", denver->nes_2a03->apu_2a03.dmc.sample_length_load);
+			ImGui::Text("Sample buffer: %d", denver->nes_2a03->apu_2a03.dmc.sample_buffer);
+			ImGui::Text("Silent: %s", (denver->nes_2a03->apu_2a03.dmc.silent ? "Yes" : "No"));
+			ImGui::Text("Sample Shift Register: %d", denver->nes_2a03->apu_2a03.dmc.sample_shift_register);
+			ImGui::Separator();
+			ImGui::TreePop();
+		}
+		if (ImGui::TreeNode("Live Sample Data")) {
+			int s = (int)denver->audio->final_mux.size();
+			float * graph = &denver->audio->final_mux[0];
+			float lb = denver->audio->average_mix - 0.7f;
+			float hb = denver->audio->average_mix + 0.7f;
+			ImGui::PlotLines("Sample", graph, s, 0, NULL, lb, hb, ImVec2{ 0, 160.0f });
+			ImGui::Separator();
+			ImGui::TreePop();
+		}
+		ImGui::End();
+	}
+}
+
+void	denvergui::render_cpuviewer(nes_emulator *denver, denvergui_state *state) {
+	if (ImGui::Begin("CPU debugger", &state->show_cpu_debugger)) {
+		if (ImGui::TreeNode("CPU registers")) {
+			ImGui::Text("pc = %02X, sp = %02X, sr = %02X", denver->nes_2a03->cpu_2a03.regs.pc,
+				denver->nes_2a03->cpu_2a03.regs.sp, denver->nes_2a03->cpu_2a03.regs.sr);
+			ImGui::Text("ac = %02X, x = %02X, y = %02X", denver->nes_2a03->cpu_2a03.regs.ac,
+				denver->nes_2a03->cpu_2a03.regs.x, denver->nes_2a03->cpu_2a03.regs.y);
+			ImGui::Text("Status Flags: %s%s%s%s%s%s%s",
+				(denver->nes_2a03->cpu_2a03.regs.sr & cf_negative) > 0 ? "N" : "_",
+				(denver->nes_2a03->cpu_2a03.regs.sr & cf_overflow) > 0 ? "O" : "_",
+				(denver->nes_2a03->cpu_2a03.regs.sr & cf_break) > 0 ? "B" : "_",
+				(denver->nes_2a03->cpu_2a03.regs.sr & cf_decimal) > 0 ? "D" : "_",
+				(denver->nes_2a03->cpu_2a03.regs.sr & cf_interrupt) > 0 ? "I" : "_",
+				(denver->nes_2a03->cpu_2a03.regs.sr & cf_zero) > 0 ? "Z" : "_",
+				(denver->nes_2a03->cpu_2a03.regs.sr & cf_carry) > 0 ? "C" : "_");
+			ImGui::Separator();
+			ImGui::TreePop();
+		}
+		if (ImGui::TreeNode("Disassembler")) {
+			ImGui::Text("Set disassemble address:");
+			ImGui::InputInt("ADDRESS:", &state->disasm_start, 1, 100, ImGuiInputTextFlags_CharsHexadecimal | ImGuiInputTextFlags_CharsUppercase);
+			if (ImGui::Button("GO RESETVECTOR")) {
+				state->disasm_start = denver->mainbus->readmemory_as_word(vector_reset);
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("GO NMIVECTOR")) {
+				state->disasm_start = denver->mainbus->readmemory_as_word(vector_nmi);
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("GO IRQVECTOR")) {
+				state->disasm_start = denver->mainbus->readmemory_as_word(vector_irq);
+			}
+			ImGui::Text("Disassembling from: 0x%04X", state->disasm_start);
+			if (ImGui::BeginTable("Disassembly", 3, ImGuiTableFlags_SizingFixedSame)) {
+				ImGui::TableSetupColumn("ADDRESS", ImGuiTableColumnFlags_WidthFixed);
+				ImGui::TableSetupColumn("DATA", ImGuiTableColumnFlags_WidthFixed);
+				ImGui::TableSetupColumn("DISASSEMBLY", ImGuiTableColumnFlags_WidthFixed);
+				ImGui::TableHeadersRow();
+			
+				// prepare the disassembler.
+				int disaddr = state->disasm_start;
+				disassembler *dasm = new disassembler();
+				dasm->set_address(disaddr);
+				dasm->set_mainbus(denver->mainbus);
+
+				// disassemble up to 40 lines.
+				for (int i = 0; i < 40; i++) {
+					std::string distxt = dasm->disassemble();
+					int size = dasm->last_instruction_size;
+					ImGui::TableNextRow();
+					ImGui::TableSetColumnIndex(0);	// ADDRESS
+					ImGui::Text("0x%04X", disaddr);
+					ImGui::TableSetColumnIndex(1);	// DATA
+					switch (size) {
+					case 1:
+						ImGui::Text("%02X", (int)denver->mainbus->readmemory(disaddr));
+						disaddr++;
+						break;
+					case 2:
+						ImGui::Text("%02X %02X", (int)denver->mainbus->readmemory(disaddr),
+							(int)denver->mainbus->readmemory(disaddr + 1));
+						disaddr += 2;
+						break;
+					case 3:
+						ImGui::Text("%02X %02X %02X", (int)denver->mainbus->readmemory(disaddr),
+							(int)denver->mainbus->readmemory(disaddr + 1),
+							(int)denver->mainbus->readmemory(disaddr + 2));
+						disaddr += 3;
+						break;
+					}
+					ImGui::TableSetColumnIndex(2); // DISASSEMBLY
+					ImGui::Text(distxt.c_str());
+				}
+				ImGui::EndTable();
+			}
+			ImGui::Separator();
+			ImGui::TreePop();
+		}
+		if (ImGui::TreeNode("Stack")) {
+			// show as 16x16 (256 byte) view.
+			int stack = 0x0100;
+			ImGui::Text("STACK:");
+			for (int i = 0; i < 16; i++) {
+				ImGui::Text("0x%04X   ", stack);
+				ImGui::SameLine();
+				for (int j = 0; j < 16; j++) {
+					byte sb = denver->mainbus->readmemory(stack++);
+					ImGui::Text("%02X ", (int)sb);
+					if (j != 15) ImGui::SameLine();
+				}
+			}
+			ImGui::Text("");
+			ImGui::Text("WORD @ SP: %04X  --  BYTE @ SP: %02X",
+				denver->mainbus->readmemory_as_word(0x0100 + denver->nes_2a03->cpu_2a03.regs.sp),
+				denver->mainbus->readmemory(0x0100 + denver->nes_2a03->cpu_2a03.regs.sp)
+				);
+			ImGui::Separator();
+			ImGui::TreePop();
+		}
+		ImGui::End();
+	}
+}
+
+void	denvergui::render_ppuviewer(nes_emulator *denver, denvergui_state *state) {
+	if (ImGui::Begin("PPU viewer", &state->show_ppu_debugger)) {
+		if (ImGui::TreeNode("Basics")) {
+			ImGui::Text("PPU basics");
+			ImGui::InputInt("CAPTURE CYCLE", &denver->ppu_device->capture_cycle, 1, 100, ImGuiInputTextFlags_CharsDecimal);
+			if (ImGui::BeginTable("EMULATION PARAMETERS", 2, ImGuiTableFlags_SizingFixedFit)) {
+				ImGui::TableSetupColumn("Parameter", ImGuiTableColumnFlags_WidthFixed);
+				ImGui::TableSetupColumn("Value", ImGuiTableColumnFlags_WidthFixed);
+				ImGui::TableHeadersRow();
+
+				// show values.
+				ImGui::TableNextRow();
+				
+				// latch
+				ImGui::TableSetColumnIndex(0);	ImGui::Text("Latch");
+				ImGui::TableSetColumnIndex(1);	ImGui::Text("%d", denver->ppu_device->dbg_latch);
+
+				// p2007buffer
+				ImGui::TableNextRow();
+				ImGui::TableSetColumnIndex(0);	ImGui::Text("Port 2007 buffer");
+				ImGui::TableSetColumnIndex(1);	ImGui::Text("%02X", denver->ppu_device->dbg_p2007buf);
+
+				// dbg_ppuaddr
+				ImGui::TableNextRow();
+				ImGui::TableSetColumnIndex(0);	ImGui::Text("PPU ADDR");
+				ImGui::TableSetColumnIndex(1);	ImGui::Text("%04X", denver->ppu_device->dbg_ppuaddr);
+
+				// dbg_sl
+				ImGui::TableNextRow();
+				ImGui::TableSetColumnIndex(0);	ImGui::Text("Scanline");
+				ImGui::TableSetColumnIndex(1);	ImGui::Text("%d", denver->ppu_device->dbg_sl);
+
+				// dbg_beam
+				ImGui::TableNextRow();
+				ImGui::TableSetColumnIndex(0);	ImGui::Text("Beam");
+				ImGui::TableSetColumnIndex(1);	ImGui::Text("%d", denver->ppu_device->dbg_beam);
+
+				// base name table
+				ImGui::TableNextRow();
+				ImGui::TableSetColumnIndex(0);	ImGui::Text("BASE_NAME_TABLE");
+				ImGui::TableSetColumnIndex(1);	ImGui::Text("%02X", denver->ppu_device->dbg_ppuctrl.base_name_table);
+				// increment 32 bytes.
+				ImGui::TableNextRow();
+				ImGui::TableSetColumnIndex(0);	ImGui::Text("INC_32_BYTES");
+				ImGui::TableSetColumnIndex(1);	ImGui::Text("%s", denver->ppu_device->dbg_ppuctrl.increment_32_bytes ? "True" : "False");
+				// sprites @ 0x1000
+				ImGui::TableNextRow();
+				ImGui::TableSetColumnIndex(0);	ImGui::Text("SPRITES_AT_0X1000");
+				ImGui::TableSetColumnIndex(1);	ImGui::Text("%s", denver->ppu_device->dbg_ppuctrl.sprites_0x1000 ? "True" : "False");
+				// bg @ 0x1000
+				ImGui::TableNextRow();
+				ImGui::TableSetColumnIndex(0);	ImGui::Text("BACKGROUND_AT_0X1000");
+				ImGui::TableSetColumnIndex(1);	ImGui::Text("%s", denver->ppu_device->dbg_ppuctrl.bg_0x1000 ? "True" : "False");
+				// 8x16 sprites?
+				ImGui::TableNextRow();
+				ImGui::TableSetColumnIndex(0);	ImGui::Text("SPRITES_8X16");
+				ImGui::TableSetColumnIndex(1);	ImGui::Text("%s", denver->ppu_device->dbg_ppuctrl.sprites_8x16 ? "True" : "False");
+				// master_mode
+				ImGui::TableNextRow();
+				ImGui::TableSetColumnIndex(0);	ImGui::Text("MASTERMODE");
+				ImGui::TableSetColumnIndex(1);	ImGui::Text("%s", denver->ppu_device->dbg_ppuctrl.master_mode ? "True" : "False");
+				// NMI
+				ImGui::TableNextRow();
+				ImGui::TableSetColumnIndex(0);	ImGui::Text("TRIGGER_NMI");
+				ImGui::TableSetColumnIndex(1);	ImGui::Text("%s", denver->ppu_device->dbg_ppuctrl.do_nmi ? "True" : "False");
+
+				ImGui::TableNextRow();
+				ImGui::TableSetColumnIndex(0);	ImGui::Text("GRAYSCALE");
+				ImGui::TableSetColumnIndex(1);	ImGui::Text("%s", denver->ppu_device->dbg_ppumask.grayscale ? "True" : "False");
+				ImGui::TableNextRow();
+				ImGui::TableSetColumnIndex(0);	ImGui::Text("SHOW_LEFT_8PX_BG");
+				ImGui::TableSetColumnIndex(1);	ImGui::Text("%s", denver->ppu_device->dbg_ppumask.bg8lt ? "True" : "False");
+				ImGui::TableNextRow();
+				ImGui::TableSetColumnIndex(0);	ImGui::Text("SHOW_LEFT_8PX_SPR");
+				ImGui::TableSetColumnIndex(1);	ImGui::Text("%s", denver->ppu_device->dbg_ppumask.spr8lt ? "True" : "False");
+				ImGui::TableNextRow();
+				ImGui::TableSetColumnIndex(0);	ImGui::Text("BG_ENABLE");
+				ImGui::TableSetColumnIndex(1);	ImGui::Text("%s", denver->ppu_device->dbg_ppumask.showbg ? "True" : "False");
+				ImGui::TableNextRow();
+				ImGui::TableSetColumnIndex(0);	ImGui::Text("SPR_ENABLE");
+				ImGui::TableSetColumnIndex(1);	ImGui::Text("%s", denver->ppu_device->dbg_ppumask.showspr ? "True" : "False");
+				ImGui::TableNextRow();
+				ImGui::TableSetColumnIndex(0);	ImGui::Text("EMPHASIS_RED");
+				ImGui::TableSetColumnIndex(1);	ImGui::Text("%s", denver->ppu_device->dbg_ppumask.emp_red ? "True" : "False");
+				ImGui::TableNextRow();
+				ImGui::TableSetColumnIndex(0);	ImGui::Text("EMPHASIS_GREEN");
+				ImGui::TableSetColumnIndex(1);	ImGui::Text("%s", denver->ppu_device->dbg_ppumask.emp_grn ? "True" : "False");
+				ImGui::TableNextRow();
+				ImGui::TableSetColumnIndex(0);	ImGui::Text("EMPHASIS_BLUE");
+				ImGui::TableSetColumnIndex(1);	ImGui::Text("%s", denver->ppu_device->dbg_ppumask.emp_blu ? "True" : "False");
+
+				ImGui::TableNextRow();
+				ImGui::TableSetColumnIndex(0);	ImGui::Text("SPRITE_OVERFLOW");
+				ImGui::TableSetColumnIndex(1);	ImGui::Text("%s", denver->ppu_device->dbg_ppustatus.sprite_overflow ? "True" : "False");
+				ImGui::TableNextRow();
+				ImGui::TableSetColumnIndex(0);	ImGui::Text("SPRITE_0_HIT");
+				ImGui::TableSetColumnIndex(1);	ImGui::Text("%s", denver->ppu_device->dbg_ppustatus.sprite_0_hit ? "True" : "False");
+				ImGui::TableNextRow();
+				ImGui::TableSetColumnIndex(0);	ImGui::Text("VBLANK");
+				ImGui::TableSetColumnIndex(1);	ImGui::Text("%s", denver->ppu_device->dbg_ppustatus.vblank ? "True" : "False");
+				ImGui::EndTable();
+			}
+
+			// PPU_INTERNALS.
+			if (ImGui::BeginTable("PPU INTERNALS", 2, ImGuiTableFlags_SizingFixedFit)) {
+				ImGui::EndTable();
+			}
+
+			ImGui::Separator();
+			ImGui::TreePop();
+		}
+		ImGui::End();
+	}
+}

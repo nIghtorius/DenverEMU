@@ -66,7 +66,6 @@ private:
 	int		rundevice_internal(int ticks);
 	void	write_cpu_log();
 
-	cpuregs	regs;
 	int		dma_cycle;
 	byte	dma_high;
 	byte	dma_count;
@@ -75,6 +74,8 @@ private:
 	disassembler	disasm;
 
 public:	
+	cpuregs	regs;
+
 	bool	error_state;
 	cpu2a03_fast();
 	~cpu2a03_fast();

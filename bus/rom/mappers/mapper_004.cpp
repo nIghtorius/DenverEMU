@@ -29,8 +29,8 @@ byte	mmc3_rom::read(int addr, int addr_from_base)
 
 void	mmc3_rom::write(int addr, int addr_from_base, byte data) {
 	if ((addr >= 0x6000) && (addr <= 0x7FFF)) {
-		if (!state.prg_ram_enable) return;
-		if (state.prg_ram_readonly) return;
+		//if (!state.prg_ram_enable) return;
+		//if (state.prg_ram_readonly) return;
 		prgram6000[addr - 0x6000] = data;
 		return;
 	}
@@ -151,6 +151,8 @@ void	mmc3_rom::set_rom_data(byte *data, std::size_t size) {
 
 	// reset state.
 	memset(&state, 0, sizeof(mmc3_state));
+	state.prg_ram_enable = true;
+	state.prg_ram_readonly = false;
 	update_banks();
 }
 

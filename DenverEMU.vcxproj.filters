@@ -192,6 +192,9 @@
     <ClInclude Include="bus\rom\mappers\mapper_004.h">
       <Filter>Source Files\emulation\bus\rom\mappers</Filter>
     </ClInclude>
+    <ClInclude Include="denvergui\gui_debuggers.h">
+      <Filter>Source Files\emulation\denvergui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DenverEMU.cpp">
@@ -286,6 +289,9 @@
     </ClCompile>
     <ClCompile Include="bus\rom\mappers\mapper_004.cpp">
       <Filter>Source Files\emulation\bus\rom\mappers</Filter>
+    </ClCompile>
+    <ClCompile Include="denvergui\gui_debuggers.cpp">
+      <Filter>Source Files\emulation\denvergui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
