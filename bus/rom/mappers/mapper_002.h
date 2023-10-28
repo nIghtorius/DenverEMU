@@ -29,7 +29,7 @@ private:
 	int		lastbank;
 public:
 	uxrom();
-	virtual byte	read(int addr, int addr_from_base);
+	virtual byte	read(int addr, int addr_from_base, bool onlyread = false);
 	virtual void	write(int addr, int addr_from_base, byte data);
 	virtual void	set_rom_data(byte *data, std::size_t size);
 };

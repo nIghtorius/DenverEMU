@@ -26,7 +26,7 @@ static const std::uint8_t ntscpalette[] = {
 
 class nesvideo {
 private:
-	std::uint32_t* displaybuffer;	// 16bit
+	std::uint32_t* displaybuffer;	// 32bit
 public:
 	nesvideo();
 	~nesvideo();

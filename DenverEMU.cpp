@@ -21,6 +21,7 @@
 
 #include "denvergui/dengui_main.h"
 #include "cpu/tools/2a03_disasm.h"
+#include "video/debug_renderer.h"
 
 #include <SDL.h>
 #if defined(IMGUI_IMPL_OPENGL_ES2)
@@ -89,12 +90,16 @@ int main()
 	}
 
 	GLuint tex;
+	GLuint ppu_ptable;
+	GLuint ppu_ntable;
+
 	// Texture.
 	glGenTextures(1, &tex);
-	//glActiveTexture(GL_TEXTURE1);
+	glGenTextures(1, &ppu_ptable);
+	glGenTextures(1, &ppu_ntable);
+
 	glBindTexture(GL_TEXTURE_2D, tex);
 	
-
 	// Setup Dear ImGui context
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -128,28 +133,16 @@ int main()
 	bool btrue = true;
 	bool *p_open = &btrue;
 
-	glGenTextures(1, &tex);
-
 	nes_emulator * denver = new nes_emulator();
 	denver->load_logo();
 
 	denvergui::denvergui_state windowstates;
 	windowstates.show_apu_debugger = false;
 
-	// disassemble 0x8000 (10 instructions)
-	//disassembler disasm;
+	// setup debug rendering for ppu.
+	ppu_debug_vram *ppu_visual_debug = new ppu_debug_vram();
+	ppu_visual_debug->set_target_ppu(denver->ppu_device);
 
-	/*
-	disasm.set_mainbus(denver->mainbus);
-	disasm.set_address(0x8000);
-	word addr = 0x8000;
-	for (int i = 0; i < 10; i++) {
-		std::cout << std::hex << (int)addr << " ";
-		std::string dis = disasm.disassemble();
-		std::cout << dis << std::endl;
-		addr += disasm.last_instruction_size;
-	}
-	*/
 	// new call back code. set callback to the ppu.
 	denver->ppu_device->callback = ([&] () {
 		SDL_Event event;
@@ -178,6 +171,29 @@ int main()
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 256, 240, 0, GL_RGBA, GL_UNSIGNED_BYTE, (GLvoid *)nesframe->texture);
+
+		if (windowstates.show_ppu_debugger) {
+			// render ppu debugger pattern table.
+			ppu_visual_debug->render_tilemap(windowstates.pattern_palette);
+			glBindTexture(GL_TEXTURE_2D, ppu_ptable);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 256, 128, 0, GL_RGBA, GL_UNSIGNED_BYTE, (GLvoid *)ppu_visual_debug->get_patterntable_render());
+
+			// render ppu debugger name table.
+			ppu_visual_debug->show_scroll_registers = windowstates.show_scroll_regs;
+			ppu_visual_debug->render_nametable();
+			glBindTexture(GL_TEXTURE_2D, ppu_ntable);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 512, 480, 0, GL_RGBA, GL_UNSIGNED_BYTE, (GLvoid *)ppu_visual_debug->get_nametable_render());
+
+			windowstates.pattern_tex = ppu_ptable;
+			windowstates.ntable_tex = ppu_ntable;
+		}
+
 		denvergui::render_main(denver, tex, &windowstates);
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

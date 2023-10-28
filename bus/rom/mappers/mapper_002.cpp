@@ -8,7 +8,7 @@ uxrom::uxrom() {
 	strncpy(get_device_descriptor(), "Denver UxROM (mapper 002)", MAX_DESCRIPTOR_LENGTH);
 }
 
-byte uxrom::read(int addr, int addr_from_base)
+byte uxrom::read(int addr, int addr_from_base, bool onlyread)
 {
 	return addr_from_base >= 0x4000 ? 
 		romdata[(addr & 0x3FFF) | lastbank] : 

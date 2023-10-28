@@ -24,7 +24,7 @@ void mainram::write(int addr, int addr_from_base, byte data) {
 	ram[addr_from_base] = data;	
 }
 
-byte mainram::read(int addr, int addr_from_base) {
+byte mainram::read(int addr, int addr_from_base, bool onlyread) {
 	// same as write but then read.
 	return ram[addr_from_base];
 }

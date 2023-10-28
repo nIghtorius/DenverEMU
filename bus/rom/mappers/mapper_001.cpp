@@ -15,7 +15,7 @@ mmc1_rom::~mmc1_rom() {
 	free(mmc1ram);
 }
 
-byte mmc1_rom::read(int addr, int addr_from_base)
+byte mmc1_rom::read(int addr, int addr_from_base, bool onlyread)
 {
 	if ((addr >= 0x6000) && (addr <= 0x7FFF)) return mmc1ram[addr - 0x6000];
 	if ((addr >= 0x8000) && (addr <= 0xBFFF)) return prg8000[addr - 0x8000];
@@ -126,7 +126,7 @@ mmc1_vrom::~mmc1_vrom() {
 	free(ram);
 }
 
-byte mmc1_vrom::read(int addr, int addr_from_base)
+byte mmc1_vrom::read(int addr, int addr_from_base, bool onlyread)
 {
 	if (ram_mode) return ram[addr_from_base];
 	if (addr < 0x1000) return chr0000[addr];

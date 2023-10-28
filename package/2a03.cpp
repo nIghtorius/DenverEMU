@@ -19,11 +19,11 @@ void	package_2a03::set_joydefs(joypad * joydefs) {
 	controllers.controller = joydefs;
 }
 
-byte	package_2a03::read(int addr, int addr_from_base) {
+byte	package_2a03::read(int addr, int addr_from_base, bool onlyread) {
 	if ((addr_from_base == CTR_CTRL1_PORT) || (addr_from_base == CTR_CTRL2_PORT)) {
-		return controllers.read(addr, addr_from_base);
+		return controllers.read(addr, addr_from_base, onlyread);
 	}
-	return apu_2a03.read(addr, addr_from_base);
+	return apu_2a03.read(addr, addr_from_base, onlyread);
 }
 
 void	package_2a03::write(int addr, int addr_from_base, byte data) {

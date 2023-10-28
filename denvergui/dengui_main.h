@@ -20,6 +20,12 @@ namespace denvergui {
 
 		// cpu viewer.
 		int	disasm_start = 0x8000;
+
+		// ppu palette (pattern)
+		int	pattern_palette = 0x00;
+		GLuint	pattern_tex;
+		GLuint  ntable_tex;
+		bool	show_scroll_regs = false;
 	};
 
 	void	render_main (nes_emulator *denver,  GLuint tex, denvergui_state *state);

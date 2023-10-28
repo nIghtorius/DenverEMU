@@ -79,7 +79,7 @@ void	nes_2a03_joyports::write(int addr, int addr_from_base, byte data)
 	}
 }
 
-byte	nes_2a03_joyports::read(int addr, int addr_from_base)
+byte	nes_2a03_joyports::read(int addr, int addr_from_base, bool onlyread)
 {
 	switch (addr_from_base) {
 		case CTR_CTRL1_PORT:

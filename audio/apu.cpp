@@ -36,7 +36,7 @@ float	apu::mux(byte p1, byte p2, byte tri, byte noi, byte dmc) {
 	return pulse_muxtable[p1 + p2] + tnd_table[3 * tri + 2 * noi + dmc];
 }
 
-byte	apu::read(int addr, int addr_from_base) {
+byte	apu::read(int addr, int addr_from_base, bool onlyread) {
 	switch (addr_from_base) {
 	case APU_STATUS_REGISTER:
 		byte result = (dmc.irq_asserted ? 0x80 : 0) |

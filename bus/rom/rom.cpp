@@ -27,7 +27,7 @@ void rom::write(int addr, int addr_from_base, byte data) {
 	// especially ROM 0x00 -> other roms with mappers will control the mapper logic.
 }
 
-byte rom::read(int addr, int addr_from_base) {
+byte rom::read(int addr, int addr_from_base, bool onlyread) {
 	// read ROM data.
 	return romdata[addr_from_base];
 }
@@ -52,7 +52,7 @@ void vrom::write(int addr, int addr_from_base, byte data) {
 	// do nothing ROM=ROM as in read ONLY memory
 }
 
-byte vrom::read(int addr, int addr_from_base) {
+byte vrom::read(int addr, int addr_from_base, bool onlyread) {
 	return romdata[addr_from_base];
 }
 
@@ -76,7 +76,7 @@ void vram::write(int addr, int addr_from_base, byte data) {
 	ram[addr_from_base] = data;
 }
 
-byte vram::read(int addr, int addr_from_base) {
+byte vram::read(int addr, int addr_from_base, bool onlyread) {
 	return ram[addr_from_base];
 }
 

@@ -67,7 +67,7 @@ private:
 public:
 	mmc1_vrom();
 	~mmc1_vrom();
-	virtual byte	read(int addr, int addr_from_base);
+	virtual byte	read(int addr, int addr_from_base, bool onlyread = false);
 	virtual void	write(int addr, int addr_from_base, byte data);
 	virtual void	set_rom_data(byte *data, std::size_t size);
 	void			update_banks(mmc1_state &state);
@@ -85,7 +85,7 @@ private:
 public:
 	mmc1_rom();
 	~mmc1_rom();
-	virtual byte	read(int addr, int addr_from_base);
+	virtual byte	read(int addr, int addr_from_base, bool onlyread = false);
 	virtual void	write(int addr, int addr_from_base, byte data);
 	virtual void	set_rom_data(byte *data, std::size_t size);
 	void			link_vrom(mmc1_vrom *vrom);

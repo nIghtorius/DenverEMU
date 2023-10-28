@@ -221,7 +221,7 @@ public:
 	noise_generator		noise;			// noise generator.
 	dmc_generator		dmc;			// delta modulation (sampling)
 
-	byte	read(int addr, int addr_from_base);
+	byte	read(int addr, int addr_from_base, bool onlyread = false);
 	void	write(int addr, int addr_from_base, byte data);
 	int		rundevice(int ticks);
 	void	reset();

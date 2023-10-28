@@ -137,15 +137,15 @@ void	denvergui::render_cpuviewer(nes_emulator *denver, denvergui_state *state) {
 			ImGui::Text("Set disassemble address:");
 			ImGui::InputInt("ADDRESS:", &state->disasm_start, 1, 100, ImGuiInputTextFlags_CharsHexadecimal | ImGuiInputTextFlags_CharsUppercase);
 			if (ImGui::Button("GO RESETVECTOR")) {
-				state->disasm_start = denver->mainbus->readmemory_as_word(vector_reset);
+				state->disasm_start = denver->mainbus->readmemory_as_word(vector_reset, true);
 			}
 			ImGui::SameLine();
 			if (ImGui::Button("GO NMIVECTOR")) {
-				state->disasm_start = denver->mainbus->readmemory_as_word(vector_nmi);
+				state->disasm_start = denver->mainbus->readmemory_as_word(vector_nmi, true);
 			}
 			ImGui::SameLine();
 			if (ImGui::Button("GO IRQVECTOR")) {
-				state->disasm_start = denver->mainbus->readmemory_as_word(vector_irq);
+				state->disasm_start = denver->mainbus->readmemory_as_word(vector_irq, true);
 			}
 			ImGui::Text("Disassembling from: 0x%04X", state->disasm_start);
 			if (ImGui::BeginTable("Disassembly", 3, ImGuiTableFlags_SizingFixedSame)) {
@@ -170,18 +170,18 @@ void	denvergui::render_cpuviewer(nes_emulator *denver, denvergui_state *state) {
 					ImGui::TableSetColumnIndex(1);	// DATA
 					switch (size) {
 					case 1:
-						ImGui::Text("%02X", (int)denver->mainbus->readmemory(disaddr));
+						ImGui::Text("%02X", (int)denver->mainbus->readmemory(disaddr, true));
 						disaddr++;
 						break;
 					case 2:
-						ImGui::Text("%02X %02X", (int)denver->mainbus->readmemory(disaddr),
-							(int)denver->mainbus->readmemory(disaddr + 1));
+						ImGui::Text("%02X %02X", (int)denver->mainbus->readmemory(disaddr, true),
+							(int)denver->mainbus->readmemory(disaddr + 1), true);
 						disaddr += 2;
 						break;
 					case 3:
-						ImGui::Text("%02X %02X %02X", (int)denver->mainbus->readmemory(disaddr),
-							(int)denver->mainbus->readmemory(disaddr + 1),
-							(int)denver->mainbus->readmemory(disaddr + 2));
+						ImGui::Text("%02X %02X %02X", (int)denver->mainbus->readmemory(disaddr, true),
+							(int)denver->mainbus->readmemory(disaddr + 1, true),
+							(int)denver->mainbus->readmemory(disaddr + 2), true);
 						disaddr += 3;
 						break;
 					}
@@ -201,15 +201,15 @@ void	denvergui::render_cpuviewer(nes_emulator *denver, denvergui_state *state) {
 				ImGui::Text("0x%04X   ", stack);
 				ImGui::SameLine();
 				for (int j = 0; j < 16; j++) {
-					byte sb = denver->mainbus->readmemory(stack++);
+					byte sb = denver->mainbus->readmemory(stack++, true);
 					ImGui::Text("%02X ", (int)sb);
 					if (j != 15) ImGui::SameLine();
 				}
 			}
 			ImGui::Text("");
 			ImGui::Text("WORD @ SP: %04X  --  BYTE @ SP: %02X",
-				denver->mainbus->readmemory_as_word(0x0100 + denver->nes_2a03->cpu_2a03.regs.sp),
-				denver->mainbus->readmemory(0x0100 + denver->nes_2a03->cpu_2a03.regs.sp)
+				denver->mainbus->readmemory_as_word(0x0100 + denver->nes_2a03->cpu_2a03.regs.sp, true),
+				denver->mainbus->readmemory(0x0100 + denver->nes_2a03->cpu_2a03.regs.sp, true)
 				);
 			ImGui::Separator();
 			ImGui::TreePop();
@@ -244,6 +244,11 @@ void	denvergui::render_ppuviewer(nes_emulator *denver, denvergui_state *state) {
 				ImGui::TableNextRow();
 				ImGui::TableSetColumnIndex(0);	ImGui::Text("PPU ADDR");
 				ImGui::TableSetColumnIndex(1);	ImGui::Text("%04X", denver->ppu_device->dbg_ppuaddr);
+
+				// dbg_cycle
+				ImGui::TableNextRow();
+				ImGui::TableSetColumnIndex(0);	ImGui::Text("DOT_CYCLE");
+				ImGui::TableSetColumnIndex(1);	ImGui::Text("%d", denver->ppu_device->dbg_cycle);
 
 				// dbg_sl
 				ImGui::TableNextRow();
@@ -318,6 +323,94 @@ void	denvergui::render_ppuviewer(nes_emulator *denver, denvergui_state *state) {
 				ImGui::TableNextRow();
 				ImGui::TableSetColumnIndex(0);	ImGui::Text("VBLANK");
 				ImGui::TableSetColumnIndex(1);	ImGui::Text("%s", denver->ppu_device->dbg_ppustatus.vblank ? "True" : "False");
+
+				// ppu_internal. big one.
+				ImGui::TableNextRow();
+				ImGui::TableSetColumnIndex(0);	ImGui::Text("ADDRESS WRITE LATCH");
+				ImGui::TableSetColumnIndex(1);	ImGui::Text("%s", denver->ppu_device->dbg_ppuint.address_write_latch ? "True" : "False");
+				ImGui::TableNextRow();
+				ImGui::TableSetColumnIndex(0);	ImGui::Text("FINE X SHIFT");
+				ImGui::TableSetColumnIndex(1);	ImGui::Text("%d", denver->ppu_device->dbg_ppuint.x_shift);
+				ImGui::TableNextRow();
+				ImGui::TableSetColumnIndex(0);	ImGui::Text("FINE Y SHIFT");
+				ImGui::TableSetColumnIndex(1);	ImGui::Text("%d", denver->ppu_device->dbg_ppuint.y_shift);
+				ImGui::TableNextRow();
+				ImGui::TableSetColumnIndex(0);	ImGui::Text("T_REGISTER (TEMP)");
+				ImGui::TableSetColumnIndex(1);	ImGui::Text("%04X", denver->ppu_device->dbg_ppuint.t_register);
+				ImGui::TableNextRow();
+				ImGui::TableSetColumnIndex(0);	ImGui::Text("V_REGISTER");
+				ImGui::TableSetColumnIndex(1);	ImGui::Text("%04X", denver->ppu_device->dbg_ppuint.v_register);
+				ImGui::TableNextRow();
+				ImGui::TableSetColumnIndex(0);	ImGui::Text("PATTERN_SHIFT_REG_LO");
+				ImGui::TableSetColumnIndex(1);	ImGui::Text("%04X", denver->ppu_device->dbg_ppuint.shiftregs_pattern[0]);
+				ImGui::TableNextRow();
+				ImGui::TableSetColumnIndex(0);	ImGui::Text("PATTERN_SHIFT_REG_HI");
+				ImGui::TableSetColumnIndex(1);	ImGui::Text("%04X", denver->ppu_device->dbg_ppuint.shiftregs_pattern[1]);
+				ImGui::TableNextRow();
+				ImGui::TableSetColumnIndex(0);	ImGui::Text("ATTRIBUTE_SHIFT_REG_LO");
+				ImGui::TableSetColumnIndex(1);	ImGui::Text("%04X", denver->ppu_device->dbg_ppuint.shiftreg_attribute[0]);
+				ImGui::TableNextRow();
+				ImGui::TableSetColumnIndex(0);	ImGui::Text("ATTRIBUTE_SHIFT_REG_HI");
+				ImGui::TableSetColumnIndex(1);	ImGui::Text("%04X", denver->ppu_device->dbg_ppuint.shiftreg_attribute[1]);
+				ImGui::TableNextRow();
+				ImGui::TableSetColumnIndex(0);	ImGui::Text("SECONDARY OAM");
+				ImGui::TableSetColumnIndex(1);	
+				for (int i = 0; i < 8; i++) {
+					ImGui::Text("%d - %02X %02X %02X %02X", i, denver->ppu_device->dbg_ppuint.secoam[i].y,
+						denver->ppu_device->dbg_ppuint.secoam[i].tile,
+						denver->ppu_device->dbg_ppuint.secoam[i].attr,
+						denver->ppu_device->dbg_ppuint.secoam[i].x);
+					if (!(i % 2)) ImGui::SameLine();
+				}
+				ImGui::TableNextRow();
+				ImGui::TableSetColumnIndex(0);	ImGui::Text("SPRITE_EVAL_N_IDX");
+				ImGui::TableSetColumnIndex(1);	ImGui::Text("%d", denver->ppu_device->dbg_ppuint.n);
+				ImGui::TableNextRow();
+				ImGui::TableSetColumnIndex(0);	ImGui::Text("SPRITE_EVAL_OAM_CPY_M_CTR");
+				ImGui::TableSetColumnIndex(1);	ImGui::Text("%d", denver->ppu_device->dbg_ppuint.m);
+				ImGui::TableNextRow();
+				ImGui::TableSetColumnIndex(0);	ImGui::Text("SPRITE_EVAL_OAM_CPY_SN");
+				ImGui::TableSetColumnIndex(1);	ImGui::Text("%d", denver->ppu_device->dbg_ppuint.sn);
+				ImGui::TableNextRow();
+				ImGui::TableSetColumnIndex(0);	ImGui::Text("SECOAM CLEAR PHASE");
+				ImGui::TableSetColumnIndex(1);	ImGui::Text("%s", denver->ppu_device->dbg_ppuint.oam_clearing ? "True" : "False");
+				ImGui::TableNextRow();
+				ImGui::TableSetColumnIndex(0);	ImGui::Text("SECOAM COPY PHASE");
+				ImGui::TableSetColumnIndex(1);	ImGui::Text("%s", denver->ppu_device->dbg_ppuint.oam_copy ? "True" : "False");
+				ImGui::TableNextRow();
+				ImGui::TableSetColumnIndex(0);	ImGui::Text("SECOAM EVAL COMPLETE");
+				ImGui::TableSetColumnIndex(1);	ImGui::Text("%s", denver->ppu_device->dbg_ppuint.oam_evald ? "True" : "False");
+				ImGui::TableNextRow();
+				ImGui::TableSetColumnIndex(0);	ImGui::Text("SPRITE_PATTERN_LO(8X)");
+				ImGui::TableSetColumnIndex(1);
+				for (int i = 0; i < 8; i++) {
+					ImGui::Text("%X02", denver->ppu_device->dbg_ppuint.shiftreg_spr_pattern_lo[i]);
+					ImGui::SameLine();
+				}
+				ImGui::TableNextRow();
+				ImGui::TableSetColumnIndex(0);	ImGui::Text("SPRITE_PATTERN_HI(8X)");
+				ImGui::TableSetColumnIndex(1);
+				for (int i = 0; i < 8; i++) {
+					ImGui::Text("%X02", denver->ppu_device->dbg_ppuint.shiftreg_spr_pattern_hi[i]);
+					ImGui::SameLine();
+				}
+				ImGui::TableNextRow();
+				ImGui::TableSetColumnIndex(0);	ImGui::Text("SPRITE_LATCH(ATTR)(8X)");
+				ImGui::TableSetColumnIndex(1);
+				for (int i = 0; i < 8; i++) {
+					ImGui::Text("%X02", denver->ppu_device->dbg_ppuint.shiftreg_spr_latch[i]);
+					ImGui::SameLine();
+				}
+				ImGui::TableNextRow();
+				ImGui::TableSetColumnIndex(0);	ImGui::Text("SPRITE_CTR(8X)");
+				ImGui::TableSetColumnIndex(1);
+				for (int i = 0; i < 8; i++) {
+					ImGui::Text("%X02", denver->ppu_device->dbg_ppuint.shiftreg_spr_counter[i]);
+					ImGui::SameLine();
+				}
+				ImGui::TableNextRow();
+				ImGui::TableSetColumnIndex(0);	ImGui::Text("ODD FRAME");
+				ImGui::TableSetColumnIndex(1);	ImGui::Text("%s", denver->ppu_device->dbg_ppuint.odd_even_frame ? "True" : "False");
 				ImGui::EndTable();
 			}
 
@@ -326,6 +419,25 @@ void	denvergui::render_ppuviewer(nes_emulator *denver, denvergui_state *state) {
 				ImGui::EndTable();
 			}
 
+			ImGui::Separator();
+			ImGui::TreePop();
+		}
+		if (ImGui::TreeNode("Pattern Table")) {
+			// palette chooser.
+			const char * items[] = { "BG PAL#0", "BG PAL#1", "BG PAL#2", "BG PAL#3",
+								"SPR PAL#0", "SPR PAL#1", "SPR PAL#2", "SPR PAL#3" };
+			ImGui::Text("Select active palette");
+			ImGui::SameLine();
+			ImGui::Combo("palette", &state->pattern_palette, items, 8);
+			// render the pattern table.
+			ImGui::Image((void *)(intptr_t)state->pattern_tex, ImVec2 { 512, 256 });
+			ImGui::Separator();
+			ImGui::TreePop();
+		}
+		if (ImGui::TreeNode("Name Table")) {
+			ImGui::Checkbox("Show scroll registers", &state->show_scroll_regs);
+			// render the name table.
+			ImGui::Image((void *)(intptr_t)state->ntable_tex, ImVec2 { 512, 480 });
 			ImGui::Separator();
 			ImGui::TreePop();
 		}

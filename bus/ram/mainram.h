@@ -13,7 +13,7 @@ public:
 	mainram();
 	~mainram();
 	void	write(int addr, int addr_from_base, byte data);
-	byte	read(int addr, int addr_from_base);
+	byte	read(int addr, int addr_from_base, bool onlyread = false);
 	void	reset();
 };
 

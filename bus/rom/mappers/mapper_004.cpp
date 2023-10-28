@@ -16,7 +16,7 @@ mmc3_rom::~mmc3_rom() {
 	free(prgram6000);
 }
 
-byte	mmc3_rom::read(int addr, int addr_from_base)
+byte	mmc3_rom::read(int addr, int addr_from_base, bool onlyread)
 {
 	if ((addr >= 0x6000) && (addr <= 0x7fff)) {
 		return state.prg_ram_enable ? prgram6000[addr - 0x6000] : 0;
@@ -225,8 +225,8 @@ void mmc3_vrom::update_banks(mmc3_state *state) {
 	}
 }
 
-byte mmc3_vrom::read(int addr, int addr_from_base) {
-	ppuaddr = addr;
+byte mmc3_vrom::read(int addr, int addr_from_base, bool onlyread) {
+	if (!onlyread) ppuaddr = addr;
 	if (!chr0000) return 0;	// not initialized yet.
 	if ((addr >= 0x0000) && (addr <= 0x03ff)) return chr0000[addr];
 	if ((addr >= 0x0400) && (addr <= 0x07ff)) return chr0400[addr - 0x0400];

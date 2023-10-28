@@ -23,7 +23,7 @@ private:
 
 public:
 	cnvrom();
-	virtual	byte read(int addr, int addr_from_base);
+	virtual	byte read(int addr, int addr_from_base, bool onlyread = false);
 	virtual void set_rom_data(byte *data, std::size_t size);
 	void	setbank(int bank);
 };

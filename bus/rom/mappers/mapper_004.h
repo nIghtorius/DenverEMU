@@ -56,7 +56,7 @@ private:
 public:
 	mmc3_rom();
 	~mmc3_rom();
-	virtual	byte	read(int addr, int addr_from_base);
+	virtual	byte	read(int addr, int addr_from_base, bool onlyread = false);
 	virtual void	write(int addr, int addr_from_base, byte data);
 	virtual void	set_rom_data(byte *data, std::size_t size);
 	virtual int		rundevice(int ticks);
@@ -80,7 +80,7 @@ public:
 	mmc3_vrom();
 	mmc3_rom		*rom;
 	void			update_banks(mmc3_state *state);
-	virtual	byte	read(int addr, int addr_from_base);
+	virtual	byte	read(int addr, int addr_from_base, bool onlyread = false);
 	virtual	void	write(int addr, int addr_from_base, byte data);
 	virtual void	set_rom_data(byte *data, std::size_t size);
 	word			fetch_ppu_addr();

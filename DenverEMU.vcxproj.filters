@@ -195,6 +195,9 @@
     <ClInclude Include="denvergui\gui_debuggers.h">
       <Filter>Source Files\emulation\denvergui</Filter>
     </ClInclude>
+    <ClInclude Include="video\debug_renderer.h">
+      <Filter>Source Files\emulation\video</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DenverEMU.cpp">
@@ -292,6 +295,9 @@
     </ClCompile>
     <ClCompile Include="denvergui\gui_debuggers.cpp">
       <Filter>Source Files\emulation\denvergui</Filter>
+    </ClCompile>
+    <ClCompile Include="video\debug_renderer.cpp">
+      <Filter>Source Files\emulation\video</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

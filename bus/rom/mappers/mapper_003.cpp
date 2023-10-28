@@ -9,7 +9,7 @@ cnvrom::cnvrom() {
 	strncpy(get_device_descriptor(), "Denver CNROM (mapper 003)", MAX_DESCRIPTOR_LENGTH);
 }
 
-byte	cnvrom::read(int addr, int addr_from_base) {
+byte	cnvrom::read(int addr, int addr_from_base, bool onlyread) {
 	return charbank[addr];
 }
 

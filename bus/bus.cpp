@@ -18,12 +18,12 @@ void	bus::writememory(int addr, byte data) {
 	write(data);
 }
 
-byte	bus::readmemory(int addr) {
+byte	bus::readmemory(int addr, bool onlyread) {
 	address = addr;
 	return read();
 }
 
-word	bus::readmemory_as_word(int addr) {
+word	bus::readmemory_as_word(int addr, bool onlyread) {
 	word		result;
 	address = addr;
 	result = read();
@@ -31,7 +31,7 @@ word	bus::readmemory_as_word(int addr) {
 	return result | read() << 8;
 }
 
-word	bus::readmemory_as_word_wrap(int addr) {
+word	bus::readmemory_as_word_wrap(int addr, bool onlyread) {
 	word		result;
 	address = addr;
 	result = read();
@@ -49,12 +49,12 @@ void	bus::write(byte data) {
 	}
 }
 
-byte	bus::read() {
+byte	bus::read(bool onlyread) {
 	byte	readbus = 0x00;
 	for (auto device : devices) {
 		if ((address >= device->devicestart) && (address <= device->deviceend)) {
 			word caddr = device->compute_addr_from_layout(address);
-			readbus |= device->read(caddr, caddr - device->devicestart);
+			readbus |= device->read(caddr, caddr - device->devicestart, onlyread);
 			if (!no_bus_conflicts) break; // do not emulate bus conflicts, we are done.
 		}		
 	}
@@ -178,7 +178,7 @@ void bus_device::write(int addr, int addr_from_base, byte data) {
 	
 }
 
-byte bus_device::read(int addr, int addr_from_base) {
+byte bus_device::read(int addr, int addr_from_base, bool onlyread) {
 	return 0x00;
 }
 

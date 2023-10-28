@@ -118,7 +118,7 @@ public:
 	byte*	ram;
 	ppuram();
 	~ppuram();
-	byte	read(int addr, int addr_from_base);
+	byte	read(int addr, int addr_from_base, bool onlyread = false);
 	void	write(int addr, int addr_from_base, byte data);
 };
 
@@ -129,7 +129,7 @@ private:
 public:
 	ppu_pal_ram();
 	~ppu_pal_ram();
-	byte	read(int addr, int addr_from_base);
+	byte	read(int addr, int addr_from_base, bool onlyread = false);
 	void	write(int addr, int addr_from_base, byte data);
 };
 
@@ -165,6 +165,7 @@ public:
 	byte					dbg_latch, dbg_p2007buf;
 	word					dbg_ppuaddr;
 	int						dbg_sl, dbg_beam;	
+	int						dbg_cycle;
 
 	int						ppu_cycles_per_frame;
 	int						capture_cycle = 82180;
@@ -174,7 +175,7 @@ public:
 
 	ppu();
 	~ppu();
-	byte					read(int addr, int addr_from_base);
+	byte					read(int addr, int addr_from_base, bool onlyread = false);
 	void					write(int addr, int addr_from_base, byte data);
 	int						rundevice(int ticks);
 	void					set_char_rom(bus_device *vdata);

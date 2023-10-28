@@ -39,7 +39,7 @@ void ppu::write_state_dump (const char *filename) {
 }
 
 
-byte	ppu::read(int addr, int addr_from_base) {
+byte	ppu::read(int addr, int addr_from_base, bool onlyread) {
 	// registers
 	// PPU STATUS register
 	if (addr_from_base == PPU_PPUSTATUS_PORT) {
@@ -524,6 +524,7 @@ void	ppu::snap_state_for_debugger() {
 	dbg_ppuaddr = ppuaddr;
 	dbg_sl = scanline;
 	dbg_beam = beam;
+	dbg_cycle = cycle;
 }
 
 void	ppu::set_char_rom(bus_device *vdata) {
@@ -587,7 +588,7 @@ void	ppuram::write(int addr, int addr_from_base, byte data) {
 	ram[addr_from_base] = data;
 }
 
-byte	ppuram::read(int addr, int addr_from_base) {
+byte	ppuram::read(int addr, int addr_from_base, bool onlyread) {
 	return ram[addr_from_base];
 }
 
@@ -616,7 +617,7 @@ void ppu_pal_ram::write(int addr, int addr_from_base, byte data) {
 	ram[pal_addr_compute (addr_from_base)] = data;
 }
 
-byte ppu_pal_ram::read(int addr, int addr_from_base) {
+byte ppu_pal_ram::read(int addr, int addr_from_base, bool onlyread) {
 	if (addr_from_base == 0x04) return ram[0x00];
 	if (addr_from_base == 0x08) return ram[0x00];
 	if (addr_from_base == 0x0C) return ram[0x00];

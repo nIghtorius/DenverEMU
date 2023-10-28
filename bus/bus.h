@@ -70,7 +70,7 @@ public:
 	void			vccpin(int pin);
 	void			resetpins_to_default();
 	virtual void	write(int addr, int addr_from_base, byte data);
-	virtual	byte	read(int addr, int addr_from_base);
+	virtual	byte	read(int addr, int addr_from_base, bool onlyread = false);
 	virtual void	_attach_to_bus(bus * attachedbus);
 };
 
@@ -84,11 +84,11 @@ public:
 	// general reading/writing.
 	std::vector<bus_device *> devices;
 	void	writememory(int addr, byte data);
-	byte	readmemory(int addr);
-	word	readmemory_as_word(int addr);
-	word	readmemory_as_word_wrap(int addr);
+	byte	readmemory(int addr, bool onlyread = false);
+	word	readmemory_as_word(int addr, bool onlyread = false);
+	word	readmemory_as_word_wrap(int addr, bool onlyread = false);
 	void	write(byte data);
-	byte	read();
+	byte	read(bool onlyread = false);
 	//	IRQ/NMI lines
 	bool	nmi_pulled();
 	bool	irq_pulled();

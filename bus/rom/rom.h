@@ -22,7 +22,7 @@ public:
 	~vrom();
 	virtual void	set_rom_data(byte *data, std::size_t size);
 	virtual void	write(int addr, int addr_from_base, byte data);
-	virtual byte	read(int addr, int addr_from_base);
+	virtual byte	read(int addr, int addr_from_base, bool onlyread = false);
 	void			link_ppu_bus(bus_device *ppu_bus);
 	bus_device		*ppubus;
 	byte			*romdata;
@@ -36,7 +36,7 @@ public:
 	vram();
 	~vram();
 	virtual void	write(int addr, int addr_from_base, byte data);
-	virtual byte	read(int addr, int addr_from_base);
+	virtual byte	read(int addr, int addr_from_base, bool onlyread = false);
 	void			reset();
 };
 
@@ -47,7 +47,7 @@ public:
 	~rom();
 	virtual	void	set_rom_data(byte *data, std::size_t size);
 	virtual void	write(int addr, int addr_from_base, byte data);
-	virtual	byte	read(int addr, int addr_from_base);
+	virtual	byte	read(int addr, int addr_from_base, bool onlyread = false);
 	byte	*romdata;
 	int		romsize;
 };
