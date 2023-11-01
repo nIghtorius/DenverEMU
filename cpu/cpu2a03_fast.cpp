@@ -100,6 +100,7 @@ int	cpu2a03_fast::rundevice_internal (int ticks) {
 	// check nmi/irq.
 	// NMI
 	if (devicebus->nmi_pulled()) {
+		nmi_delay = false;
 		pushstack_word(regs.pc);
 		pushstack_byte(regs.sr & ~0x10);
 		regs.sr |= cf_interrupt;
@@ -107,13 +108,14 @@ int	cpu2a03_fast::rundevice_internal (int ticks) {
 		return 7 * tick_rate;	// NMI takes 7 cycles.
 	}
 	// IRQ
-	if ((devicebus->irq_pulled()) && ((regs.sr & cf_interrupt) == 0)) {
+	if (devicebus->irq_pulled() && ((regs.sr & cf_interrupt) == 0)) {
 		pushstack_word(regs.pc);
 		pushstack_byte(regs.sr & ~0x10);
 		regs.sr |= cf_interrupt;
 		regs.pc = devicebus->readmemory_as_word(vector_irq); // IRQ vector.
+		irq_delay = false;
 		return 7 * tick_rate;	// IRQ takes 7 cycles.
-	}	
+	}
 
 	byte opcode = devicebus->readmemory(regs.pc);
 	regs.pc++;

@@ -110,7 +110,12 @@ void fastclock::run() {
 	// make it all run.
 	running = true;
 	while (running) {
-		//  run cpu 1 step.
+		// check if cpu is in error.
+		if (reinterpret_cast<package_2a03*>(cpudevice)->cpu_2a03.error_state) {
+			std::cout << "CPU has run into a invalid OP.";
+			running = false;
+		}
+		//  run cpu 1 step.		
 		byte dmabyte;
 		if (cpudevice == NULL) return;
 		if (cpudevice->in_dma_mode) {

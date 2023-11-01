@@ -69,6 +69,8 @@ private:
 	int		dma_cycle;
 	byte	dma_high;
 	byte	dma_count;
+	bool	nmi_delay;
+	bool	irq_delay;
 
 	std::ofstream	*cpu_log = nullptr;
 	disassembler	disasm;

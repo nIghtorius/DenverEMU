@@ -384,28 +384,28 @@ void	denvergui::render_ppuviewer(nes_emulator *denver, denvergui_state *state) {
 				ImGui::TableSetColumnIndex(0);	ImGui::Text("SPRITE_PATTERN_LO(8X)");
 				ImGui::TableSetColumnIndex(1);
 				for (int i = 0; i < 8; i++) {
-					ImGui::Text("%X02", denver->ppu_device->dbg_ppuint.shiftreg_spr_pattern_lo[i]);
+					ImGui::Text("%02X", denver->ppu_device->dbg_ppuint.shiftreg_spr_pattern_lo[i]);
 					ImGui::SameLine();
 				}
 				ImGui::TableNextRow();
 				ImGui::TableSetColumnIndex(0);	ImGui::Text("SPRITE_PATTERN_HI(8X)");
 				ImGui::TableSetColumnIndex(1);
 				for (int i = 0; i < 8; i++) {
-					ImGui::Text("%X02", denver->ppu_device->dbg_ppuint.shiftreg_spr_pattern_hi[i]);
+					ImGui::Text("%02X", denver->ppu_device->dbg_ppuint.shiftreg_spr_pattern_hi[i]);
 					ImGui::SameLine();
 				}
 				ImGui::TableNextRow();
 				ImGui::TableSetColumnIndex(0);	ImGui::Text("SPRITE_LATCH(ATTR)(8X)");
 				ImGui::TableSetColumnIndex(1);
 				for (int i = 0; i < 8; i++) {
-					ImGui::Text("%X02", denver->ppu_device->dbg_ppuint.shiftreg_spr_latch[i]);
+					ImGui::Text("%02X", denver->ppu_device->dbg_ppuint.shiftreg_spr_latch[i]);
 					ImGui::SameLine();
 				}
 				ImGui::TableNextRow();
 				ImGui::TableSetColumnIndex(0);	ImGui::Text("SPRITE_CTR(8X)");
 				ImGui::TableSetColumnIndex(1);
 				for (int i = 0; i < 8; i++) {
-					ImGui::Text("%X02", denver->ppu_device->dbg_ppuint.shiftreg_spr_counter[i]);
+					ImGui::Text("%02X", denver->ppu_device->dbg_ppuint.shiftreg_spr_counter[i]);
 					ImGui::SameLine();
 				}
 				ImGui::TableNextRow();

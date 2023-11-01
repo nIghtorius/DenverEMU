@@ -21,6 +21,7 @@
 #include "../video/nesvideo.h"
 #include "../controller/joypad.h"
 #include "../package/2a03.h"
+#include "../audio/expansion/vrc6.h"
 #include <SDL_opengl.h>
 
 struct nes_frame_tex {
@@ -42,6 +43,7 @@ private:
 public:
 	//apu				* apu_device;
 	package_2a03		* nes_2a03;
+
 	ppu				* ppu_device;
 	bus				* mainbus;
 	fastclock		  clock;	// trying clock non heap, maybe some speed?

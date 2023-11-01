@@ -56,10 +56,12 @@ public:
 	bool	samples_is_played = false;
 	int		samples_per_frame = 0;
 	bool	boostspeed = false;
+	bool	no_audio = false;
 
 	audio_player();
 	~audio_player();
 	void	register_audible_device(audio_device *dev);
+	void	unregister_audible_device(audio_device *dev);
 	void	play_audio();
 	bool	has_enough_samples();
 	void	startplayback();

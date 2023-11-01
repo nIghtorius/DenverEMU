@@ -23,6 +23,7 @@ byte	package_2a03::read(int addr, int addr_from_base, bool onlyread) {
 	if ((addr_from_base == CTR_CTRL1_PORT) || (addr_from_base == CTR_CTRL2_PORT)) {
 		return controllers.read(addr, addr_from_base, onlyread);
 	}
+	if (no_apu) return 0;
 	return apu_2a03.read(addr, addr_from_base, onlyread);
 }
 
@@ -36,7 +37,7 @@ void	package_2a03::write(int addr, int addr_from_base, byte data) {
 		controllers.write(addr, addr_from_base, data);
 		return;
 	}
-	apu_2a03.write(addr, addr_from_base, data);
+	if (!no_apu) apu_2a03.write(addr, addr_from_base, data);
 }
 
 void	package_2a03::reset() {
@@ -49,7 +50,7 @@ void	package_2a03::reset() {
 int		package_2a03::rundevice(int ticks) {
 	// leading device is the CPU.
 	int cputicks = cpu_2a03.rundevice(ticks);
-	apu_2a03.rundevice(cputicks / 3);	// cpu responds in ppu ticks, divide 3 to get cpu ticks.
+	if (!no_apu) apu_2a03.rundevice(cputicks / 3);	// cpu responds in ppu ticks, divide 3 to get cpu ticks.
 	in_dma_mode = cpu_2a03.in_dma_mode; // take the dma status from the cpu object.
 	return cputicks;
 }
@@ -61,6 +62,6 @@ void	package_2a03::dma(byte *data, bool is_output, bool started) {
 void	package_2a03::_attach_to_bus(bus * attachedbus) {
 	// link the bus.
 	cpu_2a03._attach_to_bus(attachedbus);
-	apu_2a03._attach_to_bus(attachedbus);
+	if (!no_apu) apu_2a03._attach_to_bus(attachedbus);
 	controllers._attach_to_bus(attachedbus);
 }

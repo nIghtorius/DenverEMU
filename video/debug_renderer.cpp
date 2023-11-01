@@ -196,9 +196,34 @@ void	ppu_debug_vram::render_nametable() {
 
 		// y scroll.
 		start = y * 512;
-		for (int i = 0; i < 512; i++) {
-			nametable[start++] = 0xFF00FF00;
+		if (start <= 512*479)
+			for (int i = 0; i < 512; i++) 
+				nametable[start++] = 0xFF00FF00;
+
+		// y (debug position)
+		int dbg_sl = target->dbg_sl + y;
+		int dbg_beam = target->dbg_beam + x;
+
+		start = dbg_sl * 512;
+		if (start <= 512*479)
+			for (int i = 0; i < 512; i++)
+				nametable[start++] = 0xFF0000FF;
+
+		// draw a "dot around" the current beam position.
+		start = dbg_beam + (dbg_sl * 512) - 512 - 1;
+		if ((start >= 0) && (start + 3 < 512 * 480))
+			for (int i = 0; i < 3; i++)
+				nametable[start++] = 0xFFFFFF00;
+		start = dbg_beam + (dbg_sl * 512) - 1;
+		if ((start >= 0) && (start + 3 < 512 * 480)) {
+			nametable[start] = 0xFFFFFF00;
+			nametable[start + 2] = 0xFFFFFF00;
 		}
+		start = dbg_beam + (dbg_sl * 512) - 1 + 512;
+		if ((start >= 0) && (start + 3 < 512 * 480))
+			for (int i = 0; i < 3; i++)
+				nametable[start++] = 0xFFFFFF00;
+
 	}
 }
 

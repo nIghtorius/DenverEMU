@@ -3,12 +3,6 @@
 	NES APU (Audio Processing Unit)
 	(c) 2023 P. Santing
 
-
-	ToDo:
-
-		Move mixing code out of the APU and make a seperate module.
-		This is required because of expansion audio such as VRC6/VRC7/Namco/MMC5 etc.
-
 */
 
 #pragma once
@@ -16,7 +10,6 @@
 #include "../bus/bus.h"
 #include "audio.h"
 #include <vector>
-#include <fstream>
 
 // pulse generators
 #define PULSE_DUTY_CYCLE_LCH_VOLENV			0x00

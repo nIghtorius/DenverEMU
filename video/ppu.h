@@ -172,6 +172,7 @@ public:
 
 	// callback function (in order to speed things up)
 	std::function<void()>	callback = nullptr;
+	std::function<void()>	dbg_callback = nullptr;
 
 	ppu();
 	~ppu();

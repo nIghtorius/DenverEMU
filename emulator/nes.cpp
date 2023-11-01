@@ -133,14 +133,15 @@ void	nes_emulator::stop() {
 
 void	nes_emulator::load_cartridge(const char * filename) {
 	if (cart) delete cart;
-	cart = new cartridge(filename, ppu_device, mainbus);
+	cart = new cartridge(filename, ppu_device, mainbus, audio);
 	clock.setdevices(nes_2a03, ppu_device, cart->program);
 	nes_2a03->cpu_2a03.coldboot();
 }
 
 void	nes_emulator::load_logo() {
+	if (cart) delete cart;
 	imemstream data((char *)denverlogo, sizeof(denverlogo));
-	cart = new cartridge(data, ppu_device, mainbus);
+	cart = new cartridge(data, ppu_device, mainbus, audio);
 	clock.setdevices(nes_2a03, ppu_device, cart->program);
 	nes_2a03->cpu_2a03.coldboot();
 }

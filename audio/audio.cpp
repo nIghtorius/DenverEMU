@@ -49,7 +49,18 @@ bool	audio_player::has_enough_samples() {
 }
 
 void	audio_player::register_audible_device(audio_device *dev) {
+	std::cout << "Registering audio device: " << dev->get_device_descriptor() << "\n";
 	audibles.push_back(dev);
+}
+
+void	audio_player::unregister_audible_device(audio_device *dev) {
+	if (audibles.size() == 0) return;
+	for (int i = 0; i < audibles.size(); i++) {
+		if (dev == audibles[i]) {
+			audibles.erase(audibles.begin() + i);
+			return;
+		}
+	}
 }
 
 void	audio_player::play_audio() {
@@ -57,6 +68,15 @@ void	audio_player::play_audio() {
 	if (audibles.size() == 0) return;
 	// test if audio frame is ready. test only first device they should become ready together.
 	if (!audibles[0]->audio_frame_ready) return;
+
+	// audio disabled?
+	if (no_audio) {
+		for (auto audible : audibles) {
+			audible->sample_buffer.clear();
+			audible->audio_frame_ready = false;
+			return;
+		}
+	}
 
 	// everything is ready. let's mux everything together.
 	final_mux.clear();
@@ -66,9 +86,10 @@ void	audio_player::play_audio() {
 	for (int i = 0; i < audibles[0]->sample_buffer.size(); i++) {
 		float input = 0.0f;
 		for (auto audible : audibles) {
-			input += audible->sample_buffer[i];
+			if (i < audible->sample_buffer.size())
+				input += audible->sample_buffer[i];
 		}
-		input /= audibles.size();
+		//input /= audibles.size();
 		avg_center += input;
 		final_mux.push_back(input);
 	}

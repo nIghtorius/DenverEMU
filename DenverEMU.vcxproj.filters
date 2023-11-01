@@ -79,6 +79,9 @@
     <Filter Include="Source Files\emulation\package">
       <UniqueIdentifier>{75a1da77-654b-4e13-8d7e-799c3f78c0c9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\emulation\audio\expansion">
+      <UniqueIdentifier>{9f4a3c40-40f8-44a5-beba-5e470c501342}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="audio\apu.h">
@@ -198,6 +201,12 @@
     <ClInclude Include="video\debug_renderer.h">
       <Filter>Source Files\emulation\video</Filter>
     </ClInclude>
+    <ClInclude Include="bus\rom\mappers\mapper_024026.h">
+      <Filter>Source Files\emulation\bus\rom\mappers</Filter>
+    </ClInclude>
+    <ClInclude Include="audio\expansion\vrc6.h">
+      <Filter>Source Files\emulation\audio\expansion</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DenverEMU.cpp">
@@ -298,6 +307,12 @@
     </ClCompile>
     <ClCompile Include="video\debug_renderer.cpp">
       <Filter>Source Files\emulation\video</Filter>
+    </ClCompile>
+    <ClCompile Include="bus\rom\mappers\mapper_024026.cpp">
+      <Filter>Source Files\emulation\bus\rom\mappers</Filter>
+    </ClCompile>
+    <ClCompile Include="audio\expansion\vrc6.cpp">
+      <Filter>Source Files\emulation\audio\expansion</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

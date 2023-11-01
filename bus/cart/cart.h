@@ -10,12 +10,17 @@
 
 #include "../bus.h"
 #include "../../video/ppu.h"
+#include "../../audio/audio.h"
 #include <cstdint>
 #include <iostream>
 #include <istream>
 
 // mappers.
 #include "../rom/rom.h"
+
+// expansions.
+#include "../../audio/expansion/vrc6.h"
+
 
 // end of mappers.
 
@@ -81,12 +86,14 @@ class cartridge {
 private:
 	ppu		*l_ppu;
 	bus		*m_bus;
-	void	readstream(std::istream &stream, ppu *ppu_device, bus *mainbus);
+	audio_player *m_aud;
+	vrc6audio *vrc6exp = nullptr;
+	void	readstream(std::istream &stream, ppu *ppu_device, bus *mainbus, audio_player *audbus);
 public:
 	bool	is_valid;
 	rom		*program;
 	vrom	*character;
-	cartridge(const char *filename, ppu *ppu_device, bus *mainbus);
-	cartridge(std::istream &stream, ppu *ppu_device, bus *mainbus);
+	cartridge(const char *filename, ppu *ppu_device, bus *mainbus, audio_player *audbus);
+	cartridge(std::istream &stream, ppu *ppu_device, bus *mainbus, audio_player *audbus);
 	~cartridge();
 };

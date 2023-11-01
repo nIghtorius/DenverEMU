@@ -7,6 +7,7 @@
 #include "../rom/mappers/mapper_002.h"
 #include "../rom/mappers/mapper_003.h"
 #include "../rom/mappers/mapper_004.h"
+#include "../rom/mappers/mapper_024026.h"
 
 // implementation.
 
@@ -46,7 +47,7 @@ nes_header_data		parse_nes_header(nes_header_raw &ines) {
 
 // classes
 
-void	cartridge::readstream(std::istream &nesfile, ppu *ppu_device, bus *mainbus) {
+void	cartridge::readstream(std::istream &nesfile, ppu *ppu_device, bus *mainbus, audio_player *audbus) {
 
 	program = NULL;
 	character = NULL;
@@ -185,6 +186,42 @@ void	cartridge::readstream(std::istream &nesfile, ppu *ppu_device, bus *mainbus)
 			character = charram;			
 		}
 		break;
+	case 24:
+		// VRC6a
+		program = new vrc6rom();
+		character = new vrc6vrom();
+		vrc6exp = new vrc6audio();
+		vrc6exp->vrc6_mapper_026 = false;
+		audbus->register_audible_device(vrc6exp);
+		mainbus->registerdevice(vrc6exp);
+		// vrc6 linking.
+		reinterpret_cast<vrc6rom*>(program)->link_vrom(reinterpret_cast<vrc6vrom*>(character));
+		reinterpret_cast<vrc6vrom*>(character)->link_ppu_bus(&ppu_device->vram);
+		reinterpret_cast<vrc6rom*>(program)->mapper_026 = false;
+		reinterpret_cast<vrc6rom*>(program)->audiochip = vrc6exp;
+		if (has_char_data) {
+			character->set_rom_data((byte *)char_data, nes.charsize);
+		}
+		program->set_rom_data((byte *)program_data, nes.programsize);		
+		break;
+	case 26:
+		// VRC6b
+		program = new vrc6rom();
+		character = new vrc6vrom();
+		vrc6exp = new vrc6audio();
+		vrc6exp->vrc6_mapper_026 = true;
+		audbus->register_audible_device(vrc6exp);
+		mainbus->registerdevice(vrc6exp);
+		// vrc6 linking.
+		reinterpret_cast<vrc6rom*>(program)->link_vrom(reinterpret_cast<vrc6vrom*>(character));
+		reinterpret_cast<vrc6vrom*>(character)->link_ppu_bus(&ppu_device->vram);
+		reinterpret_cast<vrc6rom*>(program)->mapper_026 = true;
+		reinterpret_cast<vrc6rom*>(program)->audiochip = vrc6exp;
+		if (has_char_data) {
+			character->set_rom_data((byte *)char_data, nes.charsize);
+		}		
+		program->set_rom_data((byte *)program_data, nes.programsize);
+		break;
 	default:
 		std::cout << "Mapper is unknown to me" << std::endl;
 		break;
@@ -199,25 +236,32 @@ void	cartridge::readstream(std::istream &nesfile, ppu *ppu_device, bus *mainbus)
 
 
 	// link busses.
+	m_aud = audbus;
 	m_bus = mainbus;
 	l_ppu = ppu_device;
 }
 
-cartridge::cartridge(std::istream &stream, ppu *ppu_device, bus *mainbus) {
+cartridge::cartridge(std::istream &stream, ppu *ppu_device, bus *mainbus, audio_player *audbus) {
 	std::cout << "Loading cartridge from memory 0x" << std::hex << (std::uint64_t)&stream << std::endl;
-	readstream(stream, ppu_device, mainbus);
+	readstream(stream, ppu_device, mainbus, audbus);
 }
 
-cartridge::cartridge(const char *filename, ppu *ppu_device, bus *mainbus) {
+cartridge::cartridge(const char *filename, ppu *ppu_device, bus *mainbus, audio_player *audbus) {
 	std::cout << "Loading cartridge: " << filename << std::endl;
 	// load & parse NES file.
 	std::ifstream	nesfile;
 	nesfile.open(filename, std::ios::binary | std::ios::in);
-	readstream(nesfile, ppu_device, mainbus);
+	readstream(nesfile, ppu_device, mainbus, audbus);
 	nesfile.close();
 }
 
 cartridge::~cartridge() {
+	if (m_aud != NULL) {
+		if (vrc6exp) {
+			m_aud->unregister_audible_device(vrc6exp);
+			m_bus->removedevice_select_base(vrc6exp->devicestart);
+		}
+	}
 	if (m_bus != NULL) {
 		if (program != NULL)
 		m_bus->removedevice_select_base(program->devicestart);

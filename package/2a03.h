@@ -21,6 +21,7 @@ public:
 	apu					apu_2a03;
 	cpu2a03_fast		cpu_2a03;
 	nes_2a03_joyports	controllers;
+	bool				no_apu = false;
 
 	package_2a03();
 

@@ -76,6 +76,7 @@ byte	ppu::read(int addr, int addr_from_base, bool onlyread) {
 void	ppu::write(int addr, int addr_from_base, byte data) {
 	// update latch
 	latch = data;
+
 	// registers.
 	if (addr_from_base == PPU_PPUCTRL_PORT) {
 		ppu_internal.t_register &= ~0xC00;
@@ -132,7 +133,7 @@ void	ppu::write(int addr, int addr_from_base, byte data) {
 			ppu_internal.t_register |= (data & 0x3F) << 8;
 		}
 		else {
-			ppu_internal.t_register &= 0xFF00;
+			ppu_internal.t_register &= ~0xFF;
 			ppu_internal.t_register |= data;
 			ppu_internal.v_register = ppu_internal.t_register;
 		}
@@ -525,6 +526,8 @@ void	ppu::snap_state_for_debugger() {
 	dbg_sl = scanline;
 	dbg_beam = beam;
 	dbg_cycle = cycle;
+	// render a debugger.
+	if (dbg_callback) dbg_callback();
 }
 
 void	ppu::set_char_rom(bus_device *vdata) {

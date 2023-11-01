@@ -33,12 +33,40 @@
 #define		DENVER_VERSION		"0.2 alpha"
 #undef main
 
-int main()
+static bool		vsync_enable = false;
+static bool		no_audio = false;
+static bool		no_audio_emu = false;
+
+void process_args(int argc, char *argv[]) {
+	for (int i = 1; i < argc; i++) {
+		if (strcmp(argv[i], "--vsync")==0) {
+			vsync_enable = true;
+			std::cout << "--vsync option, enabling v-sync" << std::endl;
+		}
+		if (strcmp(argv[i], "--no-vsync") == 0) {
+			vsync_enable = false;
+			std::cout << "--no-vsync, disabling v-sync" << std::endl;
+		}
+		if (strcmp(argv[i], "--no-audio") == 0) {
+			no_audio = true;
+			std::cout << "--no-audio, disable audio output. emulation runs uncapped, or enable vsync" << std::endl;
+		}
+		if (strcmp(argv[i], "--no-apu-emulation") == 0) {
+			no_audio_emu = true;
+			no_audio = true;
+			std::cout << "--no-apu-emulation, audio emulation disabled." << std::endl;
+		}
+	}
+}
+
+int main(int argc, char *argv[])
 {
 	/*
 		Print Shield
 	*/
 
+	if (argc > 1) process_args(argc, argv);
+	
 	std::cout << "Project Denver version " << DENVER_VERSION << std::endl << "(c) 2018 P. Santing aka nIghtorius" << std::endl << std::endl;
 	std::cout << "Emulator initializing.." << std::endl;
 
@@ -85,8 +113,9 @@ int main()
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
 	SDL_GLContext gl_context = SDL_GL_CreateContext(win);
 	SDL_GL_MakeCurrent(win, gl_context);
-	if (SDL_GL_SetSwapInterval(0)) {
-		std::cout << "Unable to disable Vsync" << std::endl;
+	int vsync = vsync_enable ? 1 : 0;
+	if (SDL_GL_SetSwapInterval(vsync)) {
+		std::cout << "Unable to set Vsync" << std::endl;
 	}
 
 	GLuint tex;
@@ -134,6 +163,10 @@ int main()
 	bool *p_open = &btrue;
 
 	nes_emulator * denver = new nes_emulator();
+
+	if (no_audio) denver->audio->no_audio = true;
+	if (no_audio_emu) denver->nes_2a03->no_apu = true;
+
 	denver->load_logo();
 
 	denvergui::denvergui_state windowstates;
@@ -142,6 +175,13 @@ int main()
 	// setup debug rendering for ppu.
 	ppu_debug_vram *ppu_visual_debug = new ppu_debug_vram();
 	ppu_visual_debug->set_target_ppu(denver->ppu_device);
+
+	// set the debugger callback for the ppu.
+	denver->ppu_device->dbg_callback = ([&]() {
+		if (windowstates.show_ppu_debugger) {
+			ppu_visual_debug->render_nametable();
+		}
+	});
 
 	// new call back code. set callback to the ppu.
 	denver->ppu_device->callback = ([&] () {
@@ -183,7 +223,7 @@ int main()
 
 			// render ppu debugger name table.
 			ppu_visual_debug->show_scroll_registers = windowstates.show_scroll_regs;
-			ppu_visual_debug->render_nametable();
+			//ppu_visual_debug->render_nametable();	<-- now being rendered with a callback.
 			glBindTexture(GL_TEXTURE_2D, ppu_ntable);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
