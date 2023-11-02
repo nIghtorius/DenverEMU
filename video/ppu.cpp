@@ -566,7 +566,6 @@ bool	ppu::isFrameReady() {
 }
 
 void	ppu::reset() {
-	std::cout << "PPU has reset" << std::endl;
 	cycle = 0;
 	memset (&ppu_internal, 0, sizeof (ppu_render_state));
 	nmi_enable = false;

@@ -67,9 +67,6 @@ void	nsfrom::initialize(byte song) {
 	// get the defaults from state.
 	// first check "base_nsf" state. When the banks are all 0.
 
-	// perform a bus reset.
-	devicebus->busreset();
-
 	bool	are_all_zero = true;
 	for (int i = 0; i < 8; i++)
 		if (state.banks[i] != 0) are_all_zero = false;
@@ -83,6 +80,9 @@ void	nsfrom::initialize(byte song) {
 	for (int i = 0; i < 8; i++) {
 		prg[i] = &romdata[(state.banks[i] << 12) % romsize];
 	}
+
+	// perform a bus reset.
+	devicebus->busreset();
 
 	// initialize machine state.
 	for (int i = 0; i < 0x0800; i++)
@@ -112,8 +112,4 @@ void	nsfrom::initialize(byte song) {
 	state.irq_vector = vectors.irq;
 	state.nmi_vector = vectors.nmi;
 	state.res_vector = vectors.reset;
-
-	std::cout << "reset: 0x" << std::hex << (int)state.res_vector << "\n";
-	std::cout << "nmi  : 0x" << std::hex << (int)state.nmi_vector << "\n";
-	std::cout << "irq  : 0x" << std::hex << (int)state.irq_vector << "\n";
 }
