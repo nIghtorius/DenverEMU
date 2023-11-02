@@ -5,8 +5,8 @@
 
 	Load cart type(s) 0x18 & 0x1A
 
-	Does not contain the VRC6 emulation code. 
-	this will be in /audio/expanded/vrc6.*
+	Does not contain the VRC6 audio emulation code. 
+	this will be in /audio/expansion/vrc6.*
 
 */
 

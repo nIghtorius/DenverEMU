@@ -130,6 +130,11 @@ void	denvergui::render_cpuviewer(nes_emulator *denver, denvergui_state *state) {
 				(denver->nes_2a03->cpu_2a03.regs.sr & cf_interrupt) > 0 ? "I" : "_",
 				(denver->nes_2a03->cpu_2a03.regs.sr & cf_zero) > 0 ? "Z" : "_",
 				(denver->nes_2a03->cpu_2a03.regs.sr & cf_carry) > 0 ? "C" : "_");
+			ImGui::Text("Reset: %04X, NMI: %04X, IRQ: %04X",
+				denver->mainbus->readmemory_as_word(vector_reset, true),
+				denver->mainbus->readmemory_as_word(vector_nmi, true),
+				denver->mainbus->readmemory_as_word(vector_irq, true)
+				);
 			ImGui::Separator();
 			ImGui::TreePop();
 		}

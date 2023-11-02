@@ -45,6 +45,9 @@
 #define		INES_F5_PRG_RAM_PRESENT					0x10
 #define		INES_F5_BUS_CONFLICT					0x20
 
+
+// NSF bits header.
+
 #pragma pack (push, 1)
 struct nes_header_raw {
 	std::uint32_t		header_signature;
@@ -56,6 +59,27 @@ struct nes_header_raw {
 	byte				flags4;
 	byte				flags5;
 	byte				reserved[21];
+};
+
+struct nsf_header_raw {
+	std::uint32_t		header_signature;
+	byte				header2;
+	byte				version;
+	byte				total_songs;
+	byte				start_song;
+	word				load_address;
+	word				init_address;
+	word				play_address;
+	char				songname[32];
+	char				artist[32];
+	char				copyright[32];
+	word				playspeed_ntsc;
+	byte				bank_init[8];
+	word				playspeed_pal;
+	byte				palntscbits;
+	byte				expansion_audio;
+	byte				nsf2_reserved;
+	byte				program_size[3];
 };
 #pragma pack (pop)
 
@@ -89,10 +113,15 @@ private:
 	audio_player *m_aud;
 	vrc6audio *vrc6exp = nullptr;
 	void	readstream(std::istream &stream, ppu *ppu_device, bus *mainbus, audio_player *audbus);
+	bool	readstream_nsf(std::istream &stream, ppu *ppu_device, bus *mainbus, audio_player *audbus);
 public:
 	bool	is_valid;
 	rom		*program;
 	vrom	*character;
+	bool	nsf_mode = false;
+	char	songname[32];
+	char	artist[32];
+	char	copyright[32];
 	cartridge(const char *filename, ppu *ppu_device, bus *mainbus, audio_player *audbus);
 	cartridge(std::istream &stream, ppu *ppu_device, bus *mainbus, audio_player *audbus);
 	~cartridge();

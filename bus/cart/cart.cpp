@@ -9,6 +9,9 @@
 #include "../rom/mappers/mapper_004.h"
 #include "../rom/mappers/mapper_024026.h"
 
+// NSF
+#include "../rom/mappers/mapper_nsf.h"
+
 // implementation.
 
 // base functions
@@ -46,11 +49,108 @@ nes_header_data		parse_nes_header(nes_header_raw &ines) {
 }
 
 // classes
+bool	cartridge::readstream_nsf(std::istream &nsffile, ppu *ppu_device, bus *mainbus, audio_player *audbus) {
+	program = NULL;
+	character = NULL;	// will not be used.
+
+	nsf_header_raw nsf_hdr;
+	nsffile.seekg(0, std::ios_base::beg);
+	nsffile.read((char*)&nsf_hdr, sizeof(nsf_header_raw));
+
+	bool is_valid = (nsf_hdr.header_signature == (std::uint32_t)0x4D53454E) && (nsf_hdr.header2 == 0x1A);
+	
+	if (!is_valid) {
+		return false;
+	}
+
+	std::cout << "Cartridge is NSF file..\n";
+	std::cout << "Songname  : " << nsf_hdr.songname << "\n";
+	std::cout << "Artist    : " << nsf_hdr.artist << "\n";
+	std::cout << "Copyright : " << nsf_hdr.copyright << "\n";
+	std::cout << "# of song : " << std::dec << (int)nsf_hdr.total_songs << "\n";
+	std::cout << "L_ADDR    : 0x" << std::hex << (int)nsf_hdr.load_address << "\n";
+	std::cout << "I_ADDR    : 0x" << std::hex << (int)nsf_hdr.init_address << "\n";
+	std::cout << "P_ADDR    : 0x" << std::hex << (int)nsf_hdr.play_address << "\n";
+	std::cout << "BANKS     : ";
+	for (int i = 0; i < 8; i++) {
+		std::cout << "0x" << std::hex << (int)nsf_hdr.bank_init[i] << " ";
+	}
+	std::cout << "\n";
+
+	int	program_size = nsf_hdr.program_size[0] << 16 | nsf_hdr.program_size[1] << 8 | nsf_hdr.program_size[2];
+
+	std::cout << "PRG_SIZE  : " << std::dec << (int)program_size << " bytes.. (header based)\n";
+
+	// program_size in header is wonky. So we are to ignore that.
+	nsffile.seekg(0, std::ios_base::end);
+	program_size = (int)nsffile.tellg() - sizeof(nsf_header_raw);
+	nsffile.seekg(sizeof(nsf_header_raw), std::ios_base::beg);
+
+	std::cout << "PRG_SIZEc : " << std::dec << (int)program_size << " bytes.. (computed)\n";
+
+	// loading NSF is tricky. because load address is not always 0x8000
+	// we do not support < 0x8000, check this first.
+	if (nsf_hdr.load_address < 0x8000) {
+		std::cout << "We cannot load NSF file with load address below 0x8000\n";
+		return false;
+	}
+
+	int	prealloc = nsf_hdr.load_address - 0x8000;
+
+	// load program data.
+	byte * program_data = (byte*)malloc(prealloc + program_size);
+
+	nsffile.read((char*)&program_data[prealloc], program_size);
+
+	// NSF is loaded.
+	// build a NSF cartridge.
+	program = new nsfrom();
+	nsfrom	*nsf_rom = reinterpret_cast<nsfrom*>(program);
+
+	// configure NSF cartridge.
+	nsf_rom->state.numsongs = nsf_hdr.total_songs;
+	nsf_rom->state.currentsong = 1;
+	for (int i = 0; i < 8; i++) nsf_rom->state.banks[i] = nsf_hdr.bank_init[i];
+	nsf_rom->state.init = nsf_hdr.init_address;
+	nsf_rom->state.play = nsf_hdr.play_address;
+	nsf_rom->set_rom_data(program_data, program_size + prealloc);
+
+	// expansions.
+	if (nsf_hdr.expansion_audio & NSF_EXP_VRC6) {
+		vrc6exp = new vrc6audio();
+		vrc6exp->vrc6_mapper_026 = false;
+		audbus->register_audible_device(vrc6exp);
+		mainbus->registerdevice(vrc6exp);
+		nsf_rom->vrc6exp = vrc6exp;
+	}
+
+	// add to mainbus
+	mainbus->registerdevice(nsf_rom);
+
+	// initialize cart for song #1 (0)
+	nsf_rom->initialize(0);
+
+	// link busses.
+	m_aud = audbus;
+	m_bus = mainbus;
+	l_ppu = ppu_device;
+
+	// copy meta data.
+	memcpy(songname, nsf_hdr.songname, 32);
+	memcpy(artist, nsf_hdr.artist, 32);
+	memcpy(copyright, nsf_hdr.copyright, 32);
+
+	nsf_mode = true;
+
+	return true;
+}
 
 void	cartridge::readstream(std::istream &nesfile, ppu *ppu_device, bus *mainbus, audio_player *audbus) {
 
 	program = NULL;
 	character = NULL;
+
+	nsf_mode = false;
 
 	nes_header_raw nes_hdr;
 	nesfile.read((char *)&nes_hdr, 16);
@@ -61,6 +161,9 @@ void	cartridge::readstream(std::istream &nesfile, ppu *ppu_device, bus *mainbus,
 
 	// do nothing is header is not valid. 
 	if (!nes.valid_nes_header) {
+		// before giving up. try first NSF.
+		if (!readstream_nsf(nesfile, ppu_device, mainbus, audbus))
+			std::cout << "Cartridge is invalid format\n";
 		return;
 	}
 
@@ -260,6 +363,7 @@ cartridge::~cartridge() {
 		if (vrc6exp) {
 			m_aud->unregister_audible_device(vrc6exp);
 			m_bus->removedevice_select_base(vrc6exp->devicestart);
+			delete vrc6exp;
 		}
 	}
 	if (m_bus != NULL) {

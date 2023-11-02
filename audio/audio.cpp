@@ -57,6 +57,7 @@ void	audio_player::unregister_audible_device(audio_device *dev) {
 	if (audibles.size() == 0) return;
 	for (int i = 0; i < audibles.size(); i++) {
 		if (dev == audibles[i]) {
+			std::cout << "Unregistering audio device: " << dev->get_device_descriptor() << "\n";
 			audibles.erase(audibles.begin() + i);
 			return;
 		}

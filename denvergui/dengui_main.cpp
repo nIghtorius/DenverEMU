@@ -3,6 +3,7 @@
 #include "imgui_internal.h"
 #include "../imguifiledialog/ImGuiFileDialog.h"
 #include "../package/2a03.h"
+#include "../bus/rom/mappers/mapper_nsf.h"
 #include "gui_debuggers.h"
 #include <iostream>
 
@@ -173,32 +174,73 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
 	if (ImGui::Begin("NES Game", NULL, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoResize || ImGuiWindowFlags_NoInputs)) 
 	{
-		// compute where the image has to come. for now its the 4:3 renderer, later on we implement
-		// the 8:7 renderer.
+		if (!denver->cart->nsf_mode) {
+			// compute where the image has to come. for now its the 4:3 renderer, later on we implement
+			// the 8:7 renderer.
 
-		float scale_x = io.DisplaySize.x / 256.0f; //ImGui::GetContentRegionAvail().x / 256.0f;
-		float scale_y = ImGui::GetContentRegionAvail().y / 240.0f;
-		
-		float width_x = 0.0f;
-		float height_y = 0.0f;
+			float scale_x = io.DisplaySize.x / 256.0f; //ImGui::GetContentRegionAvail().x / 256.0f;
+			float scale_y = ImGui::GetContentRegionAvail().y / 240.0f;
 
-		if (scale_x > scale_y) {
-			// scale y dominant.
-			width_x = 256.0f * scale_y;
-			height_y = 240.0f * scale_y;
+			float width_x = 0.0f;
+			float height_y = 0.0f;
+
+			if (scale_x > scale_y) {
+				// scale y dominant.
+				width_x = 256.0f * scale_y;
+				height_y = 240.0f * scale_y;
+			}
+			else {
+				// scale x dominant.
+				width_x = 256.0f * scale_x;
+				height_y = 240.0f * scale_x;
+			}
+
+			// 8:7 transformation?
+			scale_x *= 1.3f;
+			float start_x = (ImGui::GetContentRegionAvail().x / 2) - (width_x / 2);
+
+			ImGui::SetCursorPosX(start_x);
+			ImGui::Image((void *)(intptr_t)tex, ImVec2{ width_x, height_y });
 		}
 		else {
-			// scale x dominant.
-			width_x = 256.0f * scale_x;
-			height_y = 240.0f * scale_x;
+			// NSF interface.
+			ImGui::Text("Denver NSF Player");
+			ImGui::Text("");
+			ImGui::Text("Song(s) :");
+			ImGui::SameLine();
+			ImGui::Text(denver->cart->songname);
+			ImGui::Text("Artist :");
+			ImGui::SameLine();
+			ImGui::Text(denver->cart->artist);
+			ImGui::Text("Copyright :");
+			ImGui::SameLine();
+			ImGui::Text(denver->cart->copyright);
+			ImGui::Text("");
+			ImGui::Separator();
+
+			// get NSF interface.
+			nsfrom *nsfinterface = reinterpret_cast<nsfrom*>(denver->cart->program);
+
+			ImGui::Text("Selected song %d/%d", nsfinterface->state.currentsong, nsfinterface->state.numsongs);
+			ImGui::Separator();
+
+			// Media buttons.
+			if (ImGui::Button("<<", ImVec2{ 128, 32 })) {
+				if (nsfinterface->state.currentsong>1)
+					nsfinterface->state.currentsong--;
+				// play the track.
+				nsfinterface->initialize(nsfinterface->state.currentsong - 1);
+			}
+			ImGui::SameLine();
+			ImGui::Text("      ");
+			ImGui::SameLine();
+			if (ImGui::Button(">>", ImVec2{128, 32})) {
+				if (nsfinterface->state.currentsong < nsfinterface->state.numsongs)
+					nsfinterface->state.currentsong++;
+				nsfinterface->initialize(nsfinterface->state.currentsong - 1);
+			}
+			
 		}
-
-		// 8:7 transformation?
-		scale_x *= 1.3f;
-		float start_x = (ImGui::GetContentRegionAvail().x / 2) - (width_x / 2);
-
-		ImGui::SetCursorPosX(start_x);
-		ImGui::Image((void *)(intptr_t)tex, ImVec2{ width_x, height_y });
 		ImGui::End();
 	}
 	ImGui::PopStyleVar(1);

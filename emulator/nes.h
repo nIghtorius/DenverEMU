@@ -32,7 +32,6 @@ struct nes_frame_tex {
 
 class nes_emulator {
 private:
-	cartridge			* cart;
 	//cpu2a03_fast		* cpu_2a03;
 	mainram				* nesram;
 	//nes_2a03_joyports	* controllers;
@@ -49,6 +48,7 @@ public:
 	fastclock		  clock;	// trying clock non heap, maybe some speed?
 	joypad				* joydefs;
 	audio_player		* audio;
+	cartridge			* cart;
 
 	nes_emulator();
 	~nes_emulator();
