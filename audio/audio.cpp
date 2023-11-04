@@ -75,8 +75,8 @@ void	audio_player::play_audio() {
 		for (auto audible : audibles) {
 			audible->sample_buffer.clear();
 			audible->audio_frame_ready = false;
-			return;
 		}
+		return;
 	}
 
 	// everything is ready. let's mux everything together.

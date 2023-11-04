@@ -11,10 +11,12 @@
 
 #include "../rom.h"
 #include "../../audio/expansion/vrc6.h"
+#include "../../audio/expansion/sunsoft5b.h"
 #include "../../package/2a03.h"
 
 // EXP audio
 #define		NSF_EXP_VRC6			0x01
+#define		NSF_EXP_SUNSOFT			0x20
 
 // firmware
 static const byte nsfufirm[] = {
@@ -61,6 +63,8 @@ public:
 	byte		*prg[8];	// program banks.
 	// expansion audio.
 	vrc6audio	*vrc6exp = nullptr;
+	sunsoftaudio *sunexp = nullptr;
+
 	package_2a03 *n2a03 = nullptr;
 
 	nsfrom();

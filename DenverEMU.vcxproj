@@ -169,6 +169,7 @@
   <ItemGroup>
     <ClInclude Include="audio\apu.h" />
     <ClInclude Include="audio\audio.h" />
+    <ClInclude Include="audio\expansion\sunsoft5b.h" />
     <ClInclude Include="audio\expansion\vrc6.h" />
     <ClInclude Include="bus\bus.h" />
     <ClInclude Include="bus\cart\cart.h" />
@@ -179,6 +180,7 @@
     <ClInclude Include="bus\rom\mappers\mapper_002.h" />
     <ClInclude Include="bus\rom\mappers\mapper_003.h" />
     <ClInclude Include="bus\rom\mappers\mapper_004.h" />
+    <ClInclude Include="bus\rom\mappers\mapper_069.h" />
     <ClInclude Include="bus\rom\mappers\mapper_nsf.h" />
     <ClInclude Include="bus\rom\rom.h" />
     <ClInclude Include="clock\clock.h" />
@@ -213,6 +215,7 @@
   <ItemGroup>
     <ClCompile Include="audio\apu.cpp" />
     <ClCompile Include="audio\audio.cpp" />
+    <ClCompile Include="audio\expansion\sunsoft5b.cpp" />
     <ClCompile Include="audio\expansion\vrc6.cpp" />
     <ClCompile Include="bus\bus.cpp" />
     <ClCompile Include="bus\cart\cart.cpp" />
@@ -223,6 +226,7 @@
     <ClCompile Include="bus\rom\mappers\mapper_003.cpp" />
     <ClCompile Include="bus\rom\mappers\mapper_004.cpp" />
     <ClCompile Include="bus\rom\mappers\mapper_024026.cpp" />
+    <ClCompile Include="bus\rom\mappers\mapper_069.cpp" />
     <ClCompile Include="bus\rom\mappers\mapper_nsf.cpp" />
     <ClCompile Include="bus\rom\rom.cpp" />
     <ClCompile Include="clock\clock.cpp" />

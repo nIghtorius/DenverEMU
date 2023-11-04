@@ -102,4 +102,5 @@ public:
 	void	set_pc(word addr);
 	void	write_execution_log();
 	void	stop_execution_log();
+	void	machine_code_trace(int startaddr, int endaddr, int erraddr);
 };

@@ -8,6 +8,7 @@
 #include "../rom/mappers/mapper_003.h"
 #include "../rom/mappers/mapper_004.h"
 #include "../rom/mappers/mapper_024026.h"
+#include "../rom/mappers/mapper_069.h"
 
 // NSF
 #include "../rom/mappers/mapper_nsf.h"
@@ -123,6 +124,12 @@ bool	cartridge::readstream_nsf(std::istream &nsffile, ppu *ppu_device, bus *main
 		mainbus->registerdevice(vrc6exp);
 		nsf_rom->vrc6exp = vrc6exp;
 	}
+	if (nsf_hdr.expansion_audio & NSF_EXP_SUNSOFT) {
+		sunexp = new sunsoftaudio();
+		audbus->register_audible_device(sunexp);
+		mainbus->registerdevice(sunexp);
+		nsf_rom->sunexp = sunexp;
+	}	
 
 	// add to mainbus
 	mainbus->registerdevice(nsf_rom);
@@ -325,6 +332,22 @@ void	cartridge::readstream(std::istream &nesfile, ppu *ppu_device, bus *mainbus,
 		}		
 		program->set_rom_data((byte *)program_data, nes.programsize);
 		break;
+	case 69:
+		// Sunsoft FME-7
+		program = new fme7rom();
+		character = new fme7vrom();
+		sunexp = new sunsoftaudio();
+		audbus->register_audible_device(sunexp);
+		mainbus->registerdevice(sunexp);
+		// fme7 linking.
+		reinterpret_cast<fme7rom*>(program)->link_vrom(reinterpret_cast<fme7vrom*>(character));
+		reinterpret_cast<fme7vrom*>(character)->link_ppu_bus(&ppu_device->vram);
+		reinterpret_cast<fme7rom*>(program)->audiochip = sunexp;
+		if (has_char_data) {
+			character->set_rom_data((byte *)char_data, nes.charsize);
+		}
+		program->set_rom_data((byte *)program_data, nes.programsize);
+		break;
 	default:
 		std::cout << "Mapper is unknown to me" << std::endl;
 		break;
@@ -364,6 +387,11 @@ cartridge::~cartridge() {
 			m_aud->unregister_audible_device(vrc6exp);
 			m_bus->removedevice_select_base(vrc6exp->devicestart);
 			delete vrc6exp;
+		}
+		if (sunexp) {
+			m_aud->unregister_audible_device(sunexp);
+			m_bus->removedevice_select_base(sunexp->devicestart);
+			delete sunexp;
 		}
 	}
 	if (m_bus != NULL) {

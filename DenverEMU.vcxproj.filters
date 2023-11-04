@@ -210,6 +210,12 @@
     <ClInclude Include="bus\rom\mappers\mapper_nsf.h">
       <Filter>Source Files\emulation\bus\rom\mappers</Filter>
     </ClInclude>
+    <ClInclude Include="bus\rom\mappers\mapper_069.h">
+      <Filter>Source Files\emulation\bus\rom\mappers</Filter>
+    </ClInclude>
+    <ClInclude Include="audio\expansion\sunsoft5b.h">
+      <Filter>Source Files\emulation\audio\expansion</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DenverEMU.cpp">
@@ -319,6 +325,12 @@
     </ClCompile>
     <ClCompile Include="bus\rom\mappers\mapper_nsf.cpp">
       <Filter>Source Files\emulation\bus\rom\mappers</Filter>
+    </ClCompile>
+    <ClCompile Include="bus\rom\mappers\mapper_069.cpp">
+      <Filter>Source Files\emulation\bus\rom\mappers</Filter>
+    </ClCompile>
+    <ClCompile Include="audio\expansion\sunsoft5b.cpp">
+      <Filter>Source Files\emulation\audio\expansion</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

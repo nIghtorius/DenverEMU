@@ -60,6 +60,7 @@ int		nsfrom::rundevice(int ticks) {
 	// for expansion audio.
 	// check vrc6
 	if (vrc6exp) vrc6exp->rundevice(ticks);
+	if (sunexp) sunexp->rundevice(ticks);
 	return ticks;
 }
 

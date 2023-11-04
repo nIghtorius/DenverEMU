@@ -28,6 +28,23 @@ cpu2a03_fast::~cpu2a03_fast() {
 void cpu2a03_fast::log_register() {
 }
 
+void cpu2a03_fast::machine_code_trace(int startaddr, int endaddr, int erraddr) {
+	disassembler disasm;
+	disasm.set_mainbus(devicebus);
+	disasm.set_address(startaddr);
+	int	myaddr = startaddr;
+	while (myaddr < endaddr) {
+		std::string disassembled = disasm.disassemble();
+		if (myaddr != erraddr) {
+			std::cout << "  0x" << std::hex << (int)myaddr << " " << disassembled << "\n";
+		}
+		else {
+			std::cout << "* 0x" << std::hex << (int)myaddr << " " << disassembled << "\n";
+		}
+		myaddr += disasm.last_instruction_size;
+	}
+}
+
 void cpu2a03_fast::write_cpu_log() {
 	// logging makes emulation slower, but helpful debugging issues.
 	// first we want the disassemble.
