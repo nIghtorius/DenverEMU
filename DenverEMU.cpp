@@ -30,12 +30,13 @@
 #include <SDL_opengl.h>
 #endif
 
-#define		DENVER_VERSION		"0.2 alpha"
+#define		DENVER_VERSION		"0.3 alpha"
 #undef main
 
 static bool		vsync_enable = false;
 static bool		no_audio = false;
 static bool		no_audio_emu = false;
+static bool		no_expanded_audio = false;
 
 void process_args(int argc, char *argv[]) {
 	for (int i = 1; i < argc; i++) {
@@ -55,6 +56,10 @@ void process_args(int argc, char *argv[]) {
 			no_audio_emu = true;
 			no_audio = true;
 			std::cout << "--no-apu-emulation, audio emulation disabled." << std::endl;
+		}
+		if (strcmp(argv[i], "--no-expanded-audio") == 0) {
+			no_expanded_audio = true;
+			std::cout << "--no-expanded-audio, audio expansion emulation disabled." << std::endl;
 		}
 	}
 }
@@ -109,7 +114,7 @@ int main(int argc, char *argv[])
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 
-	SDL_Window* win = SDL_CreateWindow("Denver - NES Emulator - Alpha version", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1024, 960, SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL | SDL_WINDOW_ALLOW_HIGHDPI);
+	SDL_Window* win = SDL_CreateWindow("Denver", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1024, 960, SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL | SDL_WINDOW_ALLOW_HIGHDPI);
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
 	SDL_GLContext gl_context = SDL_GL_CreateContext(win);
 	SDL_GL_MakeCurrent(win, gl_context);
@@ -137,7 +142,7 @@ int main(int argc, char *argv[])
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
 	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
-
+	
 	// Setup Dear ImGui style
 	ImGui::StyleColorsDark();
 
@@ -166,11 +171,13 @@ int main(int argc, char *argv[])
 
 	if (no_audio) denver->audio->no_audio = true;
 	if (no_audio_emu) denver->nes_2a03->no_apu = true;
+	if (no_expanded_audio) denver->audio->no_expanded_audio = true;
 
 	denver->load_logo();
 
 	denvergui::denvergui_state windowstates;
 	windowstates.show_apu_debugger = false;
+	windowstates.mainwin = win;
 
 	// setup debug rendering for ppu.
 	ppu_debug_vram *ppu_visual_debug = new ppu_debug_vram();

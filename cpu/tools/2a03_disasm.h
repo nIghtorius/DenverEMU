@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include <stdint.h>
+#include <cstdint>
 #include "../../bus/bus.h"
 #include <string>
 
@@ -157,11 +157,11 @@ static const opcode opcode_table[] = {
 
 class disassembler {
 private:
-	word	disassemble_addr;
-	bus		*mbus;
+	word				disassemble_addr;
+	bus					*mbus;
 public:
-	int		last_instruction_size;
+	int					last_instruction_size;
 	const std::string 	disassemble();
-	void	set_address(word address);
-	void	set_mainbus(bus *mainbus);
+	void				set_address(word address);
+	void				set_mainbus(bus *mainbus);
 };

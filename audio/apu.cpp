@@ -272,7 +272,7 @@ void	pulse_generator::update_timers() {
 }
 
 void	pulse_generator::sweep() {
-	if ((sweep_enable) && ((timer > 8) || (sweep_negate && (timer < 0x078B)))) 
+	if ((sweep_enable) && !((timer < 8) || (!sweep_negate && (timer >= 0x078B)))) 
 	{
 		if (sweep_div_count > 0) {
 			sweep_div_count--;

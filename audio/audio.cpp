@@ -89,6 +89,7 @@ void	audio_player::play_audio() {
 		for (auto audible : audibles) {
 			if (i < audible->sample_buffer.size())
 				input += audible->sample_buffer[i];
+			if (no_expanded_audio) break;
 		}
 		//input /= audibles.size();
 		avg_center += input;

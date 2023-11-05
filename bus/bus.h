@@ -6,8 +6,7 @@
 #pragma once
 
 #include <vector>
-#include <cstdint>
-#include <string.h>
+#include <string>
 #include <cstdlib>
 
 #define		MAX_DESCRIPTOR_LENGTH	128

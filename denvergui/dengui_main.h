@@ -26,6 +26,9 @@ namespace denvergui {
 		GLuint	pattern_tex;
 		GLuint  ntable_tex;
 		bool	show_scroll_regs = false;
+
+		// main window.
+		SDL_Window		*mainwin;
 	};
 
 	void	render_main (nes_emulator *denver,  GLuint tex, denvergui_state *state);

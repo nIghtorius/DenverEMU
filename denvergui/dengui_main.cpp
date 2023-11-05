@@ -27,6 +27,10 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *
 				denver->nes_2a03->cpu_2a03.write_execution_log();
 				state->write_exec_log = false;
 			}
+			std::string newcaption = "Denver - [";
+			newcaption += ImGuiFileDialog::Instance()->GetCurrentFileName();
+			newcaption += "]";
+			SDL_SetWindowTitle(state->mainwin, newcaption.c_str());
 		}
 		ImGuiFileDialog::Instance()->Close();
 	}
@@ -98,20 +102,16 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *
 				if (ImGui::MenuItem("Controllers", NULL, false)) {
 
 				}
-				if (ImGui::BeginMenu("[dbg]Emulation cycle sync")) {
-					if (ImGui::MenuItem("Sync as fast as possible (slow)")) {
-						denver->clock.set_sync_cycle_in_ppucycles(1);
-					}
-					if (ImGui::MenuItem("Sync around ~35 PPU cycles")) {
-						denver->clock.set_sync_cycle_in_ppucycles(35);
-					}
-					if (ImGui::MenuItem("Sync around ~70 PPU cycles")) {
-						denver->clock.set_sync_cycle_in_ppucycles(70);
-					}
-					if (ImGui::MenuItem("Sync around ~128 PPU cycles (fastest)")) {
-						denver->clock.set_sync_cycle_in_ppucycles(128);
-					}
-					ImGui::EndMenu();
+				ImGui::EndMenu();
+			}
+			if (ImGui::BeginMenu("DebugActions")) {
+				if (ImGui::MenuItem("Switch PPU to VER")) {
+					denver->ppu_device->vram.resetpins_to_default();
+				}
+				if (ImGui::MenuItem("Switch PPU to HORIZ")) {
+					denver->ppu_device->vram.resetpins_to_default();
+					denver->ppu_device->vram.swappins(10, 11);
+					denver->ppu_device->vram.groundpin(10);	
 				}
 				ImGui::EndMenu();
 			}

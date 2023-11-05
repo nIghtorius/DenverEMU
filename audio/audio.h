@@ -57,6 +57,7 @@ public:
 	int		samples_per_frame = 0;
 	bool	boostspeed = false;
 	bool	no_audio = false;
+	bool	no_expanded_audio = false;
 
 	audio_player();
 	~audio_player();
