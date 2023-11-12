@@ -115,6 +115,7 @@ int		sunsoftaudio::rundevice(int ticks) {
 		// mix.
 		sample_buffer.push_back(mux(p1, p2, p3));
 	}
+	return ticks;
 }
 
 void	sunsoftaudio::reset() {

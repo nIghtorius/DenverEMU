@@ -6,8 +6,10 @@
 #pragma once
 
 #include <vector>
-#include <string>
+#include <cstring>
 #include <cstdlib>
+#include <cstdint>
+
 
 #define		MAX_DESCRIPTOR_LENGTH	128
 #define		BUS_OPEN_BUS			0xF0
