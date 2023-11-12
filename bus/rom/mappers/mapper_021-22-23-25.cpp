@@ -19,12 +19,16 @@ word	vrc2_4_rom::recompute_addr(word addr) {
 		// we are doing VRC4a or VRC4c possibly.
 		// 4a = A1, A2, 4c = A6, A7
 		if ((addr & 0x02) || (addr & 0x04)) {
+			std::cout << "VRC2/4 Probable chip detected: VRC4a\n";
 			submapper = 1;	// VRC4a detected.
 			run_as_mapper = 21;
+			compability_mode = -1;		// compat detect done.
 		}
 		if ((addr & 0x80) || (addr & 0x40)) {
+			std::cout << "VRC2/4 Probable chip detected: VRC4c\n";
 			submapper = 2;	// VRC4c detected.
 			run_as_mapper = 21;
+			compability_mode = -1;		// compat detect done.
 		}
 		state.ram_enable = true;	// force ram enable in compat
 		break;
@@ -32,12 +36,16 @@ word	vrc2_4_rom::recompute_addr(word addr) {
 		// we are doing VRC2b+VRC4f, VRC4e
 		// 2b/4f = A0, A1, 4e = A2, A3
 		if ((addr & 0x01) || (addr & 0x02)) {
+			std::cout << "VRC2/4 Probable chip detected: VRC2b/VRC4f\n";
 			submapper = 1;	// emulate VRC4f
 			run_as_mapper = 23;
+			compability_mode = -1;		// compat detect done.
 		}
 		if ((addr & 0x04) || (addr & 0x08)) {
+			std::cout << "VRC2/4 Probable chip detected: VRC4e\n";
 			submapper = 2;	// emulate VRC4e
 			run_as_mapper = 23; 
+			compability_mode = -1;		// compat detect done.
 		}
 		state.ram_enable = true;	// force ram enable in compat
 		break;
@@ -45,12 +53,16 @@ word	vrc2_4_rom::recompute_addr(word addr) {
 		// we are doing VRC2c+VRC4b, VRC4d
 		// 2c/4b = A1, A0, 4d = A3, A2
 		if ((addr & 0x01) || (addr & 0x02)) {
+			std::cout << "VRC2/4 Probable chip detected: VRC2c/VRC4b\n";
 			submapper = 1; // emulate VRC4b
 			run_as_mapper = 25;
+			compability_mode = -1;		// compat detect done.
 		}
 		if ((addr & 0x04) || (addr & 0x08)) {
+			std::cout << "VRC2/4 Probable chip detected: VRC4d\n";
 			submapper = 2; // emulate VRC4d
 			run_as_mapper = 25; 
+			compability_mode = -1;		// compat detect done.
 		}
 		state.ram_enable = true;	// force ram enable in compat
 		break;
