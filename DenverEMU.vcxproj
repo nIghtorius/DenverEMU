@@ -86,7 +86,7 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>imgui\backends;imgui;G:\vc_libs\SDL2-2.28.3\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -106,7 +106,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>imgui\backends;imgui;G:\vc_libs\SDL2-2.28.3\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -124,7 +124,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <OmitFramePointers>true</OmitFramePointers>
@@ -151,7 +151,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>imgui\backends;imgui;G:\vc_libs\SDL2-2.28.3\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -167,6 +167,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="3rdparty\hqx\HQ2x.h" />
+    <ClInclude Include="3rdparty\hqx\HQ3x.h" />
+    <ClInclude Include="3rdparty\hqx\HQx.h" />
     <ClInclude Include="audio\apu.h" />
     <ClInclude Include="audio\audio.h" />
     <ClInclude Include="audio\expansion\sunsoft5b.h" />
@@ -175,6 +178,7 @@
     <ClInclude Include="bus\cart\cart.h" />
     <ClInclude Include="bus\debug\debug6k.h" />
     <ClInclude Include="bus\ram\mainram.h" />
+    <ClInclude Include="bus\rom\mappers\mapper_021-22-23-25.h" />
     <ClInclude Include="bus\rom\mappers\mapper_024026.h" />
     <ClInclude Include="bus\rom\mappers\mapper_001.h" />
     <ClInclude Include="bus\rom\mappers\mapper_002.h" />
@@ -225,6 +229,7 @@
     <ClCompile Include="bus\rom\mappers\mapper_002.cpp" />
     <ClCompile Include="bus\rom\mappers\mapper_003.cpp" />
     <ClCompile Include="bus\rom\mappers\mapper_004.cpp" />
+    <ClCompile Include="bus\rom\mappers\mapper_021-22-23-25.cpp" />
     <ClCompile Include="bus\rom\mappers\mapper_024026.cpp" />
     <ClCompile Include="bus\rom\mappers\mapper_069.cpp" />
     <ClCompile Include="bus\rom\mappers\mapper_nsf.cpp" />
@@ -253,6 +258,21 @@
     <ClCompile Include="video\ppu.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="3rdparty\hqx\HQ2x.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <FileType>Document</FileType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="3rdparty\hqx\HQ3x.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+      <FileType>Document</FileType>
+    </ClCompile>
+    <ClCompile Include="3rdparty\hqx\HQx.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+      <FileType>Document</FileType>
+    </ClCompile>
     <None Include="imgui\backends\vulkan\generate_spv.sh" />
     <None Include="imgui\backends\vulkan\glsl_shader.frag" />
     <None Include="imgui\backends\vulkan\glsl_shader.vert" />

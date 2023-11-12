@@ -23,6 +23,10 @@
 #include "../package/2a03.h"
 #include <SDL_opengl.h>
 
+#define	DENVER_NO_UPSCALER			0
+#define DENVER_HQ2X_UPSCALER		1
+#define	DENVER_HQ3X_UPSCALER		2
+
 struct nes_frame_tex {
 	int w, h;
 	GLvoid *texture;
@@ -44,6 +48,8 @@ public:
 	joypad				* joydefs;
 	audio_player		* audio;
 	cartridge			* cart;
+
+	int					frame_upscaler = DENVER_NO_UPSCALER;
 
 	nes_emulator();
 	~nes_emulator();

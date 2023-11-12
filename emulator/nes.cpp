@@ -107,6 +107,14 @@ void	nes_emulator::prepare_frame() {
 	if (ppu_device) {
 		video_out->process_ppu_image((std::uint16_t *)ppu_device->getFrameBuffer());
 		video_out->add_overscan_borders();
+		switch (frame_upscaler) {
+		case DENVER_HQ2X_UPSCALER:
+			video_out->hq2x_image();
+			break;
+		case DENVER_HQ3X_UPSCALER:
+			video_out->hq3x_image();
+			break;
+		}
 	}
 }
 
@@ -115,10 +123,24 @@ void	nes_emulator::sync_audio() {
 }
 
 nes_frame_tex * nes_emulator::returnFrameAsTexture() {
+	frame.format = GL_RGBA;
 	frame.w = 256;
 	frame.h = 240;
-	frame.format = GL_RGBA;
 	frame.texture = video_out->getFrame();
+
+	switch (frame_upscaler) {
+	case DENVER_HQ2X_UPSCALER:
+		frame.w = 512;
+		frame.h = 480;
+		frame.texture = video_out->getFramex();
+		break;
+	case DENVER_HQ3X_UPSCALER:
+		frame.w = 768;
+		frame.h = 720;
+		frame.texture = video_out->getFramex();
+		break;
+	}
+
 	return &frame;
 }
 

@@ -8,6 +8,8 @@
 #pragma once
 
 #include <cstdint>
+#include "../3rdparty/hqx/HQ2x.h"
+#include "../3rdparty/hqx/HQ3x.h"
 
 static const std::uint8_t ntscpalette[] = {
   0x4d, 0x4d, 0x4d, 0x01, 0x17, 0x4b, 0x0d, 0x0c, 0x60, 0x1f, 0x05, 0x5e, 0x31, 0x02, 0x45, 0x3b,
@@ -27,10 +29,21 @@ static const std::uint8_t ntscpalette[] = {
 class nesvideo {
 private:
 	std::uint32_t* displaybuffer;	// 32bit
+	std::uint32_t* displaybufferx;
+	HQ2x	hq2x;
+	HQ3x	hq3x;
+
 public:
 	nesvideo();
 	~nesvideo();
 	void process_ppu_image(std::uint16_t* ppu_image);
-	void* getFrame();
 	void add_overscan_borders();
+
+	// upscalers.
+	void hq2x_image();
+	void hq3x_image();
+
+	// frame getters
+	void* getFrame();
+	void* getFramex();
 };

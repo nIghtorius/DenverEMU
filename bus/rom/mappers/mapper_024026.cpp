@@ -94,11 +94,9 @@ void	vrc6rom::write(int addr, int addr_from_base, byte data) {
 
 	if ((taddr >= 0xF000) && (taddr <= 0xF003)) {
 		byte selector = taddr & 0x03;
-		int scanlines;
 		switch (selector) {
 		case 0:
 			state.irq_latch_reload = data;
-			scanlines = 255 - data;
 			return;
 			break;
 		case 1:

@@ -2,7 +2,8 @@
 #include <cstdlib>
 
 nesvideo::nesvideo() {
-	displaybuffer = (std::uint32_t *)malloc(245760); // buffer is 256x240 16 bits.
+	displaybuffer = (std::uint32_t *)malloc(245760); // buffer is 256x240 32 bits.
+	displaybufferx = (std::uint32_t *)malloc(1024 * 960 * 4); 
 }
 
 nesvideo::~nesvideo() {
@@ -39,3 +40,14 @@ void nesvideo::add_overscan_borders() {
 	for (int i = 59392; i < 61440; i++) displaybuffer[i] = 0;
 }
 
+void nesvideo::hq2x_image() {
+	hq2x.resize(displaybuffer, 256, 240, displaybufferx);
+}
+
+void nesvideo::hq3x_image() {
+	hq3x.resize(displaybuffer, 256, 240, displaybufferx);
+}
+
+void * nesvideo::getFramex() {
+	return displaybufferx;
+}

@@ -39,6 +39,8 @@
 #define		INES_F2_ARCHAIC_ID						0x04
 
 #define		INES_F3_PROGRAM_RAM						0xFF
+#define		INES_F3_NES20_SUBMAPPER					0xF0
+#define		INES_F3_NES20_MAPPER_HIHI				0x0F
 
 #define		INES_F4_TVSYSTEM						0x01
 
@@ -94,6 +96,7 @@ struct nes_header_data {
 	bool				has_trainer;
 	bool				no_mirroring; // 4screen
 	int					mapper;
+	byte				submapper;
 	bool				vs_unisystem;
 	bool				has_playchoice;
 	bool				has_nes20;
@@ -104,6 +107,7 @@ struct nes_header_data {
 	byte				tv_system;
 	bool				has_prg_ram;
 	bool				bus_conflicts;
+	int					ext_mapper;
 };
 
 

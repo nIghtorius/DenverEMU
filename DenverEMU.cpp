@@ -6,6 +6,8 @@
 	
 */
 
+#pragma warning(disable : 4996)
+
 // DenverEMU.cpp : Defines the entry point for the console application.
 //
 #include "emulator/nes.h"
@@ -37,10 +39,17 @@ static bool		vsync_enable = false;
 static bool		no_audio = false;
 static bool		no_audio_emu = false;
 static bool		no_expanded_audio = false;
+static bool		no_gui = false;
+static char		rom_load_startup[512];
+static bool		fullscreen = false;
+static int		upscaler = 0;
+static int		width = 512;
+static int		height = 480;
+static bool		linear_filter = false;
 
 void process_args(int argc, char *argv[]) {
 	for (int i = 1; i < argc; i++) {
-		if (strcmp(argv[i], "--vsync")==0) {
+		if (strcmp(argv[i], "--vsync") == 0) {
 			vsync_enable = true;
 			std::cout << "--vsync option, enabling v-sync" << std::endl;
 		}
@@ -61,6 +70,38 @@ void process_args(int argc, char *argv[]) {
 			no_expanded_audio = true;
 			std::cout << "--no-expanded-audio, audio expansion emulation disabled." << std::endl;
 		}
+		if (strcmp(argv[i], "--no-gui") == 0) {
+			no_gui = true;
+			std::cout << "--no-gui, gui disabled. requires --rom-file <rom>\n";
+		}
+		if (strcmp(argv[i], "--rom-file") == 0) {
+			if (i + 1 <= argc) {
+				strncpy(rom_load_startup, argv[i + 1], 512);
+			}
+		}
+		if (strcmp(argv[i], "--fullscreen") == 0) {
+			std::cout << "--fullscreen, full screen enabled.\n";
+			fullscreen = true;
+		}
+		if (strcmp(argv[i], "--upscaler") == 0) {
+			if (i + 1 <= argc) {
+				upscaler = atoi(argv[i + 1]);
+				std::cout << "Upscaler set to: " << (int)upscaler << "\n";
+			}
+		}
+		if (strcmp(argv[i], "--width") == 0) {
+			if (i + 1 <= argc) {
+				width = atoi(argv[i + 1]);
+			}
+		}
+		if (strcmp(argv[i], "--height") == 0) {
+			if (i + 1 <= argc) {
+				height = atoi(argv[i + 1]);
+			}
+		}
+		if (strcmp(argv[i], "--linear-filter") == 0) {
+			linear_filter = true;
+		}
 	}
 }
 
@@ -70,7 +111,16 @@ int main(int argc, char *argv[])
 		Print Shield
 	*/
 
+	rom_load_startup[0] = 0x0;
+
 	if (argc > 1) process_args(argc, argv);
+
+	if (no_gui) {
+		if (strnlen(rom_load_startup, 512) == 0) {
+			std::cout << "--no-gui, requires --rom-file <filename> to specified\n";
+			return 128;
+		}
+	}
 	
 	std::cout << "Project Denver version " << DENVER_VERSION << std::endl << "(c) 2018 P. Santing aka nIghtorius" << std::endl << std::endl;
 	std::cout << "Emulator initializing.." << std::endl;
@@ -114,8 +164,13 @@ int main(int argc, char *argv[])
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 
-	SDL_Window* win = SDL_CreateWindow("Denver", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1024, 960, SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL | SDL_WINDOW_ALLOW_HIGHDPI);
-	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
+	int flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL | SDL_WINDOW_ALLOW_HIGHDPI;
+	if (fullscreen) {
+		flags = SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN;
+	}
+
+	SDL_Window* win = SDL_CreateWindow("Denver", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, flags);
+	
 	SDL_GLContext gl_context = SDL_GL_CreateContext(win);
 	SDL_GL_MakeCurrent(win, gl_context);
 	int vsync = vsync_enable ? 1 : 0;
@@ -168,12 +223,18 @@ int main(int argc, char *argv[])
 	bool *p_open = &btrue;
 
 	nes_emulator * denver = new nes_emulator();
+	denver->frame_upscaler = upscaler;
 
 	if (no_audio) denver->audio->no_audio = true;
 	if (no_audio_emu) denver->nes_2a03->no_apu = true;
 	if (no_expanded_audio) denver->audio->no_expanded_audio = true;
 
-	denver->load_logo();
+	if (strnlen(rom_load_startup, 512) == 0) {
+		denver->load_logo();
+	}
+	else {
+		denver->load_cartridge(rom_load_startup);
+	}
 
 	denvergui::denvergui_state windowstates;
 	windowstates.show_apu_debugger = false;
@@ -214,10 +275,16 @@ int main(int argc, char *argv[])
 		denver->prepare_frame();
 		nes_frame_tex * nesframe = denver->returnFrameAsTexture();
 		glBindTexture(GL_TEXTURE_2D, tex);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		if (!linear_filter) {
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		}
+		else {
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		}
 		glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 256, 240, 0, GL_RGBA, GL_UNSIGNED_BYTE, (GLvoid *)nesframe->texture);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, nesframe->w, nesframe->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, (GLvoid *)nesframe->texture);
 
 		if (windowstates.show_ppu_debugger) {
 			// render ppu debugger pattern table.
@@ -241,18 +308,43 @@ int main(int argc, char *argv[])
 			windowstates.ntable_tex = ppu_ntable;
 		}
 
-		denvergui::render_main(denver, tex, &windowstates);
-		ImGui::Render();
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-		{
-			SDL_Window* backup_current_window = SDL_GL_GetCurrentWindow();
-			SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
-			ImGui::UpdatePlatformWindows();
-			ImGui::RenderPlatformWindowsDefault();
-			SDL_GL_MakeCurrent(backup_current_window, backup_current_context);
+		if (!no_gui) {
+			denvergui::render_main(denver, tex, &windowstates);
+			ImGui::Render();
+			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+			if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+			{
+				SDL_Window* backup_current_window = SDL_GL_GetCurrentWindow();
+				SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
+				ImGui::UpdatePlatformWindows();
+				ImGui::RenderPlatformWindowsDefault();
+				SDL_GL_MakeCurrent(backup_current_window, backup_current_context);
+			}
 		}
-
+		else {
+			glMatrixMode(GL_PROJECTION);
+			glPushMatrix();
+			glLoadIdentity();
+			glOrtho(0.0, 256.0f, 0.0f, 240.0f, -1.0f, 1.0f);
+			glMatrixMode(GL_MODELVIEW);
+			glPushMatrix();
+			glLoadIdentity();
+			glDisable(GL_LIGHTING);
+			glColor3f(1.0f, 1.0f, 1.0f);
+			glEnable(GL_TEXTURE_2D);
+			glBindTexture(GL_TEXTURE_2D, tex);
+			glBegin(GL_QUADS);
+			glTexCoord2f(0, 1); glVertex3f(0, 0, 0);
+			glTexCoord2f(0, 0); glVertex3f(0, 240, 0);
+			glTexCoord2f(1, 0); glVertex3f(256, 240, 0);
+			glTexCoord2f(1, 1); glVertex3f(256, 0, 0);
+			glEnd();
+			glDisable(GL_TEXTURE_2D);
+			glPopMatrix();
+			glMatrixMode(GL_PROJECTION);
+			glPopMatrix();
+			glMatrixMode(GL_MODELVIEW);
+		}
 		SDL_GL_SwapWindow(win);
 		denver->sync_audio();
 	});

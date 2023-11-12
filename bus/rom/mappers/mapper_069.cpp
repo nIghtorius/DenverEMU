@@ -173,6 +173,7 @@ void	fme7vrom::setbanks(fme7_state *state) {
 	switch (state->mirroring) {
 	case 0:
 		ppubus->resetpins_to_default();		// vertical.
+		ppubus->groundpin(11);
 		break;
 	case 1:
 		ppubus->resetpins_to_default();

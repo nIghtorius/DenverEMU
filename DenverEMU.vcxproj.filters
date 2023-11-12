@@ -82,6 +82,12 @@
     <Filter Include="Source Files\emulation\audio\expansion">
       <UniqueIdentifier>{9f4a3c40-40f8-44a5-beba-5e470c501342}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\emulation\3rdparty">
+      <UniqueIdentifier>{661e9f78-b93d-4e7e-8b30-98519790ed1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\emulation\3rdparty\hqx">
+      <UniqueIdentifier>{eaecbc1a-9f09-45c3-bb1f-a574f9c3c2e7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="audio\apu.h">
@@ -216,6 +222,18 @@
     <ClInclude Include="audio\expansion\sunsoft5b.h">
       <Filter>Source Files\emulation\audio\expansion</Filter>
     </ClInclude>
+    <ClInclude Include="3rdparty\hqx\HQ2x.h">
+      <Filter>Source Files\emulation\3rdparty\hqx</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\hqx\HQ3x.h">
+      <Filter>Source Files\emulation\3rdparty\hqx</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\hqx\HQx.h">
+      <Filter>Source Files\emulation\3rdparty\hqx</Filter>
+    </ClInclude>
+    <ClInclude Include="bus\rom\mappers\mapper_021-22-23-25.h">
+      <Filter>Source Files\emulation\bus\rom\mappers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DenverEMU.cpp">
@@ -331,6 +349,18 @@
     </ClCompile>
     <ClCompile Include="audio\expansion\sunsoft5b.cpp">
       <Filter>Source Files\emulation\audio\expansion</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdparty\hqx\HQ2x.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdparty\hqx\HQ3x.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdparty\hqx\HQx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="bus\rom\mappers\mapper_021-22-23-25.cpp">
+      <Filter>Source Files\emulation\bus\rom\mappers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

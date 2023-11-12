@@ -8,6 +8,7 @@
 #include "../rom/mappers/mapper_003.h"
 #include "../rom/mappers/mapper_004.h"
 #include "../rom/mappers/mapper_024026.h"
+#include "../rom/mappers/mapper_021-22-23-25.h"
 #include "../rom/mappers/mapper_069.h"
 
 // NSF
@@ -35,6 +36,7 @@ nes_header_data		parse_nes_header(nes_header_raw &ines) {
 
 
 	data.mapper = (int)mapper;
+
 	data.vs_unisystem = (ines.flags2 & INES_F2_VS_UNISYSTEM) > 0;
 	data.has_playchoice = (ines.flags2 & INES_F2_PLAYCHOICE) > 0;
 	data.has_nes20 = (ines.flags2 & INES_F2_NES20_BITPATTERN) == INES_F2_NES20_BITPATTERN;
@@ -45,6 +47,8 @@ nes_header_data		parse_nes_header(nes_header_raw &ines) {
 	data.tv_system = (ines.flags5 & INES_F5_TVSYSTEM);
 	data.has_prg_ram = (ines.flags5 & INES_F5_PRG_RAM_PRESENT) > 0;
 	data.bus_conflicts = (ines.flags5 & INES_F5_BUS_CONFLICT) > 0;
+	data.ext_mapper = mapper & (ines.flags3 & INES_F3_NES20_MAPPER_HIHI) << 12;
+	data.submapper = (ines.flags3 & INES_F3_NES20_SUBMAPPER) >> 4;
 
 	return data;
 }
@@ -297,35 +301,18 @@ void	cartridge::readstream(std::istream &nesfile, ppu *ppu_device, bus *mainbus,
 		}
 		break;
 	case 24:
-		// VRC6a
-		program = new vrc6rom();
-		character = new vrc6vrom();
-		vrc6exp = new vrc6audio();
-		vrc6exp->vrc6_mapper_026 = false;
-		audbus->register_audible_device(vrc6exp);
-		mainbus->registerdevice(vrc6exp);
-		// vrc6 linking.
-		reinterpret_cast<vrc6rom*>(program)->link_vrom(reinterpret_cast<vrc6vrom*>(character));
-		reinterpret_cast<vrc6vrom*>(character)->link_ppu_bus(&ppu_device->vram);
-		reinterpret_cast<vrc6rom*>(program)->mapper_026 = false;
-		reinterpret_cast<vrc6rom*>(program)->audiochip = vrc6exp;
-		if (has_char_data) {
-			character->set_rom_data((byte *)char_data, nes.charsize);
-		}
-		program->set_rom_data((byte *)program_data, nes.programsize);		
-		break;
 	case 26:
 		// VRC6b
 		program = new vrc6rom();
 		character = new vrc6vrom();
 		vrc6exp = new vrc6audio();
-		vrc6exp->vrc6_mapper_026 = true;
+		vrc6exp->vrc6_mapper_026 = (nes.mapper == 26);
 		audbus->register_audible_device(vrc6exp);
 		mainbus->registerdevice(vrc6exp);
 		// vrc6 linking.
 		reinterpret_cast<vrc6rom*>(program)->link_vrom(reinterpret_cast<vrc6vrom*>(character));
 		reinterpret_cast<vrc6vrom*>(character)->link_ppu_bus(&ppu_device->vram);
-		reinterpret_cast<vrc6rom*>(program)->mapper_026 = true;
+		reinterpret_cast<vrc6rom*>(program)->mapper_026 = (nes.mapper == 26);
 		reinterpret_cast<vrc6rom*>(program)->audiochip = vrc6exp;
 		if (has_char_data) {
 			character->set_rom_data((byte *)char_data, nes.charsize);
@@ -347,6 +334,64 @@ void	cartridge::readstream(std::istream &nesfile, ppu *ppu_device, bus *mainbus,
 			character->set_rom_data((byte *)char_data, nes.charsize);
 		}
 		program->set_rom_data((byte *)program_data, nes.programsize);
+		break;
+	case 21:
+	case 22:
+	case 23:
+	case 25:
+		std::cout << "Mapper 21-23, 25 detected. Enabling NES2.0 Header support\n";
+		std::cout << "Has NES 2.0 header? " << (nes.has_nes20 ? "Yes" : "No") << "\n";
+		if (nes.has_nes20) {
+			std::cout << "NES 2.0 Extended Mapper type: " << (int)nes.ext_mapper << "\n";
+			std::cout << "NES 2.0 Submapper: " << (int)nes.submapper<< "\n";
+			program = new vrc2_4_rom();
+			character = new vrc2_4_vrom();
+			bool vrc2 = false;		// assume VRC4 unless conditions down below are met.
+			// enable vrc mode for the follow combinations.
+			if ((nes.mapper == 22) && (nes.submapper == 0)) vrc2 = true;
+			if ((nes.mapper == 23) && (nes.submapper == 3)) vrc2 = true;
+			if ((nes.mapper == 25) && (nes.submapper == 3)) vrc2 = true;
+			reinterpret_cast<vrc2_4_rom*>(program)->link_vrom(reinterpret_cast<vrc2_4_vrom*>(character));
+			reinterpret_cast<vrc2_4_rom*>(program)->vrc2_mode = vrc2;
+			reinterpret_cast<vrc2_4_rom*>(program)->run_as_mapper = nes.mapper;
+			reinterpret_cast<vrc2_4_rom*>(program)->submapper = nes.submapper;		// important in NES2.0 mode.
+			reinterpret_cast<vrc2_4_rom*>(program)->compability_mode = 0;	// native mode, no compat.
+			reinterpret_cast<vrc2_4_vrom*>(character)->link_ppu_bus(&ppu_device->vram);
+			if (has_char_data) {
+				character->set_rom_data((byte *)char_data, nes.charsize);
+			}
+			program->set_rom_data((byte *)program_data, nes.programsize);
+		}
+		else {
+			std::cout << "No specific mapper information, compatibility mode enabled.\n";
+			program = new vrc2_4_rom();
+			character = new vrc2_4_vrom();
+			int compat;
+			// switch compatibility layers.
+			if (nes.mapper == 21) {
+				// emulate VRC4a, VRC4c (detect these chips during emulation)
+				compat = VRC24_COMPAT_MAPPER_21;
+			}
+			if (nes.mapper == 23) {
+				// emulate vrc2b+vrc4, VRC4e
+				compat = VRC24_COMPAT_MAPPER_23;
+			}
+			if (nes.mapper == 25) {
+				// emulate VRC2c+VRC4b, VRC4d
+				compat = VRC24_COMPAT_MAPPER_25;
+			}
+			// VRC4 linking.
+			reinterpret_cast<vrc2_4_rom*>(program)->link_vrom(reinterpret_cast<vrc2_4_vrom*>(character));
+			reinterpret_cast<vrc2_4_rom*>(program)->vrc2_mode = false;
+			reinterpret_cast<vrc2_4_rom*>(program)->run_as_mapper = nes.mapper;
+			reinterpret_cast<vrc2_4_rom*>(program)->submapper = 0;
+			reinterpret_cast<vrc2_4_rom*>(program)->compability_mode = compat;
+			reinterpret_cast<vrc2_4_vrom*>(character)->link_ppu_bus(&ppu_device->vram);
+			if (has_char_data) {
+				character->set_rom_data((byte *)char_data, nes.charsize);
+			}			
+			program->set_rom_data((byte *)program_data, nes.programsize);
+		}
 		break;
 	default:
 		std::cout << "Mapper is unknown to me" << std::endl;
