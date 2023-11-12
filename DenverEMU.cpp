@@ -269,9 +269,11 @@ int main(int argc, char *argv[])
 				break;
 			}
 		}
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplSDL2_NewFrame();
-		ImGui::NewFrame();
+		if (!no_gui) {
+			ImGui_ImplOpenGL3_NewFrame();
+			ImGui_ImplSDL2_NewFrame();
+			ImGui::NewFrame();
+		}
 		denver->prepare_frame();
 		nes_frame_tex * nesframe = denver->returnFrameAsTexture();
 		glBindTexture(GL_TEXTURE_2D, tex);
