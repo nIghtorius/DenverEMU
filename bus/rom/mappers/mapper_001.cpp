@@ -189,6 +189,7 @@ void mmc1_vrom::update_banks(mmc1_state &state) {
 		break;
 	}
 }
+
 void mmc1_vrom::is_ram(bool enable) {
 	ram_mode = enable;
 	devicestart = 0x0000;

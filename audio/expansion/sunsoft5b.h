@@ -3,7 +3,7 @@
 	Sunsoft 5B? Sound chip
 	(c) 2023 P. Santing
 
-	No Full emulation. Only one games uses this. ( Gimmick )
+	No Full emulation. Only one game uses this. ( Gimmick )
 	Uses only the pulse gens with no enveloping.
 
 	Feel free to implement everything.

@@ -31,7 +31,8 @@
 
 #define SAMPLE_RATE				44100
 #define NES_FRAMES				5
-#define MAX_BUFFER_AUDIO		773 * (SAMPLE_RATE / 44100)
+#define MAX_BUFFER_AUDIO		773 / (44100 / SAMPLE_RATE)
+#define	NES_CLOCK_SPEED_NTSC	1789777			// clockspeed in hertz
 
 // classes
 class audio_device : public bus_device {
@@ -43,12 +44,12 @@ public:
 
 class audio_player {
 private:
-	std::vector<audio_device *>	audibles;
 	SDL_AudioDeviceID aud;
 	std::int16_t buffer[MAX_BUFFER_AUDIO * 4 * NES_FRAMES];	// 4 times the "requirement"
 	void	send_sampledata_to_audio_device();
 	static void sdl_aud_callback(void * const data, std::uint8_t * const stream, const int len);
 public:
+	std::vector<audio_device *>	audibles;
 	std::vector<float> final_mux;
 	float	average_mix;
 	int		sample_rate = SAMPLE_RATE;
@@ -58,6 +59,7 @@ public:
 	bool	boostspeed = false;
 	bool	no_audio = false;
 	bool	no_expanded_audio = false;
+	bool	interpolated = true;
 
 	audio_player();
 	~audio_player();

@@ -25,7 +25,7 @@ void	vrc6_pulse::update_timers() {
 
 byte	vrc6_pulse::readsample() {
 	if (ignore_duty) return volume;
-	return vrc6_duty_cycle_osc[duty_cycle] & (1 << 15-duty_pos) ? volume : 0;
+	return vrc6_duty_cycle_osc[duty_cycle] & (1 << (15-duty_pos)) ? volume : 0;
 }
 
 // saw channel.
@@ -127,12 +127,25 @@ void	vrc6audio::write(int addr, int addr_from_base, byte data) {
 }
 
 void	vrc6audio::reset() {
-	pulse[0].duty_pos = 0;
-	pulse[1].duty_pos = 0;
-	pulse[0].enable = false;
-	pulse[1].enable = false;
+	for (int i = 0; i < 2; i++) {
+		pulse[i].duty_pos = 0;
+		pulse[i].enable = false;
+		pulse[i].freq_16x = false;
+		pulse[i].freq_256x = false;
+		pulse[i].volume = 0;
+		pulse[i].ignore_duty = false;
+		pulse[i].frequency = 0;
+		pulse[i].frequency_counter = 0;	
+	}
 	saw.enable = false;
+	saw.freq_16x = false;
+	saw.freq_256x = false;
 	saw.step = 0;
+	saw.accumulated = 0;
+	saw.accumulator_rate = 0;
+	saw.frequency = 0;
+	saw.frequency_counter = 0;
+	halt_all_osc = false;
 }
 
 float	vrc6audio::mux(byte p1, byte p2, byte sw) {
@@ -140,7 +153,7 @@ float	vrc6audio::mux(byte p1, byte p2, byte sw) {
 	fp1 = (1.0f / 24) * (float)p1;
 	fp2 = (1.0f / 24) * (float)p2;
 	fsw = (1.0f / 48) * (float)sw;
-	return (fp1 + fp2 + fsw) / 1.5f;
+	return (fp1 + fp2 + fsw) / 2.5f;
 }
 
 int		vrc6audio::rundevice(int ticks) {

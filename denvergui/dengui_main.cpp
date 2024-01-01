@@ -102,6 +102,17 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *
 				if (ImGui::MenuItem("Controllers", NULL, false)) {
 
 				}
+				if (ImGui::BeginMenu("Audio options")) {
+					if (ImGui::MenuItem("Enable sound interpolation", NULL, denver->audio->interpolated)) {
+						denver->audio->interpolated = !denver->audio->interpolated;
+					}
+					if (denver->cart->namexp) {
+						if (ImGui::MenuItem("NAMCO163 Enhanced Mixing", NULL, denver->cart->namexp->enhanced_mixer)) {
+							denver->cart->namexp->enhanced_mixer = !denver->cart->namexp->enhanced_mixer;
+						}
+					}
+					ImGui::EndMenu();
+				}
 				ImGui::EndMenu();
 			}
 			if (ImGui::BeginMenu("DebugActions")) {
@@ -112,6 +123,9 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *
 					denver->ppu_device->vram.resetpins_to_default();
 					denver->ppu_device->vram.swappins(10, 11);
 					denver->ppu_device->vram.groundpin(10);	
+				}
+				if (ImGui::MenuItem("[mainbus]Dump Device Data to console")) {
+					denver->mainbus->reportdevices();
 				}
 				ImGui::EndMenu();
 			}
@@ -147,6 +161,12 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *
 						}
 						ImGui::SeparatorText("PPU BUS");
 						for (auto device : denver->ppu_device->vbus.devices) {
+							if (ImGui::MenuItem(device->get_device_descriptor())) {
+								device->reset();
+							}
+						}
+						ImGui::SeparatorText("Audio BUS");
+						for (auto device : denver->audio->audibles) {
 							if (ImGui::MenuItem(device->get_device_descriptor())) {
 								device->reset();
 							}

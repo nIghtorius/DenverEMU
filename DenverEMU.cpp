@@ -35,6 +35,7 @@
 #define		DENVER_VERSION		"0.3 alpha"
 #undef main
 
+// defaults
 static bool		vsync_enable = false;
 static bool		no_audio = false;
 static bool		no_audio_emu = false;
@@ -42,10 +43,10 @@ static bool		no_expanded_audio = false;
 static bool		no_gui = false;
 static char		rom_load_startup[512];
 static bool		fullscreen = false;
-static int		upscaler = 0;
+static int		upscaler = 1;
 static int		width = 512;
 static int		height = 480;
-static bool		linear_filter = false;
+static bool		linear_filter = true;
 
 void process_args(int argc, char *argv[]) {
 	for (int i = 1; i < argc; i++) {

@@ -25,7 +25,7 @@ nsfrom::~nsfrom() {
 
 byte	nsfrom::read(int addr, int addr_from_base, bool onlyread) {
 	// uFirmware.
-	if ((addr >= 0x0800) && (addr <= 0x0800 + sizeof(nsfufirm))) return ufirm[addr - 0x0800];
+	if ((addr >= 0x3000) && (addr <= 0x3000 + sizeof(nsfufirm))) return ufirm[addr - 0x3000];
 
 	// custom vectors.
 	if (addr == 0xFFFA) return state.nmi_vector & 0xFF; // low byte.
@@ -58,10 +58,16 @@ void	nsfrom::write(int addr, int addr_from_base, byte data) {
 
 int		nsfrom::rundevice(int ticks) {
 	// for expansion audio.
-	// check vrc6
+	// check expansions
 	if (vrc6exp) vrc6exp->rundevice(ticks);
 	if (sunexp) sunexp->rundevice(ticks);
+	if (namexp) namexp->rundevice(ticks);
 	return ticks;
+}
+
+void	nsfrom::set_rom_data(byte *data, std::size_t size) {
+	romdata = data;
+	romsize = (int)size;
 }
 
 void	nsfrom::initialize(byte song) {
@@ -103,11 +109,11 @@ void	nsfrom::initialize(byte song) {
 	nsf_ufirmware_header		vectors;
 	memcpy(&vectors, ufirm, sizeof(nsf_ufirmware_header));
 
-	ufirm[vectors.trackselect-0x0800] = song;
-	ufirm[vectors.init - 0x0800] = state.init & 0xFF;
-	ufirm[vectors.init - 0x0800 + 1] = (state.init & 0xFF00) >> 8;
-	ufirm[vectors.play - 0x0800] = state.play & 0xFF;
-	ufirm[vectors.play - 0x0800 + 1] = (state.play & 0xFF00) >> 8;
+	ufirm[vectors.trackselect-0x3000] = song;
+	ufirm[vectors.init - 0x3000] = state.init & 0xFF;
+	ufirm[vectors.init - 0x3000 + 1] = (state.init & 0xFF00) >> 8;
+	ufirm[vectors.play - 0x3000] = state.play & 0xFF;
+	ufirm[vectors.play - 0x3000 + 1] = (state.play & 0xFF00) >> 8;
 
 	// update state.
 	state.irq_vector = vectors.irq;

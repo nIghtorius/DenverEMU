@@ -1,7 +1,7 @@
-; uFirmware (loaded on 0x0800) for the Denver NSF player.
+; uFirmware (loaded on 0x3000) for the Denver NSF player.
 ; Denver emulates a "hardware" type NSF player.
 
-base	$800
+base	$3000
 
 ; init vectors.
 

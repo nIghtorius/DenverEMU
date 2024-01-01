@@ -108,8 +108,8 @@ void	audio_player::play_audio() {
 }
 
 void	audio_player::send_sampledata_to_audio_device() {
-	float samples_to_target = 1789777 / (float)sample_rate;
-	if (boostspeed) samples_to_target = (3579554*2) / (float)sample_rate;
+	float samples_to_target = NES_CLOCK_SPEED_NTSC / (float)sample_rate;
+	if (boostspeed) samples_to_target = (NES_CLOCK_SPEED_NTSC*4) / (float)sample_rate;
 	// supersampling. final version with lowpass.
 	float	samples = 0;
 	int		outsamples = 0;
@@ -118,10 +118,14 @@ void	audio_player::send_sampledata_to_audio_device() {
 	while (samples < final_mux.size()) {
 		float sample = 0;
 		if (samples + samples_to_target > final_mux.size()) samples_to_target = final_mux.size() - samples;
-		for (int i = (int)trunc(samples); i < -1 + (int)trunc(samples + samples_to_target); i++) {
-			sample += 0.1f * (final_mux[i] - sample);
-		}
-		buffer[samples_in_buffer + outsamples] = -16384 + (int)trunc(sample * 16384);
+
+		if (interpolated) {
+			for (int i = (int)trunc(samples); i < -1 + (int)trunc(samples + samples_to_target); i++) {
+				sample += 0.1f * (final_mux[i] - sample);
+			}
+		} else sample = final_mux[(int)trunc(samples)];
+
+		buffer[samples_in_buffer + outsamples] = -32768 + (int)trunc(sample * 30000);
 		samples += samples_to_target;
 		outsamples++;
 	}

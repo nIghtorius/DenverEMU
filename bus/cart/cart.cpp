@@ -7,6 +7,7 @@
 #include "../rom/mappers/mapper_002.h"
 #include "../rom/mappers/mapper_003.h"
 #include "../rom/mappers/mapper_004.h"
+#include "../rom/mappers/mapper_007.h"
 #include "../rom/mappers/mapper_024026.h"
 #include "../rom/mappers/mapper_021-22-23-25.h"
 #include "../rom/mappers/mapper_069.h"
@@ -134,6 +135,12 @@ bool	cartridge::readstream_nsf(std::istream &nsffile, ppu *ppu_device, bus *main
 		mainbus->registerdevice(sunexp);
 		nsf_rom->sunexp = sunexp;
 	}	
+	if (nsf_hdr.expansion_audio & NSF_EXP_NAMCO163) {
+		namexp = new namco163audio();
+		audbus->register_audible_device(namexp);
+		mainbus->registerdevice(namexp);
+		nsf_rom->namexp = namexp;
+	}
 
 	// add to mainbus
 	mainbus->registerdevice(nsf_rom);
@@ -150,6 +157,9 @@ bool	cartridge::readstream_nsf(std::istream &nsffile, ppu *ppu_device, bus *main
 	memcpy(songname, nsf_hdr.songname, 32);
 	memcpy(artist, nsf_hdr.artist, 32);
 	memcpy(copyright, nsf_hdr.copyright, 32);
+
+	// disable bus conflicts.
+	m_bus->emulate_bus_conflicts(true);
 
 	nsf_mode = true;
 
@@ -248,18 +258,17 @@ void	cartridge::readstream(std::istream &nesfile, ppu *ppu_device, bus *mainbus,
 		// mmc1 linking.
 		reinterpret_cast<mmc1_rom*>(program)->link_vrom(reinterpret_cast<mmc1_vrom*>(character));
 		reinterpret_cast<mmc1_vrom*>(character)->link_ppu_bus(&ppu_device->vram);
-		program->set_rom_data((byte *)program_data, nes.programsize);
 		if (has_char_data) {
 			character->set_rom_data((byte *)char_data, nes.charsize);
 		}
 		else {
 			reinterpret_cast<mmc1_vrom*>(character)->is_ram(true);
 		}
+		program->set_rom_data((byte *)program_data, nes.programsize);
 		break;
 	case 2:
 		// UXROM
 		program = new uxrom();
-		program->set_rom_data((byte *)program_data, nes.programsize);
 		if (has_char_data) {
 			character = new vrom();
 			character->set_rom_data((byte *)char_data, nes.charsize);
@@ -268,11 +277,11 @@ void	cartridge::readstream(std::istream &nesfile, ppu *ppu_device, bus *mainbus,
 			charram = new vram();
 			character = charram;
 		}
+		program->set_rom_data((byte *)program_data, nes.programsize);
 		break;
 	case 3:
 		// CNROM
 		program = new cnrom();
-		program->set_rom_data((byte *)program_data, nes.programsize);
 		if (has_char_data) {
 			character = new cnvrom();
 			character->set_rom_data((byte *)char_data, nes.charsize);
@@ -282,15 +291,15 @@ void	cartridge::readstream(std::istream &nesfile, ppu *ppu_device, bus *mainbus,
 			charram = new vram();
 			character = charram;	// should not happen.
 		}
+		program->set_rom_data((byte *)program_data, nes.programsize);
 		break;
 	case 4:
 		// MMC3
 		program = new mmc3_rom();
 		character = new mmc3_vrom();
 		// mmc3 linking.
-		reinterpret_cast<mmc3_rom*>(program)->link_vrom(reinterpret_cast<mmc3_vrom*>(character));
 		reinterpret_cast<mmc3_vrom*>(character)->link_ppu_bus(&ppu_device->vram);
-		program->set_rom_data((byte *)program_data, nes.programsize);
+		reinterpret_cast<mmc3_rom*>(program)->link_vrom(reinterpret_cast<mmc3_vrom*>(character));
 		if (has_char_data) {
 			character->set_rom_data((byte *)char_data, nes.charsize);
 		}
@@ -299,6 +308,22 @@ void	cartridge::readstream(std::istream &nesfile, ppu *ppu_device, bus *mainbus,
 			charram = new vram();
 			character = charram;			
 		}
+		program->set_rom_data((byte *)program_data, nes.programsize);
+		break;
+	case 7:
+		// AXROM
+		program = new axrom_rom();
+		if (has_char_data) {
+			character = new vrom();
+			character->set_rom_data((byte*)char_data, nes.charsize);
+		}
+		else {
+			charram = new vram();
+			character = charram;
+		}
+		program->set_rom_data((byte *)program_data, nes.programsize);
+		reinterpret_cast<axrom_rom*>(program)->link_ppu_ram(&ppu_device->vram);
+		reinterpret_cast<axrom_rom*>(program)->update_banks();
 		break;
 	case 24:
 	case 26:
@@ -437,6 +462,11 @@ cartridge::~cartridge() {
 			m_aud->unregister_audible_device(sunexp);
 			m_bus->removedevice_select_base(sunexp->devicestart);
 			delete sunexp;
+		}
+		if (namexp) {
+			m_aud->unregister_audible_device(namexp);
+			m_bus->removedevice_select_base(namexp->devicestart);
+			delete namexp;
 		}
 	}
 	if (m_bus != NULL) {
