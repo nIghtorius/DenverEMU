@@ -8,6 +8,7 @@
 #include "../rom/mappers/mapper_003.h"
 #include "../rom/mappers/mapper_004.h"
 #include "../rom/mappers/mapper_007.h"
+#include "../rom/mappers/mapper_009.h"
 #include "../rom/mappers/mapper_024026.h"
 #include "../rom/mappers/mapper_021-22-23-25.h"
 #include "../rom/mappers/mapper_069.h"
@@ -324,6 +325,19 @@ void	cartridge::readstream(std::istream &nesfile, ppu *ppu_device, bus *mainbus,
 		program->set_rom_data((byte *)program_data, nes.programsize);
 		reinterpret_cast<axrom_rom*>(program)->link_ppu_ram(&ppu_device->vram);
 		reinterpret_cast<axrom_rom*>(program)->update_banks();
+		break;
+	case 9:
+	case 10:
+		// MMC2
+		program = new mmc2_rom();
+		character = new mmc2_vrom();
+		character->set_rom_data((byte*)char_data, nes.charsize);
+		program->set_rom_data((byte *)program_data, nes.programsize);
+		if (nes.mapper == 10)
+			reinterpret_cast<mmc2_rom*>(program)->mmc4mode = true;
+		reinterpret_cast<mmc2_vrom*>(character)->link_ppu_bus(&ppu_device->vram);
+		reinterpret_cast<mmc2_rom*>(program)->link_vrom(reinterpret_cast<mmc2_vrom*>(character));
+		reinterpret_cast<mmc2_rom*>(program)->update_banks();
 		break;
 	case 24:
 	case 26:

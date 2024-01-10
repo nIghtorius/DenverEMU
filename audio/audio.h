@@ -51,6 +51,7 @@ private:
 public:
 	std::vector<audio_device *>	audibles;
 	std::vector<float> final_mux;
+	int		de_pop_sample = 0;
 	float	average_mix;
 	int		sample_rate = SAMPLE_RATE;
 	int		samples_in_buffer = 0;

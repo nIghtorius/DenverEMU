@@ -23,12 +23,13 @@ void	audio_player::sdl_aud_callback(void * const data, std::uint8_t* const strea
 	const auto aud_player_callback = reinterpret_cast<audio_player*>(data);
 
 	// check buffer is full enough, otherwise mute.
-	SDL_memset(stream, 0, len);
+	SDL_memset(stream, aud_player_callback->de_pop_sample, len);
 
 	if (aud_player_callback->samples_in_buffer < MAX_BUFFER_AUDIO) return;
 
 	// copy data to stream.
 	memcpy(stream, (void *)&aud_player_callback->buffer[0], len);
+	aud_player_callback->de_pop_sample = aud_player_callback->buffer[(len/sizeof(uint16_t)) - 1];
 
 	// shift buffers
 	std::int16_t buf2[MAX_BUFFER_AUDIO * 4 * NES_FRAMES];	

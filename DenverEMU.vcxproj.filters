@@ -240,6 +240,9 @@
     <ClInclude Include="audio\expansion\namco163.h">
       <Filter>Source Files\emulation\audio\expansion</Filter>
     </ClInclude>
+    <ClInclude Include="bus\rom\mappers\mapper_009.h">
+      <Filter>Source Files\emulation\bus\rom\mappers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DenverEMU.cpp">
@@ -344,9 +347,6 @@
     <ClCompile Include="bus\rom\mappers\mapper_024026.cpp">
       <Filter>Source Files\emulation\bus\rom\mappers</Filter>
     </ClCompile>
-    <ClCompile Include="audio\expansion\vrc6.cpp">
-      <Filter>Source Files\emulation\audio\expansion</Filter>
-    </ClCompile>
     <ClCompile Include="bus\rom\mappers\mapper_nsf.cpp">
       <Filter>Source Files\emulation\bus\rom\mappers</Filter>
     </ClCompile>
@@ -373,6 +373,12 @@
     </ClCompile>
     <ClCompile Include="audio\expansion\namco163.cpp">
       <Filter>Source Files\emulation\audio\expansion</Filter>
+    </ClCompile>
+    <ClCompile Include="bus\rom\mappers\mapper_009.cpp">
+      <Filter>Source Files\emulation\bus\rom\mappers</Filter>
+    </ClCompile>
+    <ClCompile Include="audio\expansion\vrc6.cpp">
+      <Filter>Source Files\emulation\audio</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
