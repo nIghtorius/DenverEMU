@@ -26,6 +26,8 @@ clean:
 	rm -rvf ${BINS}
 	rm ./denver
 
+rebuild: clean denver
+
 sources:
 	@echo "Source files: ${SRCS}" 
 
