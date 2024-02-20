@@ -578,7 +578,7 @@ ppuram::ppuram() : bus_device() {
 	strncpy(get_device_descriptor(), "PPU mainram 2k", MAX_DESCRIPTOR_LENGTH);
 	ram = (byte *)malloc(0x800);
 	devicestart = 0x2000;
-	deviceend = 0x3EFF;
+	deviceend = 0x2FFF;
 	devicemask = 0x27FF;	 // per default ppu has 2k of RAM mirrored to 4k of address-space.
 }
 

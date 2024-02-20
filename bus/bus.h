@@ -57,7 +57,7 @@ class bus;
 // a device connected to a bus.
 class bus_device: public device	{	// we base the bus device off the device class.
 public:
-	bool	processlayout;			// get set to true when specific pin configuration is set. false when not ( helps speeding up bus emulation )
+	bool	processlayout = false;			// get set to true when specific pin configuration is set. false when not ( helps speeding up bus emulation )
 	int		devicestart;
 	int		deviceend;
 	int		devicemask;
@@ -81,7 +81,7 @@ private:
 public:	
 	bus();
 	~bus();
-	int		address;
+	int		address = 0;
 	// general reading/writing.
 	std::vector<bus_device *> devices;
 	void	writememory(int addr, byte data);

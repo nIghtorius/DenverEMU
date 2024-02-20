@@ -32,9 +32,8 @@ void	audio_player::sdl_aud_callback(void * const data, std::uint8_t* const strea
 	aud_player_callback->de_pop_sample = aud_player_callback->buffer[(len/sizeof(uint16_t)) - 1];
 
 	// shift buffers
-	std::int16_t buf2[MAX_BUFFER_AUDIO * 4 * NES_FRAMES];	
-	memcpy(&buf2[0], (void *)&aud_player_callback->buffer[MAX_BUFFER_AUDIO], (aud_player_callback->samples_in_buffer - MAX_BUFFER_AUDIO) * 2);
-	memcpy((void *)&aud_player_callback->buffer[0], &buf2[0], (aud_player_callback->samples_in_buffer - MAX_BUFFER_AUDIO) * 2);
+	memcpy(&aud_player_callback->move_buffer[0], (void *)&aud_player_callback->buffer[MAX_BUFFER_AUDIO], (aud_player_callback->samples_in_buffer - MAX_BUFFER_AUDIO) * 2);
+	memcpy((void *)&aud_player_callback->buffer[0], &aud_player_callback->move_buffer[0], (aud_player_callback->samples_in_buffer - MAX_BUFFER_AUDIO) * 2);
 
 	// drop length.
 	aud_player_callback->samples_in_buffer -= MAX_BUFFER_AUDIO;

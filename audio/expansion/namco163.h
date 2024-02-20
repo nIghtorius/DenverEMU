@@ -28,7 +28,7 @@
 struct n163_channel {
 	byte *ram;
 	byte ram_base = 0x40;	// set base address. (see defines)
-	float output;
+	float output = 0.0f;
 };
 
 class namco163audio : public audio_device {

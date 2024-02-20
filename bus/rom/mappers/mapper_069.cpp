@@ -101,6 +101,7 @@ void	fme7rom::write(int addr, int addr_from_base, byte data) {
 			break;
 		case FME7_CMD_MIRRORING:
 			state.mirroring = data & 0x03;
+			setbanks();
 			break;
 		case FME7_CMD_IRQCTRL:
 			state.irq_enable = (data & 0x01) > 0;

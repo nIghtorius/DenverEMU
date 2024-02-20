@@ -46,6 +46,7 @@ class audio_player {
 private:
 	SDL_AudioDeviceID aud;
 	std::int16_t buffer[MAX_BUFFER_AUDIO * 4 * NES_FRAMES];	// 4 times the "requirement"
+	std::int16_t move_buffer[MAX_BUFFER_AUDIO * 4 * NES_FRAMES]; // shift/move buffer.
 	void	send_sampledata_to_audio_device();
 	static void sdl_aud_callback(void * const data, std::uint8_t * const stream, const int len);
 public:

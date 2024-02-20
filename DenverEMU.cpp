@@ -1,7 +1,7 @@
 /*
 	Project Denver
 
-	(c) 2018 Peter Santing.
+	(c) 2018-2024 Peter Santing.
 	This is my second NES emulator. I try to get this as accurate as possible. 
 	
 */
@@ -32,7 +32,7 @@
 #include <SDL_opengl.h>
 #endif
 
-#define		DENVER_VERSION		"0.3 alpha"
+#define		DENVER_VERSION		"0.4 alpha"
 #undef main
 
 // defaults
@@ -43,10 +43,10 @@ static bool		no_expanded_audio = false;
 static bool		no_gui = false;
 static char		rom_load_startup[512];
 static bool		fullscreen = false;
-static int		upscaler = 1;
+static int		upscaler = 0;
 static int		width = 512;
 static int		height = 480;
-static bool		linear_filter = true;
+static bool		linear_filter = false;
 
 void process_args(int argc, char *argv[]) {
 	for (int i = 1; i < argc; i++) {
@@ -123,7 +123,8 @@ int main(int argc, char *argv[])
 		}
 	}
 	
-	std::cout << "Project Denver version " << DENVER_VERSION << std::endl << "(c) 2018 P. Santing aka nIghtorius" << std::endl << std::endl;
+	std::cout << "Project Denver version " << DENVER_VERSION << std::endl << "(c) 2018-2024 P. Santing aka nIghtorius" << std::endl;
+	std::cout << "Application compiled on " << __DATE__ << " at " << __TIME__ << std::endl << std::endl;
 	std::cout << "Emulator initializing.." << std::endl;
 
 	// SDL

@@ -34,16 +34,16 @@
 // classes
 
 struct ym_channel {
-	word		period;
+	word		period = 0;
 	byte		clock = 0;
-	word		period_counter;
-	byte		noise_period;
-	bool		noise_disable;
-	bool		tone_disable;
-	bool		envelope_enable;
-	byte		volume;
-	word		envelope_period;
-	byte		envelope_mode;
+	word		period_counter = 0;
+	byte		noise_period = 0;
+	bool		noise_disable = false;
+	bool		tone_disable = false;
+	bool		envelope_enable = false;
+	byte		volume = 0;
+	word		envelope_period = 0;
+	byte		envelope_mode = 0;
 	bool		pulse = false;
 	void		update_timers();
 	byte		readsample();
@@ -51,7 +51,7 @@ struct ym_channel {
 
 class sunsoftaudio : public audio_device {
 private:
-	byte		prgreg;
+	byte		prgreg = 0;
 	bool		disable_e000 = false;
 	float		mux(byte p1, byte p2, byte p3);
 public:

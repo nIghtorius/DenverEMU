@@ -190,6 +190,13 @@ void	cartridge::readstream(std::istream &nesfile, ppu *ppu_device, bus *mainbus,
 	}
 
 	std::cout << "cartridge is valid." << std::endl;
+	std::cout << "Cartridge has NSF 2.0 header? ";
+	if (nes.has_nes20) {
+		std::cout << "Yes\n";
+	}
+	else {
+		std::cout << "No\n";
+	}
 	std::cout << "Program size: " << std::dec << (int)nes.programsize << " bytes.." << std::endl;
 	if (nes.charsize > 0) {
 		std::cout << "Charrom size: " << (int)nes.charsize << " bytes.." << std::endl;
@@ -405,7 +412,7 @@ void	cartridge::readstream(std::istream &nesfile, ppu *ppu_device, bus *mainbus,
 			std::cout << "No specific mapper information, compatibility mode enabled.\n";
 			program = new vrc2_4_rom();
 			character = new vrc2_4_vrom();
-			int compat;
+			int compat = 0;
 			// switch compatibility layers.
 			if (nes.mapper == 21) {
 				// emulate VRC4a, VRC4c (detect these chips during emulation)

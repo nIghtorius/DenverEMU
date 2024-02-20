@@ -81,26 +81,26 @@ static const word dmc_table[] = {
 class pulse_generator {
 public:
 	// values.
-	bool	enabled;
+	bool	enabled = false;
 
-	byte	duty_cycle;
-	byte	duty_pos;
-	bool	envelope_loop;
-	bool	constant_volume;
-	byte	volume_envelope;
-	word	timer;
-	word	timer_counter;	// counts to 0 and resets to .timer
-	word	length_counter;
-	bool	sweep_enable;
-	byte	sweep_divider;
-	byte	sweep_div_count;
-	bool	sweep_negate;
-	byte	sweep_shift;
-	bool	sweep_reload;
-	bool	envelope_reload;
-	byte	envelope_count;
-	byte	envelope_out;
-	bool	pulse2;
+	byte	duty_cycle = 0;
+	byte	duty_pos = 0;
+	bool	envelope_loop = false;
+	bool	constant_volume = false;
+	byte	volume_envelope= 0;
+	word	timer = 0;
+	word	timer_counter = 0;	// counts to 0 and resets to .timer
+	word	length_counter = 0;
+	bool	sweep_enable = false;
+	byte	sweep_divider = 0;
+	byte	sweep_div_count = 0;
+	bool	sweep_negate = false;
+	byte	sweep_shift = 0;
+	bool	sweep_reload = false;
+	bool	envelope_reload = false;
+	byte	envelope_count = 0;
+	byte	envelope_out = 0;
+	bool	pulse2 = false;
 	// functions
 	void	update_timers();
 	void	half_clock();
@@ -113,16 +113,16 @@ public:
 class triangle_generator {
 public:
 	// values
-	bool	enabled;
+	bool	enabled = false;
 
-	bool	triangle_length_loop;
-	word	length_counter;	
-	byte	triangle_length;
-	byte	triangle_length_counter;
-	bool	triangle_counter_reload;
-	word	timer;
-	word	timer_counter;
-	byte	sequencer;
+	bool	triangle_length_loop = false;
+	word	length_counter = 0;
+	byte	triangle_length = 0;
+	byte	triangle_length_counter = 0;
+	bool	triangle_counter_reload = false;
+	word	timer = 0;
+	word	timer_counter = 0;
+	byte	sequencer = 0;
 	// functions
 	void	update_timers();
 	void	half_clock();
@@ -133,18 +133,18 @@ public:
 class noise_generator {
 public:
 	// values
-	bool	enabled;
+	bool	enabled = false;
 
-	bool	envelope_loop;
-	bool	constant_volume;
-	byte	volume_envelope;
-	byte	envelope_out;
-	bool	envelope_reload;
-	byte	envelope_count;
-	bool	noise_loop;
-	byte	noise_period;
-	word	length_counter;
-	word	timer_counter;
+	bool	envelope_loop = false;
+	bool	constant_volume = false;
+	byte	volume_envelope = 0;
+	byte	envelope_out = 0;
+	bool	envelope_reload = false;
+	byte	envelope_count = 0;
+	bool	noise_loop = false;
+	byte	noise_period = 0;
+	word	length_counter = 0;
+	word	timer_counter = 0;
 	word	noise_shift_reg = 0x01;
 	// functions
 	void	update_timers();
@@ -157,25 +157,25 @@ public:
 class dmc_generator {
 public:
 	// values
-	bool	enabled;
+	bool	enabled = false;
 
-	bool	irq_enable;
+	bool	irq_enable = false;
 	bool	irq_asserted = false;
-	bool	dmc_loop;
-	word	rate;
-	byte	direct_out;
-	word	sample_addr;
-	word	sample_addr_counter;
-	word	sample_length_load;
-	word	sample_length;
-	word	count;
-	byte	sample_buffer;
-	bool	sample_buffer_ready;
-	bool	silent;
-	byte	sample_shift_register;
-	byte	bits_in_sample_remaining;
+	bool	dmc_loop = false;
+	word	rate = 0;
+	byte	direct_out = 0;
+	word	sample_addr = 0;
+	word	sample_addr_counter = 0;
+	word	sample_length_load = 0;
+	word	sample_length = 0;
+	word	count = 0;
+	byte	sample_buffer = 0;
+	bool	sample_buffer_ready = false;
+	bool	silent = false;
+	byte	sample_shift_register = 0;
+	byte	bits_in_sample_remaining = 0;
 
-	bus					*mainbus;
+	bus					*mainbus = nullptr;
 
 	// functions
 	byte	readsample();
@@ -201,7 +201,7 @@ private:
 
 	int					sample_buffer_counter = 0;
 
-	int					ldm;
+	int					ldm = 0;
 
 	float				mux(byte p1, byte p2, byte tri, byte noi, byte dmc);
 

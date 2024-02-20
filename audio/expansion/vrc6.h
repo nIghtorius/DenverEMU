@@ -19,35 +19,35 @@ static const byte vrc6_duty_cycle_osc[] = {
 // classes
 
 struct vrc6_pulse {
-	bool		enable;
-	bool		freq_16x;
-	bool		freq_256x;	// 256x overrides 16x
-	byte		volume;
-	byte		duty_cycle;
-	byte		duty_pos;
-	bool		ignore_duty;
-	word		frequency;
-	word		frequency_counter;
+	bool		enable = false;
+	bool		freq_16x = false;
+	bool		freq_256x = false;	// 256x overrides 16x
+	byte		volume = 0;
+	byte		duty_cycle = 0;
+	byte		duty_pos = 0;
+	bool		ignore_duty = false;
+	word		frequency = 0;
+	word		frequency_counter = 0;
 	void		update_timers();
 	byte		readsample();
 };
 
 struct vrc6_saw {
-	bool		enable;
-	bool		freq_16x;
-	bool		freq_256x;	// 256x overrides 16x
-	byte		accumulator_rate;
-	byte		accumulated;
-	word		frequency;
-	word		frequency_counter;
-	byte		step;
+	bool		enable = false;
+	bool		freq_16x = false;
+	bool		freq_256x = false;	// 256x overrides 16x
+	byte		accumulator_rate = 0;
+	byte		accumulated = 0;
+	word		frequency = 0;
+	word		frequency_counter = 0;
+	byte		step = 0;
 	void		update_timers();
 	byte		readsample();
 };
 
 class vrc6audio : public audio_device {
 private:
-	bool		halt_all_osc;
+	bool		halt_all_osc = false;
 	float		mux(byte p1, byte p2, byte sw);
 
 public:

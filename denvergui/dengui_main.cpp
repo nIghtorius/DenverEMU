@@ -118,6 +118,7 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *
 			if (ImGui::BeginMenu("DebugActions")) {
 				if (ImGui::MenuItem("Switch PPU to VER")) {
 					denver->ppu_device->vram.resetpins_to_default();
+					denver->ppu_device->vram.groundpin(11);
 				}
 				if (ImGui::MenuItem("Switch PPU to HORIZ")) {
 					denver->ppu_device->vram.resetpins_to_default();

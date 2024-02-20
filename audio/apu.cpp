@@ -232,6 +232,7 @@ int		apu::rundevice(int ticks) {
 		ldm = dmc.enabled ? dmc.readsample() : ldm;
 
 		sample_buffer.push_back(mux(p1, p2, tr, no, ldm));
+		//sample_buffer.push_back(mux(0,0,0,0, ldm));
 
 		framecycle++;
 		audioframes++;
