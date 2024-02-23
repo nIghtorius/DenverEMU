@@ -99,6 +99,9 @@ int cpu2a03_fast::rundevice(int ticks) {
 int	cpu2a03_fast::rundevice_internal (int ticks) {
 	int	actualticks = 0;
 
+	// stop processing when in error_state
+	if (error_state) return ticks;
+
 	// log state?
 	if (cpu_log) write_cpu_log();
 
@@ -135,6 +138,7 @@ int	cpu2a03_fast::rundevice_internal (int ticks) {
 	}
 
 	byte opcode = devicebus->readmemory(regs.pc);
+
 	regs.pc++;
 	switch (opcode) {
 		case 0x00: {	// BRK instruction
@@ -163,7 +167,7 @@ int	cpu2a03_fast::rundevice_internal (int ticks) {
 			actualticks += 8;
 			break;
 		}
-		case 0x04: case 0x44: case 0x64: {
+		case 0x04: case 0x44: case 0x64: { // NOP B:2 C:3
 			regs.pc++;
 			actualticks += 3;
 			break;
@@ -211,8 +215,11 @@ int	cpu2a03_fast::rundevice_internal (int ticks) {
 			break;
 		}
 		case 0x0c: case 0x1c: case 0x3c: case 0x5c: case 0x7c: case 0xdc: case 0xfc: {
+			// NOP B:3 C:4
 			regs.pc += 2;
 			actualticks += 4;
+			if (opcode != 0x0c)
+				if ((_mem_absolute & 0xFF00) != (_mem_absolute_x & 0xFF00)) actualticks++;
 			break;
 		}
 		case 0x0d: {
@@ -264,7 +271,7 @@ int	cpu2a03_fast::rundevice_internal (int ticks) {
 			actualticks += 8;
 			break;			
 		}
-		case 0x14: case 0x34: case 0x54: case 0x74: case 0xd4: case 0xf4: {
+		case 0x14: case 0x34: case 0x54: case 0x74: case 0xd4: case 0xf4: { // NOP B:2 C:4
 			regs.pc++;
 			actualticks += 4;
 			break;
@@ -301,7 +308,9 @@ int	cpu2a03_fast::rundevice_internal (int ticks) {
 			break;
 		}
 		case 0x1a: {
-			error_state = true;
+			// NOP cycle 2
+			actualticks += 2;
+			//error_state = true;
 			break;
 		}
 		case 0x1b: {
@@ -478,8 +487,9 @@ int	cpu2a03_fast::rundevice_internal (int ticks) {
 			if ((_mem_absolute & 0xFF00) != (_mem_absolute_y & 0xFF00)) actualticks++;
 			break;
 		}
-		case 0x3a: {
-			error_state = true;
+		case 0x3a: { // NOP C:2
+			actualticks += 2;
+			//error_state = true;
 			break;
 		}
 		case 0x3b: {
@@ -656,8 +666,9 @@ int	cpu2a03_fast::rundevice_internal (int ticks) {
 			if ((_mem_absolute & 0xFF00) != (_mem_absolute_y & 0xFF00)) actualticks++;
 			break;
 		}
-		case 0x5a: {
-			error_state = true;
+		case 0x5a: { // NOP C:2
+			actualticks += 2;
+			//error_state = true;
 			break;
 		}
 		case 0x5b: {
@@ -843,8 +854,9 @@ int	cpu2a03_fast::rundevice_internal (int ticks) {
 			regs.pc += 2;
 			break;
 		}
-		case 0x7a: {
-			error_state = true;
+		case 0x7a: { // NOP C:2
+			//error_state = true;
+			actualticks += 2;
 			break;
 		}
 		case 0x7b: {
@@ -874,7 +886,7 @@ int	cpu2a03_fast::rundevice_internal (int ticks) {
 			actualticks += 7;
 			break;
 		}
-		case 0x80: case 0x82: case 0x89: case 0xc2: case 0xe2: {
+		case 0x80: case 0x82: case 0x89: case 0xc2: case 0xe2: { // NOP B:2 C:2
 			regs.pc++;
 			actualticks += 2;
 			break;
@@ -1023,9 +1035,21 @@ int	cpu2a03_fast::rundevice_internal (int ticks) {
 			error_state = true;
 			break;
 		}
-		case 0x9c: {	// keeps failing 07-abs_xy.nes test, everything documented tells me this is right.
+		case 0x9c: {
 			byte hb = (_mem_absolute >> 8);
-			devicebus->writememory(_mem_absolute_x, regs.y & (hb + 1));
+			hb++;
+			// check for boundary cross.
+			word xadr = _mem_absolute_x;
+			if ((_mem_absolute & 0xFF00) != (_mem_absolute_x & 0xFF00)) {
+				// something weird happens too when a page boundary occurs.
+				// value of the y register that effecting the high address line to be written.
+				// this is the reason why it failed the 07-abs_xy.nes test.
+				// thanking the video of "Official USB-NES Channel" on YT for deeply explaining
+				// the behaiviour of the SHY $abs, X opcode.
+				xadr = _mem_absolute & 0x00FF | ((regs.y & hb) << 8);
+				xadr += regs.x;
+			}
+			devicebus->writememory(xadr, regs.y & hb);
 			regs.pc += 2;
 			actualticks += 5;
 			break;
@@ -1036,9 +1060,17 @@ int	cpu2a03_fast::rundevice_internal (int ticks) {
 			actualticks += 5;
 			break;
 		}
-		case 0x9e: {	// keeps failing 07 - abs_xy.nes test, everything documented tells me this is right.
+		case 0x9e: {
 			byte hb = (_mem_absolute >> 8);
-			devicebus->writememory(_mem_absolute_y, regs.x & (hb + 1));
+			hb++;
+			word xadr = _mem_absolute_y;
+			if ((_mem_absolute & 0xFF00) != (_mem_absolute_y & 0xFF00)) {
+				// explaination. see opcode: 9c
+				// essentially the same but x and y registers swapped.
+				xadr = _mem_absolute & 0x00FF | ((regs.x & hb) << 8);
+				xadr += regs.y;
+			}
+			devicebus->writememory(xadr, regs.x & hb);
 			regs.pc += 2;
 			actualticks += 5;
 			break;
@@ -1420,8 +1452,9 @@ int	cpu2a03_fast::rundevice_internal (int ticks) {
 			if ((_mem_absolute & 0xFF00) != (_mem_absolute_y & 0xFF00)) actualticks++;
 			break;
 		}
-		case 0xda: {
-			error_state = true;
+		case 0xda: { //NOP C:2
+			actualticks += 2;
+			//error_state = true;
 			break;
 		}
 		case 0xdb: {
@@ -1600,8 +1633,9 @@ int	cpu2a03_fast::rundevice_internal (int ticks) {
 			if ((_mem_absolute & 0xFF00) != (_mem_absolute_y & 0xFF00)) actualticks++;
 			break;
 		}
-		case 0xfa: {
-			error_state = true;
+		case 0xfa: { // NOP C:2
+			actualticks += 2;
+			//error_state = true;
 			break;
 		}
 		case 0xfb: {
@@ -1633,6 +1667,9 @@ int	cpu2a03_fast::rundevice_internal (int ticks) {
 			actualticks += 7;
 			break;
 		}
+	}
+	if (error_state) {
+		last_opcode = opcode;
 	}
 	return actualticks * tick_rate;
 }

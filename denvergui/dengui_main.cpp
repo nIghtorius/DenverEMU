@@ -102,6 +102,18 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *
 				if (ImGui::MenuItem("Controllers", NULL, false)) {
 
 				}
+				if (ImGui::BeginMenu("Upscalers")) {
+					if (ImGui::MenuItem("No upscaling", NULL, (denver->frame_upscaler == 0))) {
+						denver->frame_upscaler = 0;
+					}
+					if (ImGui::MenuItem("Use HQ2X filter", NULL, (denver->frame_upscaler == 1))) {
+						denver->frame_upscaler = 1;
+					}
+					if (ImGui::MenuItem("Use HQ3X filter", NULL, (denver->frame_upscaler == 2))) {
+						denver->frame_upscaler = 2;
+					}
+					ImGui::EndMenu();
+				}
 				if (ImGui::BeginMenu("Audio options")) {
 					if (ImGui::MenuItem("Enable sound interpolation", NULL, denver->audio->interpolated)) {
 						denver->audio->interpolated = !denver->audio->interpolated;

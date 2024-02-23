@@ -79,6 +79,8 @@ public:
 	cpuregs	regs;
 
 	bool	error_state;
+	byte	last_opcode;
+
 	cpu2a03_fast();
 	~cpu2a03_fast();
 	int		rundevice(int ticks);

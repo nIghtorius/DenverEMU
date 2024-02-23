@@ -326,13 +326,6 @@ int		ppu::rundevice(int ticks) {
 					if (ix > 7) pattern_address += 8;
 					pattern_address += (ltile << 4) + ix;
 					if (pattern_address >= 0x1FF8) pattern_address = 0x1FF8; //clamp it.
-					if (ppu_internal.n > 7) {
-						// should not happen, but happens on the linux port. reason unknown, windows version never happens.
-						std::cout << "internal.n overflowed n>7, value n = " << std::dec << (int)ppu_internal.n << " @ cycle step: " << (int)cycle << "\n";
-						std::cout << "dump file: ppu_internal_regs_state.dmp written\n";
-						write_state_dump ("ppu_internal_regs_state.dmp");
-						exit(-1);
-					}
 					ppu_internal.shiftreg_spr_pattern_hi[ppu_internal.n] = vbus.readmemory(pattern_address + 8);
 					ppu_internal.shiftreg_spr_counter[ppu_internal.n] = ppu_internal.secoam[ppu_internal.n].x;
 					ppu_internal.n++;	// eval to next sprite in seconday oam. this will never go over 7, because eval will stop earlier.

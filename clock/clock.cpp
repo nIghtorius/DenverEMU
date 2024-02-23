@@ -114,7 +114,8 @@ void fastclock::run() {
 		if (reinterpret_cast<package_2a03*>(cpudevice)->cpu_2a03.error_state) {
 			package_2a03 *i2a03 = reinterpret_cast<package_2a03*>(cpudevice);
 			std::cout << "CPU has run into a invalid OP.\n";
-			std::cout << "CPU crashed @ PC = 0x" << std::hex << (int)i2a03->cpu_2a03.regs.pc << "\n\n";
+			std::cout << "CPU crashed @ PC = 0x" << std::hex << (int)i2a03->cpu_2a03.regs.pc << "\n";
+			std::cout << "CPU opcode: " << (int)i2a03->cpu_2a03.last_opcode << "\n\n";
 			std::cout << "Disassembly stack trace:\n";
 			std::cout << "------------------------\n";
 			i2a03->cpu_2a03.machine_code_trace(i2a03->cpu_2a03.regs.pc - 0x10, i2a03->cpu_2a03.regs.pc + 0x03, i2a03->cpu_2a03.regs.pc);

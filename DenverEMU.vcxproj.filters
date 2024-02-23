@@ -378,7 +378,7 @@
       <Filter>Source Files\emulation\bus\rom\mappers</Filter>
     </ClCompile>
     <ClCompile Include="audio\expansion\vrc6.cpp">
-      <Filter>Source Files\emulation\audio</Filter>
+      <Filter>Source Files\emulation\audio\expansion</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
