@@ -42,6 +42,11 @@ private:
 	nes_frame_tex		frame;
 	bool				quit = false;
 
+	// postprocessors.
+	hq2x				_hq2x;
+	hq3x				_hq3x;
+
+
 public:
 	package_2a03		* nes_2a03;
 	ppu					* ppu_device;

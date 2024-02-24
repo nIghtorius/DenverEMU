@@ -57,6 +57,8 @@ public:
 	void		 link_vrom(vrc6vrom *rom);
 	virtual	void reset();
 	virtual void set_rom_data(byte *data, std::size_t size);
+	virtual batterybackedram* get_battery_backed_ram();
+	virtual void	set_battery_backed_ram(byte* data, std::size_t size);
 };
 
 class vrc6vrom : public vrom {

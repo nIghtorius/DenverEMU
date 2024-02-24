@@ -9,6 +9,9 @@ rom::rom() {
 	devicestart = 0x8000;
 	deviceend = 0xFFFF;
 	devicemask = 0xBFFF;	// 1011 1111 1111 1111
+	// create space for SRAM file name.
+	sramfile = (char*)malloc(SRAM_MAX_FILE_NAME);
+	strncpy(sramfile, "", SRAM_MAX_FILE_NAME);
 }
 
 rom::~rom() {
@@ -19,6 +22,18 @@ void rom::set_rom_data(byte *data, std::size_t size) {
 	this->romsize = (int)size;
 	// extra logic for 16kB / 32kB roms.
 	if (size == 16384) devicemask = 0xBFFF; else devicemask = 0xFFFF;
+}
+
+char* rom::get_sram_filename() {
+	return sramfile;
+}
+
+batterybackedram* rom::get_battery_backed_ram() {
+	return NULL; // does not have battery packed ram.
+}
+
+void rom::set_battery_backed_ram(byte* data, std::size_t size) {
+	// do nothing.
 }
 
 void rom::write(int addr, int addr_from_base, byte data) {

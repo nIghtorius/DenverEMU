@@ -88,6 +88,8 @@ public:
 	virtual byte	read(int addr, int addr_from_base, bool onlyread = false);
 	virtual void	write(int addr, int addr_from_base, byte data);
 	virtual void	set_rom_data(byte *data, std::size_t size);
+	virtual batterybackedram* get_battery_backed_ram();
+	virtual void	set_battery_backed_ram(byte* data, std::size_t size);
 	void			link_vrom(mmc1_vrom *vrom);
 	void			update_control();
 	void			update_banks();

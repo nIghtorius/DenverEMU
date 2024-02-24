@@ -36,6 +36,8 @@ public:
 	virtual void	set_rom_data(byte *data, std::size_t size);
 	void			link_vrom(mmc2_vrom *);
 	void			update_banks();
+	virtual batterybackedram* get_battery_backed_ram();
+	virtual void	set_battery_backed_ram(byte* data, std::size_t size);
 };
 
 class mmc2_vrom : public vrom {

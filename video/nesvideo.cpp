@@ -10,11 +10,14 @@ nesvideo::~nesvideo() {
 	free(displaybuffer); // free used ram.
 }
 
-void * nesvideo::getFrame() {
-	return displaybuffer;
+Image* nesvideo::getFrame() {
+	outImage.image = displaybuffer;
+	outImage.size.width = 256;
+	outImage.size.height = 240;
+	return &outImage;
 }
 
-postprocessedImage* nesvideo::getPostImage() {
+Image* nesvideo::getPostImage() {
 	// processes all postprocessors.
 	int w = 256;
 	int h = 240;
@@ -22,7 +25,7 @@ postprocessedImage* nesvideo::getPostImage() {
 
 	for (postprocessor* ip : postprocessors) {
 		ip->process_image((uint32_t*)_image, w, h);
-		postprocessedImage* image = ip->getImage();
+		Image* image = ip->getImage();
 		// get what we need from it and dispose it.
 		_image = image->image;
 		w = image->size.width;
@@ -31,7 +34,10 @@ postprocessedImage* nesvideo::getPostImage() {
 	}
 
 	// return final postprocessedImage.
-	return new postprocessedImage(_image, imageSize(w, h));
+	outImage.image = _image;
+	outImage.size.width = w;
+	outImage.size.height = h;
+	return &outImage;
 }
 
 void nesvideo::process_ppu_image(std::uint16_t * ppu_image) {
@@ -97,8 +103,8 @@ void postprocessor::process_image(std::uint32_t* pc_image, int width, int height
 	
 }
 
-postprocessedImage* postprocessor::getImage() {
-	return new postprocessedImage((void*)renderedimage, imageSize(newWidth, newHeight));
+Image* postprocessor::getImage() {
+	return new Image((void*)renderedimage, imageSize(newWidth, newHeight));
 }
 
 imageSize postprocessor::getDimensions() {

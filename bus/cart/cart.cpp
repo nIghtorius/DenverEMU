@@ -107,7 +107,8 @@ bool	cartridge::readstream_nsf(std::istream &nsffile, ppu *ppu_device, bus *main
 	// load program data.
 	byte * program_data = (byte*)malloc(prealloc + program_size);
 
-	nsffile.read((char*)&program_data[prealloc], program_size);
+	if (program_data != nullptr)
+		nsffile.read((char*)&program_data[prealloc], program_size);
 
 	// NSF is loaded.
 	// build a NSF cartridge.
@@ -167,7 +168,7 @@ bool	cartridge::readstream_nsf(std::istream &nsffile, ppu *ppu_device, bus *main
 	return true;
 }
 
-void	cartridge::readstream(std::istream &nesfile, ppu *ppu_device, bus *mainbus, audio_player *audbus) {
+void	cartridge::readstream(std::istream &nesfile, ppu *ppu_device, bus *mainbus, audio_player *audbus, const char *orgfilename) {
 
 	program = NULL;
 	character = NULL;
@@ -438,7 +439,32 @@ void	cartridge::readstream(std::istream &nesfile, ppu *ppu_device, bus *mainbus,
 		break;
 	}
 
-	std::cout << "Mapper devicename: " << program->get_device_descriptor() << "\n";
+	if (program != nullptr)
+		std::cout << "Mapper devicename: " << program->get_device_descriptor() << "\n";
+
+	// load srm file.
+	if ((orgfilename != nullptr) && (nes.has_battery) && (program != nullptr)) {
+		std::string srmfile;
+		srmfile += orgfilename;
+		srmfile += ".srm";
+		// we have a generated filename. assign it to the loaded program rom.
+		strncpy(program->get_sram_filename(), srmfile.c_str(), SRAM_MAX_FILE_NAME);
+		std::ifstream srm(srmfile.c_str(), std::ios::binary | std::ios::in);
+		if (srm.good()) {
+			// load the file.
+			srm.seekg(0, std::ios::end);
+			size_t srm_size = srm.tellg();
+			srm.seekg(0, std::ios::beg);
+			byte* sram = (byte*)malloc(srm_size);
+			if (sram != NULL) srm.read((char*)sram, srm_size);
+			// update cart.
+			if (sram != NULL) program->set_battery_backed_ram(sram, srm_size);
+			std::cout << "Battery packed SRAM loaded from: " << srmfile.c_str() << "\n";
+		}
+	}
+	
+	if (program != nullptr)
+		program->battery = nes.has_battery;
 
 	// link roms..
 	mainbus->registerdevice(program);
@@ -446,7 +472,6 @@ void	cartridge::readstream(std::istream &nesfile, ppu *ppu_device, bus *mainbus,
 
 	// reset vector.
 	std::cout << "ROM Reset vector: 0x" << std::hex << (int)mainbus->readmemory_as_word(0xfffc) << std::endl;
-
 
 	// link busses.
 	m_aud = audbus;
@@ -456,7 +481,7 @@ void	cartridge::readstream(std::istream &nesfile, ppu *ppu_device, bus *mainbus,
 
 cartridge::cartridge(std::istream &stream, ppu *ppu_device, bus *mainbus, audio_player *audbus) {
 	std::cout << "Loading cartridge from memory 0x" << std::hex << (std::uint64_t)&stream << std::endl;
-	readstream(stream, ppu_device, mainbus, audbus);
+	readstream(stream, ppu_device, mainbus, audbus, nullptr);
 }
 
 cartridge::cartridge(const char *filename, ppu *ppu_device, bus *mainbus, audio_player *audbus) {
@@ -464,7 +489,7 @@ cartridge::cartridge(const char *filename, ppu *ppu_device, bus *mainbus, audio_
 	// load & parse NES file.
 	std::ifstream	nesfile;
 	nesfile.open(filename, std::ios::binary | std::ios::in);
-	readstream(nesfile, ppu_device, mainbus, audbus);
+	readstream(nesfile, ppu_device, mainbus, audbus, filename);
 	nesfile.close();
 }
 
@@ -487,8 +512,19 @@ cartridge::~cartridge() {
 		}
 	}
 	if (m_bus != NULL) {
-		if (program != NULL)
-		m_bus->removedevice_select_base(program->devicestart);
+		if (program != NULL) {
+			m_bus->removedevice_select_base(program->devicestart);
+			// has it a SRAM file assigned?
+			char* srmfile = program->get_sram_filename();
+			if (strlen(srmfile) > 0) {
+				std::cout << "Writing battery backed ram to: " << srmfile << "\n";
+				std::ofstream srm(srmfile, std::ios::binary | std::ios::out);
+				batterybackedram* ramtowrite = program->get_battery_backed_ram();
+				srm.write((char*)ramtowrite->data, ramtowrite->size);
+				srm.close();
+				free(ramtowrite);
+			}
+		}
 	}
 	if (l_ppu != NULL) {
 		l_ppu->set_char_rom(NULL);

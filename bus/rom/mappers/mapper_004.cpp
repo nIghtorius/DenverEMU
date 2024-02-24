@@ -16,6 +16,15 @@ mmc3_rom::~mmc3_rom() {
 	free(prgram6000);
 }
 
+batterybackedram* mmc3_rom::get_battery_backed_ram() {
+	return new batterybackedram((byte*)prgram6000, 8192);
+}
+
+void mmc3_rom::set_battery_backed_ram(byte* data, std::size_t size) {
+	if (size > 8192) return;
+	memcpy(prgram6000, data, size);
+}
+
 byte	mmc3_rom::read(int addr, int addr_from_base, bool onlyread)
 {
 	if ((addr >= 0x6000) && (addr <= 0x7fff)) {

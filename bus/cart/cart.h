@@ -119,7 +119,7 @@ private:
 	vrc6audio *vrc6exp = nullptr;
 	sunsoftaudio *sunexp = nullptr;
 
-	void	readstream(std::istream &stream, ppu *ppu_device, bus *mainbus, audio_player *audbus);
+	void	readstream(std::istream &stream, ppu *ppu_device, bus *mainbus, audio_player *audbus, const char *orgfilename);
 	bool	readstream_nsf(std::istream &stream, ppu *ppu_device, bus *mainbus, audio_player *audbus);
 public:
 	namco163audio *namexp = nullptr;

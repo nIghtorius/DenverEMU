@@ -155,6 +155,16 @@ vrc2_4_rom::~vrc2_4_rom() {
 	free(ram);
 }
 
+batterybackedram* vrc2_4_rom::get_battery_backed_ram() {
+	return new batterybackedram((byte*)ram, 8192);
+}
+
+void vrc2_4_rom::set_battery_backed_ram(byte* data, std::size_t size) {
+	if (size > 8192) return;
+	memcpy(ram, data, size);
+}
+
+
 int		vrc2_4_rom::rundevice(int ticks) {
 	if (!state.irq_enabled) return ticks;
 	if (vrc2_mode) return ticks; // vrc2(x) does not have an IRQ counter.

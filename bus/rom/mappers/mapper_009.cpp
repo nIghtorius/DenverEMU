@@ -25,6 +25,15 @@ mmc2_rom::~mmc2_rom() {
 	free(prgram6000);
 }
 
+batterybackedram* mmc2_rom::get_battery_backed_ram() {
+	return new batterybackedram((byte*)prgram6000, 8192);
+}
+
+void mmc2_rom::set_battery_backed_ram(byte* data, std::size_t size) {
+	if (size > 8192) return;
+	memcpy(prgram6000, data, size);
+}
+
 byte	mmc2_rom::read(int addr, int addr_from_base, bool onlyread) {
 	if ((addr >= 0x6000) && (addr <= 0x7FFF)) return prgram6000[addr - 0x6000];
 	if (!mmc4mode) {

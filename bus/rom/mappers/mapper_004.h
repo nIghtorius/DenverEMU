@@ -63,6 +63,8 @@ public:
 	void			link_vrom(mmc3_vrom *);
 	void			write_banks(byte data);
 	void			update_banks();
+	virtual batterybackedram* get_battery_backed_ram();
+	virtual void	set_battery_backed_ram(byte* data, std::size_t size);
 };
 
 class mmc3_vrom : public vrom {

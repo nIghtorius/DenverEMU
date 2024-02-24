@@ -15,6 +15,15 @@ mmc1_rom::~mmc1_rom() {
 	free(mmc1ram);
 }
 
+batterybackedram* mmc1_rom::get_battery_backed_ram() {
+	return new batterybackedram((byte*)mmc1ram, 8192);
+}
+
+void mmc1_rom::set_battery_backed_ram(byte* data, std::size_t size) {
+	if (size > 8192) return;
+	memcpy(mmc1ram, data, size);
+}
+
 byte mmc1_rom::read(int addr, int addr_from_base, bool onlyread)
 {
 	if ((addr >= 0x6000) && (addr <= 0x7FFF)) return mmc1ram[addr - 0x6000];

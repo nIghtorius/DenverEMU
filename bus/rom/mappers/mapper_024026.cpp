@@ -25,6 +25,15 @@ vrc6rom::~vrc6rom() {
 	free(ram);
 }
 
+batterybackedram* vrc6rom::get_battery_backed_ram() {
+	return new batterybackedram((byte*)ram, 8192);
+}
+
+void vrc6rom::set_battery_backed_ram(byte* data, std::size_t size) {
+	if (size > 8192) return;
+	memcpy(ram, data, size);
+}
+
 void	vrc6rom::reset() {
 	memset(&state, 0x00, sizeof(vrc6_state));
 }

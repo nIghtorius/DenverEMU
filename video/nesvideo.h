@@ -28,11 +28,25 @@ static const std::uint8_t ntscpalette[] = {
 };
 
 class postprocessor;
-struct postprocessedImage;
+
+struct imageSize {
+	int width;
+	int height;
+	constexpr imageSize() : width(0), height(0) {}
+	constexpr imageSize(int w, int h) : width(w), height(h) {}
+};
+
+struct Image {
+	void* image;
+	imageSize size;
+	constexpr Image() : image(nullptr), size(imageSize()) {}
+	constexpr Image(void* _image, imageSize _size) : image(_image), size(_size) {}
+};
 
 class nesvideo {
 private:
 	std::uint32_t* displaybuffer;	// 32bit
+	Image outImage;
 	std::vector<postprocessor*> postprocessors;
 
 public:
@@ -43,27 +57,13 @@ public:
 	void add_overscan_borders();
 
 	// frame getters
-	void* getFrame();		// gets a void pointer to a PC compatible (32bits) image.
-	postprocessedImage* getPostImage();
+	Image* getFrame();		// gets a void pointer to a PC compatible (32bits) image.
+	Image* getPostImage();
 
 	// register postprocessors.
 	void RegisterPostProcessor(postprocessor* processor);
 	void RemovePostProcessor(postprocessor* processor);
 	void ClearPostProcessors();
-};
-
-struct imageSize {
-	int width;
-	int height;
-	constexpr imageSize() : width(0), height(0) {}
-	constexpr imageSize(int w, int h) : width(w), height(h) {}
-};
-
-struct postprocessedImage {
-	void* image;
-	imageSize size;
-	constexpr postprocessedImage() : image(nullptr), size(imageSize()) {}
-	constexpr postprocessedImage(void* _image, imageSize _size) : image(_image), size(_size) {}
 };
 
 class postprocessor {
@@ -78,5 +78,5 @@ public:
 	virtual void process_image(std::uint32_t* pc_image, int width, int height);
 	virtual imageSize getDimensions();
 	char* getName();
-	postprocessedImage * getImage();
+	Image * getImage();
 };
