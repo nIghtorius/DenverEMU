@@ -217,6 +217,7 @@
     <ClInclude Include="package\2a03.h" />
     <ClInclude Include="video\debug_renderer.h" />
     <ClInclude Include="video\nesvideo.h" />
+    <ClInclude Include="video\postprocessing\hqxpost.h" />
     <ClInclude Include="video\ppu.h" />
   </ItemGroup>
   <ItemGroup>
@@ -261,6 +262,7 @@
     <ClCompile Include="package\2a03.cpp" />
     <ClCompile Include="video\debug_renderer.cpp" />
     <ClCompile Include="video\nesvideo.cpp" />
+    <ClCompile Include="video\postprocessing\hqxpost.cpp" />
     <ClCompile Include="video\ppu.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -9,6 +9,7 @@
 #pragma once
 #include "../bus/bus.h"	// it is a bus device.
 #include <functional>
+#include <vector>
 
 #define		PPU_PPUCTRL_PORT				0x00
 #define		PPU_PPUMASK_PORT				0x01
@@ -112,6 +113,16 @@ struct ppu_render_state {
 	bool		odd_even_frame;
 };
 
+// debugging list.
+struct ppu_cpu_event {
+	word		ppuaddr;
+	int			ppucycle;
+	int			cpucycle;
+	int			beam;
+	int			scanline;
+	byte		data;
+};
+
 class ppuram : public bus_device {
 private:
 public:
@@ -156,6 +167,8 @@ public:
 	ppuram					vram;
 	oamentry				oam[64];
 	byte					oamaddr;
+
+	std::vector<ppu_cpu_event>	events;
 
 	ppu_ctrl_register		dbg_ppuctrl;
 	ppu_mask_register		dbg_ppumask;

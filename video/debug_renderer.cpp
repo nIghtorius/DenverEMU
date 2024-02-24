@@ -7,6 +7,7 @@
 #include "debug_renderer.h"
 #include "nesvideo.h"		// we need the colors.
 #include <cstdlib>
+#include <iostream>
 
 ppu_debug_vram::ppu_debug_vram() {
 	// alloc 256x128 32b pixels.
@@ -157,6 +158,29 @@ void	ppu_debug_vram::render_nametable() {
 				}
 
 			}
+		}
+	}
+
+	// show ppu updates.
+	if (show_ppu_updates_from_cpu) {		
+		for (ppu_cpu_event& event : target->events) {
+			// color
+			uint32_t color = 0xFF00FF00;// +0xFF * ((event.ppuaddr - 0x2000) << 6);
+
+			// draw a "dot around" the current beam position.
+			int start = event.beam + (event.scanline * 512) - 512 - 1;
+			if ((start >= 0) && (start + 3 < 512 * 480))
+				for (int i = 0; i < 3; i++)
+					nametable[start++] = color;
+			start = event.beam + (event.scanline * 512) - 1;
+			if ((start >= 0) && (start + 3 < 512 * 480)) {
+				nametable[start] = color;
+				nametable[start + 2] = color;
+			}
+			start = event.beam + (event.scanline * 512) - 1 + 512;
+			if ((start >= 0) && (start + 3 < 512 * 480))
+				for (int i = 0; i < 3; i++)
+					nametable[start++] = color;
 		}
 	}
 

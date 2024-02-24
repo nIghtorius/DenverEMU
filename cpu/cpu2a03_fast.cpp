@@ -219,7 +219,7 @@ int	cpu2a03_fast::rundevice_internal (int ticks) {
 			regs.pc += 2;
 			actualticks += 4;
 			if (opcode != 0x0c)
-				if ((_mem_absolute & 0xFF00) != (_mem_absolute_x & 0xFF00)) actualticks++;
+				if (((_mem_absolute) & 0xFF00) != ((_mem_absolute_x) & 0xFF00)) actualticks++;
 			break;
 		}
 		case 0x0d: {
@@ -245,7 +245,7 @@ int	cpu2a03_fast::rundevice_internal (int ticks) {
 			actualticks += 2;
 			if (!(regs.sr & cf_negative)) {
 				actualticks++;
-				if ((_mem_relative & 0xFF00) != (regs.pc & 0xFF00)) actualticks++;	// boundary tick
+				if (((_mem_relative) & 0xFF00) != ((regs.pc + 1) & 0xFF00)) actualticks++;	// boundary tick
 				regs.pc = _mem_relative;
 			}
 			else {
@@ -255,9 +255,9 @@ int	cpu2a03_fast::rundevice_internal (int ticks) {
 		}
 		case 0x11: {
 			opc_ora(devicebus->readmemory(_mem_index_y));
+			if (_mem_index_y_inc) actualticks++;
 			regs.pc++;
 			actualticks += 5;
-			if (_mem_index_y_inc) actualticks++;
 			break;
 		}
 		case 0x12: {
@@ -302,9 +302,9 @@ int	cpu2a03_fast::rundevice_internal (int ticks) {
 		}
 		case 0x19: {
 			opc_ora(devicebus->readmemory(_mem_absolute_y));
+			if (((_mem_absolute) & 0xFF00) != ((_mem_absolute_y) & 0xFF00)) actualticks++;
 			regs.pc += 2;
 			actualticks += 4;
-			if ((_mem_absolute & 0xFF00) != (_mem_absolute_y & 0xFF00)) actualticks++;
 			break;
 		}
 		case 0x1a: {
@@ -322,9 +322,9 @@ int	cpu2a03_fast::rundevice_internal (int ticks) {
 		}
 		case 0x1d: {
 			opc_ora(devicebus->readmemory(_mem_absolute_x));
+			if (((_mem_absolute) & 0xFF00) != ((_mem_absolute_x) & 0xFF00)) actualticks++;
 			regs.pc += 2;
 			actualticks += 4;
-			if ((_mem_absolute & 0xFF00) != (_mem_absolute_x & 0xFF00)) actualticks++;
 			break;
 		}
 		case 0x1e: {
@@ -433,16 +433,16 @@ int	cpu2a03_fast::rundevice_internal (int ticks) {
 			actualticks += 2;
 			if (regs.sr & cf_negative) {
 				actualticks++;
-				if ((regs.pc & 0xFF00) != (_mem_relative and 0xFF00)) actualticks++;
+				if (((regs.pc + 1) & 0xFF00) != ((_mem_relative) & 0xFF00)) actualticks++;
 				regs.pc = _mem_relative;
 			} else regs.pc++;
 			break;
 		}
 		case 0x31: {
 			opc_and(devicebus->readmemory(_mem_index_y));
+			if (_mem_index_y_inc) actualticks++;
 			regs.pc++;
 			actualticks += 5;
-			if (_mem_index_y_inc) actualticks++;
 			break;
 		}
 		case 0x32: {
@@ -482,9 +482,9 @@ int	cpu2a03_fast::rundevice_internal (int ticks) {
 		}
 		case 0x39: {
 			opc_and(devicebus->readmemory(_mem_absolute_y));
+			if (((_mem_absolute) & 0xFF00) != ((_mem_absolute_y) & 0xFF00)) actualticks++;
 			regs.pc += 2;
 			actualticks += 4;
-			if ((_mem_absolute & 0xFF00) != (_mem_absolute_y & 0xFF00)) actualticks++;
 			break;
 		}
 		case 0x3a: { // NOP C:2
@@ -501,9 +501,9 @@ int	cpu2a03_fast::rundevice_internal (int ticks) {
 		}
 		case 0x3d: {
 			opc_and(devicebus->readmemory(_mem_absolute_x));
+			if (((_mem_absolute) & 0xFF00) != ((_mem_absolute_x) & 0xFF00)) actualticks++;
 			regs.pc += 2;
 			actualticks += 4;
-			if ((_mem_absolute & 0xFF00) != (_mem_absolute_x & 0xFF00)) actualticks++;
 			break;
 		}
 		case 0x3e: {
@@ -612,16 +612,16 @@ int	cpu2a03_fast::rundevice_internal (int ticks) {
 			actualticks += 2;
 			if (!(regs.sr & cf_overflow)) {
 				actualticks++;
-				if ((regs.pc & 0xFF00) != (_mem_relative & 0xFF00)) actualticks++;
+				if (((regs.pc + 1) & 0xFF00) != ((_mem_relative) & 0xFF00)) actualticks++;
 				regs.pc = _mem_relative;
 			} else regs.pc++;
 			break;
 		}
 		case 0x51: {
 			opc_xor(devicebus->readmemory(_mem_index_y));
+			if (_mem_index_y_inc) actualticks++;
 			regs.pc++;
 			actualticks += 5;
-			if (_mem_index_y_inc) actualticks++;
 			break;
 		}
 		case 0x52: {
@@ -661,9 +661,9 @@ int	cpu2a03_fast::rundevice_internal (int ticks) {
 		}
 		case 0x59: {
 			opc_xor(devicebus->readmemory(_mem_absolute_y));
+			if (((_mem_absolute) & 0xFF00) != ((_mem_absolute_y) & 0xFF00)) actualticks++;
 			regs.pc += 2;
 			actualticks += 4;
-			if ((_mem_absolute & 0xFF00) != (_mem_absolute_y & 0xFF00)) actualticks++;
 			break;
 		}
 		case 0x5a: { // NOP C:2
@@ -680,9 +680,9 @@ int	cpu2a03_fast::rundevice_internal (int ticks) {
 		}
 		case 0x5d: {
 			opc_xor(devicebus->readmemory(_mem_absolute_x));
+			if (((_mem_absolute) & 0xFF00) != ((_mem_absolute_x) & 0xFF00)) actualticks++;
 			regs.pc += 2;
 			actualticks += 4;
-			if ((_mem_absolute & 0xFF00) != (_mem_absolute_x & 0xFF00)) actualticks++;
 			break;
 		}
 		case 0x5e: {
@@ -800,16 +800,16 @@ int	cpu2a03_fast::rundevice_internal (int ticks) {
 			actualticks += 2;
 			if (regs.sr & cf_overflow) {
 				actualticks++;
-				if ((regs.pc & 0xFF00) != (_mem_relative & 0xFF00)) actualticks++;
+				if (((regs.pc + 1) & 0xFF00) != ((_mem_relative) & 0xFF00)) actualticks++;
 				regs.pc = _mem_relative;
 			} else regs.pc++;
 			break;
 		}
 		case 0x71: {
 			opc_adc(devicebus->readmemory(_mem_index_y));
+			if (_mem_index_y_inc) actualticks++;
 			regs.pc++;
 			actualticks += 5;
-			if (_mem_index_y_inc) actualticks++;
 			break;
 		}
 		case 0x72: {
@@ -850,7 +850,7 @@ int	cpu2a03_fast::rundevice_internal (int ticks) {
 		case 0x79: {
 			opc_adc(devicebus->readmemory(_mem_absolute_y));
 			actualticks += 4;
-			if ((_mem_absolute & 0xFF00) != (_mem_absolute_y & 0xFF00)) actualticks++;
+			if (((_mem_absolute) & 0xFF00) != ((_mem_absolute_y) & 0xFF00)) actualticks++;
 			regs.pc += 2;
 			break;
 		}
@@ -868,9 +868,9 @@ int	cpu2a03_fast::rundevice_internal (int ticks) {
 		}
 		case 0x7d: {
 			opc_adc(devicebus->readmemory(_mem_absolute_x));
+			if (((_mem_absolute) & 0xFF00) != ((_mem_absolute_x) & 0xFF00)) actualticks++;
 			regs.pc += 2;
 			actualticks += 4;
-			if ((_mem_absolute & 0xFF00) != (_mem_absolute_x & 0xFF00)) actualticks++;
 			break;
 		}
 		case 0x7e: {
@@ -972,7 +972,7 @@ int	cpu2a03_fast::rundevice_internal (int ticks) {
 			actualticks += 2;
 			if (!(regs.sr & cf_carry)) {
 				actualticks++;
-				if ((regs.pc & 0xFF00) != (_mem_relative & 0xFF00)) actualticks++;
+				if (((regs.pc + 1) & 0xFF00) != ((_mem_relative) & 0xFF00)) actualticks++;
 				regs.pc = _mem_relative;				
 			} else regs.pc++;
 			break;
@@ -1187,16 +1187,16 @@ int	cpu2a03_fast::rundevice_internal (int ticks) {
 			actualticks += 2;
 			if (regs.sr & cf_carry) {
 				actualticks++;
-				if ((regs.pc & 0xFF00) != (_mem_relative & 0xFF00)) actualticks++;
+				if (((regs.pc + 1) & 0xFF00) != ((_mem_relative) & 0xFF00)) actualticks++;
 				regs.pc = _mem_relative;
 			} else regs.pc++;
 			break;
 		}
 		case 0xb1: {
 			opc_ld_(regs.ac, devicebus->readmemory(_mem_index_y));
+			if (_mem_index_y_inc) actualticks++;
 			regs.pc++;
 			actualticks += 5;
-			if (_mem_index_y_inc) actualticks++;
 			break;
 		}
 		case 0xb2: {
@@ -1205,16 +1205,16 @@ int	cpu2a03_fast::rundevice_internal (int ticks) {
 		}
 		case 0xb3: {
 			opc_ld_(regs.ac, devicebus->readmemory(_mem_index_y));
+			if (_mem_index_y_inc) actualticks++;
 			regs.pc++;
 			regs.x = regs.ac;
 			actualticks += 5;
-			if (_mem_index_y_inc) actualticks++;
 			break;
 		}
 		case 0xb4: {
 			opc_ld_(regs.y, devicebus->readmemory(_mem_zero_x));
 			regs.pc++;
-			actualticks += 3;
+			actualticks += 4;
 			break;
 		}
 		case 0xb5: {
@@ -1243,9 +1243,9 @@ int	cpu2a03_fast::rundevice_internal (int ticks) {
 		}
 		case 0xb9: {
 			opc_ld_(regs.ac, devicebus->readmemory(_mem_absolute_y));
+			if (((_mem_absolute) & 0xFF00) != ((_mem_absolute_y) & 0xFF00)) actualticks++;
 			regs.pc += 2;
 			actualticks += 4;
-			if ((_mem_absolute & 0xFF00) != (_mem_absolute_y & 0xFF00)) actualticks++;
 			break;
 		}
 		case 0xba: { //tsx
@@ -1262,31 +1262,31 @@ int	cpu2a03_fast::rundevice_internal (int ticks) {
 		}
 		case 0xbc: {
 			opc_ld_(regs.y, devicebus->readmemory(_mem_absolute_x));
+			if (((_mem_absolute) & 0xFF00) != ((_mem_absolute_x) & 0xFF00)) actualticks++;
 			regs.pc += 2;
 			actualticks += 4;
-			if ((_mem_absolute & 0xFF00) != (_mem_absolute_x & 0xFF00)) actualticks++;
 			break;
 		}
 		case 0xbd: {
 			opc_ld_(regs.ac, devicebus->readmemory(_mem_absolute_x));
+			if (((_mem_absolute) & 0xFF00) != ((_mem_absolute_x) & 0xFF00)) actualticks++;
 			regs.pc += 2;
 			actualticks += 4;
-			if ((_mem_absolute & 0xFF00) != (_mem_absolute_x & 0xFF00)) actualticks++;
 			break;
 		}
 		case 0xbe: {
 			opc_ld_(regs.x, devicebus->readmemory(_mem_absolute_y));
+			if (((_mem_absolute) & 0xFF00) != ((_mem_absolute_y) & 0xFF00)) actualticks++;
 			regs.pc += 2;
 			actualticks += 4;
-			if ((_mem_absolute & 0xFF00) != (_mem_absolute_y & 0xFF00)) actualticks++;
 			break;
 		}
 		case 0xbf: {
 			opc_ld_(regs.ac, devicebus->readmemory(_mem_absolute_y));
+			if (((_mem_absolute) & 0xFF00) != ((_mem_absolute_y) & 0xFF00)) actualticks++;
 			regs.x = regs.ac;
 			regs.pc += 2;
 			actualticks += 4;
-			if ((_mem_absolute & 0xFF00) != (_mem_absolute_y & 0xFF00)) actualticks++;
 			break;
 		}
 		case 0xc0: {
@@ -1396,16 +1396,16 @@ int	cpu2a03_fast::rundevice_internal (int ticks) {
 			actualticks += 2;
 			if (!(regs.sr & cf_zero)) {
 				actualticks++;
-				if ((regs.pc & 0xFF00) != (_mem_relative & 0xFF00)) actualticks++;
+				if (((regs.pc+1) & 0xFF00) != ((_mem_relative) & 0xFF00)) actualticks++;
 				regs.pc = _mem_relative;
 			} else regs.pc++;
 			break;
 		}
 		case 0xd1: {
 			opc_cmp(regs.ac, devicebus->readmemory(_mem_index_y));
+			if (_mem_index_y_inc) actualticks++;
 			regs.pc++;
 			actualticks += 5;
-			if (_mem_index_y_inc) actualticks++;
 			break;
 		}
 		case 0xd2: {
@@ -1447,9 +1447,9 @@ int	cpu2a03_fast::rundevice_internal (int ticks) {
 		}
 		case 0xd9: {
 			opc_cmp(regs.ac, devicebus->readmemory(_mem_absolute_y));
+			if (((_mem_absolute) & 0xFF00) != ((_mem_absolute_y) & 0xFF00)) actualticks++;
 			regs.pc += 2;
 			actualticks += 4;
-			if ((_mem_absolute & 0xFF00) != (_mem_absolute_y & 0xFF00)) actualticks++;
 			break;
 		}
 		case 0xda: { //NOP C:2
@@ -1467,9 +1467,9 @@ int	cpu2a03_fast::rundevice_internal (int ticks) {
 		}
 		case 0xdd: {
 			opc_cmp(regs.ac, devicebus->readmemory(_mem_absolute_x));
+			if (((_mem_absolute) & 0xFF00) != ((_mem_absolute_x) & 0xFF00)) actualticks++;
 			regs.pc += 2;
 			actualticks += 4;
-			if ((_mem_absolute & 0xFF00) != (_mem_absolute_x & 0xFF00)) actualticks++;
 			break;
 		}
 		case 0xde: {
@@ -1577,7 +1577,7 @@ int	cpu2a03_fast::rundevice_internal (int ticks) {
 			actualticks += 2;
 			if (regs.sr & cf_zero) {
 				actualticks++;
-				if ((regs.pc & 0xFF00) != (_mem_relative & 0xFF00)) actualticks++;
+				if (((regs.pc + 1) & 0xFF00) != ((_mem_relative) & 0xFF00)) actualticks++;
 				regs.pc = _mem_relative;
 			} else regs.pc++;
 			break;
@@ -1628,9 +1628,9 @@ int	cpu2a03_fast::rundevice_internal (int ticks) {
 		}
 		case 0xf9: {
 			opc_sbc(devicebus->readmemory(_mem_absolute_y));
+			if (((_mem_absolute) & 0xFF00) != ((_mem_absolute_y) & 0xFF00)) actualticks++;
 			regs.pc += 2;
 			actualticks += 4;
-			if ((_mem_absolute & 0xFF00) != (_mem_absolute_y & 0xFF00)) actualticks++;
 			break;
 		}
 		case 0xfa: { // NOP C:2
@@ -1648,9 +1648,9 @@ int	cpu2a03_fast::rundevice_internal (int ticks) {
 		}
 		case 0xfd: {
 			opc_sbc(devicebus->readmemory(_mem_absolute_x));
+			if (((_mem_absolute) & 0xFF00) != ((_mem_absolute_x) & 0xFF00)) actualticks++;
 			regs.pc += 2;
 			actualticks += 4;
-			if ((_mem_absolute & 0xFF00) != (_mem_absolute_x & 0xFF00)) actualticks++;
 			break;
 		}
 		case 0xfe: {

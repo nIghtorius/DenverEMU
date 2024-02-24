@@ -21,6 +21,8 @@
 #include "../video/nesvideo.h"
 #include "../controller/joypad.h"
 #include "../package/2a03.h"
+#include "../video/postprocessing/hqxpost.h"
+
 #include <SDL_opengl.h>
 
 #define	DENVER_NO_UPSCALER			0
@@ -70,4 +72,6 @@ public:
 	void stop();
 
 	void prepare_frame();
+
+	std::vector<postprocessor*> listOfPostProcessors();
 };

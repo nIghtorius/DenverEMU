@@ -29,9 +29,9 @@
 #include "../bus/bus.h"
 #include <SDL.h>
 
-#define SAMPLE_RATE				44100
+#define SAMPLE_RATE				48000
 #define NES_FRAMES				5
-#define MAX_BUFFER_AUDIO		773 / (44100 / SAMPLE_RATE)
+#define MAX_BUFFER_AUDIO		842 //773 / (44100 / SAMPLE_RATE)
 #define	NES_CLOCK_SPEED_NTSC	1789777			// clockspeed in hertz
 
 // classes

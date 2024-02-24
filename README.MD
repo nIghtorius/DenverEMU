@@ -6,8 +6,18 @@ This is my first open source project. I have tested this on Windows x86/x64 and 
 What is it?
 -----------
 It is a open source NES emulator. It is far from perfect. There are some small emulation bugs (that needs to be squashed). 
-Only supports 4 mappers (5 cart types) will be expanded in the future.
+Only supports a handful of mappers. This will be expanded in the feature.
 
+Does it support NSF?
+--------------------
+Yes it does support NSF. The compability is suprisingly great. It plays most of the NSFs. 
+It does so by "emulating" a NSF player on a NES. mapper_nsf cart type.
+Currently does the following expansion audio:
+* VRC6
+* Namco 163
+* Sunsoft 5B
+
+Expansion audio will be expanded later on.
 
 How to compile?
 ---------------

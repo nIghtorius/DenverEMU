@@ -190,13 +190,7 @@ void	cartridge::readstream(std::istream &nesfile, ppu *ppu_device, bus *mainbus,
 	}
 
 	std::cout << "cartridge is valid." << std::endl;
-	std::cout << "Cartridge has NSF 2.0 header? ";
-	if (nes.has_nes20) {
-		std::cout << "Yes\n";
-	}
-	else {
-		std::cout << "No\n";
-	}
+	std::cout << "Cartridge has NSF 2.0 header? " << (nes.has_nes20 ? "Yes" : "No") << "\n";
 	std::cout << "Program size: " << std::dec << (int)nes.programsize << " bytes.." << std::endl;
 	if (nes.charsize > 0) {
 		std::cout << "Charrom size: " << (int)nes.charsize << " bytes.." << std::endl;
@@ -443,6 +437,8 @@ void	cartridge::readstream(std::istream &nesfile, ppu *ppu_device, bus *mainbus,
 		std::cout << "Mapper is unknown to me" << std::endl;
 		break;
 	}
+
+	std::cout << "Mapper devicename: " << program->get_device_descriptor() << "\n";
 
 	// link roms..
 	mainbus->registerdevice(program);

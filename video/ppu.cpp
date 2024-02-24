@@ -24,6 +24,8 @@ ppu::ppu() : bus_device () {
 	scanline = -1;
 	beam = 0;
 	cycle = 0;
+	// initialize debug lists.
+	events.clear();
 }
 
 ppu::~ppu() {
@@ -61,7 +63,7 @@ byte	ppu::read(int addr, int addr_from_base, bool onlyread) {
 	// READ register.
 	if (addr_from_base == PPU_DATA_PORT) {
 		byte data = prt2007buffer;
-		prt2007buffer = vbus.readmemory(ppu_internal.v_register);
+		prt2007buffer = vbus.readmemory(ppu_internal.v_register & 0x3FFF);
 		if (ppuctrl.increment_32_bytes) {
 			ppu_internal.v_register += 32;
 		}
@@ -76,6 +78,19 @@ byte	ppu::read(int addr, int addr_from_base, bool onlyread) {
 void	ppu::write(int addr, int addr_from_base, byte data) {
 	// update latch
 	latch = data;
+
+	// this is an event. therefore log it. unless it is a data write.
+	if (addr_from_base != PPU_DATA_PORT) {
+		ppu_cpu_event event;
+		event.ppuaddr = addr;
+		event.ppucycle = ppu_cycles_per_frame;
+		event.cpucycle = 0;
+		event.scanline = scanline;
+		event.beam = beam;
+		event.data = data;
+		// add this to the events list.
+		events.push_back(event);
+	}
 
 	// registers.
 	if (addr_from_base == PPU_PPUCTRL_PORT) {
@@ -140,7 +155,7 @@ void	ppu::write(int addr, int addr_from_base, byte data) {
 		ppu_internal.address_write_latch = !ppu_internal.address_write_latch;
 	}
 	if (addr_from_base == PPU_DATA_PORT) {
-		vbus.writememory(ppu_internal.v_register, data);
+		vbus.writememory(ppu_internal.v_register & 0x3FFF, data);
 		ppu_internal.v_register += ppuctrl.increment_32_bytes ? 32 : 1;
 	}
 }
@@ -277,6 +292,7 @@ int		ppu::rundevice(int ticks) {
 				if (cs == 1) {
 					// do garbage nametable read.
 					//ppu_internal.shiftreg_nametable = vbus.readmemory(0x2000 | (ppu_internal.v_register & 0x0FFF));
+					ppu_internal.spr_pix = 0; // reset sprite render buffer. it's a denver thing.
 				}
 				else if (cs == 3) {
 					// do garbage nametable read.
@@ -421,7 +437,10 @@ int		ppu::rundevice(int ticks) {
 					ppu_internal.shiftreg_attribute[1] <<= 1;
 
 					// check disabled 8 left pixels.
-					if ((!ppumask.bg8lt) && (beam < 8)) color = vpal.read(0, 0);
+					if ((!ppumask.bg8lt) && (beam < 8)) {
+						color = vpal.read(0, 0);
+						palentry = 0;
+					}
 					if ((!ppumask.spr8lt) && (beam < 8)) ppu_internal.spr_pix = 0;
 
 					// draw to framebuffer?
@@ -440,7 +459,7 @@ int		ppu::rundevice(int ticks) {
 						}						
 						// check for spr 0
 						if (((ppu_internal.spr_pix & 0x3) > 0) && (palentry != 0)) {
-							if (ppu_internal.spr_pix & OAM_SPR_INTERNAL_ONLY_SPR0F) ppustatus.sprite_0_hit = true;
+							if ((ppu_internal.spr_pix & OAM_SPR_INTERNAL_ONLY_SPR0F) && (beam<255)) ppustatus.sprite_0_hit = true;
 						}
 						ppu_internal.spr_pix = 0;
 					}
@@ -457,7 +476,7 @@ int		ppu::rundevice(int ticks) {
 		}
 
 		if (scanline == 261) {
-			if (cycle == 1) {
+			if (cycle <= 1) {
 				// reset flags.
 				ppustatus.vblank = false;
 				ppustatus.sprite_0_hit = false;
@@ -481,6 +500,7 @@ int		ppu::rundevice(int ticks) {
 				if (callback) callback();
 			}
 			if (scanline == 262) {
+				events.clear();	// clear captured events.
 				scanline = 0;
 				if (ppu_internal.odd_even_frame) cycle = 340;
 				ppu_internal.odd_even_frame = !ppu_internal.odd_even_frame;
@@ -571,7 +591,7 @@ ppuram::ppuram() : bus_device() {
 	strncpy(get_device_descriptor(), "PPU mainram 2k", MAX_DESCRIPTOR_LENGTH);
 	ram = (byte *)malloc(0x800);
 	devicestart = 0x2000;
-	deviceend = 0x2FFF;
+	deviceend = 0x37FF;
 	devicemask = 0x27FF;	 // per default ppu has 2k of RAM mirrored to 4k of address-space.
 }
 

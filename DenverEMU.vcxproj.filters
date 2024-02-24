@@ -88,6 +88,9 @@
     <Filter Include="Source Files\emulation\3rdparty\hqx">
       <UniqueIdentifier>{eaecbc1a-9f09-45c3-bb1f-a574f9c3c2e7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\emulation\video\postprocessing">
+      <UniqueIdentifier>{06da0648-17e3-4fec-9bbc-68a7edeced6a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="audio\apu.h">
@@ -243,6 +246,9 @@
     <ClInclude Include="bus\rom\mappers\mapper_009.h">
       <Filter>Source Files\emulation\bus\rom\mappers</Filter>
     </ClInclude>
+    <ClInclude Include="video\postprocessing\hqxpost.h">
+      <Filter>Source Files\emulation\video\postprocessing</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DenverEMU.cpp">
@@ -379,6 +385,9 @@
     </ClCompile>
     <ClCompile Include="audio\expansion\vrc6.cpp">
       <Filter>Source Files\emulation\audio\expansion</Filter>
+    </ClCompile>
+    <ClCompile Include="video\postprocessing\hqxpost.cpp">
+      <Filter>Source Files\emulation\video\postprocessing</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

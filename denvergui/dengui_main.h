@@ -26,6 +26,7 @@ namespace denvergui {
 		GLuint	pattern_tex;
 		GLuint  ntable_tex;
 		bool	show_scroll_regs = false;
+		bool	show_ppu_updates = false;
 
 		// main window.
 		SDL_Window		*mainwin;

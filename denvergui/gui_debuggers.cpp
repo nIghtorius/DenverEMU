@@ -445,8 +445,65 @@ void	denvergui::render_ppuviewer(nes_emulator *denver, denvergui_state *state) {
 		}
 		if (ImGui::TreeNode("Name Table")) {
 			ImGui::Checkbox("Show scroll registers", &state->show_scroll_regs);
+			ImGui::Checkbox("Show PPU updates from cpu", &state->show_ppu_updates);
 			// render the name table.
 			ImGui::Image((void *)(intptr_t)state->ntable_tex, ImVec2 { 512, 480 });
+			ImGui::Separator();
+			ImGui::TreePop();
+		}
+		if (ImGui::TreeNode("PPU Updates during rendering")) {
+			int count = 1;
+			if (ImGui::BeginTable("PPU Updates", 8, ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Borders)) {
+				ImGui::TableSetupColumn("event#", ImGuiTableColumnFlags_WidthFixed);
+				ImGui::TableSetupColumn("ppuaddr", ImGuiTableColumnFlags_WidthFixed);
+				ImGui::TableSetupColumn("ppucycle", ImGuiTableColumnFlags_WidthFixed);
+				ImGui::TableSetupColumn("cpucycle", ImGuiTableColumnFlags_WidthFixed);
+				ImGui::TableSetupColumn("beam(x)", ImGuiTableColumnFlags_WidthFixed);
+				ImGui::TableSetupColumn("scanline(y)", ImGuiTableColumnFlags_WidthFixed);
+				ImGui::TableSetupColumn("data", ImGuiTableColumnFlags_WidthFixed);
+				ImGui::TableSetupColumn("command", ImGuiTableColumnFlags_WidthFixed);
+				ImGui::TableHeadersRow();
+
+				// show values.
+				ImGui::TableNextRow();
+
+				for (ppu_cpu_event& event : denver->ppu_device->events) {
+					ImGui::TableSetColumnIndex(0);	ImGui::Text("%d", count);
+					ImGui::TableSetColumnIndex(1);	ImGui::Text("%04X", event.ppuaddr);
+					ImGui::TableSetColumnIndex(2);	ImGui::Text("%d", event.ppucycle);
+					ImGui::TableSetColumnIndex(3);	ImGui::Text("%d", event.cpucycle);
+					ImGui::TableSetColumnIndex(4);	ImGui::Text("%d", event.beam);
+					ImGui::TableSetColumnIndex(5);	ImGui::Text("%d", event.scanline);
+					ImGui::TableSetColumnIndex(6);	ImGui::Text("%02X", event.data);
+					ImGui::TableSetColumnIndex(7);
+
+					switch (event.ppuaddr & 0xFF) {
+					case PPU_PPUCTRL_PORT:
+						ImGui::Text("CTRL_PORT");
+						break;
+					case PPU_PPUMASK_PORT:
+						ImGui::Text("MASK_PORT");
+						break;
+					case PPU_OAMADDR_PORT:
+						ImGui::Text("OAMADDR_PORT");
+						break;
+					case PPU_SCROLL_PORT:
+						ImGui::Text("SCROLL_PORT");
+						break;
+					case PPU_ADDRESS_PORT:
+						ImGui::Text("ADDRESS_PORT");
+						break;
+					default:
+						ImGui::Text("INVALID");
+						break;
+					}
+
+					ImGui::TableNextRow();
+					count++;
+				}
+
+				ImGui::EndTable();
+			}
 			ImGui::Separator();
 			ImGui::TreePop();
 		}

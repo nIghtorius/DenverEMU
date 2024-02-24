@@ -301,7 +301,8 @@ int main(int argc, char *argv[])
 
 			// render ppu debugger name table.
 			ppu_visual_debug->show_scroll_registers = windowstates.show_scroll_regs;
-			//ppu_visual_debug->render_nametable();	<-- now being rendered with a callback.
+			ppu_visual_debug->show_ppu_updates_from_cpu = windowstates.show_ppu_updates;
+
 			glBindTexture(GL_TEXTURE_2D, ppu_ntable);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);

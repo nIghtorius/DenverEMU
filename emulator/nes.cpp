@@ -53,8 +53,13 @@ nes_emulator::nes_emulator() {
 	// configure video.
 	video_out = new nesvideo();
 
+	// configure postprocessors.
+
 	// start audio.
 	audio->startplayback();
+}
+
+std::vector<postprocessor*> nes_emulator::listOfPostProcessors() {
 }
 
 nes_emulator::~nes_emulator() {
@@ -109,10 +114,10 @@ void	nes_emulator::prepare_frame() {
 		video_out->add_overscan_borders();
 		switch (frame_upscaler) {
 		case DENVER_HQ2X_UPSCALER:
-			video_out->hq2x_image();
+			//video_out->hq2x_image();
 			break;
 		case DENVER_HQ3X_UPSCALER:
-			video_out->hq3x_image();
+			//video_out->hq3x_image();
 			break;
 		}
 	}
@@ -128,7 +133,7 @@ nes_frame_tex * nes_emulator::returnFrameAsTexture() {
 	frame.h = 240;
 	frame.texture = video_out->getFrame();
 
-	switch (frame_upscaler) {
+	/*switch (frame_upscaler) {
 	case DENVER_HQ2X_UPSCALER:
 		frame.w = 512;
 		frame.h = 480;
@@ -140,6 +145,7 @@ nes_frame_tex * nes_emulator::returnFrameAsTexture() {
 		frame.texture = video_out->getFramex();
 		break;
 	}
+	*/
 
 	return &frame;
 }

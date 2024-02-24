@@ -8,8 +8,9 @@
 #pragma once
 
 #include <cstdint>
-#include "../3rdparty/hqx/HQ2x.h"
-#include "../3rdparty/hqx/HQ3x.h"
+#include <vector>
+
+#define MAX_POSTPROCESSOR_NAME		255
 
 static const std::uint8_t ntscpalette[] = {
   0x4d, 0x4d, 0x4d, 0x01, 0x17, 0x4b, 0x0d, 0x0c, 0x60, 0x1f, 0x05, 0x5e, 0x31, 0x02, 0x45, 0x3b,
@@ -26,24 +27,56 @@ static const std::uint8_t ntscpalette[] = {
   0xaa, 0xb1, 0xe3, 0xc4, 0xb2, 0xdd, 0xe3, 0xa5, 0xa5, 0xa5, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
 
+class postprocessor;
+struct postprocessedImage;
+
 class nesvideo {
 private:
 	std::uint32_t* displaybuffer;	// 32bit
-	std::uint32_t* displaybufferx;
-	HQ2x	hq2x;
-	HQ3x	hq3x;
+	std::vector<postprocessor*> postprocessors;
 
 public:
+
 	nesvideo();
 	~nesvideo();
 	void process_ppu_image(std::uint16_t* ppu_image);
 	void add_overscan_borders();
 
-	// upscalers.
-	void hq2x_image();
-	void hq3x_image();
-
 	// frame getters
-	void* getFrame();
-	void* getFramex();
+	void* getFrame();		// gets a void pointer to a PC compatible (32bits) image.
+	postprocessedImage* getPostImage();
+
+	// register postprocessors.
+	void RegisterPostProcessor(postprocessor* processor);
+	void RemovePostProcessor(postprocessor* processor);
+	void ClearPostProcessors();
+};
+
+struct imageSize {
+	int width;
+	int height;
+	constexpr imageSize() : width(0), height(0) {}
+	constexpr imageSize(int w, int h) : width(w), height(h) {}
+};
+
+struct postprocessedImage {
+	void* image;
+	imageSize size;
+	constexpr postprocessedImage() : image(nullptr), size(imageSize()) {}
+	constexpr postprocessedImage(void* _image, imageSize _size) : image(_image), size(_size) {}
+};
+
+class postprocessor {
+private:
+	char * name;
+	int	width, height;
+public:
+	std::uint32_t* renderedimage = nullptr;
+	int newWidth, newHeight;
+	postprocessor();
+	~postprocessor();
+	virtual void process_image(std::uint32_t* pc_image, int width, int height);
+	virtual imageSize getDimensions();
+	char* getName();
+	postprocessedImage * getImage();
 };
