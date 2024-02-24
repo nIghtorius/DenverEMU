@@ -1,5 +1,7 @@
 #include "nesvideo.h"
 #include <cstdlib>
+#include <cstring>
+
 #pragma warning(disable : 4996)
 
 nesvideo::nesvideo() {

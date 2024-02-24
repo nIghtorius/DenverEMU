@@ -7,6 +7,8 @@
 
 */
 
+#include <cstring>
+#include <cstdlib>
 
 #pragma warning(disable : 4996)
 
