@@ -62,8 +62,16 @@ byte	ppu::read(int addr, int addr_from_base, bool onlyread) {
 	}
 	// READ register.
 	if (addr_from_base == PPU_DATA_PORT) {
-		byte data = prt2007buffer;
-		prt2007buffer = vbus.readmemory(ppu_internal.v_register & 0x3FFF);
+		byte data = 0;
+		if (ppu_internal.v_register < 0x3F00) {
+			data = prt2007buffer;
+			prt2007buffer = vbus.readmemory(ppu_internal.v_register & 0x3FFF);
+		}
+		else {
+			// special case.
+			data = vpal.read(ppu_internal.v_register & 0x3F1F, (ppu_internal.v_register & 0x3F1F) - 0x3F00, false);
+			prt2007buffer = vbus.readmemory(ppu_internal.v_register & 0x2FFF);
+		}
 		if (ppuctrl.increment_32_bytes) {
 			ppu_internal.v_register += 32;
 		}
@@ -474,7 +482,6 @@ int		ppu::rundevice(int ticks) {
 			ppustatus.vblank = true;
 			if (ppuctrl.do_nmi) nmi_enable = true;	// nmi enabled gets automaticly pulled up by bus device.
 		}
-
 		if (scanline == 261) {
 			if (cycle <= 1) {
 				// reset flags.

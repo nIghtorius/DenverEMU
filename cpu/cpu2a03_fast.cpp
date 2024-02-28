@@ -54,7 +54,7 @@ void cpu2a03_fast::write_cpu_log() {
 
 	// now we write
 	// <pc> <disassemble> <regs>
-	*cpu_log << std::hex << "0x" << (int)addr << " " << line_to_exec << " ";
+	*cpu_log << std::hex << "0x" << (int)addr << " - [" << line_to_exec << "]						: ";
 	*cpu_log << "r.ac=" << (int)regs.ac << ", r.x=" << (int)regs.x << ", r.y="
 		<< (int)regs.y << ", r.sp=" << (int)regs.sp << ", r.sr=" << (int)regs.sr << std::endl;
 }
@@ -1670,6 +1670,7 @@ int	cpu2a03_fast::rundevice_internal (int ticks) {
 	}
 	if (error_state) {
 		last_opcode = opcode;
+		regs.pc--;
 	}
 	return actualticks * tick_rate;
 }

@@ -22,6 +22,7 @@
 #include "../../audio/expansion/vrc6.h"
 #include "../../audio/expansion/sunsoft5b.h"
 #include "../../audio/expansion/namco163.h"
+#include "../../audio/expansion/vrc7.h"
 
 // end of mappers.
 
@@ -118,6 +119,7 @@ private:
 	audio_player *m_aud;
 	vrc6audio *vrc6exp = nullptr;
 	sunsoftaudio *sunexp = nullptr;
+	vrc7audio* vrc7exp = nullptr;
 
 	void	readstream(std::istream &stream, ppu *ppu_device, bus *mainbus, audio_player *audbus, const char *orgfilename);
 	bool	readstream_nsf(std::istream &stream, ppu *ppu_device, bus *mainbus, audio_player *audbus);

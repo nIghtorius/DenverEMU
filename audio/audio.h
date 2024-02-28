@@ -32,7 +32,7 @@
 #define SAMPLE_RATE				48000
 #define NES_FRAMES				5
 #define MAX_BUFFER_AUDIO		842 //773 / (44100 / SAMPLE_RATE)
-#define	NES_CLOCK_SPEED_NTSC	1789777			// clockspeed in hertz
+#define	NES_CLOCK_SPEED_NTSC	1789772			// clockspeed in hertz
 
 // classes
 class audio_device : public bus_device {

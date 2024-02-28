@@ -159,11 +159,11 @@ int		vrc6rom::rundevice(int ticks) {
 	return ticks;
 }
 
-void	vrc6rom::link_vrom(vrc6vrom *rom) {
+void vrc6rom::link_vrom(vrc6vrom *rom) {
 	charrom = rom;
 }
 
-void	vrc6rom::setbanks() {
+void vrc6rom::setbanks() {
 	// set program banks.
 	prg_e000 = &romdata[romsize - 8192];	// last 8kB on 0xE000
 	prg_8000 = &romdata[(state.prg1_bank << 14) % romsize];

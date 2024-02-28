@@ -91,6 +91,9 @@
     <Filter Include="Source Files\emulation\video\postprocessing">
       <UniqueIdentifier>{06da0648-17e3-4fec-9bbc-68a7edeced6a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\emulation\3rdparty\fm">
+      <UniqueIdentifier>{8e720200-2548-4036-8b12-0927063af540}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="audio\apu.h">
@@ -249,6 +252,18 @@
     <ClInclude Include="video\postprocessing\hqxpost.h">
       <Filter>Source Files\emulation\video\postprocessing</Filter>
     </ClInclude>
+    <ClInclude Include="video\postprocessing\scanlines.h">
+      <Filter>Source Files\emulation\video\postprocessing</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\fm\emu2413.h">
+      <Filter>Source Files\emulation\3rdparty\fm</Filter>
+    </ClInclude>
+    <ClInclude Include="audio\expansion\vrc7.h">
+      <Filter>Source Files\emulation\audio\expansion</Filter>
+    </ClInclude>
+    <ClInclude Include="bus\rom\mappers\mapper_085.h">
+      <Filter>Source Files\emulation\bus\rom\mappers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DenverEMU.cpp">
@@ -388,6 +403,18 @@
     </ClCompile>
     <ClCompile Include="video\postprocessing\hqxpost.cpp">
       <Filter>Source Files\emulation\video\postprocessing</Filter>
+    </ClCompile>
+    <ClCompile Include="video\postprocessing\scanlines.cpp">
+      <Filter>Source Files\emulation\video\postprocessing</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdparty\fm\emu2413.c">
+      <Filter>Source Files\emulation\3rdparty\fm</Filter>
+    </ClCompile>
+    <ClCompile Include="audio\expansion\vrc7.cpp">
+      <Filter>Source Files\emulation\audio\expansion</Filter>
+    </ClCompile>
+    <ClCompile Include="bus\rom\mappers\mapper_085.cpp">
+      <Filter>Source Files\emulation\bus\rom\mappers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

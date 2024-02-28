@@ -18,7 +18,7 @@ byte uxrom::read(int addr, int addr_from_base, bool onlyread)
 void uxrom::write(int addr, int addr_from_base, byte data)
 {
 	// we just look @ data, address is irrelevant.
-	bank = data & 0x07;	// last 3 bits.
+	bank = data & 0x0F;	// last 4 bits. allowing 256kB program roms. This mapper is actually a mess.
 }
 
 void uxrom::set_rom_data(byte *data, std::size_t size)

@@ -12,9 +12,12 @@
 #include "../rom/mappers/mapper_024026.h"
 #include "../rom/mappers/mapper_021-22-23-25.h"
 #include "../rom/mappers/mapper_069.h"
+#include "../rom/mappers/mapper_085.h"
 
 // NSF
 #include "../rom/mappers/mapper_nsf.h"
+
+#pragma warning(disable : 4996)
 
 // implementation.
 
@@ -142,6 +145,12 @@ bool	cartridge::readstream_nsf(std::istream &nsffile, ppu *ppu_device, bus *main
 		audbus->register_audible_device(namexp);
 		mainbus->registerdevice(namexp);
 		nsf_rom->namexp = namexp;
+	}
+	if (nsf_hdr.expansion_audio & NSF_EXP_VRC7) {
+		vrc7exp = new vrc7audio();
+		audbus->register_audible_device(vrc7exp);
+		mainbus->registerdevice(vrc7exp);
+		nsf_rom->vrc7exp = vrc7exp;
 	}
 
 	// add to mainbus
@@ -360,6 +369,25 @@ void	cartridge::readstream(std::istream &nesfile, ppu *ppu_device, bus *mainbus,
 		}		
 		program->set_rom_data((byte *)program_data, nes.programsize);
 		break;
+	case 85:
+		// VRC7
+		program = new vrc7rom();
+		character = new vrc7vrom();
+		vrc7exp = new vrc7audio();
+		audbus->register_audible_device(vrc7exp);
+		mainbus->registerdevice(vrc7exp);
+		// vrc7 linking.
+		reinterpret_cast<vrc7rom*>(program)->link_vrom(reinterpret_cast<vrc7vrom*>(character));
+		reinterpret_cast<vrc7vrom*>(character)->link_ppu_bus(&ppu_device->vram);
+		reinterpret_cast<vrc7rom*>(program)->audiochip = vrc7exp;
+		if (has_char_data) {
+			character->set_rom_data((byte*)char_data, nes.charsize);
+		}
+		else {
+			reinterpret_cast<vrc7vrom*>(character)->switch_vram();
+		}
+		program->set_rom_data((byte*)program_data, nes.programsize);
+		break;
 	case 69:
 		// Sunsoft FME-7
 		program = new fme7rom();
@@ -510,6 +538,11 @@ cartridge::~cartridge() {
 			m_bus->removedevice_select_base(namexp->devicestart);
 			delete namexp;
 		}
+		if (vrc7exp) {
+			m_aud->unregister_audible_device(vrc7exp);
+			m_bus->removedevice_select_base(vrc7exp->devicestart);
+			delete vrc7exp;
+		}
 	}
 	if (m_bus != NULL) {
 		if (program != NULL) {
@@ -520,7 +553,8 @@ cartridge::~cartridge() {
 				std::cout << "Writing battery backed ram to: " << srmfile << "\n";
 				std::ofstream srm(srmfile, std::ios::binary | std::ios::out);
 				batterybackedram* ramtowrite = program->get_battery_backed_ram();
-				srm.write((char*)ramtowrite->data, ramtowrite->size);
+				if (ramtowrite->data != nullptr)
+					srm.write((char*)ramtowrite->data, ramtowrite->size);
 				srm.close();
 				free(ramtowrite);
 			}

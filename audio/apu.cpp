@@ -229,7 +229,7 @@ int		apu::rundevice(int ticks) {
 		byte p2 = pulse[1].enabled ? pulse[1].readsample() : 0;
 		byte tr = triangle.enabled ? triangle.readsample() : 0;
 		byte no = noise.enabled ? noise.readsample() : 0;
-		ldm = dmc.enabled ? dmc.readsample() : ldm;
+		ldm = dmc.readsample(); // disable DMC still outputs? see battletoads has DMC disabled, but sends data anyway?
 
 		sample_buffer.push_back(mux(p1, p2, tr, no, ldm));
 		//sample_buffer.push_back(mux(0,0,0,0, ldm));
@@ -416,7 +416,7 @@ void	dmc_generator::update_timers() {
 	count--;
 	if (count < 2) {
 		count = rate;
-		if ((bits_in_sample_remaining > 0) & !silent) {
+		if ((bits_in_sample_remaining > 0) && !silent) {
 			if (sample_shift_register & 0x01) {
 				if (direct_out <= 127) direct_out += 2;
 			}

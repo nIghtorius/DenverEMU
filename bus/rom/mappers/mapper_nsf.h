@@ -11,6 +11,7 @@
 
 #include "../rom.h"
 #include "../../audio/expansion/vrc6.h"
+#include "../../audio/expansion/vrc7.h"
 #include "../../audio/expansion/sunsoft5b.h"
 #include "../../audio/expansion/namco163.h"
 #include "../../package/2a03.h"
@@ -19,6 +20,7 @@
 #define		NSF_EXP_VRC6			0x01
 #define		NSF_EXP_NAMCO163		0x10
 #define		NSF_EXP_SUNSOFT			0x20
+#define		NSF_EXP_VRC7			0x02
 
 // uFirmware
 const byte nsfufirm[] = {
@@ -59,14 +61,17 @@ struct nsf_state {
 class nsfrom : public rom {
 private:
 	byte		ufirm[128];	// uFirmware space (only 128bytes)
+
 public:
 	nsf_state state;
 	byte		*ram;
 	byte		*prg[8];	// program banks.
+
 	// expansion audio.
 	vrc6audio	*vrc6exp = nullptr;
 	sunsoftaudio *sunexp = nullptr;
 	namco163audio *namexp = nullptr;
+	vrc7audio* vrc7exp = nullptr;
 
 	package_2a03 *n2a03 = nullptr;
 

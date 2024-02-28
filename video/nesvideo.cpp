@@ -64,8 +64,8 @@ void nesvideo::process_ppu_image(std::uint16_t * ppu_image) {
 }
 
 void nesvideo::add_overscan_borders() {
-	for (int i = 0; i < 2048; i++) displaybuffer[i] = 0;
-	for (int i = 59392; i < 61440; i++) displaybuffer[i] = 0;
+	for (int i = 0; i < 2048; i++) displaybuffer[i] = 0xFF000000;
+	for (int i = 59392; i < 61440; i++) displaybuffer[i] = 0xFF000000;
 }
 
 void nesvideo::RegisterPostProcessor(postprocessor* processor) {

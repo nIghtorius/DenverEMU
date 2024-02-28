@@ -22,6 +22,7 @@
 #include "../controller/joypad.h"
 #include "../package/2a03.h"
 #include "../video/postprocessing/hqxpost.h"
+#include "../video/postprocessing/scanlines.h"
 
 #include <SDL_opengl.h>
 
@@ -45,7 +46,7 @@ private:
 	// postprocessors.
 	hq2x				_hq2x;
 	hq3x				_hq3x;
-
+	scanlines			_scanlines;
 
 public:
 	package_2a03		* nes_2a03;

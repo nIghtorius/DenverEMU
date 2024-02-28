@@ -62,6 +62,7 @@ int		nsfrom::rundevice(int ticks) {
 	if (vrc6exp) vrc6exp->rundevice(ticks);
 	if (sunexp) sunexp->rundevice(ticks);
 	if (namexp) namexp->rundevice(ticks);
+	if (vrc7exp) vrc7exp->rundevice(ticks);
 	return ticks;
 }
 
