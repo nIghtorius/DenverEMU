@@ -272,7 +272,31 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *
 					nsfinterface->state.currentsong++;
 				nsfinterface->initialize(nsfinterface->state.currentsong - 1);
 			}
-			
+			ImGui::Separator();
+			ImGui::Text("Live Sample output");
+			int s = (int)denver->audio->final_mux.size();
+			float* graph = &denver->audio->final_mux[0];
+			float lb = denver->audio->average_mix - 0.7f;
+			float hb = denver->audio->average_mix + 0.7f;
+			ImGui::PlotLines("Sample", graph, s, 0, NULL, lb, hb, ImVec2{ 0, 160.0f });
+			ImGui::Separator();
+			ImGui::Text("Expansion Audio:");
+			ImGui::SameLine();
+			if (denver->cart->namexp) {
+				ImGui::Text("NAMCO"); ImGui::SameLine();
+			}
+			if (denver->cart->vrc6exp) {
+				ImGui::Text("VRC6"); ImGui::SameLine();
+			}
+			if (denver->cart->vrc7exp) {
+				ImGui::Text("VRC7"); ImGui::SameLine();
+			}
+			if (denver->cart->sunexp) {
+				ImGui::Text("SUNSOFT"); ImGui::SameLine();
+			}
+			ImGui::NewLine();
+
+
 		}
 		ImGui::End();
 	}

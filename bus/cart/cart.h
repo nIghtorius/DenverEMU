@@ -117,14 +117,14 @@ private:
 	ppu		*l_ppu;
 	bus		*m_bus;
 	audio_player *m_aud;
-	vrc6audio *vrc6exp = nullptr;
-	sunsoftaudio *sunexp = nullptr;
-	vrc7audio* vrc7exp = nullptr;
-
 	void	readstream(std::istream &stream, ppu *ppu_device, bus *mainbus, audio_player *audbus, const char *orgfilename);
 	bool	readstream_nsf(std::istream &stream, ppu *ppu_device, bus *mainbus, audio_player *audbus);
 public:
 	namco163audio *namexp = nullptr;
+	vrc6audio* vrc6exp = nullptr;
+	sunsoftaudio* sunexp = nullptr;
+	vrc7audio* vrc7exp = nullptr;
+
 	bool	is_valid;
 	rom		*program;
 	vrom	*character;

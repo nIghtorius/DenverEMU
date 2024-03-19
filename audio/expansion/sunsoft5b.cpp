@@ -98,7 +98,7 @@ float	sunsoftaudio::mux(byte p1, byte p2, byte p3) {
 	fp1 = (1.0f / 32) * (float)p1;
 	fp2 = (1.0f / 32) * (float)p2;
 	fp3 = (1.0f / 32) * (float)p3;
-	return (fp1 + fp2 + fp3) / 2.5f;
+	return (fp1 + fp2 + fp3) / 3.0f;
 }
 
 int		sunsoftaudio::rundevice(int ticks) {

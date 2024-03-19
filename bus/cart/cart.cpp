@@ -553,8 +553,9 @@ cartridge::~cartridge() {
 				std::cout << "Writing battery backed ram to: " << srmfile << "\n";
 				std::ofstream srm(srmfile, std::ios::binary | std::ios::out);
 				batterybackedram* ramtowrite = program->get_battery_backed_ram();
-				if (ramtowrite->data != nullptr)
-					srm.write((char*)ramtowrite->data, ramtowrite->size);
+				if (ramtowrite != nullptr)
+					if (ramtowrite->data != nullptr)
+						srm.write((char*)ramtowrite->data, ramtowrite->size);
 				srm.close();
 				free(ramtowrite);
 			}

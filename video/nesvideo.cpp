@@ -42,6 +42,25 @@ Image* nesvideo::getPostImage() {
 	return &outImage;
 }
 
+// compute with emphasis.
+static inline void c_w_e(std::uint8_t *r, std::uint8_t *g, std::uint8_t *b, const std::uint8_t e) {
+	if (e & EMPHASIS_R) {
+		*r += *r>0xE0 ? 0x00 : 0x1F;
+		*g -= *g<0x1F ? 0x00 : 0x1F;
+		*b -= *b<0x1F ? 0x00 : 0x1F;
+	}
+	if (e & EMPHASIS_G) {
+		*r -= *r < 0x1F ? 0x00 : 0x1F;
+		*g += *g > 0xE0 ? 0x00 : 0x1F;
+		*b -= *b < 0x1F ? 0x00 : 0x1F;
+	}
+	if (e & EMPHASIS_B) {
+		*r -= *r < 0x1F ? 0x00 : 0x1F;
+		*g -= *g < 0x1F ? 0x00 : 0x1F;
+		*b += *b > 0xE0 ? 0x00 : 0x1F;
+	}
+}
+
 void nesvideo::process_ppu_image(std::uint16_t * ppu_image) {
 	/*
 		input is a buffer of 16 bits per pixel.
@@ -51,14 +70,14 @@ void nesvideo::process_ppu_image(std::uint16_t * ppu_image) {
 	*/
 
 	for (int x = 0; x < 61440; x++) {
-		std::uint8_t pixel = ppu_image[x] & 0x3F;
-		
+		std::uint8_t pixel = ppu_image[x] & 0x3F;		
 		std::int32_t idx = pixel * 3;
-
-		std::uint32_t framepixel = 0xFF000000 | ((ntscpalette[idx+2]) << 16) |
-			((ntscpalette[idx + 1]) << 8) |
-			((ntscpalette[idx]));
-
+		std::uint8_t emp = ppu_image[x] >> 8;
+		std::uint8_t r = ntscpalette[idx + 2];
+		std::uint8_t g = ntscpalette[idx + 1];
+		std::uint8_t b = ntscpalette[idx];
+		c_w_e(&b, &g, &r, emp);
+		std::uint32_t framepixel = 0xFF000000 | r << 16 | g << 8 | b;
 		displaybuffer[x] = framepixel;
 	}
 }

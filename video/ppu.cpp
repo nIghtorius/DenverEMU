@@ -173,7 +173,7 @@ int		ppu::rundevice(int ticks) {
 	for (int i = 0; i < ticks; i++) {
 		if ((ppumask.showbg || ppumask.showspr) && !((scanline>=240) && (scanline<=260))) {
 			// loading cycles.
-			if (((cycle >= 1) && (cycle <= 256)) | ((cycle >= 321) && (cycle <= 340))) {
+			if (((cycle >= 1) && (cycle <= 256)) || ((cycle >= 321) && (cycle <= 340))) {
 				if (((cycle - 1) % 8) == 1) {
 					// load name table shift register.
 					ppu_internal.shiftreg_nametable = vbus.readmemory(0x2000 | (ppu_internal.v_register & 0x0FFF));
@@ -299,12 +299,12 @@ int		ppu::rundevice(int ticks) {
 				byte cs = (cycle - 1) % 8;
 				if (cs == 1) {
 					// do garbage nametable read.
-					//ppu_internal.shiftreg_nametable = vbus.readmemory(0x2000 | (ppu_internal.v_register & 0x0FFF));
+					ppu_internal.shiftreg_nametable = vbus.readmemory(0x2000 | (ppu_internal.v_register & 0x0FFF));
 					ppu_internal.spr_pix = 0; // reset sprite render buffer. it's a denver thing.
 				}
 				else if (cs == 3) {
 					// do garbage nametable read.
-					//ppu_internal.shiftreg_nametable = vbus.readmemory(0x2000 | (ppu_internal.v_register & 0x0FFF));
+					ppu_internal.shiftreg_nametable = vbus.readmemory(0x2000 | (ppu_internal.v_register & 0x0FFF));
 					ppu_internal.shiftreg_spr_latch[ppu_internal.n] = ppu_internal.secoam[ppu_internal.n].attr;
 				}
 				else if (cs == 5) {
@@ -472,7 +472,21 @@ int		ppu::rundevice(int ticks) {
 						ppu_internal.spr_pix = 0;
 					}
 				}
-				else framebuffer[scanline << 8 | beam] = vpal.read(0, 0);
+				else {
+					if ((ppu_internal.v_register >= 0x3F00) && (ppu_internal.v_register <= 0x3FFF)) {
+						framebuffer[scanline << 8 | beam] = vbus.readmemory(ppu_internal.v_register, false);
+						framebuffer[scanline << 8 | beam] |= (ppumask.emp_blu ? 0x0100 : 0) |
+							(ppumask.emp_grn ? 0x0200 : 0) |
+							(ppumask.emp_red ? 0x0400 : 0);
+
+					} else {
+						framebuffer[scanline << 8 | beam] = vpal.read(0, 0);
+						framebuffer[scanline << 8 | beam] |= (ppumask.emp_blu ? 0x0100 : 0) |
+							(ppumask.emp_grn ? 0x0200 : 0) |
+							(ppumask.emp_red ? 0x0400 : 0);
+					}
+				}
+				if (ppumask.grayscale) framebuffer[scanline << 8 | beam] &= 0xFF30;
 				beam++;
 			}
 		}

@@ -183,6 +183,7 @@
     <ClInclude Include="bus\ram\mainram.h" />
     <ClInclude Include="bus\rom\mappers\mapper_007.h" />
     <ClInclude Include="bus\rom\mappers\mapper_009.h" />
+    <ClInclude Include="bus\rom\mappers\mapper_019.h" />
     <ClInclude Include="bus\rom\mappers\mapper_021-22-23-25.h" />
     <ClInclude Include="bus\rom\mappers\mapper_024026.h" />
     <ClInclude Include="bus\rom\mappers\mapper_001.h" />
@@ -242,6 +243,7 @@
     <ClCompile Include="bus\rom\mappers\mapper_004.cpp" />
     <ClCompile Include="bus\rom\mappers\mapper_007.cpp" />
     <ClCompile Include="bus\rom\mappers\mapper_009.cpp" />
+    <ClCompile Include="bus\rom\mappers\mapper_019.cpp" />
     <ClCompile Include="bus\rom\mappers\mapper_021-22-23-25.cpp" />
     <ClCompile Include="bus\rom\mappers\mapper_024026.cpp" />
     <ClCompile Include="bus\rom\mappers\mapper_069.cpp" />

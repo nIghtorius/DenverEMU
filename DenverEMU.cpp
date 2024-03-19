@@ -46,7 +46,7 @@ static bool		fullscreen = false;
 static int		upscaler = 0;
 static int		width = 512;
 static int		height = 480;
-static bool		linear_filter = true;
+static bool		linear_filter = false;
 
 void process_args(int argc, char *argv[]) {
 	for (int i = 1; i < argc; i++) {

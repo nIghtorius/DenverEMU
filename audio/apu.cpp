@@ -33,7 +33,7 @@ apu::~apu() {
 }
 
 float	apu::mux(byte p1, byte p2, byte tri, byte noi, byte dmc) {
-	return pulse_muxtable[p1 + p2] + tnd_table[3 * tri + 2 * noi + dmc];
+	return pulse_muxtable[p1 + p2] + tnd_table[3 * tri + 2 * noi + dmc] * 0.9f;
 }
 
 byte	apu::read(int addr, int addr_from_base, bool onlyread) {
@@ -41,6 +41,7 @@ byte	apu::read(int addr, int addr_from_base, bool onlyread) {
 	case APU_STATUS_REGISTER:
 		byte result = (dmc.irq_asserted ? 0x80 : 0) |
 			(frame_irq_asserted ? 0x40 : 0) |
+			(dmc.sample_length ? 0x10 : 0) |
 			(pulse[0].length_counter ? 0x01 : 0) |
 			(pulse[1].length_counter ? 0x02 : 0) |
 			(triangle.length_counter ? 0x04 : 0) |
@@ -77,7 +78,7 @@ void	apu::write(int addr, int addr_from_base, byte data) {
 			break;
 		case PULSE_LCL_TIMER:
 			pulse[pulse_sel].timer = (pulse[pulse_sel].timer & 0x00FF) | ((data & 0x07) << 8);
-			pulse[pulse_sel].length_counter = apu_length_table[(data & 0xF8) >> 3];
+			if (pulse[pulse_sel].enabled) pulse[pulse_sel].length_counter = apu_length_table[(data & 0xF8) >> 3];
 			pulse[pulse_sel].duty_pos = 0; // restart sequencer.
 			pulse[pulse_sel].envelope_reload = true; // restart envelope
 			break;
@@ -93,7 +94,7 @@ void	apu::write(int addr, int addr_from_base, byte data) {
 		break;
 	case TRIANGLE_LCL_TIMER:
 		triangle.timer = (triangle.timer & 0x00FF) | ((data & 0x07) << 8);
-		triangle.length_counter = apu_length_table[(data & 0xF8) >> 3];
+		if (triangle.enabled) triangle.length_counter = apu_length_table[(data & 0xF8) >> 3];
 		triangle.triangle_counter_reload = true;
 		break;
 	case NOISE_LCH_VOLENV:
@@ -106,7 +107,7 @@ void	apu::write(int addr, int addr_from_base, byte data) {
 		noise.noise_period = (data & 0x0F);
 		break;
 	case NOISE_LENGTH_COUNTER:
-		noise.length_counter = apu_length_table[(data & 0xF8) >> 3];
+		if (noise.enabled) noise.length_counter = apu_length_table[(data & 0xF8) >> 3];
 		noise.envelope_reload = true;
 		break;
 	case DMC_IRQ_LOOP_FREQ:
@@ -122,11 +123,10 @@ void	apu::write(int addr, int addr_from_base, byte data) {
 	case DMC_SAMPLE_ADDR:
 		dmc.sample_addr = 0xC000 + (data << 6);
 		dmc.sample_addr_counter = dmc.sample_addr;
-		dmc.sample_buffer_ready = false;
 		break;
 	case DMC_SAMPLE_LENGTH:
-		dmc.sample_length_load = (data << 4) | 1;
-		if (dmc.sample_length == 0) dmc.sample_length = dmc.sample_length_load;
+		dmc.sample_length_load = (data << 4) | 1;		
+		//if (dmc.sample_length == 0) dmc.sample_length = dmc.sample_length_load;
 		break;
 	case APU_STATUS_REGISTER:
 		pulse[0].enabled =	(data & 0x01) > 0;
@@ -425,6 +425,7 @@ void	dmc_generator::update_timers() {
 			}
 			sample_shift_register >>= 1;
 			bits_in_sample_remaining--;
+
 		}
 		if ((bits_in_sample_remaining == 0) || silent) {
 			bits_in_sample_remaining = 8;
@@ -453,7 +454,6 @@ void	dmc_generator::update_timers() {
 				}
 				else {
 					if (irq_enable) irq_asserted = true;
-					return;
 				}
 			}
 		}
