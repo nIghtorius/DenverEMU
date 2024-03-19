@@ -12,8 +12,9 @@ CXX = c++
 CXXFLAGS = -I imgui -I imgui/backends -c -O3 -Ofast -Wformat `sdl2-config --cflags`
 LDFLAGS = -lSDL2 -lGL
 
-SRCS := $(call rwildcard,./*.cpp)
-BINS := $(SRCS:%.cpp=%.o)
+SRCS := $(call rwildcard,./*.cpp) $(call rwildcard,./*.c)
+BINSX := $(SRCS:%.cpp=%.o)
+BINS := $(BINSX:%.c=%.o)
 
 all: denver
 denver: ${BINS}
@@ -31,3 +32,5 @@ rebuild: clean denver
 sources:
 	@echo "Source files: ${SRCS}" 
 
+showbins:
+	@echo "Binary files: ${BINS}" 
