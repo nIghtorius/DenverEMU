@@ -56,7 +56,7 @@ nes_emulator::nes_emulator() {
 	// configure postprocessors.
 	
 	//video_out->RegisterPostProcessor(&_hq2x);
-	//video_out->RegisterPostProcessor(&_scanlines);
+	video_out->RegisterPostProcessor(&_scanlines);
 	_scanlines.scanlinemode = scanlinetypes::h75;
 
 	// start audio.

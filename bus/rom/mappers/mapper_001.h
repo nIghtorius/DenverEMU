@@ -63,7 +63,7 @@ private:
 	byte			*chr0000;
 	byte			*chr1000;
 	byte			*ram;
-	bool			ram_mode;
+	bool			ram_mode = false;
 public:
 	mmc1_vrom();
 	~mmc1_vrom();
