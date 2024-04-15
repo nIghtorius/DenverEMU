@@ -104,19 +104,28 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *
 				}
 				if (ImGui::BeginMenu("Upscalers")) {
 					if (ImGui::MenuItem("No upscaling", NULL, (denver->frame_upscaler == 0))) {
-						denver->frame_upscaler = 0;
+						denver->video_out->ClearPostProcessors();
 					}
 					if (ImGui::MenuItem("Use HQ2X filter", NULL, (denver->frame_upscaler == 1))) {
-						denver->frame_upscaler = 1;
+						denver->video_out->ClearPostProcessors();
+						denver->video_out->RegisterPostProcessor(&denver->_hq2x);
 					}
 					if (ImGui::MenuItem("Use HQ3X filter", NULL, (denver->frame_upscaler == 2))) {
-						denver->frame_upscaler = 2;
+						denver->video_out->ClearPostProcessors();
+						denver->video_out->RegisterPostProcessor(&denver->_hq3x);
+					}
+					if (ImGui::MenuItem("Enable scanlines", NULL, false)) {
+						denver->video_out->ClearPostProcessors();
+						denver->video_out->RegisterPostProcessor(&denver->_scanlines);
 					}
 					ImGui::EndMenu();
 				}
 				if (ImGui::BeginMenu("Audio options")) {
 					if (ImGui::MenuItem("Enable sound interpolation", NULL, denver->audio->interpolated)) {
 						denver->audio->interpolated = !denver->audio->interpolated;
+					}
+					if (ImGui::MenuItem("Enable auto attentuation", NULL, !denver->audio->attentuate_lock)) {
+						denver->audio->attentuate_lock = !denver->audio->attentuate_lock;
 					}
 					if (denver->cart->namexp) {
 						if (ImGui::MenuItem("NAMCO163 Enhanced Mixing", NULL, denver->cart->namexp->enhanced_mixer)) {

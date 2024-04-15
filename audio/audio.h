@@ -62,6 +62,9 @@ public:
 	bool	no_audio = false;
 	bool	no_expanded_audio = false;
 	bool	interpolated = true;
+	float	attentuate = 1.0f;
+	bool	attentuate_lock = false;
+	float	max_attentuate = 1.05f;
 
 	audio_player();
 	~audio_player();

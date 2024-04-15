@@ -83,6 +83,7 @@ void	audio_player::play_audio() {
 	final_mux.clear();
 
 	float avg_center = 0.0f;
+	bool increaseattentuate = true;
 
 	for (int i = 0; i < audibles[0]->sample_buffer.size(); i++) {
 		float input = 0.0f;
@@ -93,9 +94,30 @@ void	audio_player::play_audio() {
 		}
 		//input /= audibles.size();
 		avg_center += input;
+
+		// balance volume.
+		// peaking > lock to 1.0f
+		if (input * attentuate > 1.0f) {
+			attentuate = 1.0f / (input * attentuate);
+			increaseattentuate = false;
+		}
+		// below 90% incremently increase volume.
+		if (input * attentuate >= 0.9f) {
+			increaseattentuate = false;
+		}
+		// below 5% do not attentuate is silence.
+		if (input * attentuate <= 0.05f) {
+			increaseattentuate = false;
+		}
+
 		final_mux.push_back(input);
 	}
 	
+	if (increaseattentuate) 
+		if (attentuate < max_attentuate) attentuate += 0.005f;
+
+	if (attentuate_lock) attentuate = 0.65f;	// lock dynamic attentuation @ 0.65x
+
 	avg_center /= (float)audibles[0]->sample_buffer.size();
 	average_mix = avg_center;
 
@@ -125,7 +147,7 @@ void	audio_player::send_sampledata_to_audio_device() {
 			}
 		} else sample = final_mux[(int)trunc(samples)];
 
-		buffer[samples_in_buffer + outsamples] = -32768 + (int)trunc(sample * 24000);
+		buffer[samples_in_buffer + outsamples] = -32768 + (int)trunc(sample * attentuate * 30000);
 		samples += samples_to_target;
 		outsamples++;
 	}

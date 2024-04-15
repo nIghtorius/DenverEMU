@@ -107,6 +107,10 @@ void	ppu::write(int addr, int addr_from_base, byte data) {
 		ppuctrl.bg_0x1000 = (data & PPU_BG_TABLE_0X1000) > 0;
 		ppuctrl.sprites_0x1000 = (data & PPU_SPRITE_TABLE_0X1000) > 0;
 		ppuctrl.do_nmi = (data & PPU_DO_NMI) > 0;
+		if (ppuctrl.do_nmi) {
+			// check if in vblank and retrigger the NMI.
+			if (ppustatus.vblank) nmi_enable = true;
+		}
 		ppuctrl.increment_32_bytes = (data & PPU_VRAM_INCREMENT_32BYTES) > 0;
 		ppuctrl.master_mode = (data & PPU_MASTER_MODE) > 0;
 		ppuctrl.sprites_8x16 = (data & PPU_SPRITE_8X16) > 0;
@@ -247,10 +251,10 @@ int		ppu::rundevice(int ticks) {
 						if ((ppu_internal.sn < 8) && !ppu_internal.oam_evald) ppu_internal.secoam[ppu_internal.sn].y = ppu_internal.buffer_oam_read;
 						ppu_internal.oam_copy =
 							((scancomp >= ppu_internal.buffer_oam_read) &&
-							(scancomp < (int)ppu_internal.buffer_oam_read + (ppuctrl.sprites_8x16 ? 16 : 8))) && (scancomp < 239);
+							(scancomp < (int)ppu_internal.buffer_oam_read + (ppuctrl.sprites_8x16 ? 16 : 8))) && (scancomp < 240) && !ppu_internal.oam_evald;
 						if (ppu_internal.oam_copy && (ppu_internal.sn >= 8)) {
 							// sprite overflow.
-							ppustatus.sprite_overflow = true;
+							ppustatus.sprite_overflow = true;							
 						}
 					}
 					// copy cycles.

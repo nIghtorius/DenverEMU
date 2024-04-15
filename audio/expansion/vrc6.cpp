@@ -153,7 +153,7 @@ float	vrc6audio::mux(byte p1, byte p2, byte sw) {
 	fp1 = (1.0f / 24) * (float)p1;
 	fp2 = (1.0f / 24) * (float)p2;
 	fsw = (1.0f / 48) * (float)sw;
-	return (fp1 + fp2 + fsw) / 2.5f;
+	return (fp1 + fp2 + fsw) / 1.5f;
 }
 
 int		vrc6audio::rundevice(int ticks) {

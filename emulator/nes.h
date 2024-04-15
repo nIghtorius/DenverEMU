@@ -39,16 +39,11 @@ struct nes_frame_tex {
 class nes_emulator {
 private:
 	mainram				* nesram;
-	nesvideo			* video_out;
 	nes_frame_tex		frame;
 	bool				quit = false;
 
-	// postprocessors.
-	hq2x				_hq2x;
-	hq3x				_hq3x;
-	scanlines			_scanlines;
-
 public:
+	nesvideo* video_out;
 	package_2a03		* nes_2a03;
 	ppu					* ppu_device;
 	bus					* mainbus;
@@ -56,6 +51,11 @@ public:
 	joypad				* joydefs;
 	audio_player		* audio;
 	cartridge			* cart;
+
+	// postprocessors.
+	hq2x				_hq2x;
+	hq3x				_hq3x;
+	scanlines			_scanlines;
 
 	int					frame_upscaler = DENVER_NO_UPSCALER;
 

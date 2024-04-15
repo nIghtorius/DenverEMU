@@ -12,6 +12,7 @@
 #include "../rom/mappers/mapper_024026.h"
 #include "../rom/mappers/mapper_021-22-23-25.h"
 #include "../rom/mappers/mapper_069.h"
+#include "../rom/mappers/mapper_071.h"
 #include "../rom/mappers/mapper_085.h"
 
 // NSF
@@ -403,6 +404,13 @@ void	cartridge::readstream(std::istream &nesfile, ppu *ppu_device, bus *mainbus,
 			character->set_rom_data((byte *)char_data, nes.charsize);
 		}
 		program->set_rom_data((byte *)program_data, nes.programsize);
+		break;
+	case 71:
+		// Camerica
+		program = new m71rom();
+		charram = new vram();
+		character = charram;
+		program->set_rom_data((byte*)program_data, nes.programsize);
 		break;
 	case 21:
 	case 22:
