@@ -88,7 +88,7 @@ float	namco163audio::mux() {
 	for (int i = 0; i < channels_active + 1; i++) {
 		final_mux += channels[i].output;
 	}
-	final_mux /= (1.5f+(channels_active >> 1));
+	final_mux /= (1.0f+(channels_active >> 1));
 	return final_mux;
 }
 

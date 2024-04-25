@@ -383,15 +383,6 @@
     <ClCompile Include="audio\expansion\sunsoft5b.cpp">
       <Filter>Source Files\emulation\audio\expansion</Filter>
     </ClCompile>
-    <ClCompile Include="3rdparty\hqx\HQ2x.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="3rdparty\hqx\HQ3x.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="3rdparty\hqx\HQx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="bus\rom\mappers\mapper_021-22-23-25.cpp">
       <Filter>Source Files\emulation\bus\rom\mappers</Filter>
     </ClCompile>
@@ -427,6 +418,15 @@
     </ClCompile>
     <ClCompile Include="bus\rom\mappers\mapper_071.cpp">
       <Filter>Source Files\emulation\bus\rom\mappers</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdparty\hqx\HQ2x.cpp">
+      <Filter>Source Files\emulation\3rdparty\hqx</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdparty\hqx\HQ3x.cpp">
+      <Filter>Source Files\emulation\3rdparty\hqx</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdparty\hqx\HQx.cpp">
+      <Filter>Source Files\emulation\3rdparty\hqx</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
