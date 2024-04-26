@@ -244,7 +244,7 @@ byte mmc3_vrom::read(int addr, int addr_from_base, bool onlyread) {
 	if ((addr >= 0x1000) && (addr <= 0x13ff)) return chr1000[addr - 0x1000];
 	if ((addr >= 0x1400) && (addr <= 0x17ff)) return chr1400[addr - 0x1400];
 	if ((addr >= 0x1800) && (addr <= 0x1bff)) return chr1800[addr - 0x1800];
-	if (addr <= 0x1fff) return chr1c00[addr - 0x1c00];
+	return chr1c00[addr - 0x1c00];
 }
 
 void mmc3_vrom::write(int addr, int addr_from_base, byte data) {

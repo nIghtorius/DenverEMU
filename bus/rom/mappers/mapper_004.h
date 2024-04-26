@@ -46,13 +46,13 @@ class mmc3_vrom;
 class mmc3_rom : public rom {
 private:
 	byte	*prgram6000;
-	byte	*prg8000;
-	byte	*prga000;
-	byte	*prgc000;
-	byte	*prge000;
+	byte	*prg8000 = nullptr;
+	byte	*prga000 = nullptr;
+	byte	*prgc000 = nullptr;
+	byte	*prge000 = nullptr;
 	mmc3_state	state;
-	mmc3_vrom	*vrom;
-	word	lastppuaddr;
+	mmc3_vrom	*vrom = nullptr;
+	word	lastppuaddr = 0;
 public:
 	mmc3_rom();
 	~mmc3_rom();
@@ -69,18 +69,18 @@ public:
 
 class mmc3_vrom : public vrom {
 private:
-	byte	*chr0000;
-	byte	*chr0400;
-	byte	*chr0800;
-	byte	*chr0c00;
-	byte	*chr1000;
-	byte	*chr1400;
-	byte	*chr1800;
-	byte	*chr1c00;
-	word	ppuaddr;
+	byte	*chr0000 = nullptr;
+	byte	*chr0400 = nullptr;
+	byte	*chr0800 = nullptr;
+	byte	*chr0c00 = nullptr;
+	byte	*chr1000 = nullptr;
+	byte	*chr1400 = nullptr;
+	byte	*chr1800 = nullptr;
+	byte	*chr1c00 = nullptr;
+	word	ppuaddr = 0;
 public:
 	mmc3_vrom();
-	mmc3_rom		*rom;
+	mmc3_rom		*rom = nullptr;
 	void			update_banks(mmc3_state *state);
 	virtual	byte	read(int addr, int addr_from_base, bool onlyread = false);
 	virtual	void	write(int addr, int addr_from_base, byte data);
