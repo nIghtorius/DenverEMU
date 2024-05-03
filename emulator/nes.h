@@ -24,8 +24,9 @@
 #include "../video/postprocessing/hqxpost.h"
 #include "../video/postprocessing/scanlines.h"
 
-#include <gl/glew.h>
+#include <GL/glew.h>
 #include <SDL_opengl.h>
+#include <iostream>
 
 #define	DENVER_NO_UPSCALER			0
 #define DENVER_HQ2X_UPSCALER		1

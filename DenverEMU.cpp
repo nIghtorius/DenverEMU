@@ -229,7 +229,7 @@ int main(int argc, char *argv[])
 
 	nes_emulator * denver = new nes_emulator();
 	denver->frame_upscaler = upscaler;
-	denver->use_shader("shaders\\tv2.shader");
+	denver->use_shader("shaders/tv2.shader");
 
 	if (no_audio) denver->audio->no_audio = true;
 	if (no_audio_emu) denver->nes_2a03->no_apu = true;

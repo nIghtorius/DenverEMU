@@ -10,7 +10,7 @@ rwildcard=$(wildcard $1) $(foreach d,$1,$(call rwildcard,$(addsuffix /$(notdir $
 CXX = c++
 
 CXXFLAGS = -I imgui -I imgui/backends -c -O3 -Ofast -Wformat `sdl2-config --cflags`
-LDFLAGS = -lSDL2 -lGL
+LDFLAGS = -lSDL2 -lGL -lGLEW
 
 SRCS := $(call rwildcard,./*.cpp) $(call rwildcard,./*.c)
 BINSX := $(SRCS:%.cpp=%.o)

@@ -7,8 +7,6 @@
 
 #include "nes.h"
 #include "denverlogo.h"
-#include <iostream>
-#include <sstream>
 
 struct imembuf : std::streambuf
 {
@@ -223,7 +221,7 @@ void	nes_emulator::use_shader(const char* filename) {
 	GLuint fragShader;
 	std::cout << "Compiling shader: " << filename << "....\n";
 	// load file.
-	std::ifstream shaderFile (filename, std::ios::in || std::ios::binary);
+	std::ifstream shaderFile (filename, std::ios::in | std::ios::binary);
 	shaderFile.seekg(0, std::ios_base::end);
 	std::size_t shaderSize = shaderFile.tellg();
 	shaderFile.seekg(0, std::ios_base::beg);
