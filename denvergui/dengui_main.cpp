@@ -214,100 +214,101 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *
 	ImGui::SetNextWindowPos(startRendering);
 	ImGui::SetNextWindowSize(sizeRendering);
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-	if (ImGui::Begin("NES Game", NULL, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoResize || ImGuiWindowFlags_NoInputs)) 
-	{
-		if (!denver->cart->nsf_mode) {
-			// compute where the image has to come. for now its the 4:3 renderer, later on we implement
-			// the 8:7 renderer.
+	if (denver->cart->nsf_mode) {
+		if (ImGui::Begin("NES Game", NULL, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoResize || ImGuiWindowFlags_NoInputs))
+		{
+			if (!denver->cart->nsf_mode) {
+				// compute where the image has to come. for now its the 4:3 renderer, later on we implement
+				// the 8:7 renderer.
 
-			float scale_x = io.DisplaySize.x / 256.0f; //ImGui::GetContentRegionAvail().x / 256.0f;
-			float scale_y = ImGui::GetContentRegionAvail().y / 240.0f;
+				float scale_x = io.DisplaySize.x / 256.0f; //ImGui::GetContentRegionAvail().x / 256.0f;
+				float scale_y = ImGui::GetContentRegionAvail().y / 240.0f;
 
-			float width_x = 0.0f;
-			float height_y = 0.0f;
+				float width_x = 0.0f;
+				float height_y = 0.0f;
 
-			if (scale_x > scale_y) {
-				// scale y dominant.
-				width_x = 256.0f * scale_y;
-				height_y = 240.0f * scale_y;
+				if (scale_x > scale_y) {
+					// scale y dominant.
+					width_x = 256.0f * scale_y;
+					height_y = 240.0f * scale_y;
+				}
+				else {
+					// scale x dominant.
+					width_x = 256.0f * scale_x;
+					height_y = 240.0f * scale_x;
+				}
+
+				// 8:7 transformation?
+				scale_x *= 1.3f;
+				float start_x = (ImGui::GetContentRegionAvail().x / 2) - (width_x / 2);
+				ImGui::SetCursorPosX(start_x);
+				ImGui::Image((void*)(intptr_t)tex, ImVec2{ width_x, height_y });
 			}
 			else {
-				// scale x dominant.
-				width_x = 256.0f * scale_x;
-				height_y = 240.0f * scale_x;
+				// NSF interface.
+				ImGui::Text("Denver NSF Player");
+				ImGui::Text("");
+				ImGui::Text("Song(s) :");
+				ImGui::SameLine();
+				ImGui::Text(denver->cart->songname);
+				ImGui::Text("Artist :");
+				ImGui::SameLine();
+				ImGui::Text(denver->cart->artist);
+				ImGui::Text("Copyright :");
+				ImGui::SameLine();
+				ImGui::Text(denver->cart->copyright);
+				ImGui::Text("");
+				ImGui::Separator();
+
+				// get NSF interface.
+				nsfrom* nsfinterface = reinterpret_cast<nsfrom*>(denver->cart->program);
+
+				ImGui::Text("Selected song %d/%d", nsfinterface->state.currentsong, nsfinterface->state.numsongs);
+				ImGui::Separator();
+
+				// Media buttons.
+				if (ImGui::Button("<<", ImVec2{ 128, 32 })) {
+					if (nsfinterface->state.currentsong > 1)
+						nsfinterface->state.currentsong--;
+					// play the track.
+					nsfinterface->initialize(nsfinterface->state.currentsong - 1);
+				}
+				ImGui::SameLine();
+				ImGui::Text("      ");
+				ImGui::SameLine();
+				if (ImGui::Button(">>", ImVec2{ 128, 32 })) {
+					if (nsfinterface->state.currentsong < nsfinterface->state.numsongs)
+						nsfinterface->state.currentsong++;
+					nsfinterface->initialize(nsfinterface->state.currentsong - 1);
+				}
+				ImGui::Separator();
+				ImGui::Text("Live Sample output");
+				int s = (int)denver->audio->final_mux.size();
+				float* graph = &denver->audio->final_mux[0];
+				float lb = denver->audio->average_mix - 0.7f;
+				float hb = denver->audio->average_mix + 0.7f;
+				ImGui::PlotLines("Sample", graph, s, 0, NULL, lb, hb, ImVec2{ 0, 160.0f });
+				ImGui::Separator();
+				ImGui::Text("Expansion Audio:");
+				ImGui::SameLine();
+				if (denver->cart->namexp) {
+					ImGui::Text("NAMCO"); ImGui::SameLine();
+				}
+				if (denver->cart->vrc6exp) {
+					ImGui::Text("VRC6"); ImGui::SameLine();
+				}
+				if (denver->cart->vrc7exp) {
+					ImGui::Text("VRC7"); ImGui::SameLine();
+				}
+				if (denver->cart->sunexp) {
+					ImGui::Text("SUNSOFT"); ImGui::SameLine();
+				}
+				ImGui::NewLine();
+
+
 			}
-
-			// 8:7 transformation?
-			scale_x *= 1.3f;
-			float start_x = (ImGui::GetContentRegionAvail().x / 2) - (width_x / 2);
-
-			ImGui::SetCursorPosX(start_x);
-			ImGui::Image((void *)(intptr_t)tex, ImVec2{ width_x, height_y });
+			ImGui::End();
 		}
-		else {
-			// NSF interface.
-			ImGui::Text("Denver NSF Player");
-			ImGui::Text("");
-			ImGui::Text("Song(s) :");
-			ImGui::SameLine();
-			ImGui::Text(denver->cart->songname);
-			ImGui::Text("Artist :");
-			ImGui::SameLine();
-			ImGui::Text(denver->cart->artist);
-			ImGui::Text("Copyright :");
-			ImGui::SameLine();
-			ImGui::Text(denver->cart->copyright);
-			ImGui::Text("");
-			ImGui::Separator();
-
-			// get NSF interface.
-			nsfrom *nsfinterface = reinterpret_cast<nsfrom*>(denver->cart->program);
-
-			ImGui::Text("Selected song %d/%d", nsfinterface->state.currentsong, nsfinterface->state.numsongs);
-			ImGui::Separator();
-
-			// Media buttons.
-			if (ImGui::Button("<<", ImVec2{ 128, 32 })) {
-				if (nsfinterface->state.currentsong>1)
-					nsfinterface->state.currentsong--;
-				// play the track.
-				nsfinterface->initialize(nsfinterface->state.currentsong - 1);
-			}
-			ImGui::SameLine();
-			ImGui::Text("      ");
-			ImGui::SameLine();
-			if (ImGui::Button(">>", ImVec2{128, 32})) {
-				if (nsfinterface->state.currentsong < nsfinterface->state.numsongs)
-					nsfinterface->state.currentsong++;
-				nsfinterface->initialize(nsfinterface->state.currentsong - 1);
-			}
-			ImGui::Separator();
-			ImGui::Text("Live Sample output");
-			int s = (int)denver->audio->final_mux.size();
-			float* graph = &denver->audio->final_mux[0];
-			float lb = denver->audio->average_mix - 0.7f;
-			float hb = denver->audio->average_mix + 0.7f;
-			ImGui::PlotLines("Sample", graph, s, 0, NULL, lb, hb, ImVec2{ 0, 160.0f });
-			ImGui::Separator();
-			ImGui::Text("Expansion Audio:");
-			ImGui::SameLine();
-			if (denver->cart->namexp) {
-				ImGui::Text("NAMCO"); ImGui::SameLine();
-			}
-			if (denver->cart->vrc6exp) {
-				ImGui::Text("VRC6"); ImGui::SameLine();
-			}
-			if (denver->cart->vrc7exp) {
-				ImGui::Text("VRC7"); ImGui::SameLine();
-			}
-			if (denver->cart->sunexp) {
-				ImGui::Text("SUNSOFT"); ImGui::SameLine();
-			}
-			ImGui::NewLine();
-
-
-		}
-		ImGui::End();
 	}
 	ImGui::PopStyleVar(1);
 

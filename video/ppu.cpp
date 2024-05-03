@@ -109,7 +109,9 @@ void	ppu::write(int addr, int addr_from_base, byte data) {
 		ppuctrl.do_nmi = (data & PPU_DO_NMI) > 0;
 		if (ppuctrl.do_nmi) {
 			// check if in vblank and retrigger the NMI.
-			if (ppustatus.vblank) nmi_enable = true;
+			// ToDo: Check this. It should be more NES-like, but it breaks HEOHdemo.nes.
+			// is it the demo that is wrong or this behaiviour?
+			//if (ppustatus.vblank) nmi_enable = true;
 		}
 		ppuctrl.increment_32_bytes = (data & PPU_VRAM_INCREMENT_32BYTES) > 0;
 		ppuctrl.master_mode = (data & PPU_MASTER_MODE) > 0;

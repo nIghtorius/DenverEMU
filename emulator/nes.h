@@ -24,6 +24,7 @@
 #include "../video/postprocessing/hqxpost.h"
 #include "../video/postprocessing/scanlines.h"
 
+#include <gl/glew.h>
 #include <SDL_opengl.h>
 
 #define	DENVER_NO_UPSCALER			0
@@ -59,11 +60,16 @@ public:
 
 	int					frame_upscaler = DENVER_NO_UPSCALER;
 
+	// shaders.
+	GLuint				shader = 0;
+
 	nes_emulator();
 	~nes_emulator();
 
 	void cold_reset();
 	void reset();
+
+	void use_shader(const char* filename);
 
 	void load_cartridge(const char * filename);
 	void load_logo();
@@ -78,6 +84,7 @@ public:
 	void stop();
 
 	void prepare_frame();
+	void renderFrameToGL(const int windowWidth, const int windowHeight, const GLuint tex);
 
 	std::vector<postprocessor*> listOfPostProcessors();
 };

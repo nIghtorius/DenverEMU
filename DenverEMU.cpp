@@ -26,6 +26,8 @@
 #include "video/debug_renderer.h"
 
 #include <SDL.h>
+#include <GL/glew.h>
+
 #if defined(IMGUI_IMPL_OPENGL_ES2)
 #include <SDL_opengles2.h>
 #else
@@ -214,6 +216,7 @@ int main(int argc, char *argv[])
 	// Setup Platform/Renderer backends
 	ImGui_ImplSDL2_InitForOpenGL(win, gl_context);
 	ImGui_ImplOpenGL3_Init(glsl_version);
+	glewInit();
 
 	int time = SDL_GetTicks();
 
@@ -226,6 +229,7 @@ int main(int argc, char *argv[])
 
 	nes_emulator * denver = new nes_emulator();
 	denver->frame_upscaler = upscaler;
+	denver->use_shader("shaders\\tv2.shader");
 
 	if (no_audio) denver->audio->no_audio = true;
 	if (no_audio_emu) denver->nes_2a03->no_apu = true;
@@ -278,7 +282,7 @@ int main(int argc, char *argv[])
 		}
 		denver->prepare_frame();
 		nes_frame_tex * nesframe = denver->returnFrameAsTexture();
-		glBindTexture(GL_TEXTURE_2D, tex);
+		glBindTexture(GL_TEXTURE_2D, tex);		
 		if (!linear_filter) {
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -313,6 +317,10 @@ int main(int argc, char *argv[])
 			windowstates.ntable_tex = ppu_ntable;
 		}
 
+		int w, h;
+		SDL_GetWindowSize(win, &w, &h);
+		denver->renderFrameToGL(w, h, tex);
+
 		if (!no_gui) {
 			denvergui::render_main(denver, tex, &windowstates);
 			ImGui::Render();
@@ -326,30 +334,7 @@ int main(int argc, char *argv[])
 				SDL_GL_MakeCurrent(backup_current_window, backup_current_context);
 			}
 		}
-		else {
-			glMatrixMode(GL_PROJECTION);
-			glPushMatrix();
-			glLoadIdentity();
-			glOrtho(0.0, 256.0f, 0.0f, 240.0f, -1.0f, 1.0f);
-			glMatrixMode(GL_MODELVIEW);
-			glPushMatrix();
-			glLoadIdentity();
-			glDisable(GL_LIGHTING);
-			glColor3f(1.0f, 1.0f, 1.0f);
-			glEnable(GL_TEXTURE_2D);
-			glBindTexture(GL_TEXTURE_2D, tex);
-			glBegin(GL_QUADS);
-			glTexCoord2f(0, 1); glVertex3f(0, 0, 0);
-			glTexCoord2f(0, 0); glVertex3f(0, 240, 0);
-			glTexCoord2f(1, 0); glVertex3f(256, 240, 0);
-			glTexCoord2f(1, 1); glVertex3f(256, 0, 0);
-			glEnd();
-			glDisable(GL_TEXTURE_2D);
-			glPopMatrix();
-			glMatrixMode(GL_PROJECTION);
-			glPopMatrix();
-			glMatrixMode(GL_MODELVIEW);
-		}
+
 		SDL_GL_SwapWindow(win);
 		denver->sync_audio();
 	});

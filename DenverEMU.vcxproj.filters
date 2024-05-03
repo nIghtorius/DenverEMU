@@ -94,6 +94,9 @@
     <Filter Include="Source Files\emulation\3rdparty\fm">
       <UniqueIdentifier>{8e720200-2548-4036-8b12-0927063af540}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\shaders">
+      <UniqueIdentifier>{3c99ab6a-74f1-48ca-98ec-cbbafe5d1d5a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="audio\apu.h">
@@ -270,6 +273,9 @@
     <ClInclude Include="bus\rom\mappers\mapper_071.h">
       <Filter>Source Files\emulation\bus\rom\mappers</Filter>
     </ClInclude>
+    <ClInclude Include="emulator\simple-opengl-loader.h">
+      <Filter>Source Files\emulation\emulator</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DenverEMU.cpp">
@@ -438,6 +444,12 @@
     </None>
     <None Include="imgui\backends\vulkan\glsl_shader.vert">
       <Filter>Source Files\imgui\backends\vulkan</Filter>
+    </None>
+    <None Include="shaders\tv.shader">
+      <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="shaders\tv2.shader">
+      <Filter>Source Files\shaders</Filter>
     </None>
   </ItemGroup>
 </Project>

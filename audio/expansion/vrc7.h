@@ -17,11 +17,11 @@
 class vrc7audio : public audio_device {
 private:
 	OPLL* opl = nullptr;
-	byte		regselect;
+	byte		regselect = 0;
 	float		normalize = 0.0f;
-	float		sample;
+	float		sample = 0.0f;
 	int			samplehold = 0;
-	int			msamplehold;
+	int			msamplehold = 0;
 
 public:
 	vrc7audio();

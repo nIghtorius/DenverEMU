@@ -52,13 +52,7 @@ nes_emulator::nes_emulator() {
 
 	// configure video.
 	video_out = new nesvideo();
-
-	// configure postprocessors.
 	
-	//video_out->RegisterPostProcessor(&_hq2x);
-	video_out->RegisterPostProcessor(&_scanlines);
-	_scanlines.scanlinemode = scanlinetypes::h75;
-
 	// start audio.
 	audio->startplayback();
 }
@@ -156,4 +150,124 @@ void	nes_emulator::load_logo() {
 	cart = new cartridge(data, ppu_device, mainbus, audio);
 	clock.setdevices(nes_2a03, ppu_device, cart->program);
 	nes_2a03->cpu_2a03.coldboot();
+}
+
+void	nes_emulator::renderFrameToGL(const int windowWidth, const int windowHeight, const GLuint tex) {
+	int wH, wW, wS;
+	int fW = windowWidth;
+	int fH = windowHeight;
+
+	float scale_x = fW / 256.0f; //ImGui::GetContentRegionAvail().x / 256.0f;
+	float scale_y = fH / 240.0f;
+
+	float width_x = 0.0f;
+	float height_y = 0.0f;
+
+	if (scale_x > scale_y) {
+		// scale y dominant.
+		width_x = 256.0f * scale_y;
+		height_y = 240.0f * scale_y;
+	}
+	else {
+		// scale x dominant.
+		width_x = 256.0f * scale_x;
+		height_y = 240.0f * scale_x;
+	}
+
+	wW = floor(width_x);
+	wH = floor(height_y);
+	scale_x *= 1.3f;
+	int start_x = floor((fW / 2) - (width_x / 2));
+
+	glViewport(0, 0, fW, fH);
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	glViewport(start_x, 0, wW, wH);
+
+	if (shader) {
+		glUseProgram(shader);
+		GLint screen = glGetUniformLocation(shader, "screen");
+		GLint nesvideo = glGetUniformLocation(shader, "nesvideo");
+		GLint offset = glGetUniformLocation(shader, "offset");
+		glUniform3f(screen, width_x, height_y, 1.0f);
+		glUniform1i(nesvideo, 0);
+		glUniform2f(offset, start_x, 0);
+	}
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	glOrtho(0.0, 256.0f, 0.0f, 240.0f, -1.0f, 1.0f);
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+	glDisable(GL_LIGHTING);
+	glColor3f(1.0f, 1.0f, 1.0f);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, tex);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0, 1); glVertex3f(0, 0, 0);
+	glTexCoord2f(0, 0); glVertex3f(0, 240, 0);
+	glTexCoord2f(1, 0); glVertex3f(256, 240, 0);
+	glTexCoord2f(1, 1); glVertex3f(256, 0, 0);
+	glEnd();
+	glDisable(GL_TEXTURE_2D);
+	glPopMatrix();
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+}
+
+
+void	nes_emulator::use_shader(const char* filename) {
+	// load and compiles shader and applies it to the rendering pipeline.
+	GLuint fragShader;
+	std::cout << "Compiling shader: " << filename << "....\n";
+	// load file.
+	std::ifstream shaderFile (filename, std::ios::in || std::ios::binary);
+	shaderFile.seekg(0, std::ios_base::end);
+	std::size_t shaderSize = shaderFile.tellg();
+	shaderFile.seekg(0, std::ios_base::beg);
+	GLchar* shaderSource = (GLchar*)malloc(shaderSize + 1);
+	if (shaderSource == nullptr) {
+		return;
+	}
+	memset(shaderSource, 0, shaderSize + 1);
+	shaderFile.read(shaderSource, shaderSize);
+	shaderFile.close();
+	
+	// compile.
+	fragShader = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(fragShader, 1, &shaderSource, NULL);
+	glCompileShader(fragShader);
+
+	GLint isCompiled = 0;
+	glGetShaderiv(fragShader, GL_COMPILE_STATUS, &isCompiled);
+	if (isCompiled == GL_FALSE) {
+		GLint maxLength = 0;
+		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &maxLength);
+
+		if (maxLength > 2) {
+			// The maxLength includes the NULL character
+			std::vector<GLchar> infoLog(maxLength);
+			glGetShaderInfoLog(fragShader, maxLength, &maxLength, &infoLog[0]);
+
+			// We don't need the shader anymore.
+			glDeleteShader(fragShader);
+
+			std::cout << "Unable to load shader: " << filename << "\n";
+			std::cout << "Reason:\n" << infoLog.data() << "\n";
+		}
+		else {
+			std::cout << "Unable to load shader, reason unknown..\n";
+		}
+		return;
+	}
+	std::cout << "Shader compiled succesfully..\nShader ID: " << (int)fragShader << "\n";
+	free(shaderSource);
+	// make a program.
+	shader = glCreateProgram();
+	glAttachShader(shader, fragShader);
+	glLinkProgram(shader);
+	glDeleteShader(fragShader);
+	std::cout << "Shaderprogram linked succesfully..\nShaderProg ID: " << (int)shader << "\n";
 }
