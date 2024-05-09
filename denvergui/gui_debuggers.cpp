@@ -117,8 +117,8 @@ void	denvergui::render_apuviewer(nes_emulator *denver, denvergui_state *state) {
 			ImGui::Separator();
 			ImGui::TreePop();
 		}
-		ImGui::End();
 	}
+	ImGui::End();
 }
 
 void	denvergui::render_cpuviewer(nes_emulator *denver, denvergui_state *state) {
@@ -229,8 +229,8 @@ void	denvergui::render_cpuviewer(nes_emulator *denver, denvergui_state *state) {
 			ImGui::Separator();
 			ImGui::TreePop();
 		}
-		ImGui::End();
 	}
+	ImGui::End();
 }
 
 void	denvergui::render_ppuviewer(nes_emulator *denver, denvergui_state *state) {
@@ -513,6 +513,6 @@ void	denvergui::render_ppuviewer(nes_emulator *denver, denvergui_state *state) {
 			ImGui::Separator();
 			ImGui::TreePop();
 		}
-		ImGui::End();
 	}
+	ImGui::End();
 }

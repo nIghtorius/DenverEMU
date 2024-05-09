@@ -204,8 +204,8 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *
 
 			ImGui::EndMenuBar();
 		}
-		ImGui::End();
 	}
+	ImGui::End();
 
 	//if (ImGui::BeginViewportSideBar("##NES", viewport, ImGuiDir_Left, io.DisplaySize.y - height * 2, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings)) 
 	ImVec2 startRendering = ImGui::GetMainViewport()->Pos;
@@ -306,9 +306,9 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *
 				ImGui::NewLine();
 
 
-			}
-			ImGui::End();
+			}			
 		}
+		ImGui::End();
 	}
 	ImGui::PopStyleVar(1);
 
@@ -320,7 +320,7 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *
 			ImGui::TextColored(color, "Emulation running. %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
 			ImGui::EndMenuBar();
 		}
-		ImGui::End();
 	}
+	ImGui::End();
 
 }
