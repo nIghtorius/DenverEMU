@@ -50,6 +50,7 @@ static int		upscaler = 0;
 static int		width = 512;
 static int		height = 480;
 static bool		linear_filter = true;
+static float	override_scale = -1.0f;
 
 void process_args(int argc, char *argv[]) {
 	for (int i = 1; i < argc; i++) {
@@ -60,13 +61,14 @@ void process_args(int argc, char *argv[]) {
 			std::cout << "--no-apu-emulation, disables APU emulation\n";
 			std::cout << "--no-expanded-audio, disables expansion audio emulation\n";
 			std::cout << "--no-gui, disabled GUI, requires a rom file to be specified with --rom-file\n";
-			std::cout << "--rom-file, ROM file to run\n";
+			std::cout << "--rom-file <romfile>, ROM file to run\n";
 			std::cout << "--fullscreen, runs emulator in fullscreen mode\n";
-			std::cout << "--upscaler, selects upscaler, functionality is removed, does nothing now\n";
-			std::cout << "--width, --height, sets width and height of the window or fullscreen resolution\n";
+			std::cout << "--upscaler <upscaler>, selects upscaler, functionality is removed, does nothing now\n";
+			std::cout << "--width <width>, --height <height>, sets width and height of the window or fullscreen resolution\n";
 			std::cout << "--linear-filter, enables linear filtering\n";
 			std::cout << "--no-linear-filter, disables linear filtering\n";
-			std::cout << "--load-shader, loads a fragment shader (OpenGL)\n";
+			std::cout << "--load-shader <shader>, loads a fragment shader (OpenGL)\n";
+			std::cout << "--override-scale <factor>, overrides display scaling (DPI awareness), expects factors. ex: 2 = 200%\n";
 			exit(0);
 		}
 		if (strcmp(argv[i], "--vsync") == 0) {
@@ -129,6 +131,10 @@ void process_args(int argc, char *argv[]) {
 			if (i + 1 <= argc) {
 				strncpy(shader_load_startup, argv[i + 1], 512);
 			}
+		}
+		if (strcmp(argv[i], "--override-scale") == 0) {
+			if (i + 1 <= argc)
+				override_scale = atof(argv[i+1]);
 		}
 	}
 }
@@ -230,14 +236,19 @@ int main(int argc, char *argv[])
 	
 	float ddpi = 0.0f;
 	SDL_GetDisplayDPI(0, &ddpi, NULL, NULL);
-	
 	float display_scale = ddpi / 96.0f;
+	display_scale = display_scale<1.0f?1.0:display_scale;
+
+	if (override_scale > 0.0f) display_scale = override_scale;
+
+	std::cout << "Window Scale will be " << display_scale << "x\n";
 
 	// Setup Dear ImGui style
+	ImFontConfig *fConfig = new ImFontConfig();
 	ImGui::StyleColorsDark();
 	ImGui::GetStyle().ScaleAllSizes(display_scale);
 	io.Fonts->AddFontFromFileTTF(
-		"fonts/denver-ui.ttf", 16 * display_scale, new ImFontConfig(), io.Fonts->GetGlyphRangesDefault()
+		"fonts/denver-ui.ttf", 16 * display_scale, fConfig, io.Fonts->GetGlyphRangesDefault()
 	)->Scale = 1.0;
 	
 	// When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.

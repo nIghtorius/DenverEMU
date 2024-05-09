@@ -12,7 +12,7 @@ void	denvergui::render_apuviewer(nes_emulator *denver, denvergui_state *state) {
 			char buf[16];
 			ImGui::Text("Enabled: %s", (denver->nes_2a03->apu_2a03.pulse[0].enabled ? "Yes" : "No"));
 			ImGui::Text("Duty cycle: %d", denver->nes_2a03->apu_2a03.pulse[0].duty_cycle);
-			ImGui::Text("Dyte position: %d", denver->nes_2a03->apu_2a03.pulse[0].duty_pos);
+			ImGui::Text("Duty position: %d", denver->nes_2a03->apu_2a03.pulse[0].duty_pos);
 			ImGui::Text("Envelope loop: %s", (denver->nes_2a03->apu_2a03.pulse[0].envelope_loop ? "Yes" : "No"));
 			ImGui::Text("Contant volume: %s", (denver->nes_2a03->apu_2a03.pulse[0].constant_volume ? "Yes" : "No"));
 			ImGui::Text("Volume / Envelope");
@@ -36,7 +36,7 @@ void	denvergui::render_apuviewer(nes_emulator *denver, denvergui_state *state) {
 			char buf[16];
 			ImGui::Text("Enabled: %s", (denver->nes_2a03->apu_2a03.pulse[1].enabled ? "Yes" : "No"));
 			ImGui::Text("Duty cycle: %d", denver->nes_2a03->apu_2a03.pulse[1].duty_cycle);
-			ImGui::Text("Dyte position: %d", denver->nes_2a03->apu_2a03.pulse[1].duty_pos);
+			ImGui::Text("Duty position: %d", denver->nes_2a03->apu_2a03.pulse[1].duty_pos);
 			ImGui::Text("Envelope loop: %s", (denver->nes_2a03->apu_2a03.pulse[1].envelope_loop ? "Yes" : "No"));
 			ImGui::Text("Contant volume: %s", (denver->nes_2a03->apu_2a03.pulse[1].constant_volume ? "Yes" : "No"));
 			ImGui::Text("Volume / Envelope");
@@ -114,6 +114,8 @@ void	denvergui::render_apuviewer(nes_emulator *denver, denvergui_state *state) {
 		if (ImGui::TreeNode("Audio Mixing Specifics")) {
 			ImGui::Text("Attentuation: %f", (1.0f - denver->audio->attentuate));
 			ImGui::Text("Number of audio devices: %d", (denver->audio->audibles.size()));
+			ImGui::Separator();
+			ImGui::TreePop();
 		}
 		ImGui::End();
 	}
