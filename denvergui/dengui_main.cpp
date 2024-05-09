@@ -27,7 +27,7 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *
 				denver->nes_2a03->cpu_2a03.write_execution_log();
 				state->write_exec_log = false;
 			}
-			std::string newcaption = "Denver - [";
+			std::string newcaption = "Denver NES emulator - [";
 			newcaption += ImGuiFileDialog::Instance()->GetCurrentFileName();
 			newcaption += "]";
 			SDL_SetWindowTitle(state->mainwin, newcaption.c_str());

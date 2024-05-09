@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -118,6 +118,9 @@
       <AdditionalLibraryDirectories>G:\vc_libs\SDL2-2.28.3\lib\x64;G:\vc_libs\glew-2.1.0\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;opengl32.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <Manifest>
+      <EnableDpiAwareness>true</EnableDpiAwareness>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -165,6 +168,9 @@
       <AdditionalLibraryDirectories>G:\vc_libs\SDL2-2.28.3\lib\x64;G:\vc_libs\glew-2.1.0\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;opengl32.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <Manifest>
+      <EnableDpiAwareness>true</EnableDpiAwareness>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="3rdparty\fm\emu2413.h" />
@@ -297,6 +303,8 @@
     <None Include="imgui\backends\vulkan\generate_spv.sh" />
     <None Include="imgui\backends\vulkan\glsl_shader.frag" />
     <None Include="imgui\backends\vulkan\glsl_shader.vert" />
+    <None Include="shaders\ascii.shader" />
+    <None Include="shaders\pointsampling.shader" />
     <None Include="shaders\tv.shader" />
     <None Include="shaders\tv2.shader" />
   </ItemGroup>

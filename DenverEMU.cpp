@@ -44,6 +44,7 @@ static bool		no_audio_emu = false;
 static bool		no_expanded_audio = false;
 static bool		no_gui = false;
 static char		rom_load_startup[512];
+static char		shader_load_startup[512];
 static bool		fullscreen = false;
 static int		upscaler = 0;
 static int		width = 512;
@@ -52,6 +53,22 @@ static bool		linear_filter = true;
 
 void process_args(int argc, char *argv[]) {
 	for (int i = 1; i < argc; i++) {
+		if ((strcmp(argv[i], "--help") == 0) || (strcmp(argv[i], "-?") == 0) || (strcmp(argv[i], "/?") == 0)) {
+			// show help.
+			std::cout << "Command line options:\n";
+			std::cout << "--vsync, enables vsync.\n--no-vsync, disables vsync.\n--no-audio, disable audio playback, also uncapped speed.\n";
+			std::cout << "--no-apu-emulation, disables APU emulation\n";
+			std::cout << "--no-expanded-audio, disables expansion audio emulation\n";
+			std::cout << "--no-gui, disabled GUI, requires a rom file to be specified with --rom-file\n";
+			std::cout << "--rom-file, ROM file to run\n";
+			std::cout << "--fullscreen, runs emulator in fullscreen mode\n";
+			std::cout << "--upscaler, selects upscaler, functionality is removed, does nothing now\n";
+			std::cout << "--width, --height, sets width and height of the window or fullscreen resolution\n";
+			std::cout << "--linear-filter, enables linear filtering\n";
+			std::cout << "--no-linear-filter, disables linear filtering\n";
+			std::cout << "--load-shader, loads a fragment shader (OpenGL)\n";
+			exit(0);
+		}
 		if (strcmp(argv[i], "--vsync") == 0) {
 			vsync_enable = true;
 			std::cout << "--vsync option, enabling v-sync" << std::endl;
@@ -105,15 +122,19 @@ void process_args(int argc, char *argv[]) {
 		if (strcmp(argv[i], "--linear-filter") == 0) {
 			linear_filter = true;
 		}
+		if (strcmp(argv[i], "--no-linear-filter") == 0) {
+			linear_filter = false;
+		}
+		if (strcmp(argv[i], "--load-shader") == 0) {
+			if (i + 1 <= argc) {
+				strncpy(shader_load_startup, argv[i + 1], 512);
+			}
+		}
 	}
 }
 
 int main(int argc, char *argv[])
 {
-	/*
-		Print Shield
-	*/
-
 	rom_load_startup[0] = 0x0;
 
 	if (argc > 1) process_args(argc, argv);
@@ -124,9 +145,14 @@ int main(int argc, char *argv[])
 			return 128;
 		}
 	}
-	
+
+	/*
+		Print Shield
+	*/
 	std::cout << "Project Denver version " << DENVER_VERSION << std::endl << "(c) 2018-2024 P. Santing aka nIghtorius" << std::endl;
 	std::cout << "Application compiled on " << __DATE__ << " at " << __TIME__ << std::endl << std::endl;
+
+	// start the emulator initialization.
 	std::cout << "Emulator initializing.." << std::endl;
 
 	// SDL
@@ -173,7 +199,7 @@ int main(int argc, char *argv[])
 		flags = SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN;
 	}
 
-	SDL_Window* win = SDL_CreateWindow("Denver", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, flags);
+	SDL_Window* win = SDL_CreateWindow("Denver NES emulator", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, flags);
 	
 	SDL_GLContext gl_context = SDL_GL_CreateContext(win);
 	SDL_GL_MakeCurrent(win, gl_context);
@@ -202,9 +228,18 @@ int main(int argc, char *argv[])
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
 	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
 	
+	float ddpi = 0.0f;
+	SDL_GetDisplayDPI(0, &ddpi, NULL, NULL);
+	
+	float display_scale = ddpi / 96.0f;
+
 	// Setup Dear ImGui style
 	ImGui::StyleColorsDark();
-
+	ImGui::GetStyle().ScaleAllSizes(display_scale);
+	io.Fonts->AddFontFromFileTTF(
+		"fonts/denver-ui.ttf", 16 * display_scale, new ImFontConfig(), io.Fonts->GetGlyphRangesDefault()
+	)->Scale = 1.0;
+	
 	// When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
 	ImGuiStyle& style = ImGui::GetStyle();
 	if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
@@ -229,7 +264,10 @@ int main(int argc, char *argv[])
 
 	nes_emulator * denver = new nes_emulator();
 	denver->frame_upscaler = upscaler;
-	denver->use_shader("shaders/tv2.shader");
+
+	if (strnlen(shader_load_startup, 512) != 0) {
+		denver->use_shader(shader_load_startup);
+	}	
 
 	if (no_audio) denver->audio->no_audio = true;
 	if (no_audio_emu) denver->nes_2a03->no_apu = true;
@@ -282,6 +320,8 @@ int main(int argc, char *argv[])
 		}
 		denver->prepare_frame();
 		nes_frame_tex * nesframe = denver->returnFrameAsTexture();
+
+		// ToDo: refactor this into the nes_emulator class (emulator/nes.h)
 		glBindTexture(GL_TEXTURE_2D, tex);		
 		if (!linear_filter) {
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);

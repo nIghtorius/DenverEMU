@@ -151,11 +151,11 @@ void	nes_emulator::load_logo() {
 }
 
 void	nes_emulator::renderFrameToGL(const int windowWidth, const int windowHeight, const GLuint tex) {
-	int wH, wW, wS;
+	int wH, wW;
 	int fW = windowWidth;
 	int fH = windowHeight;
 
-	float scale_x = fW / 256.0f; //ImGui::GetContentRegionAvail().x / 256.0f;
+	float scale_x = fW / 256.0f;
 	float scale_y = fH / 240.0f;
 
 	float width_x = 0.0f;
@@ -172,10 +172,10 @@ void	nes_emulator::renderFrameToGL(const int windowWidth, const int windowHeight
 		height_y = 240.0f * scale_x;
 	}
 
-	wW = floor(width_x);
-	wH = floor(height_y);
+	wW = (int)floor(width_x);
+	wH = (int)floor(height_y);
 	scale_x *= 1.3f;
-	int start_x = floor((fW / 2) - (width_x / 2));
+	int start_x = (int)floor((fW / 2) - (width_x / 2));
 
 	glViewport(0, 0, fW, fH);
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -184,13 +184,16 @@ void	nes_emulator::renderFrameToGL(const int windowWidth, const int windowHeight
 
 	if (shader) {
 		glUseProgram(shader);
+
+		// these parameters are required in your pixelshader in order to properly show the screen.
 		GLint screen = glGetUniformLocation(shader, "screen");
 		GLint nesvideo = glGetUniformLocation(shader, "nesvideo");
 		GLint offset = glGetUniformLocation(shader, "offset");
-		glUniform3f(screen, width_x, height_y, 1.0f);
-		glUniform1i(nesvideo, 0);
-		glUniform2f(offset, start_x, 0);
+		glUniform3f(screen, width_x, height_y, 1.0f);		// pass screen size to shader. (actual pixels)
+		glUniform1i(nesvideo, 0);							// tell which texture engine has the texture. (TEXTURE1)
+		glUniform2f(offset, (float)start_x, 0);					// pass offset to shader. (how much the render is too the right)
 	}
+
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 	glLoadIdentity();
@@ -217,11 +220,17 @@ void	nes_emulator::renderFrameToGL(const int windowWidth, const int windowHeight
 
 
 void	nes_emulator::use_shader(const char* filename) {
+	// remove previous shader.
+	glDeleteProgram(shader);
 	// load and compiles shader and applies it to the rendering pipeline.
 	GLuint fragShader;
 	std::cout << "Compiling shader: " << filename << "....\n";
 	// load file.
 	std::ifstream shaderFile (filename, std::ios::in | std::ios::binary);
+	if (!shaderFile.good()) {
+		std::cout << "Shader not found, aborting.\n";
+		return;
+	}
 	shaderFile.seekg(0, std::ios_base::end);
 	std::size_t shaderSize = shaderFile.tellg();
 	shaderFile.seekg(0, std::ios_base::beg);

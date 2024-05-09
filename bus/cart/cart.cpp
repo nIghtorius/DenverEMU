@@ -17,6 +17,7 @@
 
 // NSF
 #include "../rom/mappers/mapper_nsf.h"
+#include <math.h>
 
 #pragma warning(disable : 4996)
 
@@ -88,6 +89,13 @@ bool	cartridge::readstream_nsf(std::istream &nsffile, ppu *ppu_device, bus *main
 	}
 	std::cout << "\n";
 
+	// compute NSF NMI trigger speed.
+	// cpu cycles are 29780 per audio frame (60hz), lower that number and we increase refreshrate.
+	// 16666 = 60.002hz that we know. 16666 = 29780 cycles.
+	float cpu_cycles_per_frame = (29780.0 / 16666.0) * (float)nsf_hdr.playspeed_ntsc;
+	std::cout << "SPEED     : " << std::dec << (int)nsf_hdr.playspeed_ntsc;
+	std::cout << " (" << (int)(1000000 / nsf_hdr.playspeed_ntsc) << " Hz, CPU cycles per audioframe: " << (int)cpu_cycles_per_frame << ")\n";
+
 	int	program_size = nsf_hdr.program_size[0] << 16 | nsf_hdr.program_size[1] << 8 | nsf_hdr.program_size[2];
 
 	std::cout << "PRG_SIZE  : " << std::dec << (int)program_size << " bytes.. (header based)\n";
@@ -120,6 +128,7 @@ bool	cartridge::readstream_nsf(std::istream &nsffile, ppu *ppu_device, bus *main
 	nsfrom	*nsf_rom = reinterpret_cast<nsfrom*>(program);
 
 	// configure NSF cartridge.
+	nsf_rom->nmi_trig_cycles = (int)floorf(cpu_cycles_per_frame);
 	nsf_rom->state.numsongs = nsf_hdr.total_songs;
 	nsf_rom->state.currentsong = 1;
 	for (int i = 0; i < 8; i++) nsf_rom->state.banks[i] = nsf_hdr.bank_init[i];

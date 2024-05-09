@@ -9,11 +9,11 @@ namespace denvergui {
 		bool show_cpu_debugger = false;
 		bool show_ppu_debugger = false;
 
-		bool apu_tab_pulse1;
-		bool apu_tab_pulse2;
-		bool apu_tab_tri;
-		bool apu_tab_noi;
-		bool apu_tab_dmc;
+		bool apu_tab_pulse1 = false;
+		bool apu_tab_pulse2 = false;
+		bool apu_tab_tri = false;
+		bool apu_tab_noi = false;
+		bool apu_tab_dmc = false;
 		
 		// debugging.
 		bool write_exec_log = false;
@@ -23,13 +23,13 @@ namespace denvergui {
 
 		// ppu palette (pattern)
 		int	pattern_palette = 0x00;
-		GLuint	pattern_tex;
-		GLuint  ntable_tex;
+		GLuint	pattern_tex = 0;
+		GLuint  ntable_tex = 0;
 		bool	show_scroll_regs = false;
 		bool	show_ppu_updates = false;
 
 		// main window.
-		SDL_Window		*mainwin;
+		SDL_Window* mainwin = nullptr;
 	};
 
 	void	render_main (nes_emulator *denver,  GLuint tex, denvergui_state *state);

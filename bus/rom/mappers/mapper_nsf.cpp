@@ -63,6 +63,11 @@ int		nsfrom::rundevice(int ticks) {
 	if (sunexp) sunexp->rundevice(ticks);
 	if (namexp) namexp->rundevice(ticks);
 	if (vrc7exp) vrc7exp->rundevice(ticks);
+	tickcount += ticks;
+	if (tickcount >= nmi_trig_cycles) {
+		nmi_enable = true;
+		tickcount = 0;
+	}
 	return ticks;
 }
 

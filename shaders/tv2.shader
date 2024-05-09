@@ -71,5 +71,6 @@ void main()
     result *= scanl(uv);
     result *= vig(uv);
     // final output
-    gl_FragColor = vec4( result, 1.0 );    
+    gl_FragColor = vec4( result, 1.0 ) * 1.5; 
 }
+

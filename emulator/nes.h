@@ -10,17 +10,13 @@
 
 #pragma once
 
-#include "../bus/bus.h"
+#include "../package/2a03.h"
 #include "../bus/ram/mainram.h"
 #include "../bus/cart/cart.h"
-#include "../audio/apu.h"
 #include "../audio/audio.h"
 #include "../clock/clock.h"
-#include "../cpu/cpu2a03_fast.h"
 #include "../video/ppu.h"
 #include "../video/nesvideo.h"
-#include "../controller/joypad.h"
-#include "../package/2a03.h"
 #include "../video/postprocessing/hqxpost.h"
 #include "../video/postprocessing/scanlines.h"
 
@@ -59,7 +55,7 @@ public:
 	hq3x				_hq3x;
 	scanlines			_scanlines;
 
-	int					frame_upscaler = DENVER_NO_UPSCALER;
+	int					frame_upscaler = DENVER_NO_UPSCALER;			// depricated; does nothing now.
 
 	// shaders.
 	GLuint				shader = 0;

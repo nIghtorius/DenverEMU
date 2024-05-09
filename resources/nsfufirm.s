@@ -1,6 +1,10 @@
 ; uFirmware (loaded on 0x3000) for the Denver NSF player.
 ; Denver emulates a "hardware" type NSF player.
 
+; 09-05-2024, Remove PPU dependency. the NSF rom code has it's own NMI timer now. Supporting all NSF speeds now.
+; patched by jumping directly to the trackselect code after setting up CPU/STACK.
+; also writes 0x00 to 0x2000 instead of 0x80 ( thus disabling NMI on the PPU )
+
 base	$3000
 
 ; init vectors.
@@ -22,7 +26,7 @@ reset:
 	
 	; we are going to use the ppu emulation for the timings. (NTSC)
 	inx			; 0xFF -> 0x00
-	stx $2000		; 0 -> 0x2000, 0x2001
+	jmp trackselect		; stx $2000		; 0 -> 0x2000, 0x2001
 	stx $2001		
 	
 	; wait for the ppu to be "ready"
@@ -48,8 +52,8 @@ trackselect:
 	ldx	#$00	; ntsc timing.
 init:
 	jsr	$8000	; init function (patched by loader)
-	lda	#$80
-	sta 	$2000	; enable nmi (for timing)
+	lda	#$00
+	sta 	$2000	; disable nmi
 lockloop:
 	jmp	lockloop	; lock up (only NMI is running, NSF interface will reset PC to RESET when new song is selected)
 
