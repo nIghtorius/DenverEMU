@@ -27,7 +27,7 @@ batterybackedram* vrc7rom::get_battery_backed_ram() {
 	return new batterybackedram((byte*)ram, 8192);
 }
 
-void vrc7rom::set_battery_backed_ram(byte* data, std::size_t size) {
+void vrc7rom::set_battery_backed_ram(byte* data, const std::size_t size) {
 	if (size > 8192) return;
 	memcpy(ram, data, size);
 }
@@ -40,7 +40,7 @@ void vrc7rom::link_vrom(vrc7vrom* rom) {
 	charrom = rom;
 }
 
-void vrc7rom::set_rom_data(byte* data, std::size_t size) {
+void vrc7rom::set_rom_data(byte* data, const std::size_t size) {
 	devicestart = 0x6000;
 	deviceend = 0xFFFF;
 	devicemask = 0xFFFF;
@@ -53,7 +53,7 @@ void vrc7rom::set_rom_data(byte* data, std::size_t size) {
 }
 
 
-int vrc7rom::rundevice(int ticks) {
+int vrc7rom::rundevice(const int ticks) {
 	if (audiochip) audiochip->rundevice(ticks);
 	if (!state.irq_enabled) return ticks;
 
@@ -96,7 +96,7 @@ void vrc7rom::setbanks() {
 	if (charrom) charrom->setbanks(&state);
 }
 
-byte vrc7rom::read(int addr, int addr_from_base, bool onlyread) {
+byte vrc7rom::read(const int addr, const int addr_from_base, const bool onlyread) {
 	if ((addr >= 0x6000) && (addr <= 0x7FFF)) {
 		return ram[addr - 0x6000];
 	}
@@ -106,7 +106,7 @@ byte vrc7rom::read(int addr, int addr_from_base, bool onlyread) {
 	return prg_e000[addr - 0xE000];
 }
 
-void vrc7rom::write(int addr, int addr_from_base, byte data) {
+void vrc7rom::write(const int addr, const int addr_from_base, const byte data) {
 	if ((addr >= 0x6000) && (addr <= 0x7FFF)) {
 		if (state.wram_enabled) ram[addr - 0x6000] = data;
 		return;
@@ -256,7 +256,7 @@ void	vrc7vrom::setbanks(vrc7_state *state) {
 	}
 }
 
-void	vrc7vrom::set_rom_data(byte *data, std::size_t size) {
+void	vrc7vrom::set_rom_data(byte *data, const std::size_t size) {
 	romdata = data;
 	romsize = (int)size;
 	devicestart = 0x0000;
@@ -264,7 +264,7 @@ void	vrc7vrom::set_rom_data(byte *data, std::size_t size) {
 	devicemask = 0x1FFF;
 }
 
-byte	vrc7vrom::read(int addr, int addr_from_base, bool onlyread) {
+byte	vrc7vrom::read(const int addr, const int addr_from_base, const bool onlyread) {
 	if (!romdata) return 0x00;
 	if ((addr >= 0x0000) && (addr <= 0x03FF)) return chr_0000[addr];
 	if ((addr >= 0x0400) && (addr <= 0x07FF)) return chr_0400[addr - 0x0400];
@@ -276,7 +276,7 @@ byte	vrc7vrom::read(int addr, int addr_from_base, bool onlyread) {
 	return chr_1c00[addr - 0x1C00];
 }
 
-void	vrc7vrom::write(int addr, int addr_from_base, byte data) {
+void	vrc7vrom::write(const int addr, const int addr_from_base, const byte data) {
 	if (romdata != (byte*)vram) return; // ROM mode.
 	if ((addr >= 0x0000) && (addr <= 0x03FF)) chr_0000[addr] = data;
 	if ((addr >= 0x0400) && (addr <= 0x07FF)) chr_0400[addr - 0x0400] = data;

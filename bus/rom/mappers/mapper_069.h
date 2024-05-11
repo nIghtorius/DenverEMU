@@ -31,58 +31,58 @@
 #define		FME7_CMD_IRQCHI			0x0F
 
 struct fme7_state {
-	byte	cmdreg;
-	byte	c[8];		// char banks.
-	bool	prg_ram_enable;
-	bool	ramrom_select;	// true = prgram, false = prgrom
-	byte	prg0_select;	// 0x6000-7FFF
-	byte	p[3];		// prg bank 1-3
-	byte	mirroring;
-	bool	irq_enable;
-	bool	irq_counter_enable;
-	word	irq_counter;
+	byte	cmdreg = 0;
+	byte	c[8] = { 0, 0, 0, 0, 0, 0, 0 ,0 };		// char banks.
+	bool	prg_ram_enable = false;
+	bool	ramrom_select = false;	// true = prgram, false = prgrom
+	byte	prg0_select = 0;	// 0x6000-7FFF
+	byte	p[3] = { 0, 0, 0 };		// prg bank 1-3
+	byte	mirroring = 0;
+	bool	irq_enable = false;
+	bool	irq_counter_enable = false;
+	word	irq_counter = 0;
 };
 
 class fme7vrom;
 
 class fme7rom : public rom {
 private:
-	fme7vrom		*charrom;
+	fme7vrom		*charrom = nullptr;
 	fme7_state		state;
-	byte*			ram;		// it can have 256kB of it.
+	byte*			ram = nullptr;		// it can have 256kB of it.
 	void			setbanks();
 	const int		prgsize = 262144;
-	byte			*prg_6000;		// can be rom or ram.
-	byte			*prg_8000;
-	byte			*prg_a000;
-	byte			*prg_c000;
-	byte			*prg_e000;
+	byte			*prg_6000 = nullptr;		// can be rom or ram.
+	byte			*prg_8000 = nullptr;
+	byte			*prg_a000 = nullptr;
+	byte			*prg_c000 = nullptr;
+	byte			*prg_e000 = nullptr;
 public:
 	fme7rom();
 	~fme7rom();
 	sunsoftaudio	*audiochip = nullptr;
-	virtual byte	read(int addr, int addr_from_base, bool onlyread = false);
-	virtual void	write(int addr, int addr_from_base, byte data);
-	virtual int		rundevice(int ticks);	
+	virtual byte	read(const int addr, const int addr_from_base, const bool onlyread = false);
+	virtual void	write(const int addr, const int addr_from_base, const byte data);
+	virtual int		rundevice(const int ticks);
 	virtual void	reset();
-	virtual void	set_rom_data(byte *data, std::size_t size);
+	virtual void	set_rom_data(byte *data, const std::size_t size);
 	void			link_vrom(fme7vrom *rom);
 };
 
 class fme7vrom : public vrom {
 private:
-	byte			*chr_0000;
-	byte			*chr_0400;
-	byte			*chr_0800;
-	byte			*chr_0c00;
-	byte			*chr_1000;
-	byte			*chr_1400;
-	byte			*chr_1800;
-	byte			*chr_1c00;
+	byte			*chr_0000 = nullptr;
+	byte			*chr_0400 = nullptr;
+	byte			*chr_0800 = nullptr;
+	byte			*chr_0c00 = nullptr;
+	byte			*chr_1000 = nullptr;
+	byte			*chr_1400 = nullptr;
+	byte			*chr_1800 = nullptr;
+	byte			*chr_1c00 = nullptr;
 public:
 	fme7vrom();
 	~fme7vrom();
 	void			setbanks(fme7_state *state);
-	virtual	void	set_rom_data(byte *data, std::size_t size);
-	virtual byte	read(int addr, int addr_from_base, bool onlyread = false);
+	virtual	void	set_rom_data(byte *data, const std::size_t size);
+	virtual byte	read(const int addr, const int addr_from_base, const bool onlyread = false);
 };

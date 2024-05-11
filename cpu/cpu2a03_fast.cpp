@@ -20,6 +20,13 @@ cpu2a03_fast::cpu2a03_fast() {
 	devicestart = 0x4000;
 	deviceend = 0x401F;
 	devicemask = 0x401F;
+
+	disasm.set_address(0x0000);
+	dma_count = 0;
+	dma_cycle = 0;
+	dma_high = 0;
+	irq_delay = 0;
+	nmi_delay = 0;
 }
 
 cpu2a03_fast::~cpu2a03_fast() {

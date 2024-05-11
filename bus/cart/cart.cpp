@@ -92,7 +92,7 @@ bool	cartridge::readstream_nsf(std::istream &nsffile, ppu *ppu_device, bus *main
 	// compute NSF NMI trigger speed.
 	// cpu cycles are 29780 per audio frame (60hz), lower that number and we increase refreshrate.
 	// 16666 = 60.002hz that we know. 16666 = 29780 cycles.
-	float cpu_cycles_per_frame = (29780.0 / 16666.0) * (float)nsf_hdr.playspeed_ntsc;
+	float cpu_cycles_per_frame = (float)(29780.0 / 16666.0) * (float)nsf_hdr.playspeed_ntsc;
 	std::cout << "SPEED     : " << std::dec << (int)nsf_hdr.playspeed_ntsc;
 	std::cout << " (" << (int)(1000000 / nsf_hdr.playspeed_ntsc) << " Hz, CPU cycles per audioframe: " << (int)cpu_cycles_per_frame << ")\n";
 
@@ -161,6 +161,12 @@ bool	cartridge::readstream_nsf(std::istream &nsffile, ppu *ppu_device, bus *main
 		audbus->register_audible_device(vrc7exp);
 		mainbus->registerdevice(vrc7exp);
 		nsf_rom->vrc7exp = vrc7exp;
+	}
+	if (nsf_hdr.expansion_audio & NSF_EXP_MMC5) {
+		mmc5exp = new mmc5audio();
+		audbus->register_audible_device(mmc5exp);
+		mainbus->registerdevice(mmc5exp);
+		nsf_rom->mmc5exp = mmc5exp;
 	}
 
 	// add to mainbus
@@ -559,6 +565,11 @@ cartridge::~cartridge() {
 			m_aud->unregister_audible_device(vrc7exp);
 			m_bus->removedevice_select_base(vrc7exp->devicestart);
 			delete vrc7exp;
+		}
+		if (mmc5exp) {
+			m_aud->unregister_audible_device(mmc5exp);
+			m_bus->removedevice_select_base(mmc5exp->devicestart);
+			delete mmc5exp;
 		}
 	}
 	if (m_bus != NULL) {

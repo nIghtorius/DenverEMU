@@ -276,6 +276,9 @@
     <ClInclude Include="emulator\simple-opengl-loader.h">
       <Filter>Source Files\emulation\emulator</Filter>
     </ClInclude>
+    <ClInclude Include="audio\expansion\mmc5.h">
+      <Filter>Source Files\emulation\audio\expansion</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DenverEMU.cpp">
@@ -433,6 +436,9 @@
     </ClCompile>
     <ClCompile Include="3rdparty\hqx\HQx.cpp">
       <Filter>Source Files\emulation\3rdparty\hqx</Filter>
+    </ClCompile>
+    <ClCompile Include="audio\expansion\mmc5.cpp">
+      <Filter>Source Files\emulation\audio\expansion</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

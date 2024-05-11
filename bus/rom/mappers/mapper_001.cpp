@@ -19,12 +19,12 @@ batterybackedram* mmc1_rom::get_battery_backed_ram() {
 	return new batterybackedram((byte*)mmc1ram, 8192);
 }
 
-void mmc1_rom::set_battery_backed_ram(byte* data, std::size_t size) {
+void mmc1_rom::set_battery_backed_ram(byte* data, const std::size_t size) {
 	if (size > 8192) return;
 	memcpy(mmc1ram, data, size);
 }
 
-byte mmc1_rom::read(int addr, int addr_from_base, bool onlyread)
+byte mmc1_rom::read(const int addr, const int addr_from_base, const bool onlyread)
 {
 	if ((addr >= 0x6000) && (addr <= 0x7FFF)) return mmc1ram[addr - 0x6000];
 	if ((addr >= 0x8000) && (addr <= 0xBFFF)) return prg8000[addr - 0x8000];
@@ -62,7 +62,7 @@ void mmc1_rom::update_banks() {
 	if (charrom) charrom->update_banks(state);
 }
 
-void mmc1_rom::write(int addr, int addr_from_base, byte data)
+void mmc1_rom::write(const int addr, const int addr_from_base, const byte data)
 {
 	if (addr < 0x8000) {
 		mmc1ram[addr - 0x6000] = data;
@@ -107,7 +107,7 @@ void mmc1_rom::write(int addr, int addr_from_base, byte data)
 	}	
 }
 
-void mmc1_rom::set_rom_data(byte *data, std::size_t size)
+void mmc1_rom::set_rom_data(byte *data, const std::size_t size)
 {
 	devicestart = 0x6000;
 	deviceend = 0xFFFF;
@@ -135,20 +135,20 @@ mmc1_vrom::~mmc1_vrom() {
 	free(ram);
 }
 
-byte mmc1_vrom::read(int addr, int addr_from_base, bool onlyread)
+byte mmc1_vrom::read(const int addr, const int addr_from_base, const bool onlyread)
 {
 	if (ram_mode) return ram[addr_from_base];
 	if (addr < 0x1000) return chr0000[addr];
 	return chr1000[addr - 0x1000];
 }
 
-void mmc1_vrom::write(int addr, int addr_from_base, byte data)
+void mmc1_vrom::write(const int addr, const int addr_from_base, const byte data)
 {
 	// write when in RAM_MODE.
 	if (ram_mode) ram[addr_from_base] = data;
 }
 
-void mmc1_vrom::set_rom_data(byte *data, std::size_t size)
+void mmc1_vrom::set_rom_data(byte *data, const std::size_t size)
 {
 	devicestart = 0x0000;
 	deviceend = 0x1FFF;
@@ -199,7 +199,7 @@ void mmc1_vrom::update_banks(mmc1_state &state) {
 	}
 }
 
-void mmc1_vrom::is_ram(bool enable) {
+void mmc1_vrom::is_ram(const bool enable) {
 	ram_mode = enable;
 	devicestart = 0x0000;
 	deviceend = 0x1FFF;

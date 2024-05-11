@@ -129,19 +129,19 @@ public:
 	byte*	ram;
 	ppuram();
 	~ppuram();
-	byte	read(int addr, int addr_from_base, bool onlyread = false);
-	void	write(int addr, int addr_from_base, byte data);
+	byte	read(const int addr, const int addr_from_base, const bool onlyread = false);
+	void	write(const int addr, const int addr_from_base, const byte data);
 };
 
 class ppu_pal_ram : public bus_device {
 private:
 	byte * ram;
-	int		pal_addr_compute(int addr);
+	int		pal_addr_compute(const int addr);
 public:
 	ppu_pal_ram();
 	~ppu_pal_ram();
-	byte	read(int addr, int addr_from_base, bool onlyread = false);
-	void	write(int addr, int addr_from_base, byte data);
+	byte	read(const int addr, const int addr_from_base, const bool onlyread = false);
+	void	write(const int addr, const int addr_from_base, const byte data);
 };
 
 class ppu : public bus_device {
@@ -189,9 +189,9 @@ public:
 
 	ppu();
 	~ppu();
-	byte					read(int addr, int addr_from_base, bool onlyread = false);
-	void					write(int addr, int addr_from_base, byte data);
-	int						rundevice(int ticks);
+	byte					read(const int addr, const int addr_from_base, const bool onlyread = false);
+	void					write(const int addr, const int addr_from_base, const byte data);
+	int						rundevice(const int ticks);
 	void					set_char_rom(bus_device *vdata);
 	void					configure_vertical_mirror();
 	void					configure_horizontal_mirror();

@@ -15,7 +15,7 @@ axrom_rom::axrom_rom() {
 	devicemask = 0xFFFF;
 }
 
-void axrom_rom::set_rom_data(byte *data, std::size_t size) {
+void axrom_rom::set_rom_data(byte *data, const std::size_t size) {
 	romdata = data;
 	romsize = (int)size;
 }
@@ -38,11 +38,11 @@ void axrom_rom::update_banks() {
 	}
 }
 
-byte axrom_rom::read(int addr, int addr_from_base, bool onlyread) {
+byte axrom_rom::read(const int addr, const int addr_from_base, const bool onlyread) {
 	return prg8000[addr_from_base];
 }
 
-void axrom_rom::write(int addr, int addr_from_base, byte data) {
+void axrom_rom::write(const int addr, const int addr_from_base, const byte data) {
 	state.prg = data & 0x07;
 	state.vrampage = (data & 0x10) >> 4;
 	update_banks();

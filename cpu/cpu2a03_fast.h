@@ -66,11 +66,11 @@ private:
 	int		rundevice_internal(int ticks);
 	void	write_cpu_log();
 
-	int		dma_cycle;
-	byte	dma_high;
-	byte	dma_count;
-	bool	nmi_delay;
-	bool	irq_delay;
+	int		dma_cycle = 0;
+	byte	dma_high = 0;
+	byte	dma_count = 0;
+	bool	nmi_delay = 0;
+	bool	irq_delay = 0;
 
 	std::ofstream	*cpu_log = nullptr;
 	disassembler	disasm;
@@ -78,8 +78,8 @@ private:
 public:	
 	cpuregs	regs;
 
-	bool	error_state;
-	byte	last_opcode;
+	bool	error_state = false;
+	byte	last_opcode = 0x00;
 
 	cpu2a03_fast();
 	~cpu2a03_fast();

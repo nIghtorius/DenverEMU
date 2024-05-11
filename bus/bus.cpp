@@ -13,17 +13,17 @@ bus::~bus() {
 	for (auto device : devices) delete device;
 }
 
-void	bus::writememory(int addr, byte data) {
+void	bus::writememory(const int addr, const byte data) {
 	address = addr;
 	write(data);
 }
 
-byte	bus::readmemory(int addr, bool onlyread) {
+byte	bus::readmemory(const int addr, const bool onlyread) {
 	address = addr;
 	return read();
 }
 
-word	bus::readmemory_as_word(int addr, bool onlyread) {
+word	bus::readmemory_as_word(const int addr, const bool onlyread) {
 	word		result;
 	address = addr;
 	result = read();
@@ -31,7 +31,7 @@ word	bus::readmemory_as_word(int addr, bool onlyread) {
 	return result | read() << 8;
 }
 
-word	bus::readmemory_as_word_wrap(int addr, bool onlyread) {
+word	bus::readmemory_as_word_wrap(const int addr, const bool onlyread) {
 	word		result;
 	address = addr;
 	result = read();
@@ -39,7 +39,7 @@ word	bus::readmemory_as_word_wrap(int addr, bool onlyread) {
 	return result | read() << 8;
 }
 
-void	bus::write(byte data) {
+void	bus::write(const byte data) {
 	for (auto device : devices) {
 		if ((address >= device->devicestart) && (address <= device->deviceend)) {
 			word caddr = device->compute_addr_from_layout(address);
@@ -49,7 +49,7 @@ void	bus::write(byte data) {
 	}
 }
 
-byte	bus::read(bool onlyread) {
+byte	bus::read(const bool onlyread) {
 	byte	readbus = 0x00;
 	for (auto device : devices) {
 		if ((address >= device->devicestart) && (address <= device->deviceend)) {
@@ -61,7 +61,7 @@ byte	bus::read(bool onlyread) {
 	return readbus;
 }
 
-void	bus::emulate_bus_conflicts(bool enable) {
+void	bus::emulate_bus_conflicts(const bool enable) {
 	no_bus_conflicts = enable;
 }
 
@@ -72,7 +72,7 @@ void	bus::registerdevice(bus_device *device) {
 	}
 }
 
-void	bus::removedevice_select_base(int baseaddr) {
+void	bus::removedevice_select_base(const int baseaddr) {
 	for (std::size_t i = 0; i < devices.size(); i++) {
 		if (devices[i]->devicestart == baseaddr) {
 			devices.erase(devices.begin() + i);
@@ -121,10 +121,11 @@ bus_device::bus_device() {
 	devicestart = 0x0000;
 	deviceend = 0xFFFF;
 	devicemask = 0xFFFF;
+	devicebus = nullptr;
 	for (int i = 0; i < 16; i++) pinout.pins[i] = i;
 }
 
-word bus_device::compute_addr_from_layout(word addr) {
+word bus_device::compute_addr_from_layout(const word addr) {
 	if (!processlayout) return addr & devicemask;
 	word cleanaddr = 0;
 	for (int i = 0; i < 16; i++) {
@@ -140,17 +141,17 @@ word bus_device::compute_addr_from_layout(word addr) {
 	return cleanaddr & devicemask;
 }
 
-void bus_device::groundpin(int pin) {
+void bus_device::groundpin(const int pin) {
 	pinout.pins[pin] = -2;
 	processlayout = true;
 }
 
-void bus_device::vccpin(int pin) {
+void bus_device::vccpin(const int pin) {
 	pinout.pins[pin] = -1;
 	processlayout = true;
 }
 
-void bus_device::swappins(int pin1, int pin2) {
+void bus_device::swappins(const int pin1, const int pin2) {
 	int p = pinout.pins[pin2];
 	pinout.pins[pin2] = pinout.pins[pin1];
 	pinout.pins[pin1] = p;
@@ -174,11 +175,11 @@ void device::dma(byte *data, bool is_output, bool started) {
 }
 
 
-void bus_device::write(int addr, int addr_from_base, byte data) {
+void bus_device::write(const int addr, const int addr_from_base, const byte data) {
 	
 }
 
-byte bus_device::read(int addr, int addr_from_base, bool onlyread) {
+byte bus_device::read(int const addr, const int addr_from_base, const bool onlyread) {
 	return 0x00;
 }
 
@@ -197,7 +198,7 @@ device::~device() {
 	free(devicedescriptor);	// be done with it.
 }
 
-int device::rundevice(int ticks) {
+int device::rundevice(const int ticks) {
 	return ticks;	// dummy device return same amount of ticks as told to process.
 }
 

@@ -23,15 +23,15 @@ private:
 
 public:
 	cnvrom();
-	virtual	byte read(int addr, int addr_from_base, bool onlyread = false);
-	virtual void set_rom_data(byte *data, std::size_t size);
-	void	setbank(int bank);
+	virtual	byte read(const int addr, const int addr_from_base, const bool onlyread = false);
+	virtual void set_rom_data(byte *data, const std::size_t size);
+	void	setbank(const int bank);
 };
 
 class cnrom : public rom {
 private:
 	cnvrom	*charrom = nullptr;
 public:
-	virtual void write(int addr, int addr_from_base, byte data);
+	virtual void write(const int addr, const int addr_from_base, const byte data);
 	void	link_vrom(cnvrom *rom);
 };

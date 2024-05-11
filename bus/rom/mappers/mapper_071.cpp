@@ -32,12 +32,12 @@ void m71rom::setbanks() {
 	}
 }
 
-byte m71rom::read(int addr, int addr_from_base, bool onlyread) {
+byte m71rom::read(const int addr, const int addr_from_base, const bool onlyread) {
 	if ((addr >= 0x8000) && (addr <= 0xBFFF)) return prg_8000[addr - 0x8000];
 	return prg_c000[addr - 0xC000];
 }
 
-void m71rom::write(int addr, int addr_from_base, byte data) {
+void m71rom::write(const int addr, const int addr_from_base, const byte data) {
 	if ((addr >= 0x8000) && (addr <= 0x9FFF)) {
 		// mirroring
 		state.mirror = (data & 0x10) >> 4;
@@ -49,7 +49,7 @@ void m71rom::write(int addr, int addr_from_base, byte data) {
 	}
 }
 
-void m71rom::set_rom_data(byte* data, std::size_t size) {
+void m71rom::set_rom_data(byte* data, const std::size_t size) {
 	romdata = data;
 	romsize = (int)size;
 	setbanks();

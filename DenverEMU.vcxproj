@@ -179,6 +179,7 @@
     <ClInclude Include="3rdparty\hqx\HQx.h" />
     <ClInclude Include="audio\apu.h" />
     <ClInclude Include="audio\audio.h" />
+    <ClInclude Include="audio\expansion\mmc5.h" />
     <ClInclude Include="audio\expansion\namco163.h" />
     <ClInclude Include="audio\expansion\sunsoft5b.h" />
     <ClInclude Include="audio\expansion\vrc6.h" />
@@ -237,6 +238,7 @@
     <ClCompile Include="3rdparty\fm\emu2413.c" />
     <ClCompile Include="audio\apu.cpp" />
     <ClCompile Include="audio\audio.cpp" />
+    <ClCompile Include="audio\expansion\mmc5.cpp" />
     <ClCompile Include="audio\expansion\namco163.cpp" />
     <ClCompile Include="audio\expansion\sunsoft5b.cpp" />
     <ClCompile Include="audio\expansion\vrc6.cpp" />

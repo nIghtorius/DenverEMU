@@ -29,12 +29,12 @@ batterybackedram* mmc2_rom::get_battery_backed_ram() {
 	return new batterybackedram((byte*)prgram6000, 8192);
 }
 
-void mmc2_rom::set_battery_backed_ram(byte* data, std::size_t size) {
+void mmc2_rom::set_battery_backed_ram(byte* data, const std::size_t size) {
 	if (size > 8192) return;
 	memcpy(prgram6000, data, size);
 }
 
-byte	mmc2_rom::read(int addr, int addr_from_base, bool onlyread) {
+byte	mmc2_rom::read(const int addr, const int addr_from_base, const bool onlyread) {
 	if ((addr >= 0x6000) && (addr <= 0x7FFF)) return prgram6000[addr - 0x6000];
 	if (!mmc4mode) {
 		if ((addr >= 0x8000) && (addr <= 0x9FFF)) return prg8000[addr - 0x8000];
@@ -46,7 +46,7 @@ byte	mmc2_rom::read(int addr, int addr_from_base, bool onlyread) {
 	}
 }
 
-void	mmc2_rom::write(int addr, int addr_from_base, byte data) {
+void	mmc2_rom::write(const int addr, const int addr_from_base, const byte data) {
 	if ((addr >= 0xA000) && (addr <= 0xAFFF)) {
 		state.prg_bnk = data & 0x0F;
 		update_banks();
@@ -77,7 +77,7 @@ void	mmc2_rom::write(int addr, int addr_from_base, byte data) {
 	}
 }
 
-void	mmc2_rom::set_rom_data(byte *data, std::size_t size) {
+void	mmc2_rom::set_rom_data(byte *data, const std::size_t size) {
 	romdata = data;
 	romsize = (int)size;
 	update_banks();
@@ -124,12 +124,12 @@ void	mmc2_vrom::update_banks(mmc2_state *state) {
 	}
 }
 
-void	mmc2_vrom::set_rom_data(byte *data, std::size_t size) {
+void	mmc2_vrom::set_rom_data(byte *data, const std::size_t size) {
 	romdata = data;
 	romsize = (int)size;
 }
 
-byte	mmc2_vrom::read(int addr, int addr_from_base, bool onlyread) {
+byte	mmc2_vrom::read(const int addr, const int addr_from_base, const bool onlyread) {
 	byte data = 0x00;
 	if (addr < 0x1000) {
 		data = l0fe ? chrfe0000[addr] : chrfd0000[addr];

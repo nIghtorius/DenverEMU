@@ -56,15 +56,15 @@ private:
 public:
 	mmc3_rom();
 	~mmc3_rom();
-	virtual	byte	read(int addr, int addr_from_base, bool onlyread = false);
-	virtual void	write(int addr, int addr_from_base, byte data);
-	virtual void	set_rom_data(byte *data, std::size_t size);
-	virtual int		rundevice(int ticks);
+	virtual	byte	read(const int addr, const int addr_from_base, const bool onlyread = false);
+	virtual void	write(const int addr, const int addr_from_base, const byte data);
+	virtual void	set_rom_data(byte *data, const std::size_t size);
+	virtual int		rundevice(const int ticks);
 	void			link_vrom(mmc3_vrom *);
-	void			write_banks(byte data);
+	void			write_banks(const byte data);
 	void			update_banks();
 	virtual batterybackedram* get_battery_backed_ram();
-	virtual void	set_battery_backed_ram(byte* data, std::size_t size);
+	virtual void	set_battery_backed_ram(byte* data, const std::size_t size);
 };
 
 class mmc3_vrom : public vrom {
@@ -82,9 +82,9 @@ public:
 	mmc3_vrom();
 	mmc3_rom		*rom = nullptr;
 	void			update_banks(mmc3_state *state);
-	virtual	byte	read(int addr, int addr_from_base, bool onlyread = false);
-	virtual	void	write(int addr, int addr_from_base, byte data);
-	virtual void	set_rom_data(byte *data, std::size_t size);
+	virtual	byte	read(const int addr, const int addr_from_base, const bool onlyread = false);
+	virtual	void	write(const int addr, const int addr_from_base, const byte data);
+	virtual void	set_rom_data(byte *data, const std::size_t size);
 	word			fetch_ppu_addr();
 };
 

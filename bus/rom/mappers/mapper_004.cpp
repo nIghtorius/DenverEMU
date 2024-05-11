@@ -20,12 +20,12 @@ batterybackedram* mmc3_rom::get_battery_backed_ram() {
 	return new batterybackedram((byte*)prgram6000, 8192);
 }
 
-void mmc3_rom::set_battery_backed_ram(byte* data, std::size_t size) {
+void mmc3_rom::set_battery_backed_ram(byte* data, const std::size_t size) {
 	if (size > 8192) return;
 	memcpy(prgram6000, data, size);
 }
 
-byte	mmc3_rom::read(int addr, int addr_from_base, bool onlyread)
+byte	mmc3_rom::read(const int addr, const int addr_from_base, const bool onlyread)
 {
 	if ((addr >= 0x6000) && (addr <= 0x7fff)) {
 		return state.prg_ram_enable ? prgram6000[addr - 0x6000] : 0;
@@ -36,7 +36,7 @@ byte	mmc3_rom::read(int addr, int addr_from_base, bool onlyread)
 	return prge000[addr - 0xe000];
 }
 
-void	mmc3_rom::write(int addr, int addr_from_base, byte data) {
+void	mmc3_rom::write(const int addr, const int addr_from_base, const byte data) {
 	if ((addr >= 0x6000) && (addr <= 0x7FFF)) {
 		//if (!state.prg_ram_enable) return;
 		//if (state.prg_ram_readonly) return;
@@ -94,7 +94,7 @@ void	mmc3_rom::write(int addr, int addr_from_base, byte data) {
 	}
 }
 
-void	mmc3_rom::write_banks(byte data) {
+void	mmc3_rom::write_banks(const byte data) {
 	switch (state.bank_update_reg) {
 	case 0x00:
 		// R0: Select 2 KB CHR bank at PPU $0000-$07FF (or $1000-$17FF)
@@ -151,7 +151,7 @@ void	mmc3_rom::update_banks() {
 	if (vrom) vrom->update_banks(&state);
 }
 
-void	mmc3_rom::set_rom_data(byte *data, std::size_t size) {
+void	mmc3_rom::set_rom_data(byte *data, const std::size_t size) {
 	devicestart = 0x6000;
 	deviceend = 0xFFFF;
 	devicemask = 0xFFFF;
@@ -172,7 +172,7 @@ void	mmc3_rom::link_vrom(mmc3_vrom * m3vrom) {
 	}
 }
 
-int		mmc3_rom::rundevice(int ticks) {
+int		mmc3_rom::rundevice(const int ticks) {
 	if (!vrom) return ticks;
 	word ppuaddr = vrom->fetch_ppu_addr();
 	bool a12_risen = ((ppuaddr & 0x1000) > 0) && ((lastppuaddr & 0x1000) == 0);	
@@ -234,7 +234,7 @@ void mmc3_vrom::update_banks(mmc3_state *state) {
 	}
 }
 
-byte mmc3_vrom::read(int addr, int addr_from_base, bool onlyread) {
+byte mmc3_vrom::read(const int addr, const int addr_from_base, const bool onlyread) {
 	if (!onlyread) ppuaddr = addr;
 	if (!chr0000) return 0;	// not initialized yet.
 	if ((addr >= 0x0000) && (addr <= 0x03ff)) return chr0000[addr];
@@ -244,15 +244,15 @@ byte mmc3_vrom::read(int addr, int addr_from_base, bool onlyread) {
 	if ((addr >= 0x1000) && (addr <= 0x13ff)) return chr1000[addr - 0x1000];
 	if ((addr >= 0x1400) && (addr <= 0x17ff)) return chr1400[addr - 0x1400];
 	if ((addr >= 0x1800) && (addr <= 0x1bff)) return chr1800[addr - 0x1800];
-	if (addr <= 0x1fff) return chr1c00[addr - 0x1c00];
+	return chr1c00[addr - 0x1c00];	//if (addr <= 0x1fff) 
 }
 
-void mmc3_vrom::write(int addr, int addr_from_base, byte data) {
+void mmc3_vrom::write(const int addr, const int addr_from_base, const byte data) {
 	ppuaddr = addr;
 	return;	// rom do nothing.
 }
 
-void mmc3_vrom::set_rom_data(byte *data, std::size_t size) {
+void mmc3_vrom::set_rom_data(byte *data, const std::size_t size) {
 	romdata = data;
 	romsize = (int)size;
 	devicestart = 0x0000;

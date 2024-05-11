@@ -41,7 +41,7 @@ void ppu::write_state_dump (const char *filename) {
 }
 
 
-byte	ppu::read(int addr, int addr_from_base, bool onlyread) {
+byte	ppu::read(const int addr, const int addr_from_base, const bool onlyread) {
 	// registers
 	// PPU STATUS register
 	if (addr_from_base == PPU_PPUSTATUS_PORT) {
@@ -83,7 +83,7 @@ byte	ppu::read(int addr, int addr_from_base, bool onlyread) {
 	return 0x00;
 }
 
-void	ppu::write(int addr, int addr_from_base, byte data) {
+void	ppu::write(const int addr, const int addr_from_base, const byte data) {
 	// update latch
 	latch = data;
 
@@ -174,7 +174,7 @@ void	ppu::write(int addr, int addr_from_base, byte data) {
 	}
 }
 
-int		ppu::rundevice(int ticks) {
+int		ppu::rundevice(const int ticks) {
 	// run the PPU..
 	for (int i = 0; i < ticks; i++) {
 		if ((ppumask.showbg || ppumask.showspr) && !((scanline>=240) && (scanline<=260))) {
@@ -626,11 +626,11 @@ ppuram::~ppuram() {
 	free(ram);
 }
 
-void	ppuram::write(int addr, int addr_from_base, byte data) {
+void	ppuram::write(const int addr, const int addr_from_base, const byte data) {
 	ram[addr_from_base] = data;
 }
 
-byte	ppuram::read(int addr, int addr_from_base, bool onlyread) {
+byte	ppuram::read(const int addr, const int addr_from_base, const bool onlyread) {
 	return ram[addr_from_base];
 }
 
@@ -647,7 +647,7 @@ ppu_pal_ram::~ppu_pal_ram() {
 	free(ram);
 }
 
-int ppu_pal_ram::pal_addr_compute(int addr) {
+int ppu_pal_ram::pal_addr_compute(const int addr) {
 	if (addr == 0x10) return 0x00;
 	if (addr == 0x14) return 0x04;
 	if (addr == 0x18) return 0x08;
@@ -655,11 +655,11 @@ int ppu_pal_ram::pal_addr_compute(int addr) {
 	return addr;
 }
 
-void ppu_pal_ram::write(int addr, int addr_from_base, byte data) {
+void ppu_pal_ram::write(const int addr, const int addr_from_base, const byte data) {
 	ram[pal_addr_compute (addr_from_base)] = data;
 }
 
-byte ppu_pal_ram::read(int addr, int addr_from_base, bool onlyread) {
+byte ppu_pal_ram::read(const int addr, const int addr_from_base, const bool onlyread) {
 	if (addr_from_base == 0x04) return ram[0x00];
 	if (addr_from_base == 0x08) return ram[0x00];
 	if (addr_from_base == 0x0C) return ram[0x00];

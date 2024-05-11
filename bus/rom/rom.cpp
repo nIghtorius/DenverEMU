@@ -11,13 +11,14 @@ rom::rom() {
 	devicemask = 0xBFFF;	// 1011 1111 1111 1111
 	// create space for SRAM file name.
 	sramfile = (char*)malloc(SRAM_MAX_FILE_NAME);
-	strncpy(sramfile, "", SRAM_MAX_FILE_NAME);
+	if (sramfile != nullptr)
+		strncpy(sramfile, "", SRAM_MAX_FILE_NAME);
 }
 
 rom::~rom() {
 }
 
-void rom::set_rom_data(byte *data, std::size_t size) {
+void rom::set_rom_data(byte *data, const std::size_t size) {
 	this->romdata = data;
 	this->romsize = (int)size;
 	// extra logic for 16kB / 32kB roms.
@@ -32,17 +33,17 @@ batterybackedram* rom::get_battery_backed_ram() {
 	return NULL; // does not have battery packed ram.
 }
 
-void rom::set_battery_backed_ram(byte* data, std::size_t size) {
+void rom::set_battery_backed_ram(byte* data, const std::size_t size) {
 	// do nothing.
 }
 
-void rom::write(int addr, int addr_from_base, byte data) {
+void rom::write(const int addr, const int addr_from_base, const byte data) {
 	// do actually nothing.
 	// ROM are read only and cannot be written to.
 	// especially ROM 0x00 -> other roms with mappers will control the mapper logic.
 }
 
-byte rom::read(int addr, int addr_from_base, bool onlyread) {
+byte rom::read(const int addr, const int addr_from_base, const bool onlyread) {
 	// read ROM data.
 	return romdata[addr_from_base];
 }
@@ -57,17 +58,17 @@ vrom::vrom() {
 vrom::~vrom() {
 }
 
-void vrom::set_rom_data(byte *data, std::size_t size) {
+void vrom::set_rom_data(byte *data, const std::size_t size) {
 	this->romdata = data;
 	this->romsize = (int)size;
 	devicemask = ((int)size - 1);
 }
 
-void vrom::write(int addr, int addr_from_base, byte data) {
+void vrom::write(const int addr, const int addr_from_base, const byte data) {
 	// do nothing ROM=ROM as in read ONLY memory
 }
 
-byte vrom::read(int addr, int addr_from_base, bool onlyread) {
+byte vrom::read(const int addr, const int addr_from_base, const bool onlyread) {
 	return romdata[addr_from_base];
 }
 
@@ -87,11 +88,11 @@ vram::~vram() {
 	free(ram);
 }
 
-void vram::write(int addr, int addr_from_base, byte data) {
+void vram::write(const int addr, const int addr_from_base, const byte data) {
 	ram[addr_from_base] = data;
 }
 
-byte vram::read(int addr, int addr_from_base, bool onlyread) {
+byte vram::read(const int addr, const int addr_from_base, const bool onlyread) {
 	return ram[addr_from_base];
 }
 

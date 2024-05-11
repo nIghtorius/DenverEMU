@@ -134,7 +134,7 @@ void process_args(int argc, char *argv[]) {
 		}
 		if (strcmp(argv[i], "--override-scale") == 0) {
 			if (i + 1 <= argc)
-				override_scale = atof(argv[i+1]);
+				override_scale = (float)atof(argv[i+1]);
 		}
 	}
 }
@@ -236,8 +236,8 @@ int main(int argc, char *argv[])
 	
 	float ddpi = 0.0f;
 	SDL_GetDisplayDPI(0, &ddpi, NULL, NULL);
-	float display_scale = ddpi / 96.0f;
-	display_scale = display_scale<1.0f?1.0:display_scale;
+	float display_scale = ddpi / (float)96.0f;
+	display_scale = display_scale<(float)1.0f?(float)1.0:display_scale;
 
 	if (override_scale > 0.0f) display_scale = override_scale;
 

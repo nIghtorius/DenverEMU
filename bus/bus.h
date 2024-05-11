@@ -46,7 +46,7 @@ public:
 	bool	dma_start;
 	device();
 	~device();
-	virtual	int		rundevice(int ticks); // returns the amount of ticks it actually did.
+	virtual	int		rundevice(const int ticks); // returns the amount of ticks it actually did.
 	char *			get_device_descriptor();
 	virtual	void	dma(byte *data, bool is_output, bool started);
 	virtual void	reset();
@@ -65,13 +65,13 @@ public:
 	buslayout	pinout;
 	bus_device();
 	virtual ~bus_device();
-	word			compute_addr_from_layout(word addr);
-	void			swappins(int pin1, int pin2);
-	void			groundpin(int pin);
-	void			vccpin(int pin);
+	word			compute_addr_from_layout(const word addr);
+	void			swappins(const int pin1, const int pin2);
+	void			groundpin(const int pin);
+	void			vccpin(const int pin);
 	void			resetpins_to_default();
-	virtual void	write(int addr, int addr_from_base, byte data);
-	virtual	byte	read(int addr, int addr_from_base, bool onlyread = false);
+	virtual void	write(const int addr, const int addr_from_base, const byte data);
+	virtual	byte	read(const int addr, const int addr_from_base, const bool onlyread = false);
 	virtual void	_attach_to_bus(bus * attachedbus);
 };
 
@@ -84,20 +84,20 @@ public:
 	int		address = 0;
 	// general reading/writing.
 	std::vector<bus_device *> devices;
-	void	writememory(int addr, byte data);
-	byte	readmemory(int addr, bool onlyread = false);
-	word	readmemory_as_word(int addr, bool onlyread = false);
-	word	readmemory_as_word_wrap(int addr, bool onlyread = false);
-	void	write(byte data);
-	byte	read(bool onlyread = false);
+	void	writememory(const int addr, const byte data);
+	byte	readmemory(const int addr, const bool onlyread = false);
+	word	readmemory_as_word(const int addr, const bool onlyread = false);
+	word	readmemory_as_word_wrap(const int addr, const bool onlyread = false);
+	void	write(const byte data);
+	byte	read(const bool onlyread = false);
 	//	IRQ/NMI lines
 	bool	nmi_pulled();
 	bool	irq_pulled();
 	// device registration
 	void	registerdevice(bus_device *device);
-	void	removedevice_select_base(int baseaddr);
+	void	removedevice_select_base(const int baseaddr);
 	// reports (cout)
 	void	reportdevices();
-	void	emulate_bus_conflicts(bool enable);	// emulate busconflicts? (true is slower)
+	void	emulate_bus_conflicts(const bool enable);	// emulate busconflicts? (true is slower)
 	void	busreset();
 };

@@ -63,7 +63,7 @@ int	vrc7audio::rundevice(int ticks) {
 			if (opl != nullptr) {
 				// if this goes right >_<
 				sample = (float)((calc(opl)) << 2);
-				sample /= 24576.0f;
+				sample /= 32768.0f;
 				// normalize?
 				if (sample < 0) {
 					float updatenorm = -sample;

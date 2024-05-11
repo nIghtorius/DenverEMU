@@ -27,7 +27,7 @@ void	fme7rom::reset() {
 	memset(&state, 0, sizeof(fme7_state));
 }
 
-int		fme7rom::rundevice(int ticks) {
+int		fme7rom::rundevice(const int ticks) {
 	// expansion audio?
 	if (audiochip) audiochip->rundevice(ticks);
 	// do irq counters.
@@ -46,7 +46,7 @@ void	fme7rom::link_vrom(fme7vrom *rom) {
 	charrom = rom;
 }
 
-byte	fme7rom::read(int addr, int addr_from_base, bool onlyread) {
+byte	fme7rom::read(const int addr, const int addr_from_base, const bool onlyread) {
 	// prg ram or rom?
 	if ((addr >= 0x6000) && (addr <= 0x7FFF)) {
 		if (state.ramrom_select) {
@@ -62,7 +62,7 @@ byte	fme7rom::read(int addr, int addr_from_base, bool onlyread) {
 	return prg_e000[addr - 0xE000];
 }
 
-void	fme7rom::write(int addr, int addr_from_base, byte data) {
+void	fme7rom::write(const int addr, const int addr_from_base, const byte data) {
 	// prg ram?
 	if (state.prg_ram_enable && state.ramrom_select) {
 		if ((addr >= 0x6000) && (addr <= 0x7FFF)) prg_6000[addr - 0x6000] = data;
@@ -119,7 +119,7 @@ void	fme7rom::write(int addr, int addr_from_base, byte data) {
 	}
 }
 
-void	fme7rom::set_rom_data(byte *data, std::size_t size) {
+void	fme7rom::set_rom_data(byte *data, const std::size_t size) {
 	romdata = data;
 	romsize = (int)size;
 	setbanks();
@@ -155,7 +155,7 @@ fme7vrom::~fme7vrom() {
 
 }
 
-void	fme7vrom::set_rom_data(byte *data, std::size_t size) {
+void	fme7vrom::set_rom_data(byte *data, const std::size_t size) {
 	romdata = data;
 	romsize = (int)size;
 }
@@ -192,7 +192,7 @@ void	fme7vrom::setbanks(fme7_state *state) {
 	}
 }
 
-byte	fme7vrom::read(int addr, int addr_from_base, bool onlyread) {
+byte	fme7vrom::read(const int addr, const int addr_from_base, const bool onlyread) {
 	if (!romdata) return 0x00;
 	if ((addr >= 0x0000) && (addr <= 0x03FF)) return chr_0000[addr];
 	if ((addr >= 0x0400) && (addr <= 0x07FF)) return chr_0400[addr - 0x0400];

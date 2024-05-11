@@ -14,13 +14,15 @@
 #include "../../audio/expansion/vrc7.h"
 #include "../../audio/expansion/sunsoft5b.h"
 #include "../../audio/expansion/namco163.h"
+#include "../../audio/expansion/mmc5.h"
 #include "../../package/2a03.h"
 
 // EXP audio
 #define		NSF_EXP_VRC6			0x01
+#define		NSF_EXP_VRC7			0x02
+#define		NSF_EXP_MMC5			0x08
 #define		NSF_EXP_NAMCO163		0x10
 #define		NSF_EXP_SUNSOFT			0x20
-#define		NSF_EXP_VRC7			0x02
 
 // uFirmware
 const byte nsfufirm[] = {
@@ -33,28 +35,28 @@ const byte nsfufirm[] = {
 
 #pragma pack (push, 1)
 struct nsf_ufirmware_header {
-	word	reset;
-	word	nmi;
-	word	irq;
-	word	trackselect;
-	word	init;
-	word	play;
+	word	reset = 0;
+	word	nmi = 0;
+	word	irq = 0;
+	word	trackselect = 0;
+	word	init = 0;
+	word	play = 0;
 };
 #pragma pack (pop)
 
 
 struct nsf_state {
-	byte	banks[8];
-	word	init;
-	word	play;
-	word	load;
+	byte	banks[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+	word	init = 0;
+	word	play = 0;
+	word	load = 0;
 
-	int		numsongs;
-	int		currentsong;
+	int		numsongs = 0;
+	int		currentsong = 0;
 
-	word	irq_vector;
-	word	nmi_vector;
-	word	res_vector;
+	word	irq_vector = 0;
+	word	nmi_vector = 0;
+	word	res_vector = 0;
 };
 
 
@@ -65,8 +67,8 @@ private:
 
 public:
 	nsf_state state;
-	byte		*ram;
-	byte		*prg[8];	// program banks.
+	byte		*ram = nullptr;
+	byte		*prg[8] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };	// program banks.
 	int			nmi_trig_cycles = 0;
 
 	// expansion audio.
@@ -74,14 +76,15 @@ public:
 	sunsoftaudio *sunexp = nullptr;
 	namco163audio *namexp = nullptr;
 	vrc7audio* vrc7exp = nullptr;
+	mmc5audio* mmc5exp = nullptr;
 
 	package_2a03 *n2a03 = nullptr;
 
 	nsfrom();
 	~nsfrom();
-	virtual	byte	read(int addr, int addr_from_base, bool onlyread = false);
-	virtual	void	write(int addr, int addr_from_base, byte data);
-	virtual int		rundevice(int ticks);
-	virtual void	set_rom_data(byte *data, std::size_t size);
-	void			initialize(byte song);
+	virtual	byte	read(const int addr, const int addr_from_base, const bool onlyread = false);
+	virtual	void	write(const int addr, const int addr_from_base, const byte data);
+	virtual int		rundevice(const int ticks);
+	virtual void	set_rom_data(byte *data, const std::size_t size);
+	void			initialize(const byte song);
 };

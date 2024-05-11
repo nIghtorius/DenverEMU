@@ -23,7 +23,7 @@ nsfrom::~nsfrom() {
 	free(ram);
 }
 
-byte	nsfrom::read(int addr, int addr_from_base, bool onlyread) {
+byte	nsfrom::read(const int addr, const int addr_from_base, const bool onlyread) {
 	// uFirmware.
 	if ((addr >= 0x3000) && (addr <= 0x3000 + sizeof(nsfufirm))) return ufirm[addr - 0x3000];
 
@@ -40,15 +40,15 @@ byte	nsfrom::read(int addr, int addr_from_base, bool onlyread) {
 
 	// banks. RAM is divided in 4K blocks.
 	for (int i = 0; i < 8; i++) {
-		int base = 0x8000 + (i * 0x1000);
-		int end = 0x8FFF + (i * 0x1000);
+		int base = 0x8000 | (i << 12);
+		int end = base | 0x0FFF;
 		if ((addr >= base) && (addr <= end)) return prg[i][addr - base];
 	}
 
 	return 0;
 }
 
-void	nsfrom::write(int addr, int addr_from_base, byte data) {
+void	nsfrom::write(const int addr, const int addr_from_base, const byte data) {
 	if ((addr >= 0x5FF8) && (addr <= 0x5FFF)) {
 		byte	bank = addr - 0x5FF8;
 		prg[bank] = &romdata[(data << 12) % romsize];
@@ -56,13 +56,15 @@ void	nsfrom::write(int addr, int addr_from_base, byte data) {
 	}
 }
 
-int		nsfrom::rundevice(int ticks) {
+int		nsfrom::rundevice(const int ticks) {
 	// for expansion audio.
 	// check expansions
 	if (vrc6exp) vrc6exp->rundevice(ticks);
 	if (sunexp) sunexp->rundevice(ticks);
 	if (namexp) namexp->rundevice(ticks);
 	if (vrc7exp) vrc7exp->rundevice(ticks);
+	if (mmc5exp) mmc5exp->rundevice(ticks);
+
 	tickcount += ticks;
 	if (tickcount >= nmi_trig_cycles) {
 		nmi_enable = true;
@@ -71,14 +73,17 @@ int		nsfrom::rundevice(int ticks) {
 	return ticks;
 }
 
-void	nsfrom::set_rom_data(byte *data, std::size_t size) {
+void	nsfrom::set_rom_data(byte *data, const std::size_t size) {
 	romdata = data;
 	romsize = (int)size;
 }
 
-void	nsfrom::initialize(byte song) {
+void	nsfrom::initialize(const byte song) {
 	// get the defaults from state.
 	// first check "base_nsf" state. When the banks are all 0.
+	// first reset the tickcount to 0
+	tickcount = 0;		// so we do not trip the NMI during NSFufirmware initialization.
+	nmi_enable = false;	// make sure a triggered not handled NMI is suppressed.
 
 	bool	are_all_zero = true;
 	for (int i = 0; i < 8; i++)

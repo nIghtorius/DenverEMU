@@ -60,36 +60,36 @@ struct mmc1_state {
 // vrom class.
 class mmc1_vrom : public vrom {
 private:
-	byte			*chr0000;
-	byte			*chr1000;
-	byte			*ram;
+	byte			*chr0000 = nullptr;
+	byte			*chr1000 = nullptr;
+	byte			*ram = nullptr;
 	bool			ram_mode = false;
 public:
 	mmc1_vrom();
 	~mmc1_vrom();
-	virtual byte	read(int addr, int addr_from_base, bool onlyread = false);
-	virtual void	write(int addr, int addr_from_base, byte data);
-	virtual void	set_rom_data(byte *data, std::size_t size);
+	virtual byte	read(const int addr, const int addr_from_base, const bool onlyread = false);
+	virtual void	write(const int addr, const int addr_from_base, const byte data);
+	virtual void	set_rom_data(byte *data, const std::size_t size);
 	void			update_banks(mmc1_state &state);
-	void			is_ram(bool enable);
+	void			is_ram(const bool enable);
 };
 
 // rom class.
 class mmc1_rom : public rom {
 private:
-	mmc1_vrom		*charrom;
+	mmc1_vrom		*charrom = nullptr;
 	mmc1_state		state;
-	char			*mmc1ram;
-	byte			*prg8000;
-	byte			*prgC000;
+	char			*mmc1ram = nullptr;
+	byte			*prg8000 = nullptr;
+	byte			*prgC000 = nullptr;
 public:
 	mmc1_rom();
 	~mmc1_rom();
-	virtual byte	read(int addr, int addr_from_base, bool onlyread = false);
-	virtual void	write(int addr, int addr_from_base, byte data);
-	virtual void	set_rom_data(byte *data, std::size_t size);
+	virtual byte	read(const int addr, const int addr_from_base, const bool onlyread = false);
+	virtual void	write(const int addr, const int addr_from_base, const byte data);
+	virtual void	set_rom_data(byte *data, const std::size_t size);
 	virtual batterybackedram* get_battery_backed_ram();
-	virtual void	set_battery_backed_ram(byte* data, std::size_t size);
+	virtual void	set_battery_backed_ram(byte* data, const std::size_t size);
 	void			link_vrom(mmc1_vrom *vrom);
 	void			update_control();
 	void			update_banks();

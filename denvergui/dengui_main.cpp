@@ -303,6 +303,9 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *
 				if (denver->cart->sunexp) {
 					ImGui::Text("SUNSOFT"); ImGui::SameLine();
 				}
+				if (denver->cart->mmc5exp) {
+					ImGui::Text("MMC5"); ImGui::SameLine();
+				}
 				ImGui::NewLine();
 
 

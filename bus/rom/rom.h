@@ -19,8 +19,8 @@
 #define		SRAM_MAX_FILE_NAME 512
 
 struct batterybackedram {
-	byte*		data;
-	std::size_t	size;
+	byte*		data = nullptr;
+	std::size_t	size = 0;
 	constexpr batterybackedram(byte* _data, int _size) : data(_data), size(_size) {}
 };
 
@@ -29,13 +29,13 @@ private:
 public:
 	vrom();
 	~vrom();
-	virtual void	set_rom_data(byte *data, std::size_t size);
-	virtual void	write(int addr, int addr_from_base, byte data);
-	virtual byte	read(int addr, int addr_from_base, bool onlyread = false);
+	virtual void	set_rom_data(byte *data, const std::size_t size);
+	virtual void	write(const int addr, const int addr_from_base, const byte data);
+	virtual byte	read(const int addr, const int addr_from_base, const bool onlyread = false);
 	void			link_ppu_bus(bus_device *ppu_bus);
-	bus_device		*ppubus;
-	byte			*romdata;
-	int				romsize;
+	bus_device		*ppubus = nullptr;
+	byte			*romdata = nullptr;
+	int				romsize = 0;
 };
 
 class vram : public vrom {
@@ -44,8 +44,8 @@ private:
 public:
 	vram();
 	~vram();
-	virtual void	write(int addr, int addr_from_base, byte data);
-	virtual byte	read(int addr, int addr_from_base, bool onlyread = false);
+	virtual void	write(const int addr, const int addr_from_base, const byte data);
+	virtual byte	read(const int addr, const int addr_from_base, const bool onlyread = false);
 	void			reset();
 };
 
@@ -55,13 +55,13 @@ private:
 public:
 	rom();
 	~rom();
-	virtual	void	set_rom_data(byte *data, std::size_t size);
-	virtual void	write(int addr, int addr_from_base, byte data);
-	virtual	byte	read(int addr, int addr_from_base, bool onlyread = false);
+	virtual	void	set_rom_data(byte *data, const std::size_t size);
+	virtual void	write(const int addr, const int addr_from_base, const byte data);
+	virtual	byte	read(const int addr, const int addr_from_base, const bool onlyread = false);
 	virtual batterybackedram* get_battery_backed_ram();
-	virtual void	set_battery_backed_ram(byte* data, std::size_t size);
+	virtual void	set_battery_backed_ram(byte* data, const std::size_t size);
 	char* get_sram_filename();
-	byte	*romdata;
-	int		romsize;
+	byte	*romdata = nullptr;
+	int		romsize = 0;
 	bool	battery = false;
 };
