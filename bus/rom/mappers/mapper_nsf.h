@@ -80,6 +80,8 @@ public:
 
 	package_2a03 *n2a03 = nullptr;
 
+	uint64_t		timestarted = 0;
+
 	nsfrom();
 	~nsfrom();
 	virtual	byte	read(const int addr, const int addr_from_base, const bool onlyread = false);

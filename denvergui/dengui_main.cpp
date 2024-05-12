@@ -307,8 +307,17 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *
 					ImGui::Text("MMC5"); ImGui::SameLine();
 				}
 				ImGui::NewLine();
-
-
+				ImGui::Separator();
+				// compute time elapsed.
+				uint64_t currenttime = SDL_GetTicks64();
+				uint32_t elapsed = (uint32_t)(currenttime - nsfinterface->timestarted);
+				uint32_t seconds = elapsed / 1000;
+				uint32_t minutes = seconds / 60;
+				seconds = seconds % 60;
+				uint32_t hseconds = elapsed - ((minutes * 60) + seconds) * 1000;
+				hseconds /= 10;
+				ImGui::Text("Time elapsed: %02d:%02d:%02d", minutes, seconds, hseconds);
+				ImGui::NewLine();
 			}			
 		}
 		ImGui::End();

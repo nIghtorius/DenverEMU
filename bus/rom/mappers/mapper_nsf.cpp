@@ -130,4 +130,6 @@ void	nsfrom::initialize(const byte song) {
 	state.irq_vector = vectors.irq;
 	state.nmi_vector = vectors.nmi;
 	state.res_vector = vectors.reset;
+
+	timestarted = SDL_GetTicks64();
 }

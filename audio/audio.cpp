@@ -8,7 +8,7 @@ audio_player::audio_player() {
 	SDL_AudioSpec desired;
 	desired.samples = MAX_BUFFER_AUDIO; // int16 is 2 bytes.
 	desired.channels = 1;
-	desired.format = AUDIO_S16;
+	desired.format = AUDIO_F32;
 	desired.freq = SAMPLE_RATE;
 	desired.silence = 0;
 	desired.callback = audio_player::sdl_aud_callback;
@@ -29,11 +29,11 @@ void	audio_player::sdl_aud_callback(void * const data, std::uint8_t* const strea
 
 	// copy data to stream.
 	memcpy(stream, (void *)&aud_player_callback->buffer[0], len);
-	aud_player_callback->de_pop_sample = aud_player_callback->buffer[(len/sizeof(uint16_t)) - 1];
+	aud_player_callback->de_pop_sample = aud_player_callback->buffer[(len/sizeof(float)) - 1];
 
 	// shift buffers
-	memcpy(&aud_player_callback->move_buffer[0], (void *)&aud_player_callback->buffer[MAX_BUFFER_AUDIO], (aud_player_callback->samples_in_buffer - MAX_BUFFER_AUDIO) * 2);
-	memcpy((void *)&aud_player_callback->buffer[0], &aud_player_callback->move_buffer[0], (aud_player_callback->samples_in_buffer - MAX_BUFFER_AUDIO) * 2);
+	memcpy(&aud_player_callback->move_buffer[0], (void *)&aud_player_callback->buffer[MAX_BUFFER_AUDIO], (aud_player_callback->samples_in_buffer - MAX_BUFFER_AUDIO) * sizeof(float));
+	memcpy((void *)&aud_player_callback->buffer[0], &aud_player_callback->move_buffer[0], (aud_player_callback->samples_in_buffer - MAX_BUFFER_AUDIO) * sizeof(float));
 
 	// drop length.
 	aud_player_callback->samples_in_buffer -= MAX_BUFFER_AUDIO;
@@ -119,14 +119,30 @@ void	audio_player::play_audio() {
 	if (attentuate_lock) attentuate = 0.65f;	// lock dynamic attentuation @ 0.65x
 
 	avg_center /= (float)audibles[0]->sample_buffer.size();
-	average_mix = avg_center;
-
+	average_mix += avg_center; average_mix /= 2;
+	//average_mix = avg_center > average_mix ? average_mix + 0.05f : average_mix - 0.05f;
+	
 	for (auto audible : audibles) {
 		audible->sample_buffer.clear();
 		audible->audio_frame_ready = false;
 	}
 
 	send_sampledata_to_audio_device();
+}
+
+void	audio_player::bWorthFilter(const float input, float& output) {
+	output = input * bw.a0 + bw.z1;
+	bw.z1 = input * bw.a1 + bw.z2 - bw.b1 * output;
+	bw.z2 = input * bw.a2 + bw.z3 - bw.b2 * output;
+	bw.z3 = input * bw.a3 - bw.b3 * output;
+	bw.p0 = bw.p1; bw.p1 = bw.p2; bw.p2 = input;
+}
+
+void	audio_player::simpleLowpass(const float input, float& output) {
+	if (output == input) return;
+	output += 0.5f * (input - output);
+	// clamp output when near target "input"
+	if ((output - CLAMP_LP < input) && (output + CLAMP_LP > input)) output = input;
 }
 
 void	audio_player::send_sampledata_to_audio_device() {
@@ -141,13 +157,15 @@ void	audio_player::send_sampledata_to_audio_device() {
 		float sample = 0;
 		if (samples + samples_to_target > final_mux.size()) samples_to_target = final_mux.size() - samples;
 
-		if (interpolated) {
+		/*if (!interpolated) {
 			for (int i = (int)trunc(samples); i < -1 + (int)trunc(samples + samples_to_target); i++) {
-				sample += 0.1f * (final_mux[i] - sample);
+				sample += final_mux[i];
 			}
-		} else sample = final_mux[(int)trunc(samples)];
-
-		buffer[samples_in_buffer + outsamples] = -32768 + (int)trunc(sample * attentuate * 30000);
+		} else*/ sample = final_mux[(int)trunc(samples)];
+		//if (!interpolated) sample /= trunc(samples_to_target);
+		//simpleLowpass(sample, lpout);
+		bWorthFilter(sample, lpout);
+		buffer[samples_in_buffer + outsamples] = (interpolated ? lpout : sample) * attentuate;
 		samples += samples_to_target;
 		outsamples++;
 	}

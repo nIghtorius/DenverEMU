@@ -114,6 +114,7 @@ void	denvergui::render_apuviewer(nes_emulator *denver, denvergui_state *state) {
 		if (ImGui::TreeNode("Audio Mixing Specifics")) {
 			ImGui::Text("Attentuation: %f", (1.0f - denver->audio->attentuate));
 			ImGui::Text("Number of audio devices: %d", (denver->audio->audibles.size()));
+			ImGui::Text("DC-(re)calibration: %f", denver->audio->average_mix);
 			ImGui::Separator();
 			ImGui::TreePop();
 		}
