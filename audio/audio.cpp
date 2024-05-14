@@ -116,7 +116,7 @@ void	audio_player::play_audio() {
 	if (increaseattentuate) 
 		if (attentuate < max_attentuate) attentuate += 0.005f;
 
-	if (attentuate_lock) attentuate = 0.65f;	// lock dynamic attentuation @ 0.65x
+	if (attentuate_lock) attentuate = 0.90f;	// lock dynamic attentuation @ 0.90x
 
 	avg_center /= (float)audibles[0]->sample_buffer.size();
 	average_mix += avg_center; average_mix /= 2;

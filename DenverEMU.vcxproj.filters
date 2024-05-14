@@ -279,6 +279,9 @@
     <ClInclude Include="audio\expansion\mmc5.h">
       <Filter>Source Files\emulation\audio\expansion</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DenverEMU.cpp">
@@ -463,5 +466,15 @@
     <None Include="shaders\pointsampling.shader">
       <Filter>Source Files\shaders</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="DenverEMU.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="icons\denver_main.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

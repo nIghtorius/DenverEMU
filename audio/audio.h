@@ -91,9 +91,9 @@ public:
 	bool	boostspeed = false;
 	bool	no_audio = false;
 	bool	no_expanded_audio = false;
-	bool	interpolated = false;
+	bool	interpolated = true;
 	float	attentuate = 1.0f;
-	bool	attentuate_lock = false;
+	bool	attentuate_lock = true;
 	float	max_attentuate = 1.05f;
 
 	audio_player();

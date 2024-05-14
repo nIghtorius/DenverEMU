@@ -1,5 +1,6 @@
 #include "clock.h"
 #include <iostream>
+#include <SDL.h>
 
 clock::clock() {
 }
@@ -134,7 +135,7 @@ void fastclock::run() {
 			}
 			ppudevice->rundevice(1536);
 		}
-		int actualcputicks = cpudevice->rundevice(cyclespersync);	
+		int actualcputicks = cpudevice->rundevice(cyclespersync);
 		if (romdevice) romdevice->rundevice(actualcputicks / 3);
 		if (ppudevice) ppudevice->rundevice(actualcputicks);
 	}
