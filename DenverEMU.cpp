@@ -15,6 +15,7 @@
 #include <fstream>
 #include <exception>
 #include <string>
+#include <filesystem>
 
 #include "imgui.h"
 #include "imgui_internal.h"
@@ -51,6 +52,7 @@ static int		width = 512;
 static int		height = 480;
 static bool		linear_filter = true;
 static float	override_scale = -1.0f;
+std::vector<std::string> shaderList;
 
 void process_args(int argc, char *argv[]) {
 	for (int i = 1; i < argc; i++) {
@@ -163,6 +165,13 @@ int main(int argc, char *argv[])
 
 	// SDL
 	std::cout << "Setting up SDL.." << std::endl;
+
+	// Collect shaders for the GUI.
+	shaderList.clear();
+	std::string path = "./shaders";
+	for (const auto& entry : std::filesystem::directory_iterator(path)) {
+		shaderList.push_back(entry.path().string());
+	}
 
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_GAMECONTROLLER);
 

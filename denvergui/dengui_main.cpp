@@ -9,6 +9,9 @@
 
 #pragma warning(disable : 4996)
 
+extern std::vector<std::string> shaderList;
+
+
 void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *state) {
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
 	ImGuiViewportP* viewport = (ImGuiViewportP*)(void*)ImGui::GetMainViewport();
@@ -117,6 +120,15 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *
 					if (ImGui::MenuItem("Enable scanlines", NULL, false)) {
 						denver->video_out->ClearPostProcessors();
 						denver->video_out->RegisterPostProcessor(&denver->_scanlines);
+					}
+					ImGui::EndMenu();
+				}
+				if (ImGui::BeginMenu("Shaders")) {
+					for (std::string shader : shaderList) {
+						if (ImGui::MenuItem(shader.c_str(), NULL, false)) {
+							// apply shader.
+							denver->use_shader(shader.c_str());
+						}
 					}
 					ImGui::EndMenu();
 				}
