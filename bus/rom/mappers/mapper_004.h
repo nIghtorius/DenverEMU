@@ -25,7 +25,7 @@ struct mmc3_state {
 	bool	prg_bank_mode;
 	bool	chr_a12_inv;
 
-	int		r0, r1, r2, r3, r4, r5, r6, r7;
+	byte	r0, r1, r2, r3, r4, r5, r6, r7;
 
 	// mirroring
 	bool	do_horizontal_mirroring;
@@ -53,6 +53,8 @@ private:
 	mmc3_state	state;
 	mmc3_vrom	*vrom = nullptr;
 	word	lastppuaddr = 0;
+	int		cpu_tk = 0;
+	int		lt_a12r = 0;
 public:
 	mmc3_rom();
 	~mmc3_rom();
@@ -64,7 +66,8 @@ public:
 	void			write_banks(const byte data);
 	void			update_banks();
 	virtual batterybackedram* get_battery_backed_ram();
-	virtual void	set_battery_backed_ram(byte* data, const std::size_t size);
+	virtual void	set_battery_backed_ram(byte* data, const std::size_t size); 
+	virtual void	set_debug_data();
 };
 
 class mmc3_vrom : public vrom {

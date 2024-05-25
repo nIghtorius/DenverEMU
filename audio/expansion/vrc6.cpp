@@ -59,6 +59,7 @@ vrc6audio::vrc6audio() {
 	devicestart = 0x8000;
 	deviceend = 0xBFFF;
 	devicemask = 0xFFFF;
+	set_debug_data();
 }
 
 void	vrc6audio::write(int addr, int addr_from_base, byte data) {
@@ -171,4 +172,40 @@ int		vrc6audio::rundevice(int ticks) {
 		sample_buffer.push_back(mux(p1, p2, sw));
 	}
 	return ticks;
+}
+
+void	vrc6audio::set_debug_data() {
+	debugger.add_debug_var("VRC6 Audio", -1, NULL, t_beginblock);
+	debugger.add_debug_var("Halt all oscillators", -1, &halt_all_osc, t_bool);
+	debugger.add_debug_var("Mapper 26 mode", -1, &vrc6_mapper_026, t_bool);
+	debugger.add_debug_var("VRC6 Audio", -1, NULL, t_endblock);
+
+	char buf[16];
+
+	for (int i = 1; i <= 2; i++) {
+		std::string channame = "VRC6 Pulse #";
+		channame += itoa(i, buf, 10);
+		debugger.add_debug_var(channame, -1, NULL, t_beginblock);
+		debugger.add_debug_var("Enabled", -1, &pulse[i - 1].enable, t_bool);
+		debugger.add_debug_var("Freq 16x mult", -1, &pulse[i - 1].freq_16x, t_bool);
+		debugger.add_debug_var("Freq 256x mult", -1, &pulse[i - 1].freq_256x, t_bool);
+		debugger.add_debug_var("Volume", 15, &pulse[i - 1].volume, t_byte);
+		debugger.add_debug_var("Duty Cycle", -1, &pulse[i - 1].duty_cycle, t_byte);
+		debugger.add_debug_var("Duty Pos", -1, &pulse[i - 1].duty_pos, t_byte);
+		debugger.add_debug_var("Ignore Duty", -1, &pulse[i - 1].ignore_duty, t_bool);
+		debugger.add_debug_var("Frequency", -1, &pulse[i - 1].frequency, t_word);
+		debugger.add_debug_var("Frequency ctr", -1, &pulse[i - 1].frequency_counter, t_word);
+		debugger.add_debug_var(channame, -1, NULL, t_endblock);
+	}
+
+	debugger.add_debug_var("VRC6 Sawtooth", -1, NULL, t_beginblock);
+	debugger.add_debug_var("Enabled", -1, &saw.enable, t_bool);
+	debugger.add_debug_var("Freq 16x mult", -1, &saw.freq_16x, t_bool);
+	debugger.add_debug_var("Freq 256x mult", -1, &saw.freq_256x, t_bool);
+	debugger.add_debug_var("Accumulator Rate", -1, &saw.accumulator_rate, t_byte);
+	debugger.add_debug_var("Accumulated", -1, &saw.accumulated, t_byte);
+	debugger.add_debug_var("Frequency", -1, &saw.frequency, t_word);
+	debugger.add_debug_var("Frequency ctr", -1, &saw.frequency_counter, t_word);
+	debugger.add_debug_var("Step", -1, &saw.step, t_byte);
+	debugger.add_debug_var("VRC6 Sawtooth", -1, NULL, t_endblock);
 }

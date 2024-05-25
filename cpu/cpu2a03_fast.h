@@ -84,6 +84,7 @@ public:
 	cpu2a03_fast();
 	~cpu2a03_fast();
 	int		rundevice(int ticks);
+	int		oc_rundevice(int ticks);	// run the CPU but report lower ticks. essentially OC'ing the cpu. trying this for 120hz NSFs
 	void	reset();
 	void	coldboot();
 

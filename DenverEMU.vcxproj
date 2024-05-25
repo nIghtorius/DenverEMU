@@ -210,6 +210,7 @@
     <ClInclude Include="controller\joypad.h" />
     <ClInclude Include="cpu\cpu2a03_fast.h" />
     <ClInclude Include="cpu\tools\2a03_disasm.h" />
+    <ClInclude Include="debug\device_debugger.h" />
     <ClInclude Include="denvergui\gui_debuggers.h" />
     <ClInclude Include="denvergui\dengui_main.h" />
     <ClInclude Include="emulator\denverlogo.h" />
@@ -270,6 +271,7 @@
     <ClCompile Include="controller\joypad.cpp" />
     <ClCompile Include="cpu\cpu2a03_fast.cpp" />
     <ClCompile Include="cpu\tools\2a03_disasm.cpp" />
+    <ClCompile Include="debug\device_debugger.cpp" />
     <ClCompile Include="DenverEMU.cpp" />
     <ClCompile Include="denvergui\gui_debuggers.cpp" />
     <ClCompile Include="denvergui\dengui_main.cpp" />

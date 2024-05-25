@@ -26,6 +26,8 @@ apu::apu() {
 	for (int i = 0; i < 204; i++) {
 		tnd_table[i] = -0.6752341268204134f + (163.67f / (24239.0f / (i + 100)));
 	}
+
+	set_debug_data();
 }
 
 apu::~apu() {
@@ -260,6 +262,12 @@ void	apu::quarter_clock() {
 	pulse[1].quarter_clock();
 	triangle.quarter_clock();
 	noise.quarter_clock();
+}
+
+void	apu::set_debug_data() {
+	debugger.add_debug_var("2A03 APU", -1, NULL, t_beginblock);
+	debugger.add_debug_var("See APU viewer for more information", -1, NULL, t_cstr);
+	debugger.add_debug_var("2A03 APU", -1, NULL, t_endblock);
 }
 
 // generators.

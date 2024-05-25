@@ -5,6 +5,8 @@
 */
 
 #include "mmc5.h"
+#include <iostream>
+#include <string>
 
 #pragma warning(disable : 4996)
 
@@ -20,6 +22,8 @@ mmc5audio::mmc5audio() {
 	deviceend = 0x501F;
 	devicemask = 0x501F;
 	framecycle = 0;
+
+	set_debug_data();
 }
 
 void	mmc5audio::quarter_clock() {
@@ -137,3 +141,31 @@ void	mmc5audio::reset() {
 	mmc5_dmc_read_mode = false;
 }
 
+void	mmc5audio::set_debug_data() {
+	char buf[16];
+	debugger.add_debug_var("MMC5 AUDIO", -1, NULL, t_beginblock);
+
+	debugger.add_debug_var("MMC5 DMC RO MODE", -1, &mmc5_dmc_read_mode, t_bool);
+	debugger.add_debug_var("FRAMECYCLE CTR", -1, &framecycle, t_int);
+	debugger.add_debug_var("CPU ticks CTR", -1, &cTicks, t_int);
+
+	debugger.add_debug_var("MMC5 AUDIO", -1, NULL, t_endblock);
+
+	for (int i = 1; i <= 2; i++) {
+		std::string channelname = "Pulse channel #";
+		channelname += itoa(i, buf, 10);
+		debugger.add_debug_var(channelname, -1, NULL, t_beginblock);
+		debugger.add_debug_var("Enabled", -1, &pulse[i - 1].enabled, t_bool);
+		debugger.add_debug_var("Timer", -1, &pulse[i - 1].timer, t_word);
+		debugger.add_debug_var("Length counter", -1, &pulse[i - 1].length_counter, t_word);
+		debugger.add_debug_var("Duty cycle", -1, &pulse[i - 1].duty_cycle, t_byte);
+		debugger.add_debug_var("Duty pos", -1, &pulse[i - 1].duty_pos, t_byte);
+		debugger.add_debug_var("Envelope count", -1, &pulse[i - 1].envelope_count, t_byte);
+		debugger.add_debug_var("VolEnv", 15, &pulse[i - 1].volume_envelope, t_byte);
+		debugger.add_debug_var("Constant volume", -1, &pulse[i - 1].constant_volume, t_bool);
+		debugger.add_debug_var("EnvLoop", -1, &pulse[i - 1].envelope_loop, t_bool);
+		debugger.add_debug_var("Envelope out", 15, &pulse[i - 1].envelope_out, t_byte);
+		debugger.add_debug_var(channelname, -1, NULL, t_endblock);
+	}
+
+}

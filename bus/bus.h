@@ -9,7 +9,7 @@
 #include <cstring>
 #include <cstdlib>
 #include <cstdint>
-
+#include "../debug/device_debugger.h"
 
 #define		MAX_DESCRIPTOR_LENGTH	128
 #define		BUS_OPEN_BUS			0xF0
@@ -39,11 +39,11 @@ public:
 	int		tick_rate;	// sets the tick rate. for example: if ppu rate 1 then cpu rate is 3. ( for each 3 ppu ticks there is one cpu tick )
 	bool	irq_enable = false;	// device IRQ
 	bool	nmi_enable = false;
-	int		ticker;
-	int		tickstodo;
-	int		ticksdone;
-	bool	in_dma_mode;
-	bool	dma_start;
+	int		ticker = 0;
+	int		tickstodo = 0;
+	int		ticksdone = 0;
+	bool	in_dma_mode = false;
+	bool	dma_start = false;
 	device();
 	~device();
 	virtual	int		rundevice(const int ticks); // returns the amount of ticks it actually did.
@@ -62,6 +62,7 @@ public:
 	int		deviceend;
 	int		devicemask;
 	bus		*devicebus;
+	device_debugger debugger;
 	buslayout	pinout;
 	bus_device();
 	virtual ~bus_device();
@@ -73,6 +74,7 @@ public:
 	virtual void	write(const int addr, const int addr_from_base, const byte data);
 	virtual	byte	read(const int addr, const int addr_from_base, const bool onlyread = false);
 	virtual void	_attach_to_bus(bus * attachedbus);
+	virtual void	set_debug_data();
 };
 
 class bus {

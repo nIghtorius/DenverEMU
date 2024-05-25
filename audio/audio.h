@@ -66,6 +66,7 @@ public:
 	std::vector<float>			sample_buffer;		// sample buffer.
 	int							max_sample_buffer = 1;	// amount of "nes" frames of sound.
 	bool						audio_frame_ready = false;
+	virtual void				set_debug_data();
 };
 
 class audio_player {

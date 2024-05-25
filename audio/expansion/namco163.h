@@ -26,7 +26,6 @@
 
 // classes
 struct n163_channel {
-	byte *ram;
 	byte ram_base = 0x40;	// set base address. (see defines)
 	float output = 0.0f;
 };
@@ -50,4 +49,5 @@ public:
 	void	write(int addr, int addr_from_base, byte data);
 	float	mux();
 	int		rundevice(int ticks);
+	virtual void	set_debug_data();
 };

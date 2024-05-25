@@ -31,6 +31,7 @@ public:
 	void	write(int addr, int addr_from_base, byte data);
 	int		rundevice(int ticks);
 	void	reset();
+	virtual void	set_debug_data();
 
 	mmc5audio();
 };

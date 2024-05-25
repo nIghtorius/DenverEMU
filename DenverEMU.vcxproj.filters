@@ -97,6 +97,9 @@
     <Filter Include="Source Files\shaders">
       <UniqueIdentifier>{3c99ab6a-74f1-48ca-98ec-cbbafe5d1d5a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\emulation\debug">
+      <UniqueIdentifier>{543bad2e-cf8f-4a15-8095-431b6b4ceb4e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="audio\apu.h">
@@ -282,6 +285,9 @@
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="debug\device_debugger.h">
+      <Filter>Source Files\emulation\debug</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DenverEMU.cpp">
@@ -442,6 +448,9 @@
     </ClCompile>
     <ClCompile Include="audio\expansion\mmc5.cpp">
       <Filter>Source Files\emulation\audio\expansion</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\device_debugger.cpp">
+      <Filter>Source Files\emulation\debug</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

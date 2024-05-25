@@ -136,8 +136,16 @@ void fastclock::run() {
 			ppudevice->rundevice(1536);
 		}
 		int actualcputicks = cpudevice->rundevice(cyclespersync);
-		if (romdevice) romdevice->rundevice(actualcputicks / 3);
-		if (ppudevice) ppudevice->rundevice(actualcputicks);
+		if (romdevice) {
+			if (nsf_mode) {
+				romdevice->rundevice(actualcputicks / 3 / 3);
+			} else romdevice->rundevice(actualcputicks / 3);
+		}
+		if (ppudevice) {
+			if (nsf_mode) {
+				ppudevice->rundevice(actualcputicks / 3);
+			} else ppudevice->rundevice(actualcputicks);
+		}
 	}
 }
 

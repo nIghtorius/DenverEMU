@@ -116,7 +116,7 @@ void	audio_player::play_audio() {
 	if (increaseattentuate) 
 		if (attentuate < max_attentuate) attentuate += 0.005f;
 
-	if (attentuate_lock) attentuate = 0.90f;	// lock dynamic attentuation @ 0.90x
+	if (attentuate_lock) attentuate = 1.50f;	// lock dynamic attentuation @ 0.90x
 
 	avg_center /= (float)audibles[0]->sample_buffer.size();
 	average_mix += avg_center; average_mix /= 2;
@@ -187,4 +187,8 @@ void	audio_player::startplayback() {
 
 void	audio_player::stopplayback() {
 	SDL_PauseAudioDevice(aud, 1);
+}
+
+void	audio_device::set_debug_data() {
+
 }

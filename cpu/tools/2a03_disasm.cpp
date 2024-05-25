@@ -52,7 +52,7 @@ const std::string		disassembler::disassemble() {
 		disassemble_addr++;
 		break;
 	case operand_types::indy:
-		dis_str << " (0x" << std::setw(4) << std::setfill('0') << (uint16_t)mbus->readmemory_as_word(disassemble_addr, true) << "), Y";
+		dis_str << " (0x" << std::setw(2) << std::setfill('0') << (uint16_t)mbus->readmemory(disassemble_addr, true) << "), Y";
 		disassemble_addr++;
 		break;
 	case operand_types::rel:

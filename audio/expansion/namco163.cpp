@@ -17,7 +17,6 @@ namco163audio::namco163audio() {
 	for (int i = 0; i < 8; i++) {
 		std::cout << "Setting up channel " << std::dec << 8 - i << " with base address 0x" << std::hex << ((int)0x78 - (i * 0x08)) << "\n";
 		channels[i].ram_base = 0x78 - (i * 0x08);
-		channels[i].ram = &sound_ram[0];
 	}
 	// setup misc
 	strncpy(get_device_descriptor(), "Denver Namco 163 Audio Chip", MAX_DESCRIPTOR_LENGTH);
@@ -25,6 +24,7 @@ namco163audio::namco163audio() {
 	devicestart = 0x4800;
 	deviceend = 0xFFFF;
 	devicemask = 0xFFFF;
+	set_debug_data();
 }
 
 void	namco163audio::reset() {
@@ -117,4 +117,39 @@ void	namco163audio::update_channel(byte channel) {
 	sound_ram[baddr | N163_RAM_LOW_PHASE] = phase & 0xFF;
 	sound_ram[baddr | N163_RAM_MID_PHASE] = (phase & 0xFF00) >> 8;
 	sound_ram[baddr | N163_RAM_HIGH_PHASE] = (phase & 0xFF0000) >> 16;
+}
+
+void	namco163audio::set_debug_data() {
+	debugger.add_debug_var("NAMCO 163", -1, NULL, t_beginblock);
+	debugger.add_debug_var("Enabled", -1, &enable, t_bool);
+	debugger.add_debug_var("Address pointer", -1, &address, t_byte);
+	debugger.add_debug_var("Channels active", -1, &channels_active, t_byte);
+	debugger.add_debug_var("Processing channel", -1, &running_channel, t_byte);
+	debugger.add_debug_var("Update ticker", 15, &update_tick, t_byte);
+	debugger.add_debug_var("Enhanced mixer", -1, &enhanced_mixer, t_bool);
+	debugger.add_debug_var("NAMCO 163", -1, NULL, t_endblock);
+
+	// buf
+	char buf[16];
+
+	// channels.
+	for (int i = 0; i < 8; i++) {
+		std::string desc = "Channel #";
+		desc += itoa(i + 1, buf, 10);
+		debugger.add_debug_var(desc, -1, NULL, t_beginblock);
+		debugger.add_debug_var("FREQ(LO)", -1, &sound_ram[channels[i].ram_base + N163_RAM_LOW_FREQ], t_byte);
+		debugger.add_debug_var("FREQ(MED)", -1, &sound_ram[channels[i].ram_base + N163_RAM_MID_FREQ], t_byte);
+		debugger.add_debug_var("FREQ(HI)", -1, &sound_ram[channels[i].ram_base + N163_RAM_HIGH_FREQ], t_byte);
+		debugger.add_debug_var("PHASE(LO)", -1, &sound_ram[channels[i].ram_base + N163_RAM_LOW_PHASE], t_byte);
+		debugger.add_debug_var("PHASE(MED)", -1, &sound_ram[channels[i].ram_base + N163_RAM_MID_PHASE], t_byte);
+		debugger.add_debug_var("PHASE(HI)", -1, &sound_ram[channels[i].ram_base + N163_RAM_HIGH_PHASE], t_byte);
+		debugger.add_debug_var("WAVELENGTH", -1, &sound_ram[channels[i].ram_base + N163_RAM_WAVE_LENGTH], t_byte);
+		debugger.add_debug_var("ADDRESS(WT)", -1, &sound_ram[channels[i].ram_base + N163_RAM_WAVE_ADDRESS], t_byte);
+		debugger.add_debug_var("VOLUME", 255, &sound_ram[channels[i].ram_base + N163_RAM_VOLUME], t_byte);
+		debugger.add_debug_var(desc, -1, NULL, t_endblock);
+	}
+
+	debugger.add_debug_var("Memory contents", -1, NULL, t_beginblock);
+	debugger.add_debug_var("SOUNDRAM", 128, &sound_ram[0x80], t_bytearray);
+	debugger.add_debug_var("Memory contents", -1, NULL, t_endblock);
 }

@@ -103,6 +103,15 @@ int cpu2a03_fast::rundevice(int ticks) {
 	return tickcount;
 }
 
+int cpu2a03_fast::oc_rundevice(int ticks) {
+	int tickcount = 0;
+	while (tickcount < ticks) {
+		tickcount += rundevice_internal(ticks) / tick_rate;		// essentially running the CPU @ 5.1 Mhz.
+		if (in_dma_mode) return tickcount;
+	}
+	return tickcount;
+}
+
 int	cpu2a03_fast::rundevice_internal (int ticks) {
 	int	actualticks = 0;
 

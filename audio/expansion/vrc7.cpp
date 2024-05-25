@@ -79,3 +79,7 @@ int	vrc7audio::rundevice(int ticks) {
 	}
 	return ticks;
 }
+
+void	vrc7audio::set_debug_data() {
+
+}

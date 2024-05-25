@@ -10,6 +10,7 @@
 mmc3_rom::mmc3_rom() {
 	strncpy(get_device_descriptor(), "Denver MMC3 (mapper 004)", MAX_DESCRIPTOR_LENGTH);
 	prgram6000 = (byte *)malloc(8192);
+	set_debug_data();
 }
 
 mmc3_rom::~mmc3_rom() {
@@ -173,10 +174,12 @@ void	mmc3_rom::link_vrom(mmc3_vrom * m3vrom) {
 }
 
 int		mmc3_rom::rundevice(const int ticks) {
+	cpu_tk += ticks;
 	if (!vrom) return ticks;
 	word ppuaddr = vrom->fetch_ppu_addr();
 	bool a12_risen = ((ppuaddr & 0x1000) > 0) && ((lastppuaddr & 0x1000) == 0);	
-	if (a12_risen) {
+	if ((a12_risen) && (cpu_tk - lt_a12r >= 9)) {
+		lt_a12r = cpu_tk;
 		if ((state.irq_counter == 0) || (state.irq_reload)) {
 			state.irq_counter = state.irq_latch;
 			state.irq_reload = false;
@@ -190,6 +193,26 @@ int		mmc3_rom::rundevice(const int ticks) {
 	}
 	lastppuaddr = ppuaddr;
 	return ticks;
+}
+
+void mmc3_rom::set_debug_data() {
+	debugger.add_debug_var("MMC3", -1, NULL, t_beginblock);
+	debugger.add_debug_var("CPU ticks @ ROM", -1, &cpu_tk, t_int);
+	debugger.add_debug_var("CPU tick value last A12 rise", -1, &lt_a12r, t_int);
+	debugger.add_debug_var("ROM Size", -1, &romsize, t_int);
+	debugger.add_debug_var("Bank update register", -1, &state.bank_update_reg, t_byte);
+	debugger.add_debug_var("PRG bank mode", -1, &state.prg_bank_mode, t_byte);
+	debugger.add_debug_var("CHAR a12 inverted", -1, &state.chr_a12_inv, t_bool);
+	debugger.add_debug_var("Horizontal mirroring", -1, &state.do_horizontal_mirroring, t_bool);
+	debugger.add_debug_var("PRG RAM Enable", -1, &state.prg_ram_enable, t_bool);
+	debugger.add_debug_var("PRG RAM RO", -1, &state.prg_ram_readonly, t_bool);
+	debugger.add_debug_var("IRQ Latch", -1, &state.irq_latch, t_byte);
+	debugger.add_debug_var("IRQ Counter", -1, &state.irq_counter, t_byte);
+	debugger.add_debug_var("IRQ Enabled", -1, &state.irq_enable, t_bool);
+	debugger.add_debug_var("IRQ Reload", -1, &state.irq_reload, t_bool);
+	byte* registers = &state.r0;
+	debugger.add_debug_var("MMC3 registers", 8, registers, t_shortintarray);
+	debugger.add_debug_var("MMC3", -1, NULL, t_endblock);
 }
 
 mmc3_vrom::mmc3_vrom() {

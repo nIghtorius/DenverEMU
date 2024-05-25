@@ -219,4 +219,5 @@ public:
 	int		rundevice(int ticks);
 	void	reset();
 	virtual void	_attach_to_bus (bus * attachedbus);
+	virtual void	set_debug_data();
 };

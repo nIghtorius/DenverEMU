@@ -29,4 +29,5 @@ public:
 	void	reset();
 	int		rundevice(int ticks);
 	void	write(int addr, int addr_from_base, byte data);
+	virtual void	set_debug_data();
 };

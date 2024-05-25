@@ -125,3 +125,7 @@ void	sunsoftaudio::reset() {
 		channels[i].noise_disable = false;
 	}
 }
+
+void	sunsoftaudio::set_debug_data() {
+
+}

@@ -96,6 +96,13 @@ bool	cartridge::readstream_nsf(std::istream &nsffile, ppu *ppu_device, bus *main
 	std::cout << "SPEED     : " << std::dec << (int)nsf_hdr.playspeed_ntsc;
 	std::cout << " (" << (int)(1000000 / nsf_hdr.playspeed_ntsc) << " Hz, CPU cycles per audioframe: " << (int)cpu_cycles_per_frame << ")\n";
 
+	// if >100hz enable high_hz_mode. OC'ing cpu 3x to keep up.
+	if (((int)(1000000 / nsf_hdr.playspeed_ntsc)) > 100) {
+		high_hz_nsf = true;
+	} else high_hz_nsf = false;
+
+	nsf_cpu_cycles = (int)cpu_cycles_per_frame;
+
 	int	program_size = nsf_hdr.program_size[0] << 16 | nsf_hdr.program_size[1] << 8 | nsf_hdr.program_size[2];
 
 	std::cout << "PRG_SIZE  : " << std::dec << (int)program_size << " bytes.. (header based)\n";
@@ -184,6 +191,9 @@ bool	cartridge::readstream_nsf(std::istream &nsffile, ppu *ppu_device, bus *main
 	memcpy(songname, nsf_hdr.songname, 32);
 	memcpy(artist, nsf_hdr.artist, 32);
 	memcpy(copyright, nsf_hdr.copyright, 32);
+
+	// make sure c_strings end.
+	songname[31] = 0x00; artist[31] = 0x00; copyright[31] = 0x00;
 
 	// disable bus conflicts.
 	m_bus->emulate_bus_conflicts(true);

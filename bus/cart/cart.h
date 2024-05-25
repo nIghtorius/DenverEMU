@@ -132,6 +132,8 @@ public:
 	rom		*program;
 	vrom	*character;
 	bool	nsf_mode = false;
+	bool	high_hz_nsf = false;
+	int		nsf_cpu_cycles = 0;
 	char	songname[32];
 	char	artist[32];
 	char	copyright[32];

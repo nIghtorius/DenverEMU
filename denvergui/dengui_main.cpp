@@ -52,7 +52,19 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *
 	if (state->show_ppu_debugger) {
 		render_ppuviewer(denver, state);
 	}
-	
+
+	// other debuggers.
+	for (auto device : denver->mainbus->devices) {
+		if (device->debugger.show_debugger) {
+			render_debugviewer(&device->debugger, &device->debugger.show_debugger, device->get_device_descriptor());
+		}
+	}
+	for (auto device : denver->ppu_device->vbus.devices) {
+		if (device->debugger.show_debugger) {
+			render_debugviewer(&device->debugger, &device->debugger.show_debugger, device->get_device_descriptor());
+		}
+	}
+
 	if (ImGui::BeginViewportSideBar("##SecondaryMenuBar", viewport, ImGuiDir_Up, height, window_flags)) 
 	{
 		if (ImGui::BeginMenuBar()) {
@@ -190,19 +202,19 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *
 						ImGui::SeparatorText("CPU BUS");
 						for (auto device : denver->mainbus->devices) {
 							if (ImGui::MenuItem(device->get_device_descriptor())) {
-								device->reset();
+								device->debugger.show_debugger = true;
 							}
 						}
 						ImGui::SeparatorText("PPU BUS");
 						for (auto device : denver->ppu_device->vbus.devices) {
 							if (ImGui::MenuItem(device->get_device_descriptor())) {
-								device->reset();
+								device->debugger.show_debugger = true;
 							}
 						}
 						ImGui::SeparatorText("Audio BUS");
 						for (auto device : denver->audio->audibles) {
 							if (ImGui::MenuItem(device->get_device_descriptor())) {
-								device->reset();
+								device->debugger.show_debugger = true;
 							}
 						}
 						ImGui::EndMenu();
@@ -317,6 +329,9 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *
 				}
 				if (denver->cart->mmc5exp) {
 					ImGui::Text("MMC5"); ImGui::SameLine();
+				}
+				if (denver->cart->high_hz_nsf) {
+					ImGui::Text("High refresh mode (3x CPU speed)"); ImGui::SameLine();
 				}
 				ImGui::NewLine();
 				ImGui::Separator();

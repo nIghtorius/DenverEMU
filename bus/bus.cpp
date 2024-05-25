@@ -123,6 +123,24 @@ bus_device::bus_device() {
 	devicemask = 0xFFFF;
 	devicebus = nullptr;
 	for (int i = 0; i < 16; i++) pinout.pins[i] = i;
+	set_debug_data();
+}
+
+void bus_device::set_debug_data() {
+	// placeholder debug data.
+	debugger.add_debug_var("Device Bus", -1, NULL, t_beginblock);
+	debugger.add_debug_var("Need to emulate pinlayout", -1, &processlayout, t_bool);
+	debugger.add_debug_var("Device starts at", -1, &devicestart, t_addr);
+	debugger.add_debug_var("Device ends at", -1, &deviceend, t_addr);
+	debugger.add_debug_var("Device mask", -1, &devicemask, t_addr);
+	debugger.add_debug_var("Bus Layout", 16, &pinout.pins[0], t_shortintarray);
+	debugger.add_debug_var("Device Bus", -1, NULL, t_endblock);
+	debugger.add_debug_var("Device Specific", -1, NULL, t_beginblock);
+	debugger.add_debug_var("IRQ asserted", -1, &irq_enable, t_bool);
+	debugger.add_debug_var("NMI asserted", -1, &nmi_enable, t_bool);
+	debugger.add_debug_var("Processing DMA", -1, &in_dma_mode, t_bool);
+	debugger.add_debug_var("DMA needs to start", -1, &dma_start, t_bool);
+	debugger.add_debug_var("Device Specific", -1, NULL, t_endblock); 
 }
 
 word bus_device::compute_addr_from_layout(const word addr) {

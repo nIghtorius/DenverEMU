@@ -139,6 +139,14 @@ void	nes_emulator::load_cartridge(const char * filename) {
 	if (cart) delete cart;
 	cart = new cartridge(filename, ppu_device, mainbus, audio);
 	clock.setdevices(nes_2a03, ppu_device, cart->program);
+	// check for NSF.
+	clock.nsf_mode = cart->high_hz_nsf;
+	nes_2a03->nsf_mode = cart->high_hz_nsf;
+	if (cart->high_hz_nsf) {
+		// set sync block from 1 unit to (nsf_cpu_cycles / 4) * 3
+		clock.set_sync_cycle_in_ppucycles((cart->nsf_cpu_cycles >> 2) * 3);
+	}
+	else clock.set_sync_cycle_in_ppucycles(1);
 	nes_2a03->cpu_2a03.coldboot();
 }
 

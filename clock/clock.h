@@ -36,6 +36,7 @@ private:
 	int	cyclespersync = 1;
 public:
 	bool	running;
+	bool nsf_mode = false;	// triples CPU clock when enabled.
 	fastclock();
 	~fastclock();
 	void step();

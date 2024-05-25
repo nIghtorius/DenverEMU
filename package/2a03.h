@@ -22,6 +22,7 @@ public:
 	cpu2a03_fast		cpu_2a03;
 	nes_2a03_joyports	controllers;
 	bool				no_apu = false;
+	bool				nsf_mode = false;
 
 	package_2a03();
 

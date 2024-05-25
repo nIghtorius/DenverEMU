@@ -1,10 +1,122 @@
 #include "gui_debuggers.h"
 #include "imgui.h"
 #include <string>
+#include <vector>
 
 #pragma warning(disable : 4996)
 
 // implementation
+
+void	denvergui::internal_render_dbg_node(dbg_dt* node) {
+	const int* idata = (const int*)node->data;
+	const bool* bdata = (const bool*)node->data;
+	const word* wdata = (const word*)node->data;
+	const byte* bydata = (const byte*)node->data;
+	ImVec4 color = { 0x00, 0xFF, 0x00, 0xFF };
+
+	char buf[32];
+	switch (node->datatype) {
+	case t_int:
+		if (node->max == SHOW_ONLY_VALUE_AS_TEXT) {
+			ImGui::Text("%s:", node->description.c_str()); ImGui::SameLine();
+			ImGui::Text("%d", *idata);
+		}
+		else {
+			// bars.
+			ImGui::Text("%s:", node->description.c_str());
+			float value = (1.0f / (float)node->max) * (float)*idata;
+			sprintf(buf, "%d/15", *idata);
+			ImGui::ProgressBar(value, ImVec2{ 0, 0 }, buf);
+		}
+		break;
+	case t_byte:
+		if (node->max == SHOW_ONLY_VALUE_AS_TEXT) {
+			ImGui::Text("%s:", node->description.c_str()); ImGui::SameLine();
+			ImGui::Text("%d", *bydata);
+		}
+		else {
+			// bars.
+			ImGui::Text(node->description.c_str());
+			float value = (1.0f / (float)node->max) * (float)*bydata;
+			sprintf(buf, "%d", *bydata);
+			ImGui::ProgressBar(value, ImVec2{ 0, 0 }, buf);
+		}
+		break;
+	case t_word:
+		if (node->max == SHOW_ONLY_VALUE_AS_TEXT) {
+			ImGui::Text("%s:", node->description.c_str()); ImGui::SameLine();
+			ImGui::Text("%d", *wdata);
+		}
+		else {
+			// bars.
+			ImGui::Text("%s:", node->description.c_str());
+			float value = (1.0f / (float)node->max) * (float)*wdata;
+			sprintf(buf, "%d", *wdata);
+			ImGui::ProgressBar(value, ImVec2{ 0, 0 }, buf);
+		}
+		break;
+	case t_shortintarray:
+		break;
+	case t_cstr:
+		ImGui::Text("%s:", node->description.c_str());
+		if (node->data != NULL) {
+			ImGui::SameLine();
+			ImGui::Text((const char*)node->data);
+		}
+		break;
+	case t_longintarray:
+		break;
+	case t_bool:
+		if (!*bdata) color = { 0xFF, 0x00, 0x00, 0xFF };
+		ImGui::Text("%s:", node->description.c_str()); ImGui::SameLine();
+		ImGui::TextColored(color, "%s", *bdata ? "Yes" : "No");
+		break;
+	case t_addr:
+		ImGui::Text("%s:", node->description.c_str()); ImGui::SameLine();
+		ImGui::Text("%04X", *wdata);
+		break;
+	}
+}
+
+void	denvergui::render_debugviewer(device_debugger *device, bool* showhide, char* device_name) {
+	if (ImGui::Begin(device_name, showhide)) {
+		// process the debug object.
+		std::vector<dbg_dt*>nodes_block;
+		dbg_dt* nodename = nullptr;
+		bool nstate = false;
+		for (dbg_dt *dbg : device->debuglines) {
+			if (dbg->datatype == t_beginblock) {
+				if (nstate) std::cout << "Debugging structure invalid...\n";
+				nstate = true;
+				nodename = dbg;
+				nodes_block.clear();
+			}
+			else {
+				if (dbg->datatype == t_endblock) {
+					nstate = false;
+					// render nodes....
+					if (nodename != nullptr) {
+						if (ImGui::TreeNode(nodename->description.c_str())) {
+							for (dbg_dt* node : nodes_block) internal_render_dbg_node(node);
+							ImGui::Separator();
+							ImGui::TreePop();
+						}
+					}
+				}
+				else {
+					if (nstate) {
+						// push to node render block.
+						nodes_block.push_back(dbg);
+					} else {
+						// no begin, endblock, or during.
+						internal_render_dbg_node(dbg);
+					}
+				}
+			}			
+		}
+	}
+	ImGui::End();
+}
 
 void	denvergui::render_apuviewer(nes_emulator *denver, denvergui_state *state) {
 	if (ImGui::Begin("APU debugger", &state->show_apu_debugger, 0)) {
@@ -14,7 +126,7 @@ void	denvergui::render_apuviewer(nes_emulator *denver, denvergui_state *state) {
 			ImGui::Text("Duty cycle: %d", denver->nes_2a03->apu_2a03.pulse[0].duty_cycle);
 			ImGui::Text("Duty position: %d", denver->nes_2a03->apu_2a03.pulse[0].duty_pos);
 			ImGui::Text("Envelope loop: %s", (denver->nes_2a03->apu_2a03.pulse[0].envelope_loop ? "Yes" : "No"));
-			ImGui::Text("Contant volume: %s", (denver->nes_2a03->apu_2a03.pulse[0].constant_volume ? "Yes" : "No"));
+			ImGui::Text("Constant volume: %s", (denver->nes_2a03->apu_2a03.pulse[0].constant_volume ? "Yes" : "No"));
 			ImGui::Text("Volume / Envelope");
 			float vol = (1.0f / 15.0f)*(float)denver->nes_2a03->apu_2a03.pulse[0].volume_envelope;
 			sprintf(buf, "%d/15", denver->nes_2a03->apu_2a03.pulse[0].volume_envelope);
@@ -38,7 +150,7 @@ void	denvergui::render_apuviewer(nes_emulator *denver, denvergui_state *state) {
 			ImGui::Text("Duty cycle: %d", denver->nes_2a03->apu_2a03.pulse[1].duty_cycle);
 			ImGui::Text("Duty position: %d", denver->nes_2a03->apu_2a03.pulse[1].duty_pos);
 			ImGui::Text("Envelope loop: %s", (denver->nes_2a03->apu_2a03.pulse[1].envelope_loop ? "Yes" : "No"));
-			ImGui::Text("Contant volume: %s", (denver->nes_2a03->apu_2a03.pulse[1].constant_volume ? "Yes" : "No"));
+			ImGui::Text("Constant volume: %s", (denver->nes_2a03->apu_2a03.pulse[1].constant_volume ? "Yes" : "No"));
 			ImGui::Text("Volume / Envelope");
 			float vol = (1.0f / 15.0f)*(float)denver->nes_2a03->apu_2a03.pulse[1].volume_envelope;
 			sprintf(buf, "%d/15", denver->nes_2a03->apu_2a03.pulse[1].volume_envelope);
