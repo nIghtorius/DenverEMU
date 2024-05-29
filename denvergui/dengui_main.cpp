@@ -8,6 +8,8 @@
 #include <iostream>
 
 #pragma warning(disable : 4996)
+#define USE_PLACES_DEVICES
+
 
 extern std::vector<std::string> shaderList;
 
@@ -23,6 +25,7 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *
 		if (ImGuiFileDialog::Instance()->IsOk()) {
 			denver->nes_2a03->cpu_2a03.stop_execution_log();
 			std::cout << "ImGuiFileDialog: " << ImGuiFileDialog::Instance()->GetFilePathName() << std::endl;
+			state->lastpath = ImGuiFileDialog::Instance()->GetCurrentPath() + "/";
 			// load the cart.
 			denver->load_cartridge(ImGuiFileDialog::Instance()->GetFilePathName().c_str());
 			denver->cold_reset();
@@ -70,7 +73,8 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *
 		if (ImGui::BeginMenuBar()) {
 			if (ImGui::BeginMenu("File")) {
 				if (ImGui::MenuItem("Open file", "Ctrl+O")) {
-					ImGuiFileDialog::Instance()->OpenDialog("nesfile", "Select NES file", "All compatible files{.nes,.nsf},NES roms{.nes},NES music{.nsf}", ".", 1, nullptr, ImGuiFileDialogFlags_Modal);
+					std::cout << "Last opened path: " << state->lastpath << "\n";
+					ImGuiFileDialog::Instance()->OpenDialog("nesfile", "Select NES file", "All compatible files{.nes,.nsf},NES roms{.nes},NES music{.nsf}", state->lastpath, 1, nullptr, ImGuiFileDialogFlags_Modal);
 				}
 
 				if (ImGui::BeginMenu("Recent")) {

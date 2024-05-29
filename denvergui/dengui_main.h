@@ -30,6 +30,9 @@ namespace denvergui {
 
 		// main window.
 		SDL_Window* mainwin = nullptr;
+
+		// last directory.
+		std::string lastpath = "."; // defaults to current directory.
 	};
 
 	void	render_main (nes_emulator *denver,  GLuint tex, denvergui_state *state);

@@ -60,6 +60,7 @@ public:
 	void		 setbanks();
 	virtual batterybackedram* get_battery_backed_ram();
 	virtual void	set_battery_backed_ram(byte* data, std::size_t size);
+	virtual void	set_debug_data();
 };
 
 class vrc2_4_vrom : public vrom {

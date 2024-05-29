@@ -149,6 +149,7 @@ vrc2_4_rom::vrc2_4_rom() {
 	devicestart = 0x6000;
 	deviceend = 0xFFFF;
 	devicemask = 0xFFFF;
+	set_debug_data();
 }
 
 vrc2_4_rom::~vrc2_4_rom() {
@@ -394,6 +395,31 @@ void	vrc2_4_rom::setbanks() {
 
 	// charbanking stuff.
 	if (charrom) charrom->setbanks(&state);
+}
+
+void vrc2_4_rom::set_debug_data() {
+	// initialize debugger watchers.
+	debugger.add_debug_var("VRC2/4", -1, NULL, t_beginblock);
+	debugger.add_debug_var("VRC2 mode", -1, &vrc2_mode, t_bool);
+	debugger.add_debug_var("Running as mapper id", -1, &run_as_mapper, t_byte);
+	debugger.add_debug_var("NES2 submapper", -1, &submapper, t_byte);
+	debugger.add_debug_var("Compat mode", -1, &compability_mode, t_int);
+	debugger.add_debug_var("VRC2/4", -1, NULL, t_endblock);
+
+	debugger.add_debug_var("VRC 2/4 state", -1, NULL, t_beginblock);
+	debugger.add_debug_var("PRG RAM enable", -1, &state.ram_enable, t_bool);
+	debugger.add_debug_var("Fix bank 8000", -1, &state.sm_fix_8000, t_bool);
+	debugger.add_debug_var("PRG bank #0", -1, &state.prgbank0, t_byte);
+	debugger.add_debug_var("PRG bank #1", -1, &state.prgbank1, t_byte);
+	debugger.add_debug_var("Mirror", -1, &state.mirror, t_byte);
+	debugger.add_debug_var("Charbanks", 8, &state.c[0], t_bytearray);
+	debugger.add_debug_var("IRQ latch", -1, &state.irq_latch, t_byte);
+	debugger.add_debug_var("IRQ Reload", -1, &state.irq_latch_reload, t_byte);
+	debugger.add_debug_var("IRQ Mode", -1, &state.irq_mode, t_byte);
+	debugger.add_debug_var("IRQ Enabled", -1, &state.irq_enabled, t_bool);
+	debugger.add_debug_var("IRQ restart after ack", -1, &state.irq_start_after_ack, t_bool);
+	debugger.add_debug_var("IRQ Prescaler", -1, &state.prescaler, t_int);
+	debugger.add_debug_var("VRC 2/4 state", -1, NULL, t_endblock);
 }
 
 /*
