@@ -183,8 +183,7 @@ void	vrc6audio::set_debug_data() {
 	char buf[16];
 
 	for (int i = 1; i <= 2; i++) {
-		std::string channame = "VRC6 Pulse #";
-		channame += itoa(i, buf, 10);
+		std::string channame = "VRC6 Pulse #" + std::to_string(i);
 		debugger.add_debug_var(channame, -1, NULL, t_beginblock);
 		debugger.add_debug_var("Enabled", -1, &pulse[i - 1].enable, t_bool);
 		debugger.add_debug_var("Freq 16x mult", -1, &pulse[i - 1].freq_16x, t_bool);

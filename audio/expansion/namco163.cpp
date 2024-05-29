@@ -134,8 +134,7 @@ void	namco163audio::set_debug_data() {
 
 	// channels.
 	for (int i = 0; i < 8; i++) {
-		std::string desc = "Channel #";
-		desc += itoa(i + 1, buf, 10);
+		std::string desc = "Channel #" + std::to_string(i+1);
 		debugger.add_debug_var(desc, -1, NULL, t_beginblock);
 		debugger.add_debug_var("FREQ(LO)", -1, &sound_ram[channels[i].ram_base + N163_RAM_LOW_FREQ], t_byte);
 		debugger.add_debug_var("FREQ(MED)", -1, &sound_ram[channels[i].ram_base + N163_RAM_MID_FREQ], t_byte);

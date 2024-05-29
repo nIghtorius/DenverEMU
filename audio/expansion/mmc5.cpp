@@ -152,8 +152,7 @@ void	mmc5audio::set_debug_data() {
 	debugger.add_debug_var("MMC5 AUDIO", -1, NULL, t_endblock);
 
 	for (int i = 1; i <= 2; i++) {
-		std::string channelname = "Pulse channel #";
-		channelname += itoa(i, buf, 10);
+		std::string channelname = "Pulse channel #" + std::to_string(i);
 		debugger.add_debug_var(channelname, -1, NULL, t_beginblock);
 		debugger.add_debug_var("Enabled", -1, &pulse[i - 1].enabled, t_bool);
 		debugger.add_debug_var("Timer", -1, &pulse[i - 1].timer, t_word);
