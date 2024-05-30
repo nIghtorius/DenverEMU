@@ -82,6 +82,4 @@ public:
 
 	void prepare_frame();
 	void renderFrameToGL(const int windowWidth, const int windowHeight, const GLuint tex);
-
-	std::vector<postprocessor*> listOfPostProcessors();
 };

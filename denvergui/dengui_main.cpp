@@ -74,7 +74,7 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *
 			if (ImGui::BeginMenu("File")) {
 				if (ImGui::MenuItem("Open file", "Ctrl+O")) {
 					std::cout << "Last opened path: " << state->lastpath << "\n";
-					ImGuiFileDialog::Instance()->OpenDialog("nesfile", "Select NES file", "All compatible files{.nes,.nsf},NES roms{.nes},NES music{.nsf}", state->lastpath, 1, nullptr, ImGuiFileDialogFlags_Modal);
+					ImGuiFileDialog::Instance()->OpenDialog("nesfile", "Select NES file", "All compatible files{.nes,.nsf,.nsfe},NES roms{.nes},NES music{.nsf},NES extended music{.nsfe}", state->lastpath, 1, nullptr, ImGuiFileDialogFlags_Modal);
 				}
 
 				if (ImGui::BeginMenu("Recent")) {
@@ -278,13 +278,16 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *
 				ImGui::Text("");
 				ImGui::Text("Song(s) :");
 				ImGui::SameLine();
-				ImGui::Text(denver->cart->songname);
+				ImGui::TextColored(ImVec4{1.0f, 1.0f, 0.0f, 1.0f}, denver->cart->songname.c_str());
 				ImGui::Text("Artist :");
 				ImGui::SameLine();
-				ImGui::Text(denver->cart->artist);
+				ImGui::TextColored(ImVec4{ 1.0f, 1.0f, 0.0f, 1.0f }, denver->cart->artist.c_str());
 				ImGui::Text("Copyright :");
 				ImGui::SameLine();
-				ImGui::Text(denver->cart->copyright);
+				ImGui::TextColored(ImVec4{ 1.0f, 1.0f, 0.0f, 1.0f }, denver->cart->copyright.c_str());
+				ImGui::Text("Ripper :");
+				ImGui::SameLine();
+				ImGui::TextColored(ImVec4{ 1.0f, 1.0f, 0.0f, 1.0f }, denver->cart->ripper.c_str());
 				ImGui::Text("");
 				ImGui::Separator();
 
@@ -292,6 +295,12 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *
 				nsfrom* nsfinterface = reinterpret_cast<nsfrom*>(denver->cart->program);
 
 				ImGui::Text("Selected song %d/%d", nsfinterface->state.currentsong, nsfinterface->state.numsongs);
+
+				if (denver->cart->trackNames.size() > 0) {
+					ImGui::Text("Track: "); ImGui::SameLine();
+					ImGui::TextColored(ImVec4{ 0.0f, 1.0f, 1.0f, 1.0f }, denver->cart->trackNames[nsfinterface->state.currentsong - 1].c_str());
+				}
+
 				ImGui::Separator();
 
 				// Media buttons.

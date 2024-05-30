@@ -50,6 +50,14 @@
 #define		INES_F5_PRG_RAM_PRESENT					0x10
 #define		INES_F5_BUS_CONFLICT					0x20
 
+// NSFe chunk id
+#define		NSFE_INFO								0x4F464E49
+#define		NSFE_BANK								0x4B4E4142
+#define		NSFE_RATE								0x45544152
+#define		NSFE_DATA								0x41544144
+#define		NSFE_NEND								0x444E454E
+#define		NSFE_AUTH								0x68747561
+#define		NSFE_TLBL								0x6C626C74
 
 // NSF bits header.
 
@@ -86,6 +94,37 @@ struct nsf_header_raw {
 	byte				nsf2_reserved;
 	byte				program_size[3];
 };
+
+
+// NSFe
+struct nsfe_header {
+	std::uint32_t		header_signature;
+};
+
+struct nsfe_chunk {
+	std::uint32_t		length;
+	std::uint32_t		chunkid;	
+};
+
+struct nsfe_info {
+	word				load_address;
+	word				init_address;
+	word				play_address;
+	byte				pal_ntsc_flags;
+	byte				expansion_audio;
+	byte				total_songs;
+	byte				start_song;
+};
+
+struct nsfe_bank {
+	byte				bank_init[8];
+};
+
+struct nsfe_rate {
+	word				playspeed_ntsc;
+	word				playspeed_pal;
+	word				playspeed_dendy;
+};
 #pragma pack (pop)
 
 struct nes_header_data {
@@ -112,16 +151,24 @@ struct nes_header_data {
 	int					ext_mapper;
 };
 
+struct auth_data {
+	std::string			title = "<?>";
+	std::string			artist = "<?>";
+	std::string			copyright = "<?>";
+	std::string			ripper = "<?>";
+};
 
 class cartridge {
 private:
-	ppu		*l_ppu;
-	bus		*m_bus;
-	audio_player *m_aud;
+	ppu* l_ppu = nullptr;
+	bus		*m_bus = nullptr;
+	audio_player *m_aud = nullptr;
 	void	readstream(std::istream &stream, ppu *ppu_device, bus *mainbus, audio_player *audbus, const char *orgfilename);
 	bool	readstream_nsf(std::istream &stream, ppu *ppu_device, bus *mainbus, audio_player *audbus);
+	bool	readstream_nsfe(std::istream& stream, ppu* ppu_device, bus* mainbus, audio_player* audbus);
 
 public:
+
 	namco163audio *namexp = nullptr;
 	vrc6audio* vrc6exp = nullptr;
 	sunsoftaudio* sunexp = nullptr;
@@ -134,9 +181,13 @@ public:
 	bool	nsf_mode = false;
 	bool	high_hz_nsf = false;
 	int		nsf_cpu_cycles = 0;
-	char	songname[32];
-	char	artist[32];
-	char	copyright[32];
+
+	std::string songname = "<?>";
+	std::string artist = "<?>";
+	std::string copyright = "<?>";
+	std::string ripper = "<?>";
+	std::vector<std::string>trackNames;
+
 	cartridge(const char *filename, ppu *ppu_device, bus *mainbus, audio_player *audbus);
 	cartridge(std::istream &stream, ppu *ppu_device, bus *mainbus, audio_player *audbus);
 	~cartridge();

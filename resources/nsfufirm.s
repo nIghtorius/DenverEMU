@@ -21,7 +21,7 @@ reset:
 	sei
 	ldx #40
 	stx $4017
-	ldx $FF
+	ldx #$FF
 	txs			; setup stack pointer.
 	
 	; we are going to use the ppu emulation for the timings. (NTSC)

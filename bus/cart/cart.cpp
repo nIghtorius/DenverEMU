@@ -60,7 +60,296 @@ nes_header_data		parse_nes_header(nes_header_raw &ines) {
 	return data;
 }
 
+// helper functions.
+char*	parse_data(std::string &text, char* data) {
+	text = "";
+	while (*data != 0x00) {
+		text += *data;
+		data++;
+	}
+	data++;
+	return data;
+}
+
+bool	parse_auth_data(auth_data* data, char* rawauth) {
+	std::string text;
+	char* ptr = rawauth;
+	for (int i = 0; i < 4; i++) {
+		text = "";
+		while (*ptr != 0x00) {
+			text += *ptr;
+			ptr++;
+		}
+		ptr++; // next record.
+		switch (i) {
+		case 0:
+			data->title = text;
+			break;
+		case 1:
+			data->artist = text;
+			break;
+		case 2:
+			data->copyright = text;
+			break;
+		case 3:
+			data->ripper = text;
+			break;
+		}
+	}
+	return true;
+}
+
 // classes
+bool	cartridge::readstream_nsfe(std::istream& nsffile, ppu* ppu_device, bus* mainbus, audio_player* audbus) {
+	program = NULL;
+	character = NULL;
+
+	nsffile.seekg(0, std::ios_base::end);
+	std::size_t filesize = nsffile.tellg();
+	nsffile.seekg(0, std::ios_base::beg);
+
+	nsfe_header nsfe;
+	nsffile.read((char*)&nsfe, sizeof(nsfe_header));
+
+	// check ID.
+	bool is_valid = (nsfe.header_signature == (std::uint32_t)0x4546534E);
+	if (!is_valid) return false;
+
+	int		play_speed = 16666;			// default playspeed 60hz
+
+	// read chucks till eof / NEND chunk.
+	nsfe_chunk chunk;
+
+	bool end_of_file = false;
+	int readsize = 0;
+
+	// required data
+	nsfe_info info;
+	void* romdata = nullptr;
+	void* tracknames = nullptr;
+	nsfe_bank bank;
+	nsfe_rate rate;
+	auth_data auth;
+	void* authdata = nullptr;
+	int	prgsize = 0;
+	memset(&info, 0, sizeof(nsfe_info));
+	memset(&bank, 0, sizeof(nsfe_bank));	// set to all zeroes. the NSF mapper knows how to handle this.
+
+	while (!end_of_file) {
+		nsffile.read((char*)&chunk, sizeof(nsfe_chunk));
+		end_of_file = (chunk.chunkid == NSFE_NEND) || (nsffile.tellg() + (std::streampos)chunk.length >= (std::streampos)filesize);
+		switch (chunk.chunkid) {
+		case NSFE_INFO:
+			std::cout << "Reading INFO chunk..\n";
+			readsize = chunk.length;
+			if (readsize > sizeof(nsfe_info)) {
+				readsize = sizeof(nsfe_info);
+				std::cout << "Warning NSFE_INFO block exceeds NSFE_INFO header block size, truncating..\n";
+			}
+			// read header.
+			nsffile.read((char*) &info, readsize);	// read header data.
+			chunk.length -= readsize;
+			if (chunk.length > 0) nsffile.seekg(chunk.length, std::ios_base::cur);	// skip the rest.
+			break;
+		case NSFE_BANK:
+			std::cout << "Reading BANK chunk..\n";
+			readsize = chunk.length;
+			if (readsize > 8) {
+				std::cout << "Warning NSFE_BANK block exceeds NSFE_BANK size, truncating..\n";
+				readsize = 8;
+			}
+			// read bank data.
+			nsffile.read((char*)&bank, readsize);
+			chunk.length -= readsize;
+			if (chunk.length > 0) nsffile.seekg(chunk.length, std::ios_base::cur);	// skip.
+			break;
+		case NSFE_RATE:
+			std::cout << "Reading RATE chunk..\n";
+			readsize = chunk.length;
+			if (readsize > sizeof(nsfe_rate)) {
+				readsize = sizeof(nsfe_rate);
+				std::cout << "Warning NSFE_RATE block exceeds NSFE_RATE header block size, truncating..\n";
+			}
+			// read rate header.
+			nsffile.read((char*)&rate, readsize);
+			// set rate.
+			play_speed = rate.playspeed_ntsc;		// we only care for NTSC. PAL / DENDY not supported.. (yet)
+			chunk.length -= readsize;
+			if (chunk.length > 0) nsffile.seekg(chunk.length, std::ios_base::cur);	// skip.
+			break;
+		case NSFE_DATA:
+			std::cout << "Reading DATA chunk..\n";
+			romdata = malloc(chunk.length);
+			prgsize = chunk.length;
+			if (romdata != nullptr) nsffile.read((char*)romdata, chunk.length);
+			break;
+		case NSFE_AUTH:
+			std::cout << "Reading AUTH chunk..\n";
+			authdata = malloc(chunk.length);
+			nsffile.read((char*)authdata, chunk.length);
+			// process.
+			parse_auth_data(&auth, (char*)authdata);
+			free(authdata);
+			break;
+		case NSFE_TLBL:
+			std::cout << "Reading TLBL chunk..\n";
+			tracknames = malloc(chunk.length);
+			nsffile.read((char*)tracknames, chunk.length);
+			break;
+		default:
+			//std::cout << "Unimplemented chunk.. skipping data\n";
+			if (chunk.length > 0) nsffile.seekg(chunk.length, std::ios_base::cur);
+			break;
+		}
+	}
+	
+	// check that we have all the data we need!
+	// what is required?
+	//		romdata != null
+	//		info.load_address != 0x000
+	// that's it.. other data will just filled in with  "defaults"
+
+	if (romdata == nullptr) return false;
+	if (info.load_address == 0x0000) return false;
+
+	std::cout << "Cartridge is NSFe file..\n";
+	std::cout << "Title           : " << auth.title << "\n";
+	std::cout << "Artist          : " << auth.artist << "\n";
+	std::cout << "Copyright       : " << auth.copyright << "\n";
+	std::cout << "Ripper          : " << auth.ripper << "\n";
+	std::cout << "# of song       : " << std::dec << (int)info.total_songs << "\n";
+	std::cout << "Starting @ song : " << std::dec << (int)info.start_song << "\n";
+	std::cout << "Load address    : " << std::hex << (int)info.load_address << "\n";
+	std::cout << "Init address    : " << std::hex << (int)info.init_address << "\n";
+	std::cout << "Play address    : " << std::hex << (int)info.play_address << "\n";
+	std::cout << "BANKS           : ";
+	for (int i = 0; i < 8; i++) {
+		std::cout << "0x" << std::hex << (int)bank.bank_init[i] << " ";
+	}
+	std::cout << "\n";
+
+	// compute NSF NMI trigger speed.
+	// cpu cycles are 29780 per audio frame (60hz), lower that number and we increase refreshrate.
+	// 16666 = 60.002hz that we know. 16666 = 29780 cycles.
+	float cpu_cycles_per_frame = (float)(29780.0 / 16666.0) * (float)play_speed;
+	std::cout << "SPEED           : " << std::dec << (int)play_speed;
+	std::cout << " (" << (int)(1000000 / play_speed) << " Hz, CPU cycles per audioframe: " << (int)cpu_cycles_per_frame << ")\n";
+
+	// if >100hz enable high_hz_mode. OC'ing cpu 3x to keep up.
+	if (((int)(1000000 / play_speed)) > 100) {
+		high_hz_nsf = true;
+	}
+	else high_hz_nsf = false;
+
+	nsf_cpu_cycles = (int)cpu_cycles_per_frame;
+
+	std::cout << "PRG_SIZE        : " << std::dec << (int)prgsize << " bytes.. (header based)\n";
+
+	// we do not support < 0x8000, check this first.
+	if (info.load_address < 0x8000) {
+		std::cout << "We cannot load NSF file with load address below 0x8000\n";
+		free(romdata);
+		return false;
+	}
+
+	int	prealloc = info.load_address - 0x8000;
+
+	// load program data.
+	byte* program_data = (byte*)malloc(prealloc + prgsize);
+
+	if (program_data != nullptr) {
+		// copy the data to the "final" rom.
+		memcpy((void*)&program_data[prealloc], romdata, prgsize);
+		// dispose of loaded data.
+		free(romdata);
+	}
+	else return false;	// we could not allocate???
+
+	// NSF is loaded.
+	// build a NSF cartridge.
+	program = new nsfrom();
+	nsfrom* nsf_rom = reinterpret_cast<nsfrom*>(program);
+
+	// configure NSF cartridge.
+	nsf_rom->nmi_trig_cycles = (int)floorf(cpu_cycles_per_frame);
+	nsf_rom->state.numsongs = info.total_songs;
+	nsf_rom->state.currentsong = 1;
+	for (int i = 0; i < 8; i++) nsf_rom->state.banks[i] = bank.bank_init[i];
+	nsf_rom->state.init = info.init_address;
+	nsf_rom->state.play = info.play_address;
+	nsf_rom->set_rom_data(program_data, prgsize + prealloc);
+
+	// expansions.
+	if (info.expansion_audio & NSF_EXP_VRC6) {
+		vrc6exp = new vrc6audio();
+		vrc6exp->vrc6_mapper_026 = false;
+		audbus->register_audible_device(vrc6exp);
+		mainbus->registerdevice(vrc6exp);
+		nsf_rom->vrc6exp = vrc6exp;
+	}
+	if (info.expansion_audio & NSF_EXP_SUNSOFT) {
+		sunexp = new sunsoftaudio();
+		audbus->register_audible_device(sunexp);
+		mainbus->registerdevice(sunexp);
+		nsf_rom->sunexp = sunexp;
+	}
+	if (info.expansion_audio & NSF_EXP_NAMCO163) {
+		namexp = new namco163audio();
+		audbus->register_audible_device(namexp);
+		mainbus->registerdevice(namexp);
+		nsf_rom->namexp = namexp;
+	}
+	if (info.expansion_audio & NSF_EXP_VRC7) {
+		vrc7exp = new vrc7audio();
+		audbus->register_audible_device(vrc7exp);
+		mainbus->registerdevice(vrc7exp);
+		nsf_rom->vrc7exp = vrc7exp;
+	}
+	if (info.expansion_audio & NSF_EXP_MMC5) {
+		mmc5exp = new mmc5audio();
+		audbus->register_audible_device(mmc5exp);
+		mainbus->registerdevice(mmc5exp);
+		nsf_rom->mmc5exp = mmc5exp;
+	}
+
+	// tracknames.
+	trackNames.clear();
+	if (tracknames != nullptr) {
+		std::string text;
+		void* temp = tracknames;
+		for (int i = 0; i < info.total_songs; i++) {
+			temp = parse_data(text, (char*)temp);
+			trackNames.push_back(text);
+		}
+		free(tracknames);
+	}
+
+	// add to mainbus
+	mainbus->registerdevice(nsf_rom);
+
+	// initialize cart for song #1 (0)
+	nsf_rom->initialize(0);
+
+	// link busses.
+	m_aud = audbus;
+	m_bus = mainbus;
+	l_ppu = ppu_device;
+
+	// copy meta data.
+	songname = auth.title;
+	artist = auth.artist;
+	copyright = auth.copyright;
+	ripper = auth.ripper;
+
+	// disable bus conflicts.
+	m_bus->emulate_bus_conflicts(true);
+
+	nsf_mode = true;
+
+	return true;
+}
+
+
 bool	cartridge::readstream_nsf(std::istream &nsffile, ppu *ppu_device, bus *mainbus, audio_player *audbus) {
 	program = NULL;
 	character = NULL;	// will not be used.
@@ -68,6 +357,12 @@ bool	cartridge::readstream_nsf(std::istream &nsffile, ppu *ppu_device, bus *main
 	nsf_header_raw nsf_hdr;
 	nsffile.seekg(0, std::ios_base::beg);
 	nsffile.read((char*)&nsf_hdr, sizeof(nsf_header_raw));
+
+	// check for NSFe
+	if (nsf_hdr.header_signature == (std::uint32_t)0x4546534E) {
+		std::cout << "NSFe image detected.\n";
+		return readstream_nsfe(nsffile, ppu_device, mainbus, audbus);
+	}
 
 	bool is_valid = (nsf_hdr.header_signature == (std::uint32_t)0x4D53454E) && (nsf_hdr.header2 == 0x1A);
 	
@@ -188,12 +483,10 @@ bool	cartridge::readstream_nsf(std::istream &nsffile, ppu *ppu_device, bus *main
 	l_ppu = ppu_device;
 
 	// copy meta data.
-	memcpy(songname, nsf_hdr.songname, 32);
-	memcpy(artist, nsf_hdr.artist, 32);
-	memcpy(copyright, nsf_hdr.copyright, 32);
-
-	// make sure c_strings end.
-	songname[31] = 0x00; artist[31] = 0x00; copyright[31] = 0x00;
+	songname = nsf_hdr.songname;
+	artist = nsf_hdr.artist;
+	copyright = nsf_hdr.copyright;
+	ripper = "<?>";
 
 	// disable bus conflicts.
 	m_bus->emulate_bus_conflicts(true);
@@ -555,6 +848,7 @@ cartridge::cartridge(const char *filename, ppu *ppu_device, bus *mainbus, audio_
 }
 
 cartridge::~cartridge() {
+	std::cout << "Cleaning up cartridge..\n";
 	if (m_aud != NULL) {
 		if (vrc6exp) {
 			m_aud->unregister_audible_device(vrc6exp);
@@ -582,6 +876,7 @@ cartridge::~cartridge() {
 			delete mmc5exp;
 		}
 	}
+	std::cout << "Expanded audio devices cleaned up..\n";
 	if (m_bus != NULL) {
 		if (program != NULL) {
 			m_bus->removedevice_select_base(program->devicestart);
@@ -602,6 +897,8 @@ cartridge::~cartridge() {
 	if (l_ppu != NULL) {
 		l_ppu->set_char_rom(NULL);
 	}
+	std::cout << "Memory bus (PPU) devices cleaned up..\n";
 	if (program != NULL) delete program;
 	if (character != NULL) delete character;
+	std::cout << "ROMs cleaned up..\n";
 }

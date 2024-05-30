@@ -55,9 +55,6 @@ nes_emulator::nes_emulator() {
 	audio->startplayback();
 }
 
-std::vector<postprocessor*> nes_emulator::listOfPostProcessors() {
-}
-
 nes_emulator::~nes_emulator() {
 	// destroy the emulator.
 	audio->stopplayback();
