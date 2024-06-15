@@ -17,6 +17,7 @@ nsfrom::nsfrom() {
 	ram = (byte *)malloc(8192);		// 8K 0x6000-7FFF
 	// copy in the defined uFirmware.
 	memcpy(&ufirm[0], nsfufirm, sizeof(nsfufirm));
+	set_debug_data();
 }
 
 nsfrom::~nsfrom() {
@@ -51,6 +52,7 @@ byte	nsfrom::read(const int addr, const int addr_from_base, const bool onlyread)
 void	nsfrom::write(const int addr, const int addr_from_base, const byte data) {
 	if ((addr >= 0x5FF8) && (addr <= 0x5FFF)) {
 		byte	bank = addr - 0x5FF8;
+		state.banks[bank] = data;
 		prg[bank] = &romdata[(data << 12) % romsize];
 		return;
 	}
@@ -132,4 +134,28 @@ void	nsfrom::initialize(const byte song) {
 	state.res_vector = vectors.reset;
 
 	timestarted = SDL_GetTicks64();
+}
+
+void	nsfrom::set_debug_data() {
+	debugger.add_debug_var("NSF ROM", -1, NULL, t_beginblock);
+	debugger.add_debug_var("Tickcount", -1, &tickcount, t_int);
+	debugger.add_debug_var("Cycles to trigger NMI", -1, &nmi_trig_cycles, t_int);
+	debugger.add_debug_var("Expansion VRC6", -1, &vrc6exp, t_bool);
+	debugger.add_debug_var("Expansion Sunsoft", -1, &sunexp, t_bool);
+	debugger.add_debug_var("Expansion Namco", -1, &namexp, t_bool);
+	debugger.add_debug_var("Expansion MMC5", -1, &mmc5exp, t_bool);
+	debugger.add_debug_var("Expansion VRC7", -1, &vrc7exp, t_bool);
+	debugger.add_debug_var("NSF ROM", -1, NULL, t_endblock);
+
+	debugger.add_debug_var("State", -1, NULL, t_beginblock);
+	debugger.add_debug_var("Banks", 8, &state.banks[0], t_bytearray);
+	debugger.add_debug_var("Init address", -1, &state.init, t_addr);
+	debugger.add_debug_var("Play address", -1, &state.play, t_addr);
+	debugger.add_debug_var("Load address", -1, &state.load, t_addr);
+	debugger.add_debug_var("Number of songs", -1, &state.numsongs, t_int);
+	debugger.add_debug_var("Current song", -1, &state.currentsong, t_int);
+	debugger.add_debug_var("IRQ Vector", -1, &state.irq_vector, t_addr);
+	debugger.add_debug_var("NMI Vector", -1, &state.nmi_vector, t_addr);
+	debugger.add_debug_var("RESET Vector", -1, &state.res_vector, t_addr);
+	debugger.add_debug_var("State", -1, NULL, t_endblock);
 }

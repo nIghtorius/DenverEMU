@@ -89,4 +89,5 @@ public:
 	virtual int		rundevice(const int ticks);
 	virtual void	set_rom_data(byte *data, const std::size_t size);
 	void			initialize(const byte song);
+	virtual void	set_debug_data();
 };

@@ -58,6 +58,7 @@
 #define		NSFE_NEND								0x444E454E
 #define		NSFE_AUTH								0x68747561
 #define		NSFE_TLBL								0x6C626C74
+#define		NSFE_TIME								0x656D6974
 
 // NSF bits header.
 
@@ -187,6 +188,7 @@ public:
 	std::string copyright = "<?>";
 	std::string ripper = "<?>";
 	std::vector<std::string>trackNames;
+	std::vector<std::int32_t>trackLengths;
 
 	cartridge(const char *filename, ppu *ppu_device, bus *mainbus, audio_player *audbus);
 	cartridge(std::istream &stream, ppu *ppu_device, bus *mainbus, audio_player *audbus);

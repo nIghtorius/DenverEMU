@@ -42,6 +42,26 @@ void	denvergui::internal_render_dbg_node(dbg_dt* node) {
 			ImGui::ProgressBar(value, ImVec2{ 0, 0 }, buf);
 		}
 		break;
+	case t_byte_lonibble:
+		if (node->max == SHOW_ONLY_VALUE_AS_TEXT) {
+			ImGui::Text("%s:", node->description.c_str()); ImGui::SameLine();
+			ImGui::Text("%d", *bydata & 0x0F);
+		}
+		else {
+			// bars.
+			ImGui::Text(node->description.c_str());
+			float value = (1.0f / (float)node->max) * (float)(*bydata & 0x0F);
+			sprintf(buf, "%d", *bydata & 0x0F);
+			ImGui::ProgressBar(value, ImVec2{ 0, 0 }, buf);
+		}
+		break;
+	case t_bytearray:
+		ImGui::Text("%s:", node->description.c_str()); ImGui::SameLine();
+		for (int i = 0; i < node->max; i++) {
+			ImGui::Text("%02X", bdata[i]); ImGui::SameLine();
+		}
+		ImGui::NewLine();
+		break;
 	case t_word:
 		if (node->max == SHOW_ONLY_VALUE_AS_TEXT) {
 			ImGui::Text("%s:", node->description.c_str()); ImGui::SameLine();

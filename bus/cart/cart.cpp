@@ -127,6 +127,8 @@ bool	cartridge::readstream_nsfe(std::istream& nsffile, ppu* ppu_device, bus* mai
 	nsfe_info info;
 	void* romdata = nullptr;
 	void* tracknames = nullptr;
+	void* tracklengths = nullptr;
+	int	  nr_lengths = 0;
 	nsfe_bank bank;
 	nsfe_rate rate;
 	auth_data auth;
@@ -195,6 +197,12 @@ bool	cartridge::readstream_nsfe(std::istream& nsffile, ppu* ppu_device, bus* mai
 			std::cout << "Reading TLBL chunk..\n";
 			tracknames = malloc(chunk.length);
 			nsffile.read((char*)tracknames, chunk.length);
+			break;
+		case NSFE_TIME:
+			std::cout << "Reading TIME chunk..\n";
+			tracklengths = malloc(chunk.length);
+			nsffile.read((char*)tracklengths, chunk.length);
+			nr_lengths = chunk.length / sizeof(std::int32_t);
 			break;
 		default:
 			//std::cout << "Unimplemented chunk.. skipping data\n";
@@ -322,6 +330,16 @@ bool	cartridge::readstream_nsfe(std::istream& nsffile, ppu* ppu_device, bus* mai
 			trackNames.push_back(text);
 		}
 		free(tracknames);
+	}
+
+	// track lengths
+	trackLengths.clear();
+	if (tracklengths != nullptr) {
+		std::int32_t* l = (std::int32_t*)tracklengths;
+		for (int i = 0; i < nr_lengths; i++) {
+			trackLengths.push_back(l[i]);
+		}
+		free(tracklengths);
 	}
 
 	// add to mainbus

@@ -13,7 +13,8 @@
 #define SHOW_ONLY_VALUE_AS_TEXT -1
 
 enum dbg_datatypes {
-	t_int, t_byte, t_shortintarray, t_cstr, t_longintarray, t_beginblock, t_endblock, t_bool, t_addr, t_word, t_bytearray
+	t_int, t_byte, t_shortintarray, t_cstr, t_longintarray, t_beginblock, t_endblock, t_bool, t_addr, t_word, t_bytearray,
+	t_byte_lonibble
 };
 
 struct dbg_dt {

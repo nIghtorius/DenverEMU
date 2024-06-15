@@ -88,7 +88,8 @@ float	namco163audio::mux() {
 	for (int i = 0; i < channels_active + 1; i++) {
 		final_mux += channels[i].output;
 	}
-	final_mux /= (1.0f+(channels_active >> 1));
+	//final_mux /= (1.0f+(channels_active >> 1));
+	final_mux /= 2.0f;
 	return final_mux;
 }
 
@@ -144,11 +145,11 @@ void	namco163audio::set_debug_data() {
 		debugger.add_debug_var("PHASE(HI)", -1, &sound_ram[channels[i].ram_base + N163_RAM_HIGH_PHASE], t_byte);
 		debugger.add_debug_var("WAVELENGTH", -1, &sound_ram[channels[i].ram_base + N163_RAM_WAVE_LENGTH], t_byte);
 		debugger.add_debug_var("ADDRESS(WT)", -1, &sound_ram[channels[i].ram_base + N163_RAM_WAVE_ADDRESS], t_byte);
-		debugger.add_debug_var("VOLUME", 255, &sound_ram[channels[i].ram_base + N163_RAM_VOLUME], t_byte);
+		debugger.add_debug_var("VOLUME", 15, &sound_ram[channels[i].ram_base + N163_RAM_VOLUME], t_byte_lonibble);
 		debugger.add_debug_var(desc, -1, NULL, t_endblock);
 	}
 
 	debugger.add_debug_var("Memory contents", -1, NULL, t_beginblock);
-	debugger.add_debug_var("SOUNDRAM", 128, &sound_ram[0x80], t_bytearray);
+	debugger.add_debug_var("SOUNDRAM", 128, sound_ram, t_bytearray);
 	debugger.add_debug_var("Memory contents", -1, NULL, t_endblock);
 }

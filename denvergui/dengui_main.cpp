@@ -235,7 +235,6 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *
 	}
 	ImGui::End();
 
-	//if (ImGui::BeginViewportSideBar("##NES", viewport, ImGuiDir_Left, io.DisplaySize.y - height * 2, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings)) 
 	ImVec2 startRendering = ImGui::GetMainViewport()->Pos;
 	ImVec2 sizeRendering = ImGui::GetMainViewport()->WorkSize;
 	startRendering.y += height;
@@ -243,122 +242,108 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *
 	ImGui::SetNextWindowSize(sizeRendering);
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
 	if (denver->cart->nsf_mode) {
-		if (ImGui::Begin("NES Game", NULL, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoResize || ImGuiWindowFlags_NoInputs))
+		if (ImGui::Begin("NES Music Player", NULL, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoResize || ImGuiWindowFlags_NoInputs))
 		{
-			if (!denver->cart->nsf_mode) {
-				// compute where the image has to come. for now its the 4:3 renderer, later on we implement
-				// the 8:7 renderer.
+			// NSF interface.
+			ImGui::Text("Denver NSF Player");
+			ImGui::Text("");
+			ImGui::Text("Song(s) :");
+			ImGui::SameLine();
+			ImGui::TextColored(ImVec4{1.0f, 1.0f, 0.0f, 1.0f}, denver->cart->songname.c_str());
+			ImGui::Text("Artist :");
+			ImGui::SameLine();
+			ImGui::TextColored(ImVec4{ 1.0f, 1.0f, 0.0f, 1.0f }, denver->cart->artist.c_str());
+			ImGui::Text("Copyright :");
+			ImGui::SameLine();
+			ImGui::TextColored(ImVec4{ 1.0f, 1.0f, 0.0f, 1.0f }, denver->cart->copyright.c_str());
+			ImGui::Text("Ripper :");
+			ImGui::SameLine();
+			ImGui::TextColored(ImVec4{ 1.0f, 1.0f, 0.0f, 1.0f }, denver->cart->ripper.c_str());
+			ImGui::Text("");
+			ImGui::Separator();
 
-				float scale_x = io.DisplaySize.x / 256.0f; //ImGui::GetContentRegionAvail().x / 256.0f;
-				float scale_y = ImGui::GetContentRegionAvail().y / 240.0f;
+			// get NSF interface.
+			nsfrom* nsfinterface = reinterpret_cast<nsfrom*>(denver->cart->program);
 
-				float width_x = 0.0f;
-				float height_y = 0.0f;
+			ImGui::Text("Selected song %d/%d", nsfinterface->state.currentsong, nsfinterface->state.numsongs);
 
-				if (scale_x > scale_y) {
-					// scale y dominant.
-					width_x = 256.0f * scale_y;
-					height_y = 240.0f * scale_y;
-				}
-				else {
-					// scale x dominant.
-					width_x = 256.0f * scale_x;
-					height_y = 240.0f * scale_x;
-				}
-
-				// 8:7 transformation?
-				scale_x *= 1.3f;
-				float start_x = (ImGui::GetContentRegionAvail().x / 2) - (width_x / 2);
-				ImGui::SetCursorPosX(start_x);
-				ImGui::Image((void*)(intptr_t)tex, ImVec2{ width_x, height_y });
+			if (denver->cart->trackNames.size() > 0) {
+				ImGui::Text("Track: "); ImGui::SameLine();
+				ImGui::TextColored(ImVec4{ 0.0f, 1.0f, 1.0f, 1.0f }, denver->cart->trackNames[nsfinterface->state.currentsong - 1].c_str());
 			}
-			else {
-				// NSF interface.
-				ImGui::Text("Denver NSF Player");
-				ImGui::Text("");
-				ImGui::Text("Song(s) :");
-				ImGui::SameLine();
-				ImGui::TextColored(ImVec4{1.0f, 1.0f, 0.0f, 1.0f}, denver->cart->songname.c_str());
-				ImGui::Text("Artist :");
-				ImGui::SameLine();
-				ImGui::TextColored(ImVec4{ 1.0f, 1.0f, 0.0f, 1.0f }, denver->cart->artist.c_str());
-				ImGui::Text("Copyright :");
-				ImGui::SameLine();
-				ImGui::TextColored(ImVec4{ 1.0f, 1.0f, 0.0f, 1.0f }, denver->cart->copyright.c_str());
-				ImGui::Text("Ripper :");
-				ImGui::SameLine();
-				ImGui::TextColored(ImVec4{ 1.0f, 1.0f, 0.0f, 1.0f }, denver->cart->ripper.c_str());
-				ImGui::Text("");
-				ImGui::Separator();
 
-				// get NSF interface.
-				nsfrom* nsfinterface = reinterpret_cast<nsfrom*>(denver->cart->program);
+			ImGui::Separator();
 
-				ImGui::Text("Selected song %d/%d", nsfinterface->state.currentsong, nsfinterface->state.numsongs);
-
-				if (denver->cart->trackNames.size() > 0) {
-					ImGui::Text("Track: "); ImGui::SameLine();
-					ImGui::TextColored(ImVec4{ 0.0f, 1.0f, 1.0f, 1.0f }, denver->cart->trackNames[nsfinterface->state.currentsong - 1].c_str());
+			// Media buttons.
+			if (ImGui::Button("<<", ImVec2{ 128, 32 })) {
+				if (nsfinterface->state.currentsong > 1)
+					nsfinterface->state.currentsong--;
+				// play the track.
+				nsfinterface->initialize(nsfinterface->state.currentsong - 1);
+			}
+			ImGui::SameLine();
+			ImGui::Text("      ");
+			ImGui::SameLine();
+			if (ImGui::Button(">>", ImVec2{ 128, 32 })) {
+				if (nsfinterface->state.currentsong < nsfinterface->state.numsongs)
+					nsfinterface->state.currentsong++;
+				nsfinterface->initialize(nsfinterface->state.currentsong - 1);
+			}
+			ImGui::Separator();
+			ImGui::Text("Live Sample output");
+			int s = (int)denver->audio->final_mux.size();
+			float* graph = &denver->audio->final_mux[0];
+			float lb = denver->audio->average_mix - 0.7f;
+			float hb = denver->audio->average_mix + 0.7f;
+			ImGui::PlotLines("Sample", graph, s, 0, NULL, lb, hb, ImVec2{ 0, 160.0f });
+			ImGui::Separator();
+			ImGui::Text("Expansion Audio:");
+			ImGui::SameLine();
+			if (denver->cart->namexp) {
+				ImGui::Text("NAMCO"); ImGui::SameLine();
+			}
+			if (denver->cart->vrc6exp) {
+				ImGui::Text("VRC6"); ImGui::SameLine();
+			}
+			if (denver->cart->vrc7exp) {
+				ImGui::Text("VRC7"); ImGui::SameLine();
+			}
+			if (denver->cart->sunexp) {
+				ImGui::Text("SUNSOFT"); ImGui::SameLine();
+			}
+			if (denver->cart->mmc5exp) {
+				ImGui::Text("MMC5"); ImGui::SameLine();
+			}
+			if (denver->cart->high_hz_nsf) {
+				ImGui::Text("High refresh mode (3x CPU speed)"); ImGui::SameLine();
+			}
+			ImGui::NewLine();
+			ImGui::Separator();
+			// compute time elapsed.
+			uint64_t currenttime = SDL_GetTicks64();
+			uint32_t elapsed = (uint32_t)(currenttime - nsfinterface->timestarted);
+			uint32_t seconds = elapsed / 1000;
+			uint32_t minutes = seconds / 60;
+			seconds = seconds % 60;
+			uint32_t hseconds = elapsed - ((minutes * 60) + seconds) * 1000;
+			hseconds /= 10;
+			ImGui::Text("Time elapsed: %02d:%02d:%02d", minutes, seconds, hseconds); ImGui::SameLine();
+			// check if lengths are defined???
+			if (denver->cart->trackLengths.size() != 0) {
+				if (nsfinterface->state.currentsong - 1 <= denver->cart->trackLengths.size()) {
+					// we know the length of the track add it to the line.					
+					elapsed = denver->cart->trackLengths[nsfinterface->state.currentsong - 1];
+					seconds = elapsed / 1000;
+					minutes = seconds / 60;
+					seconds = seconds % 60;
+					hseconds = elapsed - ((minutes * 60) + seconds) * 1000;
+					hseconds /= 10;
+					ImGui::Text("/"); ImGui::SameLine();
+					ImGui::Text("%02d:%02d:%02d", minutes, seconds, hseconds);
 				}
-
-				ImGui::Separator();
-
-				// Media buttons.
-				if (ImGui::Button("<<", ImVec2{ 128, 32 })) {
-					if (nsfinterface->state.currentsong > 1)
-						nsfinterface->state.currentsong--;
-					// play the track.
-					nsfinterface->initialize(nsfinterface->state.currentsong - 1);
-				}
-				ImGui::SameLine();
-				ImGui::Text("      ");
-				ImGui::SameLine();
-				if (ImGui::Button(">>", ImVec2{ 128, 32 })) {
-					if (nsfinterface->state.currentsong < nsfinterface->state.numsongs)
-						nsfinterface->state.currentsong++;
-					nsfinterface->initialize(nsfinterface->state.currentsong - 1);
-				}
-				ImGui::Separator();
-				ImGui::Text("Live Sample output");
-				int s = (int)denver->audio->final_mux.size();
-				float* graph = &denver->audio->final_mux[0];
-				float lb = denver->audio->average_mix - 0.7f;
-				float hb = denver->audio->average_mix + 0.7f;
-				ImGui::PlotLines("Sample", graph, s, 0, NULL, lb, hb, ImVec2{ 0, 160.0f });
-				ImGui::Separator();
-				ImGui::Text("Expansion Audio:");
-				ImGui::SameLine();
-				if (denver->cart->namexp) {
-					ImGui::Text("NAMCO"); ImGui::SameLine();
-				}
-				if (denver->cart->vrc6exp) {
-					ImGui::Text("VRC6"); ImGui::SameLine();
-				}
-				if (denver->cart->vrc7exp) {
-					ImGui::Text("VRC7"); ImGui::SameLine();
-				}
-				if (denver->cart->sunexp) {
-					ImGui::Text("SUNSOFT"); ImGui::SameLine();
-				}
-				if (denver->cart->mmc5exp) {
-					ImGui::Text("MMC5"); ImGui::SameLine();
-				}
-				if (denver->cart->high_hz_nsf) {
-					ImGui::Text("High refresh mode (3x CPU speed)"); ImGui::SameLine();
-				}
-				ImGui::NewLine();
-				ImGui::Separator();
-				// compute time elapsed.
-				uint64_t currenttime = SDL_GetTicks64();
-				uint32_t elapsed = (uint32_t)(currenttime - nsfinterface->timestarted);
-				uint32_t seconds = elapsed / 1000;
-				uint32_t minutes = seconds / 60;
-				seconds = seconds % 60;
-				uint32_t hseconds = elapsed - ((minutes * 60) + seconds) * 1000;
-				hseconds /= 10;
-				ImGui::Text("Time elapsed: %02d:%02d:%02d", minutes, seconds, hseconds);
-				ImGui::NewLine();
-			}			
+				else ImGui::NewLine();
+			}
+			ImGui::NewLine();
 		}
 		ImGui::End();
 	}

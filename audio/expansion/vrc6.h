@@ -11,11 +11,6 @@
 #include "../audio.h"
 #include <vector>
 
-// magic tables.
-static const byte vrc6_duty_cycle_osc[] = {
-	1, 3, 7, 15, 31, 63, 127, 255
-};
-
 // classes
 
 struct vrc6_pulse {
