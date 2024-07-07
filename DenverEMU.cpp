@@ -52,6 +52,11 @@ static int		width = 512;
 static int		height = 480;
 static bool		linear_filter = true;
 static float	override_scale = -1.0f;
+static int		p1_controller = 0;
+static int		p2_controller = 1;
+static bool		show_controllers = false;
+static bool		do_exec_trace = false;
+
 std::vector<std::string> shaderList;
 
 void process_args(int argc, char *argv[]) {
@@ -71,7 +76,31 @@ void process_args(int argc, char *argv[]) {
 			std::cout << "--no-linear-filter, disables linear filtering\n";
 			std::cout << "--load-shader <shader>, loads a fragment shader (OpenGL)\n";
 			std::cout << "--override-scale <factor>, overrides display scaling (DPI awareness), expects factors. ex: 2 = 200%\n";
+			std::cout << "--show-controllers, list all detected controllers and exit\n";
+			std::cout << "--select-controller-id-port1, selects a gamecontroller as port #1\n";
+			std::cout << "--select-controller-id-port2, selects a gamecontroller as port #2\n";
+			std::cout << "--executiontrace\n";
 			exit(0);
+		}
+		if (strcmp(argv[i], "--executiontrace") == 0) {
+			std::cout << "WARNING! Running execution trace, log file grows fast!\n";
+			do_exec_trace = true;
+		}
+
+		if (strcmp(argv[i], "--show-controllers") == 0) {
+			show_controllers = true;
+		}
+		if (strcmp(argv[i], "--select-controller-id-port1") == 0) {
+			if (i + 1 <= argc) {
+				p1_controller = atoi(argv[i + 1]);
+				std::cout << "PORT #1 controller ID set to " << p1_controller << "\n";
+			}
+		}
+		if (strcmp(argv[i], "--select-controller-id-port2") == 0) {
+			if (i + 1 <= argc) {
+				p2_controller = atoi(argv[i + 1]);
+				std::cout << "PORT #2 controller ID set to " << p2_controller << "\n";
+			}
 		}
 		if (strcmp(argv[i], "--vsync") == 0) {
 			vsync_enable = true;
@@ -213,6 +242,22 @@ int main(int argc, char *argv[])
 		flags = SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN;
 	}
 
+	nes_emulator* denver = new nes_emulator();
+	if (show_controllers) {
+		// we might have initialized denver, but the init will stop there. But we will show the detected controllers.
+		std::cout << "Denver has detected the following gamecontrollers.\n\n";
+		for (int i = 0; i < denver->joydefs->gameControllers.size(); i++) {
+			const char *controllername = SDL_GameControllerName(denver->joydefs->gameControllers[i]);
+			std::cout << std::dec << i << ". " << controllername << "\n";
+		}
+		std::cout << "\n\nDenver will exit now...\n";
+		exit(0);
+	}
+
+	// configure controller mapping (commandline)
+	denver->joydefs->controllermapping[0] = p1_controller;
+	denver->joydefs->controllermapping[1] = p2_controller;
+
 	SDL_Window* win = SDL_CreateWindow("Denver NES emulator", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, flags);
 	
 	SDL_GLContext gl_context = SDL_GL_CreateContext(win);
@@ -238,7 +283,7 @@ int main(int argc, char *argv[])
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
 	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
 	
@@ -281,7 +326,6 @@ int main(int argc, char *argv[])
 	bool btrue = true;
 	bool *p_open = &btrue;
 
-	nes_emulator * denver = new nes_emulator();
 	denver->frame_upscaler = upscaler;
 
 	if (strnlen(shader_load_startup, 512) != 0) {
@@ -298,6 +342,8 @@ int main(int argc, char *argv[])
 	else {
 		denver->load_cartridge(rom_load_startup);
 	}
+
+	if (do_exec_trace) denver->nes_2a03->cpu_2a03.write_execution_log();
 
 	denvergui::denvergui_state windowstates;
 	windowstates.show_apu_debugger = false;
@@ -329,6 +375,11 @@ int main(int argc, char *argv[])
 					denver->audio->boostspeed = (event.type == SDL_KEYDOWN);
 				}
 				denver->joydefs->process_kb_event(&event);
+				break;
+			case SDL_CONTROLLERBUTTONDOWN:
+			case SDL_CONTROLLERBUTTONUP:
+			case SDL_CONTROLLERAXISMOTION:
+				denver->joydefs->process_controller_event(&event);
 				break;
 			}
 		}

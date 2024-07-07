@@ -260,7 +260,11 @@ bool	cartridge::readstream_nsfe(std::istream& nsffile, ppu* ppu_device, bus* mai
 		return false;
 	}
 
+	bool bankloading = false;
+	for (int i = 0; i < 8; i++) if (bank.bank_init[i] != 0x00) bankloading = true;
+
 	int	prealloc = info.load_address - 0x8000;
+	if (bankloading) prealloc &= 0x0FFF;
 
 	// load program data.
 	byte* program_data = (byte*)malloc(prealloc + prgsize);
@@ -434,7 +438,11 @@ bool	cartridge::readstream_nsf(std::istream &nsffile, ppu *ppu_device, bus *main
 		return false;
 	}
 
+	bool bankloading = false;
+	for (int i = 0; i < 8; i++) if (nsf_hdr.bank_init[i] != 0x00) bankloading = true;
+
 	int	prealloc = nsf_hdr.load_address - 0x8000;
+	if (bankloading) prealloc &= 0x0FFF;
 
 	// load program data.
 	byte * program_data = (byte*)malloc(prealloc + program_size);

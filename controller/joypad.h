@@ -11,6 +11,7 @@
 #include <SDL.h>
 #include <cstdint>
 #include "../bus/bus.h"
+#include <vector>
 
 #define MAX_CONTROLLERS			4
 #define CTR_STROBE_PORT			0x16
@@ -19,6 +20,8 @@
 
 #define CTR_BIT_STROBE			0x01
 #define CTR_READ_CTRL			0x01
+
+#define DEADZONE				16384
 
 struct controller {
 	bool	states[8];
@@ -34,13 +37,18 @@ struct controller_cfg {
 class joypad {
 private:
 	controller_cfg	cfg[MAX_CONTROLLERS];
+	controller_cfg  cfg_gc[MAX_CONTROLLERS];
 	controller	controllers[MAX_CONTROLLERS];
 	uint8_t		readouts[MAX_CONTROLLERS];
+	void	detect_controllers();
 public:
+	std::vector<SDL_GameController*> gameControllers;	// publicly available.
+	int		controllermapping[MAX_CONTROLLERS];
 	joypad();
 	~joypad();
 	void	set_default_configs();
 	void	process_kb_event(SDL_Event *event);
+	void	process_controller_event(SDL_Event *event);
 	bool	pulse_read_out(int controller_id);
 	void	strobe(int controller_id);
 };

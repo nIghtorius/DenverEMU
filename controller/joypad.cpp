@@ -9,15 +9,25 @@ joypad::joypad() {
 	set_default_configs();
 	for (int i = 0; i < MAX_CONTROLLERS; i++) {
 		controllers[i] = { false, false, false, false, false, false, false, false };
+		controllermapping[i] = -1;
 	}
+	detect_controllers();
 }
 
 joypad::~joypad() {
+	// close all detected controllers.
+	for (auto gameController : gameControllers) {
+		SDL_GameControllerClose(gameController);
+	}
 }
 
 void	joypad::set_default_configs() {
 	cfg[0] = { 0x50, 0x52, 0x4f, 0x51, 0x1d, 0x1b, 0x04, 0x16 };
 	cfg[1] = { 0x0d, 0x0c, 0x0f, 0x0e, 0x14, 0x1a, 0x08, 0x15 };
+	cfg_gc[0] = { 0x0d, 0x0b, 0x0e, 0x0c, 0x00, 0x02, 0x04, 0x06 };	// controller mappings defaults are actually the same.
+	cfg_gc[1] = { 0x0d, 0x0b, 0x0e, 0x0c, 0x00, 0x02, 0x04, 0x06 };
+	cfg_gc[2] = { 0x0d, 0x0b, 0x0e, 0x0c, 0x00, 0x02, 0x04, 0x06 };
+	cfg_gc[3] = { 0x0d, 0x0b, 0x0e, 0x0c, 0x00, 0x02, 0x04, 0x06 };
 }
 
 void	joypad::process_kb_event(SDL_Event *event) {
@@ -44,13 +54,98 @@ void	joypad::process_kb_event(SDL_Event *event) {
 	}
 }
 
+void	joypad::process_controller_event(SDL_Event *event) {
+	bool buttonstate = (event->type == SDL_CONTROLLERBUTTONDOWN);
+	bool axisstate = (event->type == SDL_CONTROLLERAXISMOTION);
+	int  whatdevice = event->cdevice.which;
+	int  keycode = event->cbutton.button;
+	if (!axisstate) {
+		for (int i = 0; i < MAX_CONTROLLERS; i++) {
+			if (controllermapping[i] == whatdevice) {
+				if (cfg_gc[i].left == keycode)
+					controllers[i].states[1] = buttonstate;
+				if (cfg_gc[i].right == keycode)
+					controllers[i].states[0] = buttonstate;
+				if (cfg_gc[i].up == keycode)
+					controllers[i].states[3] = buttonstate;
+				if (cfg_gc[i].down == keycode)
+					controllers[i].states[2] = buttonstate;
+				if (cfg_gc[i].a == keycode)
+					controllers[i].states[7] = buttonstate;
+				if (cfg_gc[i].b == keycode)
+					controllers[i].states[6] = buttonstate;
+				if (cfg_gc[i].select == keycode)
+					controllers[i].states[5] = buttonstate;
+				if (cfg_gc[i].start == keycode)
+					controllers[i].states[4] = buttonstate;
+			}
+		}
+	}
+	else {
+		// process axis.. treat left / right axises the same. (as DPAD)
+		for (int i = 0; i < MAX_CONTROLLERS; i++) {
+			if (controllermapping[i] == whatdevice) {
+				switch (event->caxis.axis) {
+				case SDL_CONTROLLER_AXIS_LEFTX:
+					if (event->caxis.value <= -DEADZONE) {
+						controllers[i].left = true;
+					}
+					else controllers[i].left = false;
+					if (event->caxis.value >= DEADZONE) {
+						controllers[i].right = true;
+					}
+					else controllers[i].right = false;
+					break;
+				case SDL_CONTROLLER_AXIS_LEFTY:
+					if (event->caxis.value <= -DEADZONE) {
+						controllers[i].up = true;
+					}
+					else controllers[i].up = false;
+					if (event->caxis.value >= DEADZONE) {
+						controllers[i].down = true;
+					}
+					else controllers[i].down = false;
+					break;
+				}
+			}
+		}
+	}
+}
+
 void	joypad::strobe(int controller_id) {
 	for (int i = 0; i < MAX_CONTROLLERS; i++) readouts[i] = 0x00;
 }
 
 bool	joypad::pulse_read_out(int controller_id) {
 	if (readouts[controller_id] > 7) return 0;
+	// force axis reads.
+	if ((readouts[controller_id] == 7) && controllers[controller_id].right) {
+		readouts[controller_id]++;
+		return true;
+	}
+	if ((readouts[controller_id] == 6) && controllers[controller_id].left) {
+		readouts[controller_id]++;
+		return true;
+	}
+	if ((readouts[controller_id] == 5) && controllers[controller_id].down) { 
+		readouts[controller_id]++;
+		return true;
+	}
+	if ((readouts[controller_id] == 4) && controllers[controller_id].up) {
+		readouts[controller_id]++;
+		return true;
+	}
 	return controllers[controller_id].states[7-readouts[controller_id]++];
+}
+
+void	joypad::detect_controllers() {
+	// enumerate all controllers.
+	if (gameControllers.size() > 0) return;	// already detected.
+	for (int i = 0; i < SDL_NumJoysticks(); i++) {
+		if (SDL_IsGameController(i)) {
+			gameControllers.push_back(SDL_GameControllerOpen(i));
+		}
+	}
 }
 
 nes_2a03_joyports::nes_2a03_joyports() {

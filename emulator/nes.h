@@ -39,6 +39,7 @@ private:
 	mainram				* nesram;
 	nes_frame_tex		frame;
 	bool				quit = false;
+	uint64_t			time;
 
 public:
 	nesvideo* video_out;

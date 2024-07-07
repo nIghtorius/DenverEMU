@@ -25,7 +25,7 @@ void	vrc6_pulse::update_timers() {
 
 byte	vrc6_pulse::readsample() {
 	if (ignore_duty) return volume;
-	return duty_pos <= duty_cycle ? volume : 0;
+	return (15-duty_pos) <= duty_cycle ? volume : 0;
 }
 
 // saw channel.

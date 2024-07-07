@@ -313,6 +313,9 @@
     <None Include="imgui\backends\vulkan\glsl_shader.frag" />
     <None Include="imgui\backends\vulkan\glsl_shader.vert" />
     <None Include="shaders\ascii.shader" />
+    <None Include="shaders\bettercrtscanlines.shader" />
+    <None Include="shaders\glitch.shader" />
+    <None Include="shaders\point512.shader" />
     <None Include="shaders\pointsampling.shader" />
     <None Include="shaders\tv.shader" />
     <None Include="shaders\tv2.shader" />

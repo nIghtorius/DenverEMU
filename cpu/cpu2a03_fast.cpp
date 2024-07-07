@@ -33,6 +33,9 @@ cpu2a03_fast::~cpu2a03_fast() {
 }
 
 void cpu2a03_fast::log_register() {
+	std::cout << "CPU regs\n--------\n\n" << std::hex;
+	std::cout << "A: " << (int)regs.ac << ", X: " << (int)regs.x << ", Y: " << (int)regs.y << "\n";
+	std::cout << "SP: " << (int)regs.sp << ", SR: " << (int)regs.sr << "\n";
 }
 
 void cpu2a03_fast::machine_code_trace(int startaddr, int endaddr, int erraddr) {
@@ -70,15 +73,26 @@ void cpu2a03_fast::set_pc(word addr) {
 	regs.pc = addr;
 }
 
+bool cpu2a03_fast::stack_overflow() {
+	// do a check that maybe the stack has overflowed.
+	// overflow occurs <00 == 255
+	// current sp reg should be same or lower for no overflow, higher is overflowed.
+	if (lastregs.sp > regs.sp) return true;
+	return false;
+}
+
 void cpu2a03_fast::pushstack_byte(byte data) {
 	// puts a byte on the stack.
 	devicebus->writememory(0x0100 + regs.sp, data);
+	lastregs.sp = regs.sp;
 	regs.sp--;
 }
 
 void cpu2a03_fast::pushstack_word(word data) {
+	byte bufsp = regs.sp;
 	pushstack_byte((data & 0xFF00) >> 8);
 	pushstack_byte((data & 0x00FF));
+	lastregs.sp = bufsp;
 }
 
 byte cpu2a03_fast::pullstack_byte() {

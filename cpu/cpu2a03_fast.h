@@ -77,6 +77,7 @@ private:
 
 public:	
 	cpuregs	regs;
+	cpuregs lastregs;
 
 	bool	error_state = false;
 	byte	last_opcode = 0x00;
@@ -106,4 +107,5 @@ public:
 	void	write_execution_log();
 	void	stop_execution_log();
 	void	machine_code_trace(int startaddr, int endaddr, int erraddr);
+	bool	stack_overflow();
 };

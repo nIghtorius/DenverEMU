@@ -12,7 +12,7 @@
 // rom
 
 m71rom::m71rom() {
-	strncpy(get_device_descriptor(), "Denver Camerica Rom (mapper 071)", MAX_DESCRIPTOR_LENGTH);
+	strncpy(get_device_descriptor(), "Denver Camerica ROM (mapper 071)", MAX_DESCRIPTOR_LENGTH);
 	devicestart = 0x8000;
 	deviceend = 0xFFFF;
 	devicemask = 0xFFFF;

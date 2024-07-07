@@ -475,6 +475,15 @@
     <None Include="shaders\pointsampling.shader">
       <Filter>Source Files\shaders</Filter>
     </None>
+    <None Include="shaders\bettercrtscanlines.shader">
+      <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="shaders\glitch.shader">
+      <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="shaders\point512.shader">
+      <Filter>Source Files\shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DenverEMU.rc">

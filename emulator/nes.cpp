@@ -53,6 +53,8 @@ nes_emulator::nes_emulator() {
 	
 	// start audio.
 	audio->startplayback();
+
+	time = SDL_GetTicks64();		// get time.
 }
 
 nes_emulator::~nes_emulator() {
@@ -182,6 +184,10 @@ void	nes_emulator::renderFrameToGL(const int windowWidth, const int windowHeight
 	scale_x *= 1.3f;
 	int start_x = (int)floor((fW / 2) - (width_x / 2));
 
+	// compute iTime.
+	uint64_t ms_elapsed = SDL_GetTicks64() - time;
+	float iTime = (float)ms_elapsed / 1000;
+
 	glViewport(0, 0, fW, fH);
 	glClear(GL_COLOR_BUFFER_BIT);
 
@@ -194,9 +200,11 @@ void	nes_emulator::renderFrameToGL(const int windowWidth, const int windowHeight
 		GLint screen = glGetUniformLocation(shader, "screen");
 		GLint nesvideo = glGetUniformLocation(shader, "nesvideo");
 		GLint offset = glGetUniformLocation(shader, "offset");
+		GLint itime = glGetUniformLocation(shader, "iTime");
 		glUniform3f(screen, width_x, height_y, 1.0f);		// pass screen size to shader. (actual pixels)
 		glUniform1i(nesvideo, 0);							// tell which texture engine has the texture. (TEXTURE1)
 		glUniform2f(offset, (float)start_x, 0);					// pass offset to shader. (how much the render is too the right)
+		glUniform1f(itime, iTime);
 	}
 
 	glMatrixMode(GL_PROJECTION);

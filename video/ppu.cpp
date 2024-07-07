@@ -361,6 +361,9 @@ int		ppu::rundevice(const int ticks) {
 					ppu_internal.n++;	// eval to next sprite in seconday oam. this will never go over 7, because eval will stop earlier.
 				}
 			}
+			else {
+				ppu_internal.oam_clearing = true;	// setting this flag earlier (dot 321 and up) fixes MM.
+			}
 			// addressing cycle.
 			if (cycle == 257) {
 				ppu_internal.v_register = (ppu_internal.v_register & ~0x041F) | (ppu_internal.t_register & 0x041F);
