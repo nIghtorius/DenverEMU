@@ -41,6 +41,7 @@ private:
 	controller	controllers[MAX_CONTROLLERS];
 	uint8_t		readouts[MAX_CONTROLLERS];
 	void	detect_controllers();
+	void	reset_controller_detect();
 public:
 	std::vector<SDL_GameController*> gameControllers;	// publicly available.
 	int		controllermapping[MAX_CONTROLLERS];
@@ -49,6 +50,7 @@ public:
 	void	set_default_configs();
 	void	process_kb_event(SDL_Event *event);
 	void	process_controller_event(SDL_Event *event);
+	void	process_controller_connect_event(SDL_Event* event);
 	bool	pulse_read_out(int controller_id);
 	void	strobe(int controller_id);
 };

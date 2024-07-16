@@ -29,7 +29,8 @@ void mmc3_rom::set_battery_backed_ram(byte* data, const std::size_t size) {
 byte	mmc3_rom::read(const int addr, const int addr_from_base, const bool onlyread)
 {
 	if ((addr >= 0x6000) && (addr <= 0x7fff)) {
-		return state.prg_ram_enable ? prgram6000[addr - 0x6000] : 0;
+		return prgram6000[addr - 0x6000];
+		//return state.prg_ram_enable ? prgram6000[addr - 0x6000] : 0;
 	}
 	if ((addr >= 0x8000) && (addr <= 0x9fff)) return prg8000[addr - 0x8000];
 	if ((addr >= 0xa000) && (addr <= 0xbfff)) return prga000[addr - 0xa000];

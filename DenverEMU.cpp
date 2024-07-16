@@ -29,6 +29,8 @@
 #include <SDL.h>
 #include <GL/glew.h>
 
+#include "emulator/denver_config.h"
+
 #if defined(IMGUI_IMPL_OPENGL_ES2)
 #include <SDL_opengles2.h>
 #else
@@ -201,6 +203,7 @@ int main(int argc, char *argv[])
 		shaderList.push_back(entry.path().string());
 	}
 
+	SDL_SetHint(SDL_HINT_JOYSTICK_THREAD, "1");
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_GAMECONTROLLER);
 
 	// Decide GL+GLSL versions
@@ -321,6 +324,18 @@ int main(int argc, char *argv[])
 
 	std::cout << "Starting emulation..." << std::endl;
 
+	// test ini files.
+	inifile denverconfig;
+
+	denverconfig.setvalue("controller1", "left", (int)16);
+	denverconfig.setvalue("controller1", "right", (int)17);
+	denverconfig.setvalue("controller2", "up", (int)8);
+	denverconfig.setvalue("controller2", "down", (int)4);
+	denverconfig.setvalue("history", "lastopenedrom", (char*)"mario.nes");
+	denverconfig.setvalue("emulation", "audio_enabled", true);
+
+	denverconfig.save("denver.ini");
+
 	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
 	bool btrue = true;
@@ -380,6 +395,10 @@ int main(int argc, char *argv[])
 			case SDL_CONTROLLERBUTTONUP:
 			case SDL_CONTROLLERAXISMOTION:
 				denver->joydefs->process_controller_event(&event);
+				break;
+			case SDL_CONTROLLERDEVICEREMOVED:
+			case SDL_CONTROLLERDEVICEADDED:
+				denver->joydefs->process_controller_connect_event(&event);
 				break;
 			}
 		}

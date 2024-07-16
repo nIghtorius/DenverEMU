@@ -54,12 +54,26 @@ void	joypad::process_kb_event(SDL_Event *event) {
 	}
 }
 
+void	joypad::process_controller_connect_event(SDL_Event* event) {
+	// basicly we are going to disconnect and reconnect.
+	reset_controller_detect();
+	detect_controllers();
+	bool added = event->type == SDL_CONTROLLERDEVICEADDED;
+	if (added) {
+		std::cout << "Controller ID #" << std::dec << (int)event->cdevice.which << " connected..\n";
+	}
+	else {
+		std::cout << "Controller ID #" << std::dec << (int)event->cdevice.which << " disconnected..\n";
+	}
+}
+
 void	joypad::process_controller_event(SDL_Event *event) {
 	bool buttonstate = (event->type == SDL_CONTROLLERBUTTONDOWN);
 	bool axisstate = (event->type == SDL_CONTROLLERAXISMOTION);
 	int  whatdevice = event->cdevice.which;
 	int  keycode = event->cbutton.button;
 	if (!axisstate) {
+		std::cout << "Controller response ID: #" << std::dec << (int)whatdevice << "\n";
 		for (int i = 0; i < MAX_CONTROLLERS; i++) {
 			if (controllermapping[i] == whatdevice) {
 				if (cfg_gc[i].left == keycode)
@@ -143,9 +157,19 @@ void	joypad::detect_controllers() {
 	if (gameControllers.size() > 0) return;	// already detected.
 	for (int i = 0; i < SDL_NumJoysticks(); i++) {
 		if (SDL_IsGameController(i)) {
+			std::cout << std::dec << (int)i << ". " << SDL_GameControllerNameForIndex(i) << "\n";
 			gameControllers.push_back(SDL_GameControllerOpen(i));
 		}
 	}
+}
+
+void	joypad::reset_controller_detect() {
+	// disconnect all controllers from the event system.
+	for (SDL_GameController *controller : gameControllers) {
+		SDL_GameControllerClose(controller);
+	}
+	// clear detection.
+	gameControllers.clear();
 }
 
 nes_2a03_joyports::nes_2a03_joyports() {

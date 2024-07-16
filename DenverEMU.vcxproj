@@ -203,6 +203,7 @@
     <ClInclude Include="bus\rom\mappers\mapper_004.h" />
     <ClInclude Include="bus\rom\mappers\mapper_069.h" />
     <ClInclude Include="bus\rom\mappers\mapper_071.h" />
+    <ClInclude Include="bus\rom\mappers\mapper_073.h" />
     <ClInclude Include="bus\rom\mappers\mapper_085.h" />
     <ClInclude Include="bus\rom\mappers\mapper_nsf.h" />
     <ClInclude Include="bus\rom\rom.h" />
@@ -214,6 +215,7 @@
     <ClInclude Include="denvergui\gui_debuggers.h" />
     <ClInclude Include="denvergui\dengui_main.h" />
     <ClInclude Include="emulator\denverlogo.h" />
+    <ClInclude Include="emulator\denver_config.h" />
     <ClInclude Include="emulator\nes.h" />
     <ClInclude Include="emulator\simple-opengl-loader.h" />
     <ClInclude Include="imguifiledialog\dirent\dirent.h" />
@@ -264,6 +266,7 @@
     <ClCompile Include="bus\rom\mappers\mapper_024026.cpp" />
     <ClCompile Include="bus\rom\mappers\mapper_069.cpp" />
     <ClCompile Include="bus\rom\mappers\mapper_071.cpp" />
+    <ClCompile Include="bus\rom\mappers\mapper_073.cpp" />
     <ClCompile Include="bus\rom\mappers\mapper_085.cpp" />
     <ClCompile Include="bus\rom\mappers\mapper_nsf.cpp" />
     <ClCompile Include="bus\rom\rom.cpp" />
@@ -275,6 +278,7 @@
     <ClCompile Include="DenverEMU.cpp" />
     <ClCompile Include="denvergui\gui_debuggers.cpp" />
     <ClCompile Include="denvergui\dengui_main.cpp" />
+    <ClCompile Include="emulator\denver_config.cpp" />
     <ClCompile Include="emulator\nes.cpp" />
     <ClCompile Include="imguifiledialog\ImGuiFileDialog.cpp" />
     <ClCompile Include="imgui\backends\imgui_impl_opengl2.cpp" />

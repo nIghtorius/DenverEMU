@@ -288,6 +288,12 @@
     <ClInclude Include="debug\device_debugger.h">
       <Filter>Source Files\emulation\debug</Filter>
     </ClInclude>
+    <ClInclude Include="emulator\denver_config.h">
+      <Filter>Source Files\emulation\emulator</Filter>
+    </ClInclude>
+    <ClInclude Include="bus\rom\mappers\mapper_073.h">
+      <Filter>Source Files\emulation\bus\rom\mappers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DenverEMU.cpp">
@@ -451,6 +457,12 @@
     </ClCompile>
     <ClCompile Include="debug\device_debugger.cpp">
       <Filter>Source Files\emulation\debug</Filter>
+    </ClCompile>
+    <ClCompile Include="emulator\denver_config.cpp">
+      <Filter>Source Files\emulation\emulator</Filter>
+    </ClCompile>
+    <ClCompile Include="bus\rom\mappers\mapper_073.cpp">
+      <Filter>Source Files\emulation\bus\rom\mappers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

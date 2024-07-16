@@ -161,7 +161,8 @@ void	audio_player::send_sampledata_to_audio_device() {
 			for (int i = (int)trunc(samples); i < -1 + (int)trunc(samples + samples_to_target); i++) {
 				sample += final_mux[i];
 			}
-		} else*/ sample = final_mux[(int)trunc(samples)];
+		} else */ sample = final_mux[(int)trunc(samples)];
+
 		//if (!interpolated) sample /= trunc(samples_to_target);
 		//simpleLowpass(sample, lpout);
 		bWorthFilter(sample, lpout);

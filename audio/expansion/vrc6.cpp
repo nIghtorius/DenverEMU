@@ -86,7 +86,7 @@ void	vrc6audio::write(int addr, int addr_from_base, byte data) {
 		byte device = (taddr & (0x3000)) >> 12;
 		device--;
 		pulse[device].volume = data & 0x0F;
-		pulse[device].duty_cycle = (data >> 4) & 3;
+		pulse[device].duty_cycle = (data >> 4) & 7;
 		pulse[device].ignore_duty = (data & 0x80) > 0;
 		return;
 	}

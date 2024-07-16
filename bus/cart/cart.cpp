@@ -13,6 +13,7 @@
 #include "../rom/mappers/mapper_021-22-23-25.h"
 #include "../rom/mappers/mapper_069.h"
 #include "../rom/mappers/mapper_071.h"
+#include "../rom/mappers/mapper_073.h"
 #include "../rom/mappers/mapper_085.h"
 
 // NSF
@@ -752,6 +753,13 @@ void	cartridge::readstream(std::istream &nesfile, ppu *ppu_device, bus *mainbus,
 	case 71:
 		// Camerica
 		program = new m71rom();
+		charram = new vram();
+		character = charram;
+		program->set_rom_data((byte*)program_data, nes.programsize);
+		break;
+	case 73:
+		// VRC3 Konami.
+		program = new vrc3rom();
 		charram = new vram();
 		character = charram;
 		program->set_rom_data((byte*)program_data, nes.programsize);
