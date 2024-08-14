@@ -77,7 +77,7 @@ bool cpu2a03_fast::stack_overflow() {
 	// do a check that maybe the stack has overflowed.
 	// overflow occurs <00 == 255
 	// current sp reg should be same or lower for no overflow, higher is overflowed.
-	if (lastregs.sp > regs.sp) return true;
+	if (lastregs.sp < regs.sp) return true;
 	return false;
 }
 

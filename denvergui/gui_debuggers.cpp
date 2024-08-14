@@ -12,10 +12,16 @@ void	denvergui::internal_render_dbg_node(dbg_dt* node) {
 	const bool* bdata = (const bool*)node->data;
 	const word* wdata = (const word*)node->data;
 	const byte* bydata = (const byte*)node->data;
+	int v24b = 0;
 	ImVec4 color = { 0x00, 0xFF, 0x00, 0xFF };
 
 	char buf[32];
 	switch (node->datatype) {
+	case t_24bit_n163:
+		v24b = bydata[0] | (bydata[2] << 8) | ((bydata[4] & 3) << 16);
+		ImGui::Text("%s:", node->description.c_str()); ImGui::SameLine();
+		ImGui::Text("%d", v24b);
+		break;
 	case t_int:
 		if (node->max == SHOW_ONLY_VALUE_AS_TEXT) {
 			ImGui::Text("%s:", node->description.c_str()); ImGui::SameLine();
@@ -25,7 +31,7 @@ void	denvergui::internal_render_dbg_node(dbg_dt* node) {
 			// bars.
 			ImGui::Text("%s:", node->description.c_str());
 			float value = (1.0f / (float)node->max) * (float)*idata;
-			sprintf(buf, "%d/15", *idata);
+			sprintf(buf, "%d", *idata);
 			ImGui::ProgressBar(value, ImVec2{ 0, 0 }, buf);
 		}
 		break;

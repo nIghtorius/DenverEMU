@@ -7,7 +7,6 @@ uniform vec3        screen;         // size of glOrtho viewport.
 uniform sampler2D   nesvideo;       // image from Denver (gamescreen)
 uniform vec2        offset;         // shifted from viewport.
 
-
 void main()
 {
    vec4 fragCoord = gl_FragCoord - vec4 (offset.x, offset.y, 0, 0);

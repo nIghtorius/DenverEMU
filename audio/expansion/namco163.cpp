@@ -137,12 +137,10 @@ void	namco163audio::set_debug_data() {
 	for (int i = 0; i < 8; i++) {
 		std::string desc = "Channel #" + std::to_string(i+1);
 		debugger.add_debug_var(desc, -1, NULL, t_beginblock);
-		debugger.add_debug_var("FREQ(LO)", -1, &sound_ram[channels[i].ram_base + N163_RAM_LOW_FREQ], t_byte);
-		debugger.add_debug_var("FREQ(MED)", -1, &sound_ram[channels[i].ram_base + N163_RAM_MID_FREQ], t_byte);
-		debugger.add_debug_var("FREQ(HI)", -1, &sound_ram[channels[i].ram_base + N163_RAM_HIGH_FREQ], t_byte);
-		debugger.add_debug_var("PHASE(LO)", -1, &sound_ram[channels[i].ram_base + N163_RAM_LOW_PHASE], t_byte);
-		debugger.add_debug_var("PHASE(MED)", -1, &sound_ram[channels[i].ram_base + N163_RAM_MID_PHASE], t_byte);
-		debugger.add_debug_var("PHASE(HI)", -1, &sound_ram[channels[i].ram_base + N163_RAM_HIGH_PHASE], t_byte);
+
+		debugger.add_debug_var("FREQ(24B)", -1, &sound_ram[channels[i].ram_base + N163_RAM_LOW_FREQ], t_24bit_n163);
+		debugger.add_debug_var("PHASE(24B)", -1, &sound_ram[channels[i].ram_base + N163_RAM_LOW_PHASE], t_24bit_n163);
+
 		debugger.add_debug_var("WAVELENGTH", -1, &sound_ram[channels[i].ram_base + N163_RAM_WAVE_LENGTH], t_byte);
 		debugger.add_debug_var("ADDRESS(WT)", -1, &sound_ram[channels[i].ram_base + N163_RAM_WAVE_ADDRESS], t_byte);
 		debugger.add_debug_var("VOLUME", 15, &sound_ram[channels[i].ram_base + N163_RAM_VOLUME], t_byte_lonibble);

@@ -17,6 +17,11 @@ mmc3_rom::~mmc3_rom() {
 	free(prgram6000);
 }
 
+void mmc3_rom::reset() {
+	if (state.mapper_52_mode) state.ob_register = 0x00; write(0x6000, 0x0000, 0x00);
+	if (state.mapper_44_mode) state.ob_register = 0x00; write(0xa001, 0x4001, 0x00);
+}
+
 batterybackedram* mmc3_rom::get_battery_backed_ram() {
 	return new batterybackedram((byte*)prgram6000, 8192);
 }
@@ -39,6 +44,71 @@ byte	mmc3_rom::read(const int addr, const int addr_from_base, const bool onlyrea
 }
 
 void	mmc3_rom::write(const int addr, const int addr_from_base, const byte data) {
+	if (state.mapper_52_mode && !(state.ob_register & MP52_LOCK_UNTIL_RESET) && (addr <= 0x7FFF)) {
+		std::cout << "data accepted as m52\n";
+		state.ob_register = data;
+		state.prgand = 0x1f;
+		if (data & MP52_NOPRG256KB) state.prgand = 0x0F;
+		state.chrand = 0xff;
+		if (data & MP52_NOCHR256KB) state.chrand = 0x7F;
+		state.prgor = (data & 0x07) << 4;
+		state.chror = ((data >> 3) & 0x04) | ((data >> 1) & 0x02) | ((data >> 6) & (data >> 4) & 0x01);
+		state.chror <<= 0x07;
+		if (!(data & MP52_NOPRG256KB)) state.prgor &= 0x60;
+		if (!(data & MP52_NOCHR256KB)) state.chror &= ~0xFF;
+		update_banks();
+		return;
+	}
+	if ((addr == 0xA001) && state.mapper_44_mode) {
+		// mapper 44 registers.
+		byte block = data & 0x07;
+		switch (block) {
+		case 0x00:
+			state.prgand = 0x0F;
+			state.prgor = 0x00;
+			state.chrand = 0x7F;
+			state.chror = 0x0000;
+			break;
+		case 0x01:
+			state.prgand = 0x0F;
+			state.prgor = 0x10;
+			state.chrand = 0x7F;
+			state.chror = 0x0080;
+			break;
+		case 0x02:
+			state.prgand = 0x0F;
+			state.prgor = 0x20;
+			state.chrand = 0x7F;
+			state.chror = 0x0100;
+			break;
+		case 0x03:
+			state.prgand = 0x0F;
+			state.prgor = 0x30;
+			state.chrand = 0x7F;
+			state.chror = 0x0180;
+			break;
+		case 0x04:
+			state.prgand = 0x0F;
+			state.prgor = 0x40;
+			state.chrand = 0x7F;
+			state.chror = 0x0200;
+			break;
+		case 0x05:
+			state.prgand = 0x0F;
+			state.prgor = 0x50;
+			state.chrand = 0x7F;
+			state.chror = 0x0280;
+			break;
+		case 0x06:
+		case 0x07:
+			state.prgand = 0x1F;
+			state.prgor = 0x60;
+			state.chrand = 0xFF;
+			state.chror = 0x0300;
+			break;
+		}
+		update_banks();
+	}
 	if ((addr >= 0x6000) && (addr <= 0x7FFF)) {
 		//if (!state.prg_ram_enable) return;
 		//if (state.prg_ram_readonly) return;
@@ -135,22 +205,50 @@ void	mmc3_rom::write_banks(const byte data) {
 
 void	mmc3_rom::update_banks() {
 	// register 6
+	byte sndlastbank = (romsize - 16384) / 8192;
+	byte lastbank = (romsize - 8192) / 8192;
+
+	// do mapper 52 stuff.
+	if (state.mapper_52_mode || state.mapper_44_mode) {
+		// recompute lastbank.
+		sndlastbank = (sndlastbank & state.prgand) | state.prgor;
+		lastbank = (lastbank & state.prgand) | state.prgor;
+	}
+	else {
+		state.prgand = 0xff;
+		state.chrand = 0xff;
+		state.prgor = 0x00;
+		state.chror = 0x00;
+	}
+
 	if (!state.prg_bank_mode) {
 		// R6 => 0x8000-0x9FFF
-		prg8000 = &romdata[(state.r6 << 13)%romsize];
-		prgc000 = &romdata[romsize - 16384];
+		prg8000 = &romdata[(((state.r6 & state.prgand) | state.prgor) << 13) % romsize];
+		prgc000 = &romdata[(sndlastbank << 13) % romsize];
 	}
 	else {
 		// R6 => 0xC000-0xDFFF
-		prgc000 = &romdata[(state.r6 << 13)%romsize];
-		prg8000 = &romdata[romsize - 16384];
+		prgc000 = &romdata[(((state.r6 & state.prgand) | state.prgor) << 13) % romsize];
+		prg8000 = &romdata[(sndlastbank << 13) % romsize];
 	}
 	// register 7
-	prga000 = &romdata[(state.r7 << 13)%romsize];
-	prge000 = &romdata[romsize - 8192];
+	prga000 = &romdata[(((state.r7 & state.prgand) | state.prgor) << 13) % romsize];
+	prge000 = &romdata[(lastbank << 13) % romsize];
 
 	// trigger the event to mmc3_vrom
 	if (vrom) vrom->update_banks(&state);
+}
+
+void	mmc3_rom::set_mapper52_mode() {
+	state.mapper_52_mode = true;
+	// write initial state.
+	write(0x6000, 0x0000, 0x00);
+}
+
+void	mmc3_rom::set_mapper44_mode() {
+	state.mapper_44_mode = true;
+	// write initial state.
+	write(0xA001, 0x4001, 0x00);
 }
 
 void	mmc3_rom::set_rom_data(byte *data, const std::size_t size) {
@@ -211,7 +309,7 @@ void mmc3_rom::set_debug_data() {
 	debugger.add_debug_var("IRQ Counter", -1, &state.irq_counter, t_byte);
 	debugger.add_debug_var("IRQ Enabled", -1, &state.irq_enable, t_bool);
 	debugger.add_debug_var("IRQ Reload", -1, &state.irq_reload, t_bool);
-	byte* registers = &state.r0;
+	word* registers = &state.r0;
 	debugger.add_debug_var("MMC3 registers", 8, registers, t_shortintarray);
 	debugger.add_debug_var("MMC3", -1, NULL, t_endblock);
 }
@@ -227,24 +325,24 @@ word mmc3_vrom::fetch_ppu_addr() {
 void mmc3_vrom::update_banks(mmc3_state *state) {
 	if (!romdata) return;
 	if (!state->chr_a12_inv) {
-		chr0000 = &romdata[((state->r0 & 0xFE) << 10) % romsize];
-		chr0400 = &romdata[(((state->r0 & 0xFE) << 10) + 1024) % romsize];
-		chr0800 = &romdata[((state->r1 & 0xFE) << 10) % romsize];
-		chr0c00 = &romdata[(((state->r1 & 0xFE) << 10) + 1024) % romsize];
-		chr1000 = &romdata[(state->r2 << 10)%romsize];
-		chr1400 = &romdata[(state->r3 << 10)%romsize];
-		chr1800 = &romdata[(state->r4 << 10)%romsize];
-		chr1c00 = &romdata[(state->r5 << 10)%romsize];
+		chr0000 = &romdata[(( ((state->r0 & state->chrand) | state->chror) & 0xFFFE) << 10) % romsize];
+		chr0400 = &romdata[(((((state->r0 & state->chrand) | state->chror) & 0xFFFE) << 10) + 1024) % romsize];
+		chr0800 = &romdata[((((state->r1 & state->chrand) | state->chror) & 0xFFFE) << 10) % romsize];
+		chr0c00 = &romdata[(((((state->r1 & state->chrand) | state->chror) & 0xFFFE) << 10) + 1024) % romsize];
+		chr1000 = &romdata[(((state->r2 & state->chrand) | state->chror) << 10)%romsize];
+		chr1400 = &romdata[(((state->r3 & state->chrand) | state->chror) << 10)%romsize];
+		chr1800 = &romdata[(((state->r4 & state->chrand) | state->chror) << 10)%romsize];
+		chr1c00 = &romdata[(((state->r5 & state->chrand) | state->chror) << 10)%romsize];
 	}
 	else {
-		chr0000 = &romdata[(state->r2 << 10)%romsize];
-		chr0400 = &romdata[(state->r3 << 10)%romsize];
-		chr0800 = &romdata[(state->r4 << 10)%romsize];
-		chr0c00 = &romdata[(state->r5 << 10)%romsize];
-		chr1000 = &romdata[((state->r0 & 0xFE) << 10) % romsize];
-		chr1400 = &romdata[(((state->r0 & 0xFE) << 10) + 1024) % romsize];
-		chr1800 = &romdata[((state->r1 & 0xFE) << 10) % romsize];
-		chr1c00 = &romdata[(((state->r1 & 0xFE) << 10) + 1024) % romsize];
+		chr0000 = &romdata[(((state->r2 & state->chrand) | state->chror) << 10)%romsize];
+		chr0400 = &romdata[(((state->r3 & state->chrand) | state->chror) << 10)%romsize];
+		chr0800 = &romdata[(((state->r4 & state->chrand) | state->chror) << 10)%romsize];
+		chr0c00 = &romdata[(((state->r5 & state->chrand) | state->chror) << 10)%romsize];
+		chr1000 = &romdata[((((state->r0 & state->chrand) | state->chror) & 0xFFFE) << 10) % romsize];
+		chr1400 = &romdata[(((((state->r0 & state->chrand) | state->chror) & 0xFFFE) << 10) + 1024) % romsize];
+		chr1800 = &romdata[((((state->r1 & state->chrand) | state->chror) & 0xFFFE) << 10) % romsize];
+		chr1c00 = &romdata[(((((state->r1 & state->chrand) | state->chror) & 0xFFFE) << 10) + 1024) % romsize];
 	}
 
 	// mirroring.

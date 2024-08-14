@@ -5,6 +5,7 @@
 
 	Load cart type (0x04) (MMC3)
 	
+	Also emulates the Mapper 52
 
 */
 
@@ -19,13 +20,22 @@
 #define		MMC3_PROGRAM_RAM_ENABLE		0x80
 #define		MMC3_PROGRAM_RAM_RO			0x40
 
+// mapper 52 defines.
+#define		MP52_PRGBANK				0x01
+#define		MP52_PRGBANK_A19			0x06
+#define		MP52_PRGCHRA19				0x04
+#define		MP52_NOPRG256KB				0x08
+#define		MP52_CHRBANK				0x30
+#define		MP52_NOCHR256KB				0x40
+#define		MP52_LOCK_UNTIL_RESET		0x80
+
 struct mmc3_state {
 	// banks.
 	byte	bank_update_reg;
 	bool	prg_bank_mode;
 	bool	chr_a12_inv;
 
-	byte	r0, r1, r2, r3, r4, r5, r6, r7;
+	word	r0, r1, r2, r3, r4, r5, r6, r7;
 
 	// mirroring
 	bool	do_horizontal_mirroring;
@@ -39,6 +49,15 @@ struct mmc3_state {
 	byte	irq_counter;
 	bool	irq_enable;
 	bool	irq_reload;
+
+	// mapper 44/52
+	byte	ob_register = 0x00;
+	bool	mapper_52_mode = false;	
+	bool	mapper_44_mode = false;
+	word	prgand = 0xff;
+	word	chrand = 0xff;
+	word	prgor = 0x00;
+	word	chror = 0x00;
 };
 
 class mmc3_vrom;
@@ -68,6 +87,9 @@ public:
 	virtual batterybackedram* get_battery_backed_ram();
 	virtual void	set_battery_backed_ram(byte* data, const std::size_t size); 
 	virtual void	set_debug_data();
+	void			set_mapper52_mode();
+	void			set_mapper44_mode();
+	virtual void	reset();
 };
 
 class mmc3_vrom : public vrom {

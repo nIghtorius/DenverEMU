@@ -652,7 +652,9 @@ void	cartridge::readstream(std::istream &nesfile, ppu *ppu_device, bus *mainbus,
 		program->set_rom_data((byte *)program_data, nes.programsize);
 		break;
 	case 4:
-		// MMC3
+	case 44:
+	case 52:
+		// MMC3 / M52
 		program = new mmc3_rom();
 		character = new mmc3_vrom();
 		// mmc3 linking.
@@ -667,6 +669,8 @@ void	cartridge::readstream(std::istream &nesfile, ppu *ppu_device, bus *mainbus,
 			character = charram;			
 		}
 		program->set_rom_data((byte *)program_data, nes.programsize);
+		if (nes.mapper == 52) reinterpret_cast<mmc3_rom*>(program)->set_mapper52_mode();
+		if (nes.mapper == 44) reinterpret_cast<mmc3_rom*>(program)->set_mapper44_mode();
 		break;
 	case 7:
 		// AXROM
