@@ -100,6 +100,9 @@
     <Filter Include="Source Files\emulation\debug">
       <UniqueIdentifier>{543bad2e-cf8f-4a15-8095-431b6b4ceb4e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\helpers">
+      <UniqueIdentifier>{090dd95f-d4a3-4d3d-8461-ca43f627ca1e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="audio\apu.h">
@@ -294,6 +297,9 @@
     <ClInclude Include="bus\rom\mappers\mapper_073.h">
       <Filter>Source Files\emulation\bus\rom\mappers</Filter>
     </ClInclude>
+    <ClInclude Include="helpers\nesdb.h">
+      <Filter>Source Files\helpers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DenverEMU.cpp">
@@ -463,6 +469,9 @@
     </ClCompile>
     <ClCompile Include="bus\rom\mappers\mapper_073.cpp">
       <Filter>Source Files\emulation\bus\rom\mappers</Filter>
+    </ClCompile>
+    <ClCompile Include="helpers\nesdb.cpp">
+      <Filter>Source Files\helpers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

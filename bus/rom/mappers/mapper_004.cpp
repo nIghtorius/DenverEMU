@@ -45,7 +45,6 @@ byte	mmc3_rom::read(const int addr, const int addr_from_base, const bool onlyrea
 
 void	mmc3_rom::write(const int addr, const int addr_from_base, const byte data) {
 	if (state.mapper_52_mode && !(state.ob_register & MP52_LOCK_UNTIL_RESET) && (addr <= 0x7FFF)) {
-		std::cout << "data accepted as m52\n";
 		state.ob_register = data;
 		state.prgand = 0x1f;
 		if (data & MP52_NOPRG256KB) state.prgand = 0x0F;
@@ -240,12 +239,14 @@ void	mmc3_rom::update_banks() {
 }
 
 void	mmc3_rom::set_mapper52_mode() {
+	strncpy(get_device_descriptor(), "Denver MMC3 - Extended (mapper 052)", MAX_DESCRIPTOR_LENGTH);
 	state.mapper_52_mode = true;
 	// write initial state.
 	write(0x6000, 0x0000, 0x00);
 }
 
 void	mmc3_rom::set_mapper44_mode() {
+	strncpy(get_device_descriptor(), "Denver MMC3 - Extended (mapper 044)", MAX_DESCRIPTOR_LENGTH);
 	state.mapper_44_mode = true;
 	// write initial state.
 	write(0xA001, 0x4001, 0x00);

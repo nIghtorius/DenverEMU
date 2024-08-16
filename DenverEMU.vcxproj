@@ -221,6 +221,7 @@
     <ClInclude Include="emulator\denver_config.h" />
     <ClInclude Include="emulator\nes.h" />
     <ClInclude Include="emulator\simple-opengl-loader.h" />
+    <ClInclude Include="helpers\nesdb.h" />
     <ClInclude Include="imguifiledialog\dirent\dirent.h" />
     <ClInclude Include="imguifiledialog\ImGuiFileDialog.h" />
     <ClInclude Include="imguifiledialog\ImGuiFileDialogConfig.h" />
@@ -283,6 +284,7 @@
     <ClCompile Include="denvergui\dengui_main.cpp" />
     <ClCompile Include="emulator\denver_config.cpp" />
     <ClCompile Include="emulator\nes.cpp" />
+    <ClCompile Include="helpers\nesdb.cpp" />
     <ClCompile Include="imguifiledialog\ImGuiFileDialog.cpp" />
     <ClCompile Include="imgui\backends\imgui_impl_opengl2.cpp" />
     <ClCompile Include="imgui\backends\imgui_impl_opengl3.cpp" />

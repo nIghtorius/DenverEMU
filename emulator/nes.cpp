@@ -136,7 +136,7 @@ void	nes_emulator::stop() {
 
 void	nes_emulator::load_cartridge(const char * filename) {
 	if (cart) delete cart;
-	cart = new cartridge(filename, ppu_device, mainbus, audio);
+	cart = new cartridge(filename, ppu_device, mainbus, audio, db);
 	clock.setdevices(nes_2a03, ppu_device, cart->program);
 	// check for NSF.
 	clock.nsf_mode = cart->high_hz_nsf;

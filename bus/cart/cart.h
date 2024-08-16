@@ -25,6 +25,10 @@
 #include "../../audio/expansion/vrc7.h"
 #include "../../audio/expansion/mmc5.h"
 
+// db
+#include "../../helpers/nesdb.h"
+
+
 // end of mappers.
 
 // BITS in header.
@@ -50,7 +54,7 @@
 #define		INES_F5_PRG_RAM_PRESENT					0x10
 #define		INES_F5_BUS_CONFLICT					0x20
 
-// NSFe chunk id
+// NSFe chunk ids
 #define		NSFE_INFO								0x4F464E49
 #define		NSFE_BANK								0x4B4E4142
 #define		NSFE_RATE								0x45544152
@@ -167,6 +171,7 @@ private:
 	void	readstream(std::istream &stream, ppu *ppu_device, bus *mainbus, audio_player *audbus, const char *orgfilename);
 	bool	readstream_nsf(std::istream &stream, ppu *ppu_device, bus *mainbus, audio_player *audbus);
 	bool	readstream_nsfe(std::istream& stream, ppu* ppu_device, bus* mainbus, audio_player* audbus);
+	nesdb* gamedb;
 
 public:
 
@@ -190,7 +195,7 @@ public:
 	std::vector<std::string>trackNames;
 	std::vector<std::int32_t>trackLengths;
 
-	cartridge(const char *filename, ppu *ppu_device, bus *mainbus, audio_player *audbus);
-	cartridge(std::istream &stream, ppu *ppu_device, bus *mainbus, audio_player *audbus);
+	cartridge(const char *filename, ppu *ppu_device, bus *mainbus, audio_player *audbus, nesdb *db = nullptr);
+	cartridge(std::istream &stream, ppu *ppu_device, bus *mainbus, audio_player *audbus, nesdb *db = nullptr);
 	~cartridge();
 };

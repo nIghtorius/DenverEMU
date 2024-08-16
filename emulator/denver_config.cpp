@@ -70,7 +70,7 @@ void	inifile::save(std::string filename) {
 		for (std::string section : sections) {
 			if (sectionName == section) known = true;
 		}
-		std::cout << sectionName << " " << (int)known << "\n";
+		//std::cout << sectionName << " " << (int)known << "\n";
 		if (!known) sections.push_back(sectionName);	// not known, add the sections.
 	}
 
@@ -86,7 +86,7 @@ void	inifile::save(std::string filename) {
 			if (item.section == section) {
 				// value is in section.. write it.
 				file << item.property << "=";
-				std::cout << item.datatype << "\n";
+				//std::cout << item.datatype << "\n";
 				switch (item.datatype) {
 				case dt_int:
 					file << std::dec << (int)item.boolint_value << std::endl;

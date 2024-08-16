@@ -30,6 +30,7 @@
 #include <GL/glew.h>
 
 #include "emulator/denver_config.h"
+#include "helpers/nesdb.h"
 
 #if defined(IMGUI_IMPL_OPENGL_ES2)
 #include <SDL_opengles2.h>
@@ -193,6 +194,9 @@ int main(int argc, char *argv[])
 	// start the emulator initialization.
 	std::cout << "Emulator initializing.." << std::endl;
 
+	// Load DB.
+	nesdb nes20db;
+
 	// SDL
 	std::cout << "Setting up SDL.." << std::endl;
 
@@ -246,6 +250,7 @@ int main(int argc, char *argv[])
 	}
 
 	nes_emulator* denver = new nes_emulator();
+	denver->db = &nes20db;
 	if (show_controllers) {
 		// we might have initialized denver, but the init will stop there. But we will show the detected controllers.
 		std::cout << "Denver has detected the following gamecontrollers.\n\n";

@@ -42,6 +42,7 @@ private:
 	uint64_t			time;
 
 public:
+	nesdb* db = nullptr;
 	nesvideo* video_out;
 	package_2a03		* nes_2a03;
 	ppu					* ppu_device;

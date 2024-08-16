@@ -545,16 +545,6 @@ void	cartridge::readstream(std::istream &nesfile, ppu *ppu_device, bus *mainbus,
 		return;
 	}
 
-	std::cout << "cartridge is valid." << std::endl;
-	std::cout << "Cartridge has NSF 2.0 header? " << (nes.has_nes20 ? "Yes" : "No") << "\n";
-	std::cout << "Program size: " << std::dec << (int)nes.programsize << " bytes.." << std::endl;
-	if (nes.charsize > 0) {
-		std::cout << "Charrom size: " << (int)nes.charsize << " bytes.." << std::endl;
-	}
-	else {
-		std::cout << "Cartridge contains VRAM" << std::endl;
-	}
-
 	// load program data
 	void * program_data = malloc(nes.programsize);
 	void * char_data = malloc(16);
@@ -565,6 +555,35 @@ void	cartridge::readstream(std::istream &nesfile, ppu *ppu_device, bus *mainbus,
 	}
 
 	nesfile.read((char*)program_data, nes.programsize);
+
+	// look for the game in the db (if available)
+	if (gamedb != nullptr) {
+		if (gamedb->db_loaded) {
+			// db is loaded.
+			// find the game.
+			int gameid = gamedb->in_db(program_data, nes.programsize);
+			if (gameid != -1) {
+				db_game gdb = gamedb->get_game_id(gameid);
+				nes.has_nes20 = true;
+				nes.mapper = gdb.mapper;
+				nes.submapper = gdb.submapper;
+				nes.has_battery = gdb.has_battery > 0;
+				nes.has_prg_ram = gdb.prgram_size > 0;
+				nes.program_ram_size = gdb.prgram_size;
+				nes.mirror_vertical = gdb.mirroring > 0;
+			}
+		}
+	}
+
+	std::cout << "cartridge is valid." << std::endl;
+	std::cout << "Cartridge has NSF 2.0 header? " << (nes.has_nes20 ? "Yes" : "No") << "\n";
+	std::cout << "Program size: " << std::dec << (int)nes.programsize << " bytes.." << std::endl;
+	if (nes.charsize > 0) {
+		std::cout << "Charrom size: " << (int)nes.charsize << " bytes.." << std::endl;
+	}
+	else {
+		std::cout << "Cartridge contains VRAM" << std::endl;
+	}
 
 	// load character data.
 	bool	has_char_data = (nes.charsize > 0);
@@ -871,13 +890,15 @@ void	cartridge::readstream(std::istream &nesfile, ppu *ppu_device, bus *mainbus,
 	l_ppu = ppu_device;
 }
 
-cartridge::cartridge(std::istream &stream, ppu *ppu_device, bus *mainbus, audio_player *audbus) {
+cartridge::cartridge(std::istream &stream, ppu *ppu_device, bus *mainbus, audio_player *audbus, nesdb *db) {
 	std::cout << "Loading cartridge from memory 0x" << std::hex << (std::uint64_t)&stream << std::endl;
+	gamedb = db;
 	readstream(stream, ppu_device, mainbus, audbus, nullptr);
 }
 
-cartridge::cartridge(const char *filename, ppu *ppu_device, bus *mainbus, audio_player *audbus) {
+cartridge::cartridge(const char *filename, ppu *ppu_device, bus *mainbus, audio_player *audbus, nesdb *db) {
 	std::cout << "Loading cartridge: " << filename << std::endl;
+	gamedb = db;
 	// load & parse NES file.
 	std::ifstream	nesfile;
 	nesfile.open(filename, std::ios::binary | std::ios::in);
