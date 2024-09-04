@@ -102,4 +102,6 @@ public:
 	void	reportdevices();
 	void	emulate_bus_conflicts(const bool enable);	// emulate busconflicts? (true is slower)
 	void	busreset();
+	// finding devices.
+	bus_device* find_device_partial_name_match(const std::string matchstring);
 };

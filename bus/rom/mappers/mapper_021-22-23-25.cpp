@@ -224,17 +224,17 @@ void	vrc2_4_rom::write(int addr, int addr_from_base, byte data) {
 		
 	}
 	word caddr = recompute_addr(addr);
-	if ((caddr >= 0x8000) && (caddr <= 0x8003)) {
+	if ((caddr >= 0x8000) && (caddr <= 0x8FFF)) {
 		state.prgbank0 = data & 0x1F;
 		setbanks();
 		return;
 	}
-	if ((caddr >= 0xA000) && (caddr <= 0xA003)) {
+	if ((caddr >= 0xA000) && (caddr <= 0xAFFF)) {
 		state.prgbank1 = data & 0x1F;
 		setbanks();
 		return;
 	}
-	if ((caddr >= 0x9000) && (caddr <= 0x9003)) {
+	if ((caddr >= 0x9000) && (caddr <= 0x9FFF)) {
 		if (!vrc2_mode) {
 			if (caddr != 0x9002) {
 				state.mirror = data & 0x03;
@@ -251,7 +251,7 @@ void	vrc2_4_rom::write(int addr, int addr_from_base, byte data) {
 		return;
 	}
 	// char select.
-	if ((caddr >= 0xB000) && (caddr <= 0xE003)) {
+	if ((caddr >= 0xB000) && (caddr <= 0xEFFF)) {
 		byte hi_mask = 0x1F;
 		if (vrc2_mode) hi_mask = 0x0F;
 		switch (caddr) {
@@ -324,7 +324,7 @@ void	vrc2_4_rom::write(int addr, int addr_from_base, byte data) {
 		return;
 	}
 	// IRQ
-	if ((caddr >= 0xF000) && (caddr <= 0xF003)) {
+	if ((caddr >= 0xF000) && (caddr <= 0xFFFF)) {
 		switch (caddr) {
 		case 0xF000:
 			// IRQ Latch Lo
@@ -394,13 +394,14 @@ void	vrc2_4_rom::setbanks() {
 	}
 
 	// charbanking stuff.
-	if (charrom) charrom->setbanks(&state);
+	if (charrom) charrom->setbanks(&state, vrc2a_char_mode);
 }
 
 void vrc2_4_rom::set_debug_data() {
 	// initialize debugger watchers.
 	debugger.add_debug_var("VRC2/4", -1, NULL, t_beginblock);
 	debugger.add_debug_var("VRC2 mode", -1, &vrc2_mode, t_bool);
+	debugger.add_debug_var("VRC2a char mode", -1, &vrc2a_char_mode, t_bool);
 	debugger.add_debug_var("Running as mapper id", -1, &run_as_mapper, t_byte);
 	debugger.add_debug_var("NES2 submapper", -1, &submapper, t_byte);
 	debugger.add_debug_var("Compat mode", -1, &compability_mode, t_int);
@@ -412,7 +413,7 @@ void vrc2_4_rom::set_debug_data() {
 	debugger.add_debug_var("PRG bank #0", -1, &state.prgbank0, t_byte);
 	debugger.add_debug_var("PRG bank #1", -1, &state.prgbank1, t_byte);
 	debugger.add_debug_var("Mirror", -1, &state.mirror, t_byte);
-	debugger.add_debug_var("Charbanks", 8, &state.c[0], t_bytearray);
+	debugger.add_debug_var("Charbanks", 8, &state.c[0], t_wordarray);
 	debugger.add_debug_var("IRQ latch", -1, &state.irq_latch, t_byte);
 	debugger.add_debug_var("IRQ Reload", -1, &state.irq_latch_reload, t_byte);
 	debugger.add_debug_var("IRQ Mode", -1, &state.irq_mode, t_byte);
@@ -435,18 +436,21 @@ vrc2_4_vrom::vrc2_4_vrom() {
 	devicemask = 0x1FFF;
 }
 
-void	vrc2_4_vrom::setbanks(vrc2_4_state *state) {
+void	vrc2_4_vrom::setbanks(vrc2_4_state *state, bool vrc2mode) {
 	// VRC4 has 512K! support for charrom.
 	if (!romdata) return;
 
-	chr_0000 = &romdata[(state->c[0] << 10) % romsize];
-	chr_0400 = &romdata[(state->c[1] << 10) % romsize];
-	chr_0800 = &romdata[(state->c[2] << 10) % romsize];
-	chr_0c00 = &romdata[(state->c[3] << 10) % romsize];
-	chr_1000 = &romdata[(state->c[4] << 10) % romsize];
-	chr_1400 = &romdata[(state->c[5] << 10) % romsize];
-	chr_1800 = &romdata[(state->c[6] << 10) % romsize];
-	chr_1c00 = &romdata[(state->c[7] << 10) % romsize];
+	int shift = 10;
+	if (vrc2mode) shift--;
+
+	chr_0000 = &romdata[(state->c[0] << shift) % romsize];
+	chr_0400 = &romdata[(state->c[1] << shift) % romsize];
+	chr_0800 = &romdata[(state->c[2] << shift) % romsize];
+	chr_0c00 = &romdata[(state->c[3] << shift) % romsize];
+	chr_1000 = &romdata[(state->c[4] << shift) % romsize];
+	chr_1400 = &romdata[(state->c[5] << shift) % romsize];
+	chr_1800 = &romdata[(state->c[6] << shift) % romsize];
+	chr_1c00 = &romdata[(state->c[7] << shift) % romsize];
 
 	// mirroring.
 	switch (state->mirror) {

@@ -4,6 +4,7 @@
 #include "../imguifiledialog/ImGuiFileDialog.h"
 #include "../package/2a03.h"
 #include "../bus/rom/mappers/mapper_nsf.h"
+#include "../bus/rom/disksystem//fds.h"
 #include "gui_debuggers.h"
 #include <iostream>
 
@@ -71,10 +72,11 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *
 	if (ImGui::BeginViewportSideBar("##SecondaryMenuBar", viewport, ImGuiDir_Up, height, window_flags)) 
 	{
 		if (ImGui::BeginMenuBar()) {
+			fds_rom* fds = reinterpret_cast<fds_rom*>(denver->mainbus->find_device_partial_name_match("FDS"));
 			if (ImGui::BeginMenu("File")) {
 				if (ImGui::MenuItem("Open file", "Ctrl+O")) {
 					std::cout << "Last opened path: " << state->lastpath << "\n";
-					ImGuiFileDialog::Instance()->OpenDialog("nesfile", "Select NES file", "All compatible files{.nes,.nsf,.nsfe},NES roms{.nes},NES music{.nsf},NES extended music{.nsfe}", state->lastpath, 1, nullptr, ImGuiFileDialogFlags_Modal);
+					ImGuiFileDialog::Instance()->OpenDialog("nesfile", "Select NES file", "All compatible files{.nes,.nsf,.nsfe,.fds},NES roms{.nes},NES FDS Images{.fds},NES music{.nsf},NES extended music{.nsfe}", state->lastpath, 1, nullptr, ImGuiFileDialogFlags_Modal);
 				}
 
 				if (ImGui::BeginMenu("Recent")) {
@@ -163,6 +165,47 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *
 					ImGui::EndMenu();
 				}
 				ImGui::EndMenu();
+			}
+			if (fds) {
+				if (ImGui::BeginMenu("FDS")) {
+					if (ImGui::BeginMenu("Swap disk")) {
+						int disks = (int)fds->disks.size();
+						for (int i = 0; i < disks; i++) {
+							int sideab = i % 2;
+							int diskno = i / 2;
+							diskno++;
+							std::string descriptor = "Disk #" + std::to_string(diskno);
+							if (sideab == 0) {
+								descriptor += " side A";
+							}
+							else {
+								descriptor += " side B";
+							}
+							if (ImGui::MenuItem(descriptor.c_str())) {
+								// select the disk.
+								fds->set_side(i);
+							}
+						}
+						ImGui::EndMenu();
+					}
+					if (ImGui::BeginMenu("Disk actions")) {
+						if (ImGui::MenuItem("Eject disk", NULL, false)) {
+							if (fds) {
+								fds->disk_inserted = false;
+							}
+
+						}
+						if (ImGui::MenuItem("Insert disk", NULL, false)) {
+							if (fds) {
+								fds->disk_inserted = true;
+								fds->state.disksector = 0;
+								fds->state.cyclecount = 0;
+							}
+						}
+						ImGui::EndMenu();
+					}
+					ImGui::EndMenu();
+				}
 			}
 			if (ImGui::BeginMenu("DebugActions")) {
 				if (ImGui::MenuItem("Switch PPU to VER")) {

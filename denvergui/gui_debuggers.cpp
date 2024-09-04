@@ -14,7 +14,7 @@ void	denvergui::internal_render_dbg_node(dbg_dt* node) {
 	const byte* bydata = (const byte*)node->data;
 	int v24b = 0;
 	ImVec4 color = { 0x00, 0xFF, 0x00, 0xFF };
-
+	int		c = 0;
 	char buf[32];
 	switch (node->datatype) {
 	case t_24bit_n163:
@@ -65,6 +65,28 @@ void	denvergui::internal_render_dbg_node(dbg_dt* node) {
 		ImGui::Text("%s:", node->description.c_str()); ImGui::SameLine();
 		for (int i = 0; i < node->max; i++) {
 			ImGui::Text("%02X", bdata[i]); ImGui::SameLine();
+		}
+		ImGui::NewLine();
+		break;
+	case t_bytebigarray:
+		ImGui::Text("%s:", node->description.c_str()); 
+		ImGui::Text("      "); ImGui::SameLine();
+		c = 0;
+		for (int i = 0; i < node->max; i++) {
+			ImGui::Text("%02X", bdata[i]); ImGui::SameLine();
+			c++;
+			if (c == 16) {
+				c = 0;
+				ImGui::NewLine();
+				ImGui::Text("      "); ImGui::SameLine();
+			}
+		}
+		ImGui::NewLine();
+		break;
+	case t_wordarray:
+		ImGui::Text("%s:", node->description.c_str()); ImGui::SameLine();
+		for (int i = 0; i < node->max; i++) {
+			ImGui::Text("%04X", wdata[i]); ImGui::SameLine();
 		}
 		ImGui::NewLine();
 		break;

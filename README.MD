@@ -14,6 +14,19 @@ Since 17-08-2024, Denver has added support for the NES20DB database. But Denver 
 
 I have included a binary format of the nes20db database in this repo. /nes20db.bin. If you want to make use of it, make sure that the file resides in the same folder as the binary. Upon starting Denver. It will look for this file and load it when it is found.
 
+Famicom Disk System (FDS)
+-------------------------
+With codebases of 04-09-2024 and more recent. Denver now supports FDS emulation. 
+Requirements FDS emulation:
+* You need to find the FDS BIOS (8KB in size) and save the file as disksys.rom in the location of the Denver executable/binary.
+
+What works with FDS:
+* I have tried to implement a sturdy FDS HW emulation, it passes all the tests in fdsirqtests.fds
+* It can load and write to disks. 
+* Data that has been written will not be written in the FDS file. But a second file filename.fds.dwd will be written. Just as the .SRM files with battery backed cartridge roms. 
+* If you want to "reset" your FDS image. You only need to remove the .dwd file.
+* When loading FDS files. A extra menu option in the GUI will appear, namely: FDS. There you can swap sides and disks.
+
 Does it support NSF?
 --------------------
 Yes it does support NSF. The compability is suprisingly great. It plays most of the NSFs. 

@@ -15,6 +15,10 @@
 #include "../rom/mappers/mapper_071.h"
 #include "../rom/mappers/mapper_073.h"
 #include "../rom/mappers/mapper_085.h"
+#include "../rom/mappers/mapper_087.h"
+
+// FDS
+#include "../rom/disksystem/fds.h"
 
 // NSF
 #include "../rom/mappers/mapper_nsf.h"
@@ -100,7 +104,140 @@ bool	parse_auth_data(auth_data* data, char* rawauth) {
 	return true;
 }
 
+void fds_gapping(const byte* data, const std::size_t size, std::vector<uint8_t> &fdsImage) {
+	fdsImage.insert(fdsImage.end(), 28300 / 8, 0);
+	for (size_t i = 0; i < size;) {
+		uint8_t dblocktype = data[i];
+		uint32_t blockLength = 1;
+		switch (dblocktype) {
+		case 1: blockLength = 56; break; // main header.
+		case 2: blockLength = 2; break; // file count.
+		case 3: blockLength = 16; break; // filename header.
+		case 4: blockLength = 1 + data[i - 3] + data[i - 2] * 0x0100; break; // data block.
+		default: return;
+		}
+
+		if (dblocktype == 0x00) {
+			fdsImage.push_back(0x00);
+		}
+		else {
+			fdsImage.push_back(0x80);	// gap end bit.
+			fdsImage.insert(fdsImage.end(), &data[i], &data[i] + blockLength);
+			// add CRC data.
+			fdsImage.push_back(0x4D);
+			fdsImage.push_back(0x62);
+			fdsImage.insert(fdsImage.end(), 976 / 8, 0);
+		}
+		i += blockLength;
+	}
+	return;
+}
+
 // classes
+bool	cartridge::readstream_fds(std::istream& fdsfile, ppu* ppu_device, bus* mainbus, audio_player* audbus, const char* orgfilename) {
+	// we already confirmed header signature at this callpoint. No need to revalidate.
+	std::cout << "Loading as FDS file..\n";
+
+	fdsfile.seekg(0, std::ios_base::end);
+	std::size_t filesize = fdsfile.tellg();
+	fdsfile.seekg(0, std::ios_base::beg);
+
+	// read the FDS file.
+	bool has_header = ((filesize - 16) % 65500) == 0;
+
+	// build NSF hardware.
+	fds_rom* fdsrom;
+	try {
+		std::cout << "Initializing FDS emulation..\n";
+		program = new fds_rom();
+	}
+	catch(...) {
+		std::cout << "Unable to create FDS virtual hardware.\n";
+		return false;
+	}
+
+	fdsrom = reinterpret_cast<fds_rom*>(program);
+
+	// create VRAM device.
+	character = new vram();
+
+	// link devices
+	mainbus->registerdevice(program);
+	ppu_device->set_char_rom(character);
+
+	// cpu
+	//cpu2a03_fast *cpu = &reinterpret_cast<package_2a03*>(mainbus->devices[0])->cpu_2a03;
+	//fdsrom->cpu = cpu;
+
+	// register used devices (linking)
+	m_aud = audbus;
+	m_bus = mainbus;
+	l_ppu = ppu_device;
+
+	// load FDS data.
+	if (has_header) {
+		fdsfile.seekg(16, std::ios_base::beg);
+		filesize -= 16;
+	}
+	byte* diskdata = (byte*)malloc(filesize);
+
+	if (diskdata == nullptr) {
+		std::cout << "Something went wrong loading FDS image\n";
+		return false;
+	}
+
+	fdsfile.read((char*)diskdata, filesize);
+
+	//std::vector<uint8_t>* gappedData = new std::vector<uint8_t>();	
+	
+	int sides = (int)filesize / 65500;
+
+	for (int j = 0; j < sides; j++) {
+		std::vector<uint8_t>* diskSide = new std::vector<uint8_t>();
+		fds_gapping((byte*)&diskdata[j*65500], 65500, *diskSide);
+		if ((const int)diskSide->size() != 65500) {
+			diskSide->resize(65500);
+		}
+		fdsrom->add_disk((byte*)&diskSide->begin()[0], (const int)diskSide->size());
+		delete diskSide;
+	}
+
+	free(diskdata);
+
+	// restore saved data.
+	// load .dwd (disk write data) file.
+	if ((orgfilename != nullptr) && (program != nullptr)) {
+		std::string srmfile;
+		srmfile += orgfilename;
+		srmfile += ".dwd";
+		// we have a generated filename. assign it to the loaded program rom.
+		strncpy(program->get_sram_filename(), srmfile.c_str(), SRAM_MAX_FILE_NAME);
+		std::ifstream srm(srmfile.c_str(), std::ios::binary | std::ios::in);
+		if (srm.good()) {
+			// load the file.
+			srm.seekg(0, std::ios::end);
+			size_t srm_size = srm.tellg();
+			srm.seekg(0, std::ios::beg);
+			byte* sram = (byte*)malloc(srm_size);
+			if (sram != NULL) srm.read((char*)sram, srm_size);
+			// update cart.
+			if (sram != NULL) program->set_battery_backed_ram(sram, srm_size);
+			std::cout << "Disk write data loaded from: " << srmfile.c_str() << "\n";
+		}
+	}
+
+
+	fdsrom->set_side(0);
+	fdsrom->ppudevice = ppu_device;
+
+	std::cout << "Running FDS image..\n";
+
+	ppu_device->configure_horizontal_mirror();
+
+	return true;
+}
+
+
 bool	cartridge::readstream_nsfe(std::istream& nsffile, ppu* ppu_device, bus* mainbus, audio_player* audbus) {
 	program = NULL;
 	character = NULL;
@@ -287,9 +424,10 @@ bool	cartridge::readstream_nsfe(std::istream& nsffile, ppu* ppu_device, bus* mai
 	nsf_rom->nmi_trig_cycles = (int)floorf(cpu_cycles_per_frame);
 	nsf_rom->state.numsongs = info.total_songs;
 	nsf_rom->state.currentsong = 1;
-	for (int i = 0; i < 8; i++) nsf_rom->state.banks[i] = bank.bank_init[i];
+	for (int i = 0; i < 8; i++) nsf_rom->state.sbanks[i] = bank.bank_init[i];
 	nsf_rom->state.init = info.init_address;
 	nsf_rom->state.play = info.play_address;
+	nsf_rom->state.load = info.load_address;
 	nsf_rom->set_rom_data(program_data, prgsize + prealloc);
 
 	// expansions.
@@ -371,7 +509,6 @@ bool	cartridge::readstream_nsfe(std::istream& nsffile, ppu* ppu_device, bus* mai
 
 	return true;
 }
-
 
 bool	cartridge::readstream_nsf(std::istream &nsffile, ppu *ppu_device, bus *mainbus, audio_player *audbus) {
 	program = NULL;
@@ -460,9 +597,10 @@ bool	cartridge::readstream_nsf(std::istream &nsffile, ppu *ppu_device, bus *main
 	nsf_rom->nmi_trig_cycles = (int)floorf(cpu_cycles_per_frame);
 	nsf_rom->state.numsongs = nsf_hdr.total_songs;
 	nsf_rom->state.currentsong = 1;
-	for (int i = 0; i < 8; i++) nsf_rom->state.banks[i] = nsf_hdr.bank_init[i];
+	for (int i = 0; i < 8; i++) nsf_rom->state.sbanks[i] = nsf_hdr.bank_init[i];
 	nsf_rom->state.init = nsf_hdr.init_address;
 	nsf_rom->state.play = nsf_hdr.play_address;
+	nsf_rom->state.load = nsf_hdr.load_address;
 	nsf_rom->set_rom_data(program_data, program_size + prealloc);
 
 	// expansions.
@@ -540,8 +678,9 @@ void	cartridge::readstream(std::istream &nesfile, ppu *ppu_device, bus *mainbus,
 	// do nothing is header is not valid. 
 	if (!nes.valid_nes_header) {
 		// before giving up. try first NSF.
-		if (!readstream_nsf(nesfile, ppu_device, mainbus, audbus))
+		if (!readstream_nsf(nesfile, ppu_device, mainbus, audbus)) {
 			std::cout << "Cartridge is invalid format\n";
+		}
 		return;
 	}
 
@@ -565,6 +704,11 @@ void	cartridge::readstream(std::istream &nesfile, ppu *ppu_device, bus *mainbus,
 			if (gameid != -1) {
 				db_game gdb = gamedb->get_game_id(gameid);
 				nes.has_nes20 = true;
+				// display mapper mismatch with DB if any.
+				if (nes.mapper != gdb.mapper) {
+					std::cout << std::dec;
+					std::cout << "Cartridge file has mismatching mapper, mapper: " << (int)nes.mapper << ", mapper in DB: " << (int)gdb.mapper << "\n";
+				}
 				nes.mapper = gdb.mapper;
 				nes.submapper = gdb.submapper;
 				nes.has_battery = gdb.has_battery > 0;
@@ -799,12 +943,17 @@ void	cartridge::readstream(std::istream &nesfile, ppu *ppu_device, bus *mainbus,
 			program = new vrc2_4_rom();
 			character = new vrc2_4_vrom();
 			bool vrc2 = false;		// assume VRC4 unless conditions down below are met.
+			bool vrc2a = false;
 			// enable vrc mode for the follow combinations.
-			if ((nes.mapper == 22) && (nes.submapper == 0)) vrc2 = true;
+			if ((nes.mapper == 22) && (nes.submapper == 0)) {
+				vrc2 = true;
+				vrc2a = true;
+			}
 			if ((nes.mapper == 23) && (nes.submapper == 3)) vrc2 = true;
 			if ((nes.mapper == 25) && (nes.submapper == 3)) vrc2 = true;
 			reinterpret_cast<vrc2_4_rom*>(program)->link_vrom(reinterpret_cast<vrc2_4_vrom*>(character));
 			reinterpret_cast<vrc2_4_rom*>(program)->vrc2_mode = vrc2;
+			reinterpret_cast<vrc2_4_rom*>(program)->vrc2a_char_mode = vrc2a;
 			reinterpret_cast<vrc2_4_rom*>(program)->run_as_mapper = nes.mapper;
 			reinterpret_cast<vrc2_4_rom*>(program)->submapper = nes.submapper;		// important in NES2.0 mode.
 			reinterpret_cast<vrc2_4_rom*>(program)->compability_mode = 0;	// native mode, no compat.
@@ -845,8 +994,22 @@ void	cartridge::readstream(std::istream &nesfile, ppu *ppu_device, bus *mainbus,
 			program->set_rom_data((byte *)program_data, nes.programsize);
 		}
 		break;
+	case 87:
+		// J87 ROM
+		program = new j87rom();
+		if (has_char_data) {
+			character = new j87vrom();
+			character->set_rom_data((byte*)char_data, nes.charsize);
+			reinterpret_cast<j87rom*>(program)->link_vrom(reinterpret_cast<j87vrom*>(character));
+		}
+		else {
+			charram = new vram();
+			character = charram;	// should not happen.
+		}
+		program->set_rom_data((byte*)program_data, nes.programsize);
+		break;
 	default:
-		std::cout << "Mapper is unknown to me" << std::endl;
+		std::cout << "Mapper #" << std::dec << (int)nes.mapper << " is unknown to me" << std::endl;
 		break;
 	}
 
@@ -897,12 +1060,33 @@ cartridge::cartridge(std::istream &stream, ppu *ppu_device, bus *mainbus, audio_
 }
 
 cartridge::cartridge(const char *filename, ppu *ppu_device, bus *mainbus, audio_player *audbus, nesdb *db) {
-	std::cout << "Loading cartridge: " << filename << std::endl;
-	gamedb = db;
+	// check if file is FDS?
+	// problems with FDS file that they may come with or without a 16 byte header.
+	// we can test the validity by modulating with 65500 bytes and check if modulus is 0
+	// do this with or without -16.
+	std::size_t filesize = 0;
+
 	// load & parse NES file.
 	std::ifstream	nesfile;
 	nesfile.open(filename, std::ios::binary | std::ios::in);
-	readstream(nesfile, ppu_device, mainbus, audbus, filename);
+	nesfile.seekg(0, std::ios_base::end);
+	filesize = nesfile.tellg();
+	nesfile.seekg(0, std::ios_base::beg);
+	
+	bool is_fds = ((filesize % 65500) == 0) || (((filesize - 16) % 65500) == 0);
+
+	if (is_fds) {
+		std::cout << "Loading FDS image: " << filename << std::endl;
+		if (!readstream_fds(nesfile, ppu_device, mainbus, audbus, filename)) {
+			std::cout << "Invalid FDS image\n";
+		}
+	}
+	else {
+		std::cout << "Loading cartridge: " << filename << std::endl;
+		gamedb = db;
+		readstream(nesfile, ppu_device, mainbus, audbus, filename);
+	}
+	
 	nesfile.close();
 }
 
@@ -942,13 +1126,15 @@ cartridge::~cartridge() {
 			// has it a SRAM file assigned?
 			char* srmfile = program->get_sram_filename();
 			if (strlen(srmfile) > 0) {
-				std::cout << "Writing battery backed ram to: " << srmfile << "\n";
-				std::ofstream srm(srmfile, std::ios::binary | std::ios::out);
 				batterybackedram* ramtowrite = program->get_battery_backed_ram();
-				if (ramtowrite != nullptr)
-					if (ramtowrite->data != nullptr)
-						srm.write((char*)ramtowrite->data, ramtowrite->size);
-				srm.close();
+				if (ramtowrite->size > 0) {
+					std::ofstream srm(srmfile, std::ios::binary | std::ios::out);
+					std::cout << "Writing battery backed ram to: " << srmfile << "\n";
+					if (ramtowrite != nullptr)
+						if (ramtowrite->data != nullptr)
+							srm.write((char*)ramtowrite->data, ramtowrite->size);
+					srm.close();
+				}
 				free(ramtowrite);
 			}
 		}

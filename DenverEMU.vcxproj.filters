@@ -103,6 +103,9 @@
     <Filter Include="Source Files\helpers">
       <UniqueIdentifier>{090dd95f-d4a3-4d3d-8461-ca43f627ca1e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\emulation\bus\rom\disksystem">
+      <UniqueIdentifier>{9cc07fdb-485d-4f8f-8244-e10d205c31a7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="audio\apu.h">
@@ -300,6 +303,12 @@
     <ClInclude Include="helpers\nesdb.h">
       <Filter>Source Files\helpers</Filter>
     </ClInclude>
+    <ClInclude Include="bus\rom\mappers\mapper_087.h">
+      <Filter>Source Files\emulation\bus\rom\mappers</Filter>
+    </ClInclude>
+    <ClInclude Include="bus\rom\disksystem\fds.h">
+      <Filter>Source Files\emulation\bus\rom\disksystem</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DenverEMU.cpp">
@@ -472,6 +481,12 @@
     </ClCompile>
     <ClCompile Include="helpers\nesdb.cpp">
       <Filter>Source Files\helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="bus\rom\mappers\mapper_087.cpp">
+      <Filter>Source Files\emulation\bus\rom\mappers</Filter>
+    </ClCompile>
+    <ClCompile Include="bus\rom\disksystem\fds.cpp">
+      <Filter>Source Files\emulation\bus\rom\disksystem</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

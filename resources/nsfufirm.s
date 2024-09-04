@@ -5,6 +5,11 @@
 ; patched by jumping directly to the trackselect code after setting up CPU/STACK.
 ; also writes 0x00 to 0x2000 instead of 0x80 ( thus disabling NMI on the PPU )
 
+; 25-08-2024, Cleaned up source. Code that isn't used has been removed.
+; update code for the NMI toggle. (nmi for play routine needs to be toggled on after song init)
+; this can be done by writing 0xFF to memory address 0x3000
+; Reason for NMI toggle: so that the NMI doesn't interfere with the initialization process. Getting the player in an invalid state.
+
 base	$3000
 
 ; init vectors.
@@ -19,41 +24,23 @@ base	$3000
 reset:
 	; initialize uFirmware.
 	sei
-	ldx #40
+	ldx #$40
 	stx $4017
 	ldx #$FF
 	txs			; setup stack pointer.
-	
-	; we are going to use the ppu emulation for the timings. (NTSC)
 	inx			; 0xFF -> 0x00
-	jmp trackselect		; stx $2000		; 0 -> 0x2000, 0x2001
-	stx $2001		
-	
-	; wait for the ppu to be "ready"
-	bit $2002
--	bit $2002
-	bpl -
--	bit $2002
-	bpl -
-	; ppu ready.
+	lda	#$00
+	sta 	$2000	; disable nmi PPU emulation.
 
-	; activate rendering (rendering will be hidden by Denver)
-	lda	$2002
-	lda	#0
-	sta	#2005
-	lda	#$d0
-	sta	$2005
-	lda	#$1e
-	sta	$2001	; ppu rendering on.
-
-	; play routine.
 trackselect:
 	lda	#$00	; first track (patchable)
 	ldx	#$00	; ntsc timing.
+
 init:
 	jsr	$8000	; init function (patched by loader)
-	lda	#$00
-	sta 	$2000	; disable nmi
+	lda	#$ff	; setup Denvers NSF mode (0x3000) == enable NMI.
+	sta	$3000	; setup DEnvers NSF mode (0x3000) == enable NMI.
+
 lockloop:
 	jmp	lockloop	; lock up (only NMI is running, NSF interface will reset PC to RESET when new song is selected)
 

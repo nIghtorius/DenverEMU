@@ -100,6 +100,12 @@ struct nsf_header_raw {
 	byte				program_size[3];
 };
 
+// FDS
+struct fds_header {
+	std::uint32_t		header_signature;
+	byte				disksides;
+	byte				reserved[11];
+};
 
 // NSFe
 struct nsfe_header {
@@ -171,6 +177,7 @@ private:
 	void	readstream(std::istream &stream, ppu *ppu_device, bus *mainbus, audio_player *audbus, const char *orgfilename);
 	bool	readstream_nsf(std::istream &stream, ppu *ppu_device, bus *mainbus, audio_player *audbus);
 	bool	readstream_nsfe(std::istream& stream, ppu* ppu_device, bus* mainbus, audio_player* audbus);
+	bool	readstream_fds(std::istream& stream, ppu* ppu_device, bus* mainbus, audio_player* audbus, const char *orgfilename);
 	nesdb* gamedb;
 
 public:

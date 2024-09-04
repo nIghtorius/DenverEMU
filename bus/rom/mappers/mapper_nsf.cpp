@@ -50,6 +50,10 @@ byte	nsfrom::read(const int addr, const int addr_from_base, const bool onlyread)
 }
 
 void	nsfrom::write(const int addr, const int addr_from_base, const byte data) {
+	// enable NMI.
+	if ((addr == 0x3000) && (data == 0xFF)) {
+		nmi_enabled = true;
+	}
 	if ((addr >= 0x5FF8) && (addr <= 0x5FFF)) {
 		byte	bank = addr - 0x5FF8;
 		state.banks[bank] = data;
@@ -69,7 +73,7 @@ int		nsfrom::rundevice(const int ticks) {
 
 	tickcount += ticks;
 	if (tickcount >= nmi_trig_cycles) {
-		nmi_enable = true;
+		if (nmi_enabled) nmi_enable = true;
 		tickcount = 0;
 	}
 	return ticks;
@@ -86,10 +90,14 @@ void	nsfrom::initialize(const byte song) {
 	// first reset the tickcount to 0
 	tickcount = 0;		// so we do not trip the NMI during NSFufirmware initialization.
 	nmi_enable = false;	// make sure a triggered not handled NMI is suppressed.
+	nmi_enabled = false; // NSF hardware do not trigger NMI's. write 0xff to 0x3000 to enable this. Done via uFirmware.
 
+	// check if all zero and copy initial state to banks. (initial state is sbanks)
 	bool	are_all_zero = true;
-	for (int i = 0; i < 8; i++)
+	for (int i = 0; i < 8; i++) {
+		state.banks[i] = state.sbanks[i];
 		if (state.banks[i] != 0) are_all_zero = false;
+	}
 
 	if (are_all_zero) {
 		// emulate old nsf.
@@ -122,7 +130,7 @@ void	nsfrom::initialize(const byte song) {
 	nsf_ufirmware_header		vectors;
 	memcpy(&vectors, ufirm, sizeof(nsf_ufirmware_header));
 
-	ufirm[vectors.trackselect-0x3000] = song;
+	ufirm[vectors.trackselect - 0x3000] = song;
 	ufirm[vectors.init - 0x3000] = state.init & 0xFF;
 	ufirm[vectors.init - 0x3000 + 1] = (state.init & 0xFF00) >> 8;
 	ufirm[vectors.play - 0x3000] = state.play & 0xFF;
@@ -140,6 +148,7 @@ void	nsfrom::set_debug_data() {
 	debugger.add_debug_var("NSF ROM", -1, NULL, t_beginblock);
 	debugger.add_debug_var("Tickcount", -1, &tickcount, t_int);
 	debugger.add_debug_var("Cycles to trigger NMI", -1, &nmi_trig_cycles, t_int);
+	debugger.add_debug_var("NMI enabled", -1, &nmi_enabled, t_bool);
 	debugger.add_debug_var("Expansion VRC6", -1, &vrc6exp, t_bool);
 	debugger.add_debug_var("Expansion Sunsoft", -1, &sunexp, t_bool);
 	debugger.add_debug_var("Expansion Namco", -1, &namexp, t_bool);
@@ -148,7 +157,8 @@ void	nsfrom::set_debug_data() {
 	debugger.add_debug_var("NSF ROM", -1, NULL, t_endblock);
 
 	debugger.add_debug_var("State", -1, NULL, t_beginblock);
-	debugger.add_debug_var("Banks", 8, &state.banks[0], t_bytearray);
+	debugger.add_debug_var("Starting Banks", 8, &state.sbanks[0], t_bytearray);
+	debugger.add_debug_var("Current Banks", 8, &state.banks[0], t_bytearray);
 	debugger.add_debug_var("Init address", -1, &state.init, t_addr);
 	debugger.add_debug_var("Play address", -1, &state.play, t_addr);
 	debugger.add_debug_var("Load address", -1, &state.load, t_addr);

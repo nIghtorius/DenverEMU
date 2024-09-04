@@ -148,6 +148,6 @@ void	namco163audio::set_debug_data() {
 	}
 
 	debugger.add_debug_var("Memory contents", -1, NULL, t_beginblock);
-	debugger.add_debug_var("SOUNDRAM", 128, sound_ram, t_bytearray);
+	debugger.add_debug_var("SOUNDRAM", 128, sound_ram, t_bytebigarray);
 	debugger.add_debug_var("Memory contents", -1, NULL, t_endblock);
 }

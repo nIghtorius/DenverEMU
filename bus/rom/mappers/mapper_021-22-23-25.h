@@ -45,6 +45,7 @@ private:
 	vrc2_4_vrom	*charrom = nullptr;
 public:
 	bool		vrc2_mode;
+	bool		vrc2a_char_mode;
 	byte		submapper = 0;
 	byte		run_as_mapper = 0;
 	int			compability_mode = 0;	// no compatibilty. 
@@ -75,7 +76,7 @@ private:
 	byte		*chr_1c00;
 public:
 	vrc2_4_vrom();
-	void		setbanks(vrc2_4_state *state);
+	void		setbanks(vrc2_4_state *state, bool vrc2mode);
 	virtual void set_rom_data(byte *data, std::size_t size);
 	virtual byte read(int addr, int addr_from_base, bool onlyread = false);
 };

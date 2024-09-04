@@ -14,7 +14,7 @@
 
 enum dbg_datatypes {
 	t_int, t_byte, t_shortintarray, t_cstr, t_longintarray, t_beginblock, t_endblock, t_bool, t_addr, t_word, t_bytearray,
-	t_byte_lonibble, t_24bit_n163
+	t_byte_lonibble, t_24bit_n163, t_wordarray, t_bytebigarray
 };
 
 struct dbg_dt {

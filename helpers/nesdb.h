@@ -51,12 +51,12 @@ struct db_game {
 
 class nesdb {
 private:
-	db_header	dbstats;
-	db_game*	entries;
+	db_header	dbstats = { 0, 0, 0 };
+	db_game*	entries = nullptr;
 public:
 	bool		db_loaded = false;
-	nesdb();
+	nesdb(const char[] = "nes20db.bin");
 	~nesdb();
-	int			in_db(const void* prg, std::size_t size);
-	db_game		get_game_id(int id);
+	int			in_db(const void* prg, const std::size_t size);
+	db_game		get_game_id(const int id) const;
 };

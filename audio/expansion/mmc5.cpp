@@ -46,6 +46,7 @@ byte	mmc5audio::read(int addr, int addr_from_base, bool onlyread) {
 		return result;
 		break;
 	}
+	return result;
 }
 
 void	mmc5audio::write(int addr, int addr_from_base, byte data) {
@@ -142,7 +143,6 @@ void	mmc5audio::reset() {
 }
 
 void	mmc5audio::set_debug_data() {
-	char buf[16];
 	debugger.add_debug_var("MMC5 AUDIO", -1, NULL, t_beginblock);
 
 	debugger.add_debug_var("MMC5 DMC RO MODE", -1, &mmc5_dmc_read_mode, t_bool);

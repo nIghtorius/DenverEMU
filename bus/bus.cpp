@@ -105,6 +105,16 @@ void	bus::busreset() {
 	}
 }
 
+bus_device* bus::find_device_partial_name_match(const std::string matchstring) {
+	for (bus_device* dev : devices) {
+		char *value = strstr(dev->get_device_descriptor(), matchstring.c_str());
+		if (value) {
+			return dev;
+		}
+	}
+	return nullptr;
+}
+
 void	bus::reportdevices() {
 	// this reports (dumps to console) all the connected devices with their names and allocation points.
 	for (bus_device* dev : devices) {

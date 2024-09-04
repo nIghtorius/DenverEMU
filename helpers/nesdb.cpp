@@ -23,7 +23,7 @@ struct CRC32_s
 		}
 	}
 
-	uint32_t update(uint32_t(&table)[256], uint32_t initial, const void* buf, size_t len)
+	uint32_t update(uint32_t(&table)[256], uint32_t initial, const void* buf, const size_t len)
 	{
 		uint32_t c = initial ^ 0xFFFFFFFF;
 		const uint8_t* u = static_cast<const uint8_t*>(buf);
@@ -48,7 +48,7 @@ public:
 		crc32_s.generate_table(table);
 	}
 
-	void Update(const unsigned __int8* buf, size_t len)
+	void Update(const unsigned __int8* buf, const size_t len)
 	{
 		initial = crc32_s.update(table, initial, (const void*)buf, len);
 	}
@@ -59,11 +59,11 @@ public:
 	}
 };
 
-nesdb::nesdb() {
+nesdb::nesdb(const char * filename) {
 	// check file nes20db.bin
-	std::ifstream	nesdb_file("nes20db.bin", std::ios_base::binary);
+	std::ifstream	nesdb_file(filename, std::ios_base::binary);
 	if (!nesdb_file.good()) {
-		std::cout << "No nes20db.bin, no db loaded.\n";
+		std::cout << "No NES 2.0 DB found (" << filename << "), no db loaded.\n";
 		return;
 	}
 	// load database?
@@ -75,15 +75,15 @@ nesdb::nesdb() {
 		return;
 	}
 
-	std::cout << "nes20db.bin found, db has " << std::dec << dbstats.entries << " entries.\n";
-	std::cout << "nes20db version " << std::dec << dbstats.version << "\n";
-	std::cout << "nes20 db size is " << std::dec << (int)dbstats.entries * sizeof(db_game) << " bytes.\n";
+	std::cout << filename << " found, db has " << std::dec << dbstats.entries << " entries.\n";
+	std::cout << "nes 20 db version " << std::dec << dbstats.version << "\n";
+	std::cout << "nes 20 db size is " << std::dec << (int)dbstats.entries * sizeof(db_game) << " bytes.\n";
 
 	// load db entries.
 	int db_size = (int)dbstats.entries * sizeof(db_game);
 
 	// allocate memory.
-	entries = (db_game*)malloc(db_size);
+	entries = new db_game[db_size];
 
 	// load data.
 	nesdb_file.seekg(sizeof(db_header), std::ios_base::beg);
@@ -101,7 +101,7 @@ nesdb::~nesdb() {
 		delete entries;
 }
 
-int		nesdb::in_db(const void* prg, std::size_t size) {
+int		nesdb::in_db(const void* prg, const std::size_t size) {
 	// compute crc32 of prg and checks if it is in the db.
 	CRC32 crc;
 	crc.Update((const unsigned char*)prg, size);
@@ -119,6 +119,6 @@ int		nesdb::in_db(const void* prg, std::size_t size) {
 	return -1;	// default is none found.
 }
 
-db_game nesdb::get_game_id(int id) {
+db_game nesdb::get_game_id(const int id) const {
 	return entries[id];
 }
