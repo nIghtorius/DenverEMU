@@ -309,6 +309,9 @@
     <ClInclude Include="bus\rom\disksystem\fds.h">
       <Filter>Source Files\emulation\bus\rom\disksystem</Filter>
     </ClInclude>
+    <ClInclude Include="audio\expansion\fds_audio.h">
+      <Filter>Source Files\emulation\audio\expansion</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DenverEMU.cpp">
@@ -487,6 +490,9 @@
     </ClCompile>
     <ClCompile Include="bus\rom\disksystem\fds.cpp">
       <Filter>Source Files\emulation\bus\rom\disksystem</Filter>
+    </ClCompile>
+    <ClCompile Include="audio\expansion\fds_audio.cpp">
+      <Filter>Source Files\emulation\audio\expansion</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

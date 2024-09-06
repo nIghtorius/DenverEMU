@@ -46,25 +46,6 @@ fds_rom::~fds_rom() {
 	}
 }
 
-/*
-void fds_rom::bios_debug(const int addr) {
-	if (addr == DBG_NINTENDO_HDR_CHECK) {
-		std::cout << "BIOS is checking NINTENDO-HVC* header..\n";
-	}
-	if (addr == DBG_XFER_FAIL) {
-		std::cout << "Transfer has failed. reason is in X-reg.\n";
-		if (cpu) {
-			std::cout << "X-register is: " << std::dec << (int)cpu->regs.x << "\n";
-			byte spbu = cpu->regs.sp;
-			std::cout << "Caller address is " << std::hex << (int)cpu->pullstack_word() << "\n";
-			std::cout << " NextCaller address is " << std::hex << (int)cpu->pullstack_word() << "\n";
-			std::cout << "State [scanningdisk] is " << state.scanningdisk << "\n";
-			cpu->regs.sp = spbu;
-		}
-	}
-}
-*/
-
 byte fds_rom::read(const int addr, const int addr_from_base, const bool onlyread) {
 	// registers.
 	// bios_debug(addr);
@@ -394,7 +375,6 @@ void fds_rom::set_battery_backed_ram(byte* data, const std::size_t size) {
 		uint16_t count;
 		count = data[i]; i++;
 		count |= (uint16_t)(data[i]) << 8; i++;
-		//std::cout << "Patching disk #" << std::dec << (int)diskId << ", sector: " << (int)sector << " to " << (int)sector + (int)count << "\n";
 		for (int j = 0; j < count; j++) {
 			disks[diskId]->changemap[sector] = 1;
 			disks[diskId]->data[sector] = data[i];
@@ -449,13 +429,9 @@ batterybackedram* fds_rom::get_battery_backed_ram() {
 				patchdata[index] = (bytecount >> 0) & 0xFF;
 				patchdata[index + 1] = (bytecount >> 8) & 0xFF;
 				patchrun = false;
-				//std::cout << "Patch block completed. ";
-				//std::cout << std::dec << "sector start: " << (int)sector << ", sector end: " << (int)i << ", bytecount: " << (int)bytecount << "\n";
 			}
 		}
 	}
-
-	//std::cout << "Patch data is " << std::dec << (int)patchdata.size() << " bytes..\n";
 	// data has been written.
 	return new batterybackedram(&patchdata.begin()[0], (int)patchdata.size());
 }

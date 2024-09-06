@@ -11,7 +11,6 @@
 
 #include "../rom.h"
 #include "../../video/ppu.h"
-#include "../../cpu/cpu2a03_fast.h"
 #include <vector>
 
 // write registers.
@@ -29,14 +28,6 @@
 #define		FDS_DRIVE_STATUS_REG 0x4032
 #define		FDS_EXT_CONNECTOR_READ 0x4033
 #define		CYCLES_PER_SECTOR 150
-
-// BIOS
-#define		FDS_BIOS_CHECKDISKHEADER 0xE445
-#define		DBG_NINTENDO_HDR_CHECK 0xE6F5		// ldy #0x0d
-#define		DBG_XFER_FAIL_ON_NEQ	0xE77F
-#define		DBG_XFER_FAIL_ON_CY		0xE77C
-#define		DBG_XFER_FAIL			0xE781
-
 
 struct fds_state {
 	word irq_load = 0;
