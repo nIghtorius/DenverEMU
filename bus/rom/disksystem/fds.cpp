@@ -17,7 +17,7 @@ fds_rom::fds_rom() {
 	std::ifstream fdsbios("disksys.rom", std::ios_base::binary);
 	if (!fdsbios.good()) {
 		std::cout << "FDS bios file not found. Please place it as disksys.rom in the working directory.\n";
-		throw std::exception("FDS bios file not found. Please place it as disksys.rom in the working directory.");
+		exit(128);
 	}
 	// allocate 32kB for PRGRAM (0x6000-0xDFFF)
 	prgram = (byte*)malloc(32768);

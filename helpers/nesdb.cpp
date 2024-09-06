@@ -1,5 +1,6 @@
 #include "nesdb.h"
 #include <fstream>
+#include <cstdint>
 #include <iostream>
 
 struct CRC32_s
@@ -48,7 +49,7 @@ public:
 		crc32_s.generate_table(table);
 	}
 
-	void Update(const unsigned __int8* buf, const size_t len)
+	void Update(const uint8_t* buf, const size_t len)
 	{
 		initial = crc32_s.update(table, initial, (const void*)buf, len);
 	}
