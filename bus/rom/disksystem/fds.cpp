@@ -44,6 +44,7 @@ fds_rom::~fds_rom() {
 		if (aDisk->changemap) free(aDisk->changemap);
 		if (aDisk->data) free(aDisk->data);
 	}
+	if (savestream) free(savestream);
 }
 
 byte fds_rom::read(const int addr, const int addr_from_base, const bool onlyread) {
@@ -411,7 +412,7 @@ batterybackedram* fds_rom::get_battery_backed_ram() {
 				// data change.
 				patchrun = true;
 				sector = i;
-				patchdata.push_back(j & 0xFF); // disk id.
+				patchdata.push_back((byte)j & 0xFF); // disk id.
 				patchdata.push_back((sector >> 0) & 0xFF);
 				patchdata.push_back((sector >> 8) & 0xFF);
 				patchdata.push_back((sector >> 16) & 0xFF);
@@ -434,5 +435,13 @@ batterybackedram* fds_rom::get_battery_backed_ram() {
 		}
 	}
 	// data has been written.
-	return new batterybackedram(&patchdata.begin()[0], (int)patchdata.size());
+	// prepare savestream.
+	savestream = (byte*)malloc(patchdata.size());
+
+	// copy data to savestream because patchdata will be destroyed when this scope ends.
+	// savestream will be destroyed when de FDS object gets unloaded. which is after saving.
+	if (savestream) {
+		memcpy(savestream, &patchdata.begin()[0], patchdata.size());
+	}
+	return new batterybackedram(savestream, (int)patchdata.size());
 }

@@ -76,6 +76,7 @@ private:
 	byte* biosrom = nullptr;
 	byte* disk = nullptr;
 	byte* patch = nullptr;
+	byte* savestream = nullptr;
 
 	int	  disksize = 0;
 
