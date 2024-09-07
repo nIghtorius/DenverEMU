@@ -15,11 +15,13 @@
 #include "../../audio/expansion/sunsoft5b.h"
 #include "../../audio/expansion/namco163.h"
 #include "../../audio/expansion/mmc5.h"
+#include "../../audio/expansion/fds_audio.h"
 #include "../../package/2a03.h"
 
 // EXP audio
 #define		NSF_EXP_VRC6			0x01
 #define		NSF_EXP_VRC7			0x02
+#define		NSF_EXP_FDS				0x04
 #define		NSF_EXP_MMC5			0x08
 #define		NSF_EXP_NAMCO163		0x10
 #define		NSF_EXP_SUNSOFT			0x20
@@ -77,6 +79,7 @@ public:
 	namco163audio *namexp = nullptr;
 	vrc7audio* vrc7exp = nullptr;
 	mmc5audio* mmc5exp = nullptr;
+	fdsaudio* fdsexp = nullptr;
 
 	package_2a03 *n2a03 = nullptr;
 

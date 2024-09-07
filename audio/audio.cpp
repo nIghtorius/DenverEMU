@@ -84,6 +84,12 @@ void	audio_player::play_audio() {
 
 	float avg_center = 0.0f;
 	bool increaseattentuate = true;
+	/*
+	for (auto audible : audibles) {
+		std::cout << std::dec << (int)audible->sample_buffer.size() << " ";
+	}
+	std::cout << "\n";
+	*/
 
 	for (int i = 0; i < audibles[0]->sample_buffer.size(); i++) {
 		float input = 0.0f;

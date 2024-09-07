@@ -11,6 +11,7 @@
 
 #include "../rom.h"
 #include "../../video/ppu.h"
+#include "../../audio/expansion/fds_audio.h"
 #include <vector>
 
 // write registers.
@@ -94,7 +95,7 @@ public:
 	fds_state state;
 	ppu* ppudevice = nullptr;
 
-	//cpu2a03_fast *cpu;
+	fdsaudio* expaud = nullptr;
 
 	std::vector<diskentry*> disks;
 

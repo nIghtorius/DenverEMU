@@ -209,6 +209,7 @@ void fds_rom::writeDisk(const byte data) {
 int fds_rom::rundevice(int ticks) {
 	runirqtimers(ticks);
 	clockdiskinsertion();
+	if (expaud) expaud->rundevice(ticks);
 	if (!state.dont_stop_motor || !disk_inserted) {
 		state.scanningdisk = false;
 		state.end_head = true;

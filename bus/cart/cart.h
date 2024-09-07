@@ -24,6 +24,7 @@
 #include "../../audio/expansion/namco163.h"
 #include "../../audio/expansion/vrc7.h"
 #include "../../audio/expansion/mmc5.h"
+#include "../../audio/expansion/fds_audio.h"
 
 // db
 #include "../../helpers/nesdb.h"
@@ -187,6 +188,7 @@ public:
 	sunsoftaudio* sunexp = nullptr;
 	vrc7audio* vrc7exp = nullptr;
 	mmc5audio* mmc5exp = nullptr;
+	fdsaudio* fdsexp = nullptr;
 
 	bool	is_valid;
 	rom		*program;

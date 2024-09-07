@@ -342,6 +342,9 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *
 			ImGui::Separator();
 			ImGui::Text("Expansion Audio:");
 			ImGui::SameLine();
+			if (denver->cart->fdsexp) {
+				ImGui::Text("FDS"); ImGui::SameLine();
+			}
 			if (denver->cart->namexp) {
 				ImGui::Text("NAMCO"); ImGui::SameLine();
 			}

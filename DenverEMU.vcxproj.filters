@@ -103,7 +103,7 @@
     <Filter Include="Source Files\helpers">
       <UniqueIdentifier>{090dd95f-d4a3-4d3d-8461-ca43f627ca1e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\emulation\bus\rom\disksystem">
+    <Filter Include="Source Files\emulation\bus\rom\mappers\disksystem">
       <UniqueIdentifier>{9cc07fdb-485d-4f8f-8244-e10d205c31a7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -307,7 +307,7 @@
       <Filter>Source Files\emulation\bus\rom\mappers</Filter>
     </ClInclude>
     <ClInclude Include="bus\rom\disksystem\fds.h">
-      <Filter>Source Files\emulation\bus\rom\disksystem</Filter>
+      <Filter>Source Files\emulation\bus\rom\mappers\disksystem</Filter>
     </ClInclude>
     <ClInclude Include="audio\expansion\fds_audio.h">
       <Filter>Source Files\emulation\audio\expansion</Filter>
@@ -489,7 +489,7 @@
       <Filter>Source Files\emulation\bus\rom\mappers</Filter>
     </ClCompile>
     <ClCompile Include="bus\rom\disksystem\fds.cpp">
-      <Filter>Source Files\emulation\bus\rom\disksystem</Filter>
+      <Filter>Source Files\emulation\bus\rom\mappers\disksystem</Filter>
     </ClCompile>
     <ClCompile Include="audio\expansion\fds_audio.cpp">
       <Filter>Source Files\emulation\audio\expansion</Filter>

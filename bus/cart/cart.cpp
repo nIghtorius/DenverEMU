@@ -165,9 +165,11 @@ bool	cartridge::readstream_fds(std::istream& fdsfile, ppu* ppu_device, bus* main
 	mainbus->registerdevice(program);
 	ppu_device->set_char_rom(character);
 
-	// cpu
-	//cpu2a03_fast *cpu = &reinterpret_cast<package_2a03*>(mainbus->devices[0])->cpu_2a03;
-	//fdsrom->cpu = cpu;
+	// audio
+	fdsexp = new fdsaudio();
+	audbus->register_audible_device(fdsexp);
+	mainbus->registerdevice(fdsexp);
+	fdsrom->expaud = fdsexp;
 
 	// register used devices (linking)
 	m_aud = audbus;
@@ -462,6 +464,12 @@ bool	cartridge::readstream_nsfe(std::istream& nsffile, ppu* ppu_device, bus* mai
 		mainbus->registerdevice(mmc5exp);
 		nsf_rom->mmc5exp = mmc5exp;
 	}
+	if (info.expansion_audio & NSF_EXP_FDS) {
+		fdsexp = new fdsaudio();
+		audbus->register_audible_device(fdsexp);
+		mainbus->registerdevice(fdsexp);
+		nsf_rom->fdsexp = fdsexp;
+	}
 
 	// tracknames.
 	trackNames.clear();
@@ -634,6 +642,12 @@ bool	cartridge::readstream_nsf(std::istream &nsffile, ppu *ppu_device, bus *main
 		audbus->register_audible_device(mmc5exp);
 		mainbus->registerdevice(mmc5exp);
 		nsf_rom->mmc5exp = mmc5exp;
+	}
+	if (nsf_hdr.expansion_audio & NSF_EXP_FDS) {
+		fdsexp = new fdsaudio();
+		audbus->register_audible_device(fdsexp);
+		mainbus->registerdevice(fdsexp);
+		nsf_rom->fdsexp = fdsexp;
 	}
 
 	// add to mainbus
@@ -1117,6 +1131,11 @@ cartridge::~cartridge() {
 			m_aud->unregister_audible_device(mmc5exp);
 			m_bus->removedevice_select_base(mmc5exp->devicestart);
 			delete mmc5exp;
+		}
+		if (fdsexp) {
+			m_aud->unregister_audible_device(fdsexp);
+			m_bus->removedevice_select_base(fdsexp->devicestart);
+			delete fdsexp;
 		}
 	}
 	std::cout << "Expanded audio devices cleaned up..\n";

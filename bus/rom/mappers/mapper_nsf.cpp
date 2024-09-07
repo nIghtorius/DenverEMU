@@ -70,6 +70,7 @@ int		nsfrom::rundevice(const int ticks) {
 	if (namexp) namexp->rundevice(ticks);
 	if (vrc7exp) vrc7exp->rundevice(ticks);
 	if (mmc5exp) mmc5exp->rundevice(ticks);
+	if (fdsexp) fdsexp->rundevice(ticks);
 
 	tickcount += ticks;
 	if (tickcount >= nmi_trig_cycles) {
