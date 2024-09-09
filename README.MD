@@ -53,21 +53,21 @@ the Makefile script will compile all the files and link it together. You can the
 
 Command-line switches
 ---------------------
---vsync			, enables vsync
---no-vsync		, disabled vsync ( on some linux distro's this is ignored you can use "export vblank_mode=0" command in terminal to perma disable vsync )
---no-audio		, disables the audio output (APU is still emulated)
+* --vsync			, enables vsync
+* --no-vsync		, disabled vsync ( on some linux distro's this is ignored you can use "export vblank_mode=0" command in terminal to perma disable vsync )
+* --no-audio		, disables the audio output (APU is still emulated)
 			  per default (when no vsync, denver times the emulation speed on audio, by disabling audio you essentially make denver run on uncapped speed
 			  to make it run in pace. Be sure to set  your display to 60hz and use the --vsync flag)
---no-apu-emulation	, disables all audio and audio emulation. APU is not emulated. Denver will run uncapped so make sure vsync enabled with 60hz display.
---no-expanded-adio	, disables all audio expansions.
---no-gui		, disables the GUI elements (pure mode), it is required to supply a rom file with the --rom-file switch.
---rom-file		, supply rom file to load on startup.
---fullscreen		, starts denver in exclusive full screen mode. be sure to define width and height.
---width	<width>		, supply width (ex: 1920)
---height <height>	, supply height (ex: 1080)
---override-scale <scale>, scales the GUI. 1 is normal. 2 is twice as big. When not supplied. Denver will compute depending on the DPI settings of the display.
---show-controllers	, shows the detected game controllers and exits.
---select-controller-id-port1, select which game controller needs to be connected on game port 1
---select-controller-id-port2, select which game controller needs to be connected on game port 1
---executiontrace	, writes a execution log (use with --rom-file) of what the virtual cpu is doing. Files tend to get big fast.
+* --no-apu-emulation	, disables all audio and audio emulation. APU is not emulated. Denver will run uncapped so make sure vsync enabled with 60hz display.
+* --no-expanded-adio	, disables all audio expansions.
+* --no-gui		, disables the GUI elements (pure mode), it is required to supply a rom file with the --rom-file switch.
+* --rom-file		, supply rom file to load on startup.
+* --fullscreen		, starts denver in exclusive full screen mode. be sure to define width and height.
+* --width	<width>		, supply width (ex: 1920)
+* --height <height>	, supply height (ex: 1080)
+* --override-scale <scale>, scales the GUI. 1 is normal. 2 is twice as big. When not supplied. Denver will compute depending on the DPI settings of the display.
+* --show-controllers	, shows the detected game controllers and exits.
+* --select-controller-id-port1, select which game controller needs to be connected on game port 1
+* --select-controller-id-port2, select which game controller needs to be connected on game port 1
+* --executiontrace	, writes a execution log (use with --rom-file) of what the virtual cpu is doing. Files tend to get big fast.
 
