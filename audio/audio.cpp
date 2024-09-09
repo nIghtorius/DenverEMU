@@ -84,12 +84,6 @@ void	audio_player::play_audio() {
 
 	float avg_center = 0.0f;
 	bool increaseattentuate = true;
-	/*
-	for (auto audible : audibles) {
-		std::cout << std::dec << (int)audible->sample_buffer.size() << " ";
-	}
-	std::cout << "\n";
-	*/
 
 	for (int i = 0; i < audibles[0]->sample_buffer.size(); i++) {
 		float input = 0.0f;
@@ -98,7 +92,6 @@ void	audio_player::play_audio() {
 				input += audible->sample_buffer[i];
 			if (no_expanded_audio) break;
 		}
-		//input /= audibles.size();
 		avg_center += input;
 
 		// balance volume.
@@ -125,8 +118,7 @@ void	audio_player::play_audio() {
 	if (attentuate_lock) attentuate = .95f;	// lock dynamic attentuation @ 0.90x
 
 	avg_center /= (float)audibles[0]->sample_buffer.size();
-	average_mix += avg_center; average_mix /= 2;
-	//average_mix = avg_center > average_mix ? average_mix + 0.05f : average_mix - 0.05f;
+	average_mix += avg_center; average_mix /= 2;	
 	
 	for (auto audible : audibles) {
 		audible->sample_buffer.clear();
@@ -162,15 +154,7 @@ void	audio_player::send_sampledata_to_audio_device() {
 	while (samples < final_mux.size()) {
 		float sample = 0;
 		if (samples + samples_to_target > final_mux.size()) samples_to_target = final_mux.size() - samples;
-
-		/*if (!interpolated) {
-			for (int i = (int)trunc(samples); i < -1 + (int)trunc(samples + samples_to_target); i++) {
-				sample += final_mux[i];
-			}
-		} else */ sample = final_mux[(int)trunc(samples)];
-
-		//if (!interpolated) sample /= trunc(samples_to_target);
-		//simpleLowpass(sample, lpout);
+		sample = final_mux[(int)trunc(samples)];
 		bWorthFilter(sample, lpout);
 		buffer[samples_in_buffer + outsamples] = (interpolated ? lpout : sample) * attentuate;
 		samples += samples_to_target;

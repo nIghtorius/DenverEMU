@@ -5,6 +5,7 @@
 */
 
 #include "fds_audio.h"
+#include <iostream>
 
 #pragma warning(disable : 4996)
 
@@ -32,7 +33,7 @@ void	fdsaudio::write(const int addr, const int addr_from_base, const byte data) 
 		return;
 		break;		
 	case 0x4082: // freq low
-		freq = (freq & 0xFF00) | data;
+		freq = (freq & 0x0F00) | data;
 		return;
 		break;
 	case 0x4083: // freq high + sweep / envelope settings.
@@ -54,7 +55,7 @@ void	fdsaudio::write(const int addr, const int addr_from_base, const byte data) 
 		return;
 		break;
 	case 0x4086: // mod freq low.
-		mod_freq = (mod_freq & 0xFF00) | data;
+		mod_freq = (mod_freq & 0x0F00) | data;
 		return;
 		break;
 	case 0x4087: // mod freq high + settings.
@@ -63,11 +64,12 @@ void	fdsaudio::write(const int addr, const int addr_from_base, const byte data) 
 		halt_mod_counter = (data & 0x80) > 0;
 		if (halt_mod_counter) {
 			mod_overflowcounter = 0;
+			// ToDo: Undo this hack and find the issue that keeps mod_output stuck when halt_mod_counter is active.
+			mod_output = 0;
 		}
 		return;
 		break;
 	case 0x4088: // mod table set.
-		if (!halt_mod_counter) return;
 		mod_writeTable(data);
 		return;
 		break;
@@ -120,7 +122,7 @@ void	fdsaudio::volume_resetTimer() {
 bool	fdsaudio::volume_tickEnvelope() {
 	if (!volenv_gainmode && envelope_speed > 0) {
 		vol_timer--;
-		if (vol_timer == 0) {
+		if (vol_timer <= 0) {
 			volume_resetTimer();
 			if (volenv_direction && volenv_gain_gain < 32) {
 				volenv_gain_gain++;
@@ -139,15 +141,15 @@ void	fdsaudio::mod_updateCounter(int8_t data) {
 	if (modulatorcount >= 64) {
 		modulatorcount -= 128;
 	}
-	else if (modulatorcount <- 64) {
-		modulatorcount += 64;
+	else if (modulatorcount < -64) {
+		modulatorcount += 128;
 	}
 }
 
 bool	fdsaudio::mod_tickEnvelope() {
 	if (!modenv_gainmode && envelope_speed > 0) {
 		mod_timer--;
-		if (mod_timer == 0) {
+		if (mod_timer <= 0) {
 			mod_resetTimer();
 			if (modenv_direction && modenv_gain_gain < 32) {
 				modenv_gain_gain++;
@@ -161,7 +163,7 @@ bool	fdsaudio::mod_tickEnvelope() {
 	return false;
 }
 
-void	fdsaudio::mod_updateOutput(uint16_t freq) {
+void	fdsaudio::mod_updateOutput(uint16_t ffreq) {
 	// compute.
 	int32_t	temp = modulatorcount * modenv_gain_gain;
 	int32_t remainder = temp & 0x0F;
@@ -178,7 +180,7 @@ void	fdsaudio::mod_updateOutput(uint16_t freq) {
 		temp += 256;
 	}
 
-	temp = freq * temp;
+	temp = ffreq * temp;
 	remainder = temp & 0x3F;
 	temp >>= 6;
 	if (remainder >= 32) temp++;
@@ -218,7 +220,7 @@ void	fdsaudio::clock() {
 		mod_updateOutput(freq);
 	}
 
-	if (disable_volsweep) {
+	if (env4xboost_stopmod) {
 		wavePosition = 0;
 		updateOutput();
 	}
@@ -272,11 +274,12 @@ void	fdsaudio::set_debug_data() {
 
 	debugger.add_debug_var("Accumulator Wave", 4, &wave_accumulator, t_bytearray);
 	debugger.add_debug_var("Accumulator Modulator", 4, &mod_accumulator, t_bytearray);
-	debugger.add_debug_var("Timer Volume", 4, &vol_timer, t_bytearray);
-	debugger.add_debug_var("Timer Modulator", 4, &mod_timer, t_bytearray);
+	debugger.add_debug_var("Timer Volume", 4, &vol_timer, t_uint32);
+	debugger.add_debug_var("Timer Modulator", 4, &mod_timer, t_uint32);
 
 	debugger.add_debug_var("Wave table position", 64, &wavePosition, t_byte);
 	debugger.add_debug_var("Modulator table position", 64, &mod_tableposition, t_byte);
+	debugger.add_debug_var("Modulator output", -1, &mod_output, t_int32);
 
 	debugger.add_debug_var("FDS Audio", -1, NULL, t_endblock);
 

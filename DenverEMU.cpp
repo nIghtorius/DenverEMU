@@ -23,7 +23,6 @@
 #include "imgui_impl_opengl3.h"
 
 #include "denvergui/dengui_main.h"
-#include "cpu/tools/2a03_disasm.h"
 #include "video/debug_renderer.h"
 
 #include <SDL.h>
@@ -38,7 +37,7 @@
 #include <SDL_opengl.h>
 #endif
 
-#define		DENVER_VERSION		"0.4 alpha"
+#define		DENVER_VERSION		"0.6 alpha"
 #undef main
 
 // defaults

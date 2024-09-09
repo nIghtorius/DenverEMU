@@ -72,7 +72,7 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *
 	if (ImGui::BeginViewportSideBar("##SecondaryMenuBar", viewport, ImGuiDir_Up, height, window_flags)) 
 	{
 		if (ImGui::BeginMenuBar()) {
-			fds_rom* fds = reinterpret_cast<fds_rom*>(denver->mainbus->find_device_partial_name_match("FDS"));
+			fds_rom* fds = reinterpret_cast<fds_rom*>(denver->mainbus->find_device_partial_name_match("Denver FDS Hardware"));
 			if (ImGui::BeginMenu("File")) {
 				if (ImGui::MenuItem("Open file", "Ctrl+O")) {
 					std::cout << "Last opened path: " << state->lastpath << "\n";
