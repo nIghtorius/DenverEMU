@@ -37,6 +37,7 @@ Currently does the following expansion audio:
 * Namco 163
 * Sunsoft 5B
 * MMC5
+* FDS Audio (WIP)
 
 Denver also supports NSFe files. Which also have support for named tracks / track length, etc.
 
