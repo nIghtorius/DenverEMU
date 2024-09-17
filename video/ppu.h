@@ -160,6 +160,8 @@ public:
 	byte					prt2007buffer;	
 
 	void					snap_state_for_debugger();
+	void					incrementCourseX();
+	void					incrementY();
 
 public:
 	bus						vbus;		// vbus = videobus.

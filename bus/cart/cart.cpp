@@ -866,7 +866,7 @@ void	cartridge::readstream(std::istream &nesfile, ppu *ppu_device, bus *mainbus,
 		break;
 	case 9:
 	case 10:
-		// MMC2
+		// MMC2/MMC4
 		program = new mmc2_rom();
 		character = new mmc2_vrom();
 		character->set_rom_data((byte*)char_data, nes.charsize);

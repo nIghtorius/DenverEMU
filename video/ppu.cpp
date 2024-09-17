@@ -63,6 +63,15 @@ byte	ppu::read(const int addr, const int addr_from_base, const bool onlyread) {
 	// READ register.
 	if (addr_from_base == PPU_DATA_PORT) {
 		byte data = 0;
+		// reading while rendering causes to trigger X-course and Y-fine to be incremented.
+		// (* see https://www.nesdev.org/wiki/PPU_scrolling#$2007_(PPUDATA)_reads_and_writes )
+		if ((scanline >= 0) && (scanline <= 240) && (ppumask.showbg || ppumask.showspr)) {
+			// course X increment.
+			incrementCourseX();
+			// fine Y increment.
+			incrementY();
+			return prt2007buffer;
+		}
 		if (ppu_internal.v_register < 0x3F00) {
 			data = prt2007buffer;
 			prt2007buffer = vbus.readmemory(ppu_internal.v_register & 0x3FFF);
@@ -174,6 +183,37 @@ void	ppu::write(const int addr, const int addr_from_base, const byte data) {
 	}
 }
 
+void	ppu::incrementCourseX() {
+	if ((ppu_internal.v_register & 0x001F) == 31) {
+		ppu_internal.v_register &= ~0x001F;
+		ppu_internal.v_register ^= 0x0400;
+	}
+	else {
+		ppu_internal.v_register++;
+	}
+}
+
+void	ppu::incrementY() {
+	if ((ppu_internal.v_register & 0x7000) != 0x7000) {
+		ppu_internal.v_register += 0x1000;
+	}
+	else {
+		ppu_internal.v_register &= ~0x7000;
+		int y = ((ppu_internal.v_register & 0x03E0) >> 5);
+		if (y == 29) {
+			y = 0;
+			ppu_internal.v_register ^= 0x0800;
+		}
+		else if (y == 31) {
+			y = 0;
+		}
+		else {
+			y++;
+		}
+		ppu_internal.v_register = (ppu_internal.v_register & ~0x03E0) | (y << 5);
+	}
+}
+
 int		ppu::rundevice(const int ticks) {
 	// run the PPU..
 	for (int i = 0; i < ticks; i++) {
@@ -219,13 +259,7 @@ int		ppu::rundevice(const int ticks) {
 					ppu_internal.shiftreg_attribute[1] |= cb2 | (cb2 << 1) | (cb2 << 2) | (cb2 << 3) | (cb2 << 4) | (cb2 << 5) | (cb2 << 6) | (cb2 << 7);
 
 					// last fetch also update Coarse X (v register) (loopy_v verti)
-					if ((ppu_internal.v_register & 0x001F) == 31) {
-						ppu_internal.v_register &= ~0x001F;
-						ppu_internal.v_register ^= 0x0400;
-					}
-					else {
-						ppu_internal.v_register++;
-					}
+					incrementCourseX();
 				}
 			}
 			// secondary OAM reset (cycli 1--64)
@@ -371,24 +405,7 @@ int		ppu::rundevice(const int ticks) {
 			// loopy_v cycle (hori) @ 257
 			//std::cout << std::dec << cycle << ", ";
 			if (cycle == 256) {
-				if ((ppu_internal.v_register & 0x7000) != 0x7000) {
-					ppu_internal.v_register += 0x1000;
-				}
-				else {
-					ppu_internal.v_register &= ~0x7000;
-					int y = ((ppu_internal.v_register & 0x03E0) >> 5);
-					if (y == 29) {
-						y = 0;
-						ppu_internal.v_register ^= 0x0800;
-					}
-					else if (y == 31) {
-						y = 0;
-					}
-					else {
-						y++;
-					}
-					ppu_internal.v_register = (ppu_internal.v_register & ~0x03E0) | (y << 5);
-				}
+				incrementY();
 			}
 		}
 		// BG/SPR rendering cycles.

@@ -19,6 +19,7 @@ mmc2_rom::mmc2_rom() {
 	devicestart = 0x6000;
 	devicemask = 0xFFFF;
 	deviceend = 0xFFFF;
+	set_debug_data();
 }
 
 mmc2_rom::~mmc2_rom() {
@@ -96,6 +97,18 @@ void	mmc2_rom::update_banks() {
 		prg8000 = &romdata[(state.prg_bnk << 14) % romsize];
 	}
 	if (vrom) vrom->update_banks(&state);
+}
+
+void	mmc2_rom::set_debug_data() {
+	debugger.add_debug_var("MMC2/4", -1, NULL, t_beginblock);
+	debugger.add_debug_var("Bankable PRG slot", -1, &state.prg_bnk, t_byte);
+	debugger.add_debug_var("CHR $FD BNK#1", -1, &state.chr_fd_1_bnk, t_byte);
+	debugger.add_debug_var("CHR $FD BNK#2", -1, &state.chr_fd_2_bnk, t_byte);
+	debugger.add_debug_var("CHR $FE BNK#1", -1, &state.chr_fe_1_bnk, t_byte);
+	debugger.add_debug_var("CHR $FE BNK#2", -1, &state.chr_fe_2_bnk, t_byte);
+	debugger.add_debug_var("Horizontal Mirroring", -1, &state.horimirror, t_bool);
+	debugger.add_debug_var("MMC4 mode enable", -1, &mmc4mode, t_bool);
+	debugger.add_debug_var("MMC2/4", -1, NULL, t_endblock);
 }
 
 // VROM

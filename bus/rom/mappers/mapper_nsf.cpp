@@ -75,7 +75,7 @@ int		nsfrom::rundevice(const int ticks) {
 	tickcount += ticks;
 	if (tickcount >= nmi_trig_cycles) {
 		if (nmi_enabled) nmi_enable = true;
-		tickcount = 0;
+		tickcount -= nmi_trig_cycles;
 	}
 	return ticks;
 }
