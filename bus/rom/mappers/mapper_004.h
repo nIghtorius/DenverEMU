@@ -12,6 +12,7 @@
 #pragma once
 
 #include "../rom.h"
+#include "../../../video/ppu.h"
 
 #define		MMC3_BANKUPDATE_REG			0x07
 #define		MMC3_BANK_MODE				0x40
@@ -75,6 +76,7 @@ private:
 	int		cpu_tk = 0;
 	int		lt_a12r = 0;
 public:
+	ppu		*vbus;	// we need to snoop vbus, because VRAM is an option and we cannot rely on the mmc3_vrom.
 	mmc3_rom();
 	~mmc3_rom();
 	virtual	byte	read(const int addr, const int addr_from_base, const bool onlyread = false);
@@ -102,7 +104,6 @@ private:
 	byte	*chr1400 = nullptr;
 	byte	*chr1800 = nullptr;
 	byte	*chr1c00 = nullptr;
-	word	ppuaddr = 0;
 public:
 	mmc3_vrom();
 	mmc3_rom		*rom = nullptr;

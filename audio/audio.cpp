@@ -23,9 +23,10 @@ void	audio_player::sdl_aud_callback(void * const data, std::uint8_t* const strea
 	const auto aud_player_callback = reinterpret_cast<audio_player*>(data);
 
 	// check buffer is full enough, otherwise mute.
-	SDL_memset(stream, aud_player_callback->de_pop_sample, len);
-
-	if (aud_player_callback->samples_in_buffer < MAX_BUFFER_AUDIO) return;
+	if (aud_player_callback->samples_in_buffer < MAX_BUFFER_AUDIO) {
+		SDL_memset(stream, (int)aud_player_callback->de_pop_sample, len);
+		return;
+	}
 
 	// copy data to stream.
 	memcpy(stream, (void *)&aud_player_callback->buffer[0], len);
@@ -67,6 +68,7 @@ void	audio_player::unregister_audible_device(audio_device *dev) {
 void	audio_player::play_audio() {
 	// test if devices are registered, when no. No need to play as there is none.
 	if (audibles.size() == 0) return;
+
 	// test if audio frame is ready. test only first device they should become ready together.
 	if (!audibles[0]->audio_frame_ready) return;
 
@@ -88,7 +90,7 @@ void	audio_player::play_audio() {
 	for (int i = 0; i < audibles[0]->sample_buffer.size(); i++) {
 		float input = 0.0f;
 		for (auto audible : audibles) {
-			if (i < audible->sample_buffer.size())
+			if (i < audible->sample_buffer.size() && !audible->muted)
 				input += audible->sample_buffer[i];
 			if (no_expanded_audio) break;
 		}
@@ -138,7 +140,7 @@ void	audio_player::bWorthFilter(const float input, float& output) {
 
 void	audio_player::simpleLowpass(const float input, float& output) {
 	if (output == input) return;
-	output += 0.5f * (input - output);
+	output += ALPHA_LP * (input - output);
 	// clamp output when near target "input"
 	if ((output - CLAMP_LP < input) && (output + CLAMP_LP > input)) output = input;
 }
@@ -155,7 +157,15 @@ void	audio_player::send_sampledata_to_audio_device() {
 		float sample = 0;
 		if (samples + samples_to_target > final_mux.size()) samples_to_target = final_mux.size() - samples;
 		sample = final_mux[(int)trunc(samples)];
-		bWorthFilter(sample, lpout);
+		if (interpolated) {
+			// no need to calculate if interpolated is disabled.
+			if (hq_filter) {
+				bWorthFilter(sample, lpout);
+			}
+			else {
+				simpleLowpass(sample, lpout);
+			}
+		}
 		buffer[samples_in_buffer + outsamples] = (interpolated ? lpout : sample) * attentuate;
 		samples += samples_to_target;
 		outsamples++;
@@ -181,5 +191,13 @@ void	audio_player::stopplayback() {
 }
 
 void	audio_device::set_debug_data() {
+	debugger.add_debug_var("Audio Device Specific", -1, NULL, t_beginblock);
+	debugger.add_debug_var("Device muted", -1, &muted, t_togglebool);
+	debugger.add_debug_var("Audio Frame Ready", -1, &audio_frame_ready, t_bool);
+	debugger.add_debug_var("Audio Device Specific", -1, NULL, t_endblock);
+}
 
+audio_device::audio_device() {
+	sample_buffer.reserve(59561);	 // reserve 59561 samples.
+	set_debug_data();
 }

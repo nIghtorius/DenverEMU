@@ -8,6 +8,7 @@
 #pragma once
 
 #include "../rom.h"
+#include "../../../video/ppu.h"
 
 struct m71_state {
 	byte outerbank = 0;	// needs work.
@@ -22,6 +23,7 @@ private:
 	byte* prg_c000 = nullptr;
 	void setbanks();
 public:
+	ppu* ppubus = nullptr;
 	m71rom();
 	virtual byte read(const int addr, const int addr_from_base, const bool onlyread = false);
 	virtual void write(const int addr, const int addr_from_base, const byte data);

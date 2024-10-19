@@ -14,28 +14,30 @@ bus::~bus() {
 }
 
 void	bus::writememory(const int addr, const byte data) {
-	address = addr;
+	trigger_address_update(addr);
 	write(data);
 }
 
 byte	bus::readmemory(const int addr, const bool onlyread) {
-	address = addr;
+	trigger_address_update(addr);
 	return read();
 }
 
 word	bus::readmemory_as_word(const int addr, const bool onlyread) {
 	word		result;
-	address = addr;
+	trigger_address_update(addr);
 	result = read();
 	address++;
+	trigger_address_update(address);
 	return result | read() << 8;
 }
 
 word	bus::readmemory_as_word_wrap(const int addr, const bool onlyread) {
 	word		result;
-	address = addr;
+	trigger_address_update(addr);
 	result = read();
 	address = (addr & 0xFF00) | ((addr + 1) & 0xFF);
+	trigger_address_update(address);
 	return result | read() << 8;
 }
 
@@ -105,6 +107,16 @@ void	bus::busreset() {
 	}
 }
 
+void	bus::trigger_address_update(int _address) {
+	address = _address;
+	// because it is a address update. we need to notify all the devices on the bus.
+	for (bus_device* dev : devices) {
+		if (dev->trigger_a_change) {
+			dev->a_line_change((word)_address);
+		}
+	}
+}
+
 bus_device* bus::find_device_partial_name_match(const std::string matchstring) {
 	for (bus_device* dev : devices) {
 		char *value = strstr(dev->get_device_descriptor(), matchstring.c_str());
@@ -136,6 +148,10 @@ bus_device::bus_device() {
 	set_debug_data();
 }
 
+void bus_device::a_line_change(const word newaddress) {
+	// do nothing by default.
+}
+
 void bus_device::set_debug_data() {
 	// placeholder debug data.
 	debugger.add_debug_var("Device Bus", -1, NULL, t_beginblock);
@@ -150,7 +166,8 @@ void bus_device::set_debug_data() {
 	debugger.add_debug_var("NMI asserted", -1, &nmi_enable, t_bool);
 	debugger.add_debug_var("Processing DMA", -1, &in_dma_mode, t_bool);
 	debugger.add_debug_var("DMA needs to start", -1, &dma_start, t_bool);
-	debugger.add_debug_var("Device Specific", -1, NULL, t_endblock); 
+	debugger.add_debug_var("Device wants Address Bus updates", -1, &trigger_a_change, t_bool);
+	debugger.add_debug_var("Device Specific", -1, NULL, t_endblock);
 }
 
 word bus_device::compute_addr_from_layout(const word addr) {
@@ -189,6 +206,10 @@ void bus_device::swappins(const int pin1, const int pin2) {
 void bus_device::resetpins_to_default() {
 	for (int i = 0; i < 16; i++) pinout.pins[i] = i;
 	processlayout = false;
+}
+
+void bus_device::set_adres_intent(word address) {
+	if (devicebus) devicebus->trigger_address_update(address);
 }
 
 bus_device::~bus_device() {

@@ -837,6 +837,7 @@ void	cartridge::readstream(std::istream &nesfile, ppu *ppu_device, bus *mainbus,
 		// mmc3 linking.
 		reinterpret_cast<mmc3_vrom*>(character)->link_ppu_bus(&ppu_device->vram);
 		reinterpret_cast<mmc3_rom*>(program)->link_vrom(reinterpret_cast<mmc3_vrom*>(character));
+		reinterpret_cast<mmc3_rom*>(program)->vbus = ppu_device;
 		if (has_char_data) {
 			character->set_rom_data((byte *)char_data, nes.charsize);
 		}
@@ -936,6 +937,7 @@ void	cartridge::readstream(std::istream &nesfile, ppu *ppu_device, bus *mainbus,
 		program = new m71rom();
 		charram = new vram();
 		character = charram;
+		reinterpret_cast<m71rom*>(program)->ppubus = ppu_device;
 		program->set_rom_data((byte*)program_data, nes.programsize);
 		break;
 	case 73:

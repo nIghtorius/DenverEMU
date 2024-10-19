@@ -24,10 +24,15 @@ void m71rom::setbanks() {
 	prg_c000 = &romdata[romsize - 16384];
 
 	// mirroring. ToDo::
+	if (ppubus == nullptr) return;
 	switch (state.mirror) {
 	case 0:		
+		ppubus->vram.resetpins_to_default();	// normal mode.
+		ppubus->vram.groundpin(10);	// force 0x2400-0x27ff -> 0x2000-0x23ff
 		break;
 	case 1:
+		ppubus->vram.resetpins_to_default();	// normal mode.
+		ppubus->vram.vccpin(10);	// force 0x2000-0x23ff -> 0x2400-0x27ff
 		break;
 	}
 }
@@ -38,7 +43,7 @@ byte m71rom::read(const int addr, const int addr_from_base, const bool onlyread)
 }
 
 void m71rom::write(const int addr, const int addr_from_base, const byte data) {
-	if ((addr >= 0x8000) && (addr <= 0x9FFF)) {
+	if ((addr >= 0x9000) && (addr <= 0x9FFF)) {
 		// mirroring
 		state.mirror = (data & 0x10) >> 4;
 		setbanks();

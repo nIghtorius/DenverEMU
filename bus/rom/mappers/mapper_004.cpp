@@ -1,6 +1,7 @@
 #include "mapper_004.h"
 #include "../../video/ppu.h"
 #include <iostream>
+#include "../../package/2a03.h"
 
 #pragma warning(disable : 4996)
 
@@ -132,7 +133,15 @@ void	mmc3_rom::write(const int addr, const int addr_from_base, const byte data) 
 		if (!odd) {
 			// Mirroring control
 			state.do_horizontal_mirroring = (data & MMC3_HORIZONTAL_MIRRORING) > 0;
-			if (vrom) vrom->update_banks(&state);
+			// mirroring.
+			if (state.do_horizontal_mirroring) {
+				vbus->vram.resetpins_to_default();
+				vbus->vram.swappins(10, 11);
+				vbus->vram.groundpin(10);
+			}
+			else {
+				vbus->vram.resetpins_to_default();
+			}
 			return;
 		}
 		else {
@@ -276,9 +285,17 @@ void	mmc3_rom::link_vrom(mmc3_vrom * m3vrom) {
 int		mmc3_rom::rundevice(const int ticks) {
 	cpu_tk += ticks;
 	if (!vrom) return ticks;
-	word ppuaddr = vrom->fetch_ppu_addr();
+	word ppuaddr = vbus->vbus.address;
 	bool a12_risen = ((ppuaddr & 0x1000) > 0) && ((lastppuaddr & 0x1000) == 0);	
 	if ((a12_risen) && (cpu_tk - lt_a12r >= 9)) {
+		// log ppu scanline or a12 rise.	
+		/*
+		int scanline = reinterpret_cast<ppu*>(devicebus->devices[2])->scanline;
+		int ppucycle = reinterpret_cast<ppu*>(devicebus->devices[2])->cycle;
+		int cpux = reinterpret_cast<package_2a03*>(devicebus->devices[0])->cpu_2a03.regs.x;
+		std::cout << "A12 rise on scanline #" << std::dec << scanline << " address is @ " << std::hex << (int)ppuaddr;
+		std::cout << " last address is @ " << (int)lastppuaddr << " ppu cycle: " << std::dec << ppucycle << " cpu.x: " << cpux << "\n";
+		*/
 		lt_a12r = cpu_tk;
 		if ((state.irq_counter == 0) || (state.irq_reload)) {
 			state.irq_counter = state.irq_latch;
@@ -317,10 +334,11 @@ void mmc3_rom::set_debug_data() {
 
 mmc3_vrom::mmc3_vrom() {
 	strncpy(get_device_descriptor(), "Denver MMC3 VROM (mapper 004)", MAX_DESCRIPTOR_LENGTH);
+	trigger_a_change = false;
 }
 
 word mmc3_vrom::fetch_ppu_addr() {
-	return ppuaddr;
+	return 0;// ppuaddr;
 }
 
 void mmc3_vrom::update_banks(mmc3_state *state) {
@@ -345,20 +363,10 @@ void mmc3_vrom::update_banks(mmc3_state *state) {
 		chr1800 = &romdata[((((state->r1 & state->chrand) | state->chror) & 0xFFFE) << 10) % romsize];
 		chr1c00 = &romdata[(((((state->r1 & state->chrand) | state->chror) & 0xFFFE) << 10) + 1024) % romsize];
 	}
-
-	// mirroring.
-	if (state->do_horizontal_mirroring) {
-		ppubus->resetpins_to_default();
-		ppubus->swappins(10, 11);
-		ppubus->groundpin(10);
-	}
-	else {
-		ppubus->resetpins_to_default();
-	}
 }
 
 byte mmc3_vrom::read(const int addr, const int addr_from_base, const bool onlyread) {
-	if (!onlyread) ppuaddr = addr;
+	//if (!onlyread) ppuaddr = addr;
 	if (!chr0000) return 0;	// not initialized yet.
 	if ((addr >= 0x0000) && (addr <= 0x03ff)) return chr0000[addr];
 	if ((addr >= 0x0400) && (addr <= 0x07ff)) return chr0400[addr - 0x0400];
@@ -371,7 +379,7 @@ byte mmc3_vrom::read(const int addr, const int addr_from_base, const bool onlyre
 }
 
 void mmc3_vrom::write(const int addr, const int addr_from_base, const byte data) {
-	ppuaddr = addr;
+	//ppuaddr = addr;
 	return;	// rom do nothing.
 }
 

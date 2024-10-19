@@ -79,7 +79,7 @@ public:
 	void fast_run_callback();
 	void sync_audio();
 
-	bool hasquit();
+	bool hasquit() const;
 	void stop();
 
 	void prepare_frame();

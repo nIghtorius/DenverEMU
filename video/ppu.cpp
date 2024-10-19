@@ -4,6 +4,7 @@
 #include <fstream>
 #include <thread>
 #include <chrono>
+#include <cassert>
 
 #pragma warning(disable : 4996)
 
@@ -174,6 +175,7 @@ void	ppu::write(const int addr, const int addr_from_base, const byte data) {
 			ppu_internal.t_register &= ~0xFF;
 			ppu_internal.t_register |= data;
 			ppu_internal.v_register = ppu_internal.t_register;
+			vbus.trigger_address_update(ppu_internal.v_register);
 		}
 		ppu_internal.address_write_latch = !ppu_internal.address_write_latch;
 	}
@@ -339,12 +341,12 @@ int		ppu::rundevice(const int ticks) {
 				byte cs = (cycle - 1) % 8;
 				if (cs == 1) {
 					// do garbage nametable read.
-					ppu_internal.shiftreg_nametable = vbus.readmemory(0x2000 | (ppu_internal.v_register & 0x0FFF));
+					//ppu_internal.shiftreg_nametable = vbus.readmemory(0x1000 | (ppu_internal.v_register & 0x0FFF));
 					ppu_internal.spr_pix = 0; // reset sprite render buffer. it's a denver thing.
 				}
 				else if (cs == 3) {
 					// do garbage nametable read.
-					ppu_internal.shiftreg_nametable = vbus.readmemory(0x2000 | (ppu_internal.v_register & 0x0FFF));
+					//ppu_internal.shiftreg_nametable = vbus.readmemory(0x1000 | (ppu_internal.v_register & 0x0FFF));
 					ppu_internal.shiftreg_spr_latch[ppu_internal.n] = ppu_internal.secoam[ppu_internal.n].attr;
 				}
 				else if (cs == 5) {
@@ -366,7 +368,7 @@ int		ppu::rundevice(const int ticks) {
 					}
 					if (ix > 7) pattern_address += 8;
 					pattern_address += (ltile << 4) + ix;
-					if (pattern_address >= 0x1FF8) pattern_address = 0x1FF8; //clamp it.
+					if (pattern_address >= 0x1FF7) pattern_address = 0x1FF7; //clamp it.
 					ppu_internal.shiftreg_spr_pattern_lo[ppu_internal.n] = vbus.readmemory(pattern_address);
 					ppu_internal.shiftreg_spr_counter[ppu_internal.n] = ppu_internal.secoam[ppu_internal.n].x;
 				}
@@ -389,7 +391,8 @@ int		ppu::rundevice(const int ticks) {
 					}					
 					if (ix > 7) pattern_address += 8;
 					pattern_address += (ltile << 4) + ix;
-					if (pattern_address >= 0x1FF8) pattern_address = 0x1FF8; //clamp it.
+					if (pattern_address >= 0x1FF7) pattern_address = 0x1FF7; //clamp it.
+
 					ppu_internal.shiftreg_spr_pattern_hi[ppu_internal.n] = vbus.readmemory(pattern_address + 8);
 					ppu_internal.shiftreg_spr_counter[ppu_internal.n] = ppu_internal.secoam[ppu_internal.n].x;
 					ppu_internal.n++;	// eval to next sprite in seconday oam. this will never go over 7, because eval will stop earlier.

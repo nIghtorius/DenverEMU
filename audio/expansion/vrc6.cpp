@@ -180,8 +180,6 @@ void	vrc6audio::set_debug_data() {
 	debugger.add_debug_var("Mapper 26 mode", -1, &vrc6_mapper_026, t_bool);
 	debugger.add_debug_var("VRC6 Audio", -1, NULL, t_endblock);
 
-	char buf[16];
-
 	for (int i = 1; i <= 2; i++) {
 		std::string channame = "VRC6 Pulse #" + std::to_string(i);
 		debugger.add_debug_var(channame, -1, NULL, t_beginblock);

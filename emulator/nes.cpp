@@ -125,7 +125,7 @@ nes_frame_tex * nes_emulator::returnFrameAsTexture() {
 	return &frame;
 }
 
-bool	nes_emulator::hasquit() {
+bool	nes_emulator::hasquit() const {
 	return quit;
 }
 

@@ -33,6 +33,9 @@ namespace denvergui {
 
 		// last directory.
 		std::string lastpath = "."; // defaults to current directory.
+
+		bool	romChange = false;
+		std::string changeRomTo = "";
 	};
 
 	void	render_main (nes_emulator *denver,  GLuint tex, denvergui_state *state);

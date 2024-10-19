@@ -42,6 +42,16 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *
 		ImGuiFileDialog::Instance()->Close();
 	}
 
+	// when gui starts rendering. Check if a new NES rom needs to be loaded..
+	if (state->romChange) {
+		state->romChange = false;
+		std::string newcaption = "Denver NES emulator - [";
+		newcaption += state->changeRomTo;
+		newcaption += "]";
+		denver->load_cartridge(state->changeRomTo.c_str());
+		denver->cold_reset();
+	}
+
 	// cpu dialog
 	if (state->show_cpu_debugger) {
 		render_cpuviewer(denver, state);
@@ -151,8 +161,11 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *
 					ImGui::EndMenu();
 				}
 				if (ImGui::BeginMenu("Audio options")) {
-					if (ImGui::MenuItem("Enable sound interpolation", NULL, denver->audio->interpolated)) {
+					if (ImGui::MenuItem("Enable audio harmonics filtering", NULL, denver->audio->interpolated)) {
 						denver->audio->interpolated = !denver->audio->interpolated;
+					}
+					if (ImGui::MenuItem("Use HQ filter", NULL, denver->audio->hq_filter)) {
+						denver->audio->hq_filter= !denver->audio->hq_filter;
 					}
 					if (ImGui::MenuItem("Enable auto attentuation", NULL, !denver->audio->attentuate_lock)) {
 						denver->audio->attentuate_lock = !denver->audio->attentuate_lock;

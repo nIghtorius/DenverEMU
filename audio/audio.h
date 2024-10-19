@@ -10,8 +10,7 @@
 	*	std::vector<float> member where samples can be stored.
 	
 	Also has a class that groups all known audio devices together for a process called
-	"final muxing" which combines all audio from all linked audio devices together
-	and then converts it into a INT16 audio stream to be played back. And then it waits
+	"final muxing" which combines all audio from all linked audio devices together  And then it waits
 	a single frame audio playback for frame pacing synchronisation.
 
 	before playing sound. It buffers up to NES_FRAMES frames of audio before playing back.
@@ -20,6 +19,14 @@
 	you do run fast out of buffer. 
 
 	The recommended buffer size is 773 * (SAMPLE_RATE / 44100)
+
+	Known issues:
+
+	NES_FRAMES				3  makes audio stutter slightly on Windows 11 24H2. dunno why.
+							   setting it to 5 fixed it. Maybe the timing in Windows 11 24H2 is too relaxed?
+
+	This means that the audio lags 16.6ms*(5-1) = 66.3ms behind the video.
+	Ideally you want NES_FRAMES 1 ( no lag , but that is something that is not going to happen )
 
 */
 
@@ -63,6 +70,8 @@ struct bworth {
 // classes
 class audio_device : public bus_device {
 public:
+	bool						muted = false;
+	audio_device();
 	std::vector<float>			sample_buffer;		// sample buffer.
 	int							max_sample_buffer = 1;	// amount of "nes" frames of sound.
 	bool						audio_frame_ready = false;
@@ -74,8 +83,8 @@ private:
 	SDL_AudioDeviceID aud;
 	bworth	bw;
 	float	lpout = 0.0f;
-	float   buffer[MAX_BUFFER_AUDIO * 4 * NES_FRAMES];	// 4 times the "requirement"
-	float   move_buffer[MAX_BUFFER_AUDIO * 4 * NES_FRAMES]; // shift/move buffer.
+	float   buffer[MAX_BUFFER_AUDIO * 4 * NES_FRAMES] = {};	// 4 times the "requirement"
+	float   move_buffer[MAX_BUFFER_AUDIO * 4 * NES_FRAMES] = {}; // shift/move buffer.
 	void	send_sampledata_to_audio_device();
 	static void sdl_aud_callback(void * const data, std::uint8_t * const stream, const int len);
 	void	bWorthFilter(const float input, float& output);
@@ -84,7 +93,7 @@ public:
 	std::vector<audio_device *>	audibles;
 	std::vector<float> final_mux;
 	float	de_pop_sample = 0.0f;
-	float	average_mix;
+	float	average_mix = 0.0f;
 	int		sample_rate = SAMPLE_RATE;
 	int		samples_in_buffer = 0;
 	bool	samples_is_played = false;
@@ -93,6 +102,7 @@ public:
 	bool	no_audio = false;
 	bool	no_expanded_audio = false;
 	bool	interpolated = true;
+	bool	hq_filter = true;
 	float	attentuate = 1.0f;
 	bool	attentuate_lock = true;
 	float	max_attentuate = 1.05f;

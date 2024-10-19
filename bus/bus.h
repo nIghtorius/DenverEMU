@@ -58,10 +58,11 @@ class bus;
 class bus_device: public device	{	// we base the bus device off the device class.
 public:
 	bool	processlayout = false;			// get set to true when specific pin configuration is set. false when not ( helps speeding up bus emulation )
+	bool	trigger_a_change = false;
 	int		devicestart;
 	int		deviceend;
 	int		devicemask;
-	bus		*devicebus;
+	bus*	devicebus = nullptr;
 	device_debugger debugger;
 	buslayout	pinout;
 	bus_device();
@@ -71,10 +72,12 @@ public:
 	void			groundpin(const int pin);
 	void			vccpin(const int pin);
 	void			resetpins_to_default();
+	void			set_adres_intent(word address);
 	virtual void	write(const int addr, const int addr_from_base, const byte data);
 	virtual	byte	read(const int addr, const int addr_from_base, const bool onlyread = false);
 	virtual void	_attach_to_bus(bus * attachedbus);
 	virtual void	set_debug_data();
+	virtual void	a_line_change(const word newaddress);
 };
 
 class bus {
@@ -104,4 +107,6 @@ public:
 	void	busreset();
 	// finding devices.
 	bus_device* find_device_partial_name_match(const std::string matchstring);
+	// selecting address.
+	void	trigger_address_update(int _address);
 };

@@ -404,7 +404,14 @@ int main(int argc, char *argv[])
 			case SDL_CONTROLLERDEVICEADDED:
 				denver->joydefs->process_controller_connect_event(&event);
 				break;
+			case SDL_DROPFILE:
+				SDL_DropEvent *dropData = reinterpret_cast<SDL_DropEvent*>(&event);
+				// we have dropped the file. Load it.
+				// tell the gui to load it.
+				windowstates.romChange = true;
+				windowstates.changeRomTo = dropData->file;
 			}
+
 		}
 		if (!no_gui) {
 			ImGui_ImplOpenGL3_NewFrame();

@@ -89,7 +89,7 @@ float	namco163audio::mux() {
 		final_mux += channels[i].output;
 	}
 	//final_mux /= (1.0f+(channels_active >> 1));
-	final_mux /= 2.0f;
+	final_mux /= 1.0f;
 	return final_mux;
 }
 
@@ -129,9 +129,6 @@ void	namco163audio::set_debug_data() {
 	debugger.add_debug_var("Update ticker", 15, &update_tick, t_byte);
 	debugger.add_debug_var("Enhanced mixer", -1, &enhanced_mixer, t_bool);
 	debugger.add_debug_var("NAMCO 163", -1, NULL, t_endblock);
-
-	// buf
-	char buf[16];
 
 	// channels.
 	for (int i = 0; i < 8; i++) {

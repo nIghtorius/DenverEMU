@@ -129,6 +129,15 @@ void	denvergui::internal_render_dbg_node(dbg_dt* node) {
 		ImGui::Text("%s:", node->description.c_str()); ImGui::SameLine();
 		ImGui::TextColored(color, "%s", *bdata ? "Yes" : "No");
 		break;
+	case t_togglebool:
+		ImGui::Text("%s:", node->description.c_str()); ImGui::SameLine();
+		if (!*bdata) {
+			ImGui::Checkbox("No", (bool*)bdata);
+		}
+		else {
+			ImGui::Checkbox("Yes", (bool*)bdata);
+		}
+		break;
 	case t_addr:
 		ImGui::Text("%s:", node->description.c_str()); ImGui::SameLine();
 		ImGui::Text("%04X", *wdata);
@@ -178,6 +187,7 @@ void	denvergui::render_debugviewer(device_debugger *device, bool* showhide, char
 
 void	denvergui::render_apuviewer(nes_emulator *denver, denvergui_state *state) {
 	if (ImGui::Begin("APU debugger", &state->show_apu_debugger, 0)) {
+		ImGui::Checkbox("Mute device:", &denver->nes_2a03->apu_2a03.muted);
 		if (ImGui::TreeNode("Pulse #1")) {
 			char buf[16];
 			ImGui::Text("Enabled: %s", (denver->nes_2a03->apu_2a03.pulse[0].enabled ? "Yes" : "No"));
