@@ -1,5 +1,5 @@
 #include "clock.h"
-#include "..\video\ppu.h"
+#include "../video/ppu.h"
 #include <iostream>
 #include <SDL.h>
 

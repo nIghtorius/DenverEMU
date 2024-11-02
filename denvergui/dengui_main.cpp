@@ -306,20 +306,20 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *
 		{
 			// NSF interface.
 			ImGui::Text("Denver NSF Player");
-			ImGui::Text("");
+			ImGui::NewLine();
 			ImGui::Text("Song(s) :");
 			ImGui::SameLine();
-			ImGui::TextColored(ImVec4{1.0f, 1.0f, 0.0f, 1.0f}, denver->cart->songname.c_str());
+			ImGui::TextColored(ImVec4{1.0f, 1.0f, 0.0f, 1.0f}, "%s", denver->cart->songname.c_str());
 			ImGui::Text("Artist :");
 			ImGui::SameLine();
-			ImGui::TextColored(ImVec4{ 1.0f, 1.0f, 0.0f, 1.0f }, denver->cart->artist.c_str());
+			ImGui::TextColored(ImVec4{ 1.0f, 1.0f, 0.0f, 1.0f }, "%s", denver->cart->artist.c_str());
 			ImGui::Text("Copyright :");
 			ImGui::SameLine();
-			ImGui::TextColored(ImVec4{ 1.0f, 1.0f, 0.0f, 1.0f }, denver->cart->copyright.c_str());
+			ImGui::TextColored(ImVec4{ 1.0f, 1.0f, 0.0f, 1.0f }, "%s", denver->cart->copyright.c_str());
 			ImGui::Text("Ripper :");
 			ImGui::SameLine();
-			ImGui::TextColored(ImVec4{ 1.0f, 1.0f, 0.0f, 1.0f }, denver->cart->ripper.c_str());
-			ImGui::Text("");
+			ImGui::TextColored(ImVec4{ 1.0f, 1.0f, 0.0f, 1.0f }, "%s", denver->cart->ripper.c_str());
+			ImGui::NewLine();
 			ImGui::Separator();
 
 			// get NSF interface.
@@ -330,7 +330,7 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *
 
 			if (denver->cart->trackNames.size() > 0) {
 				ImGui::Text("Track: "); ImGui::SameLine();
-				ImGui::TextColored(ImVec4{ 0.0f, 1.0f, 1.0f, 1.0f }, denver->cart->trackNames[nsfinterface->state.currentsong - 1].c_str());
+				ImGui::TextColored(ImVec4{ 0.0f, 1.0f, 1.0f, 1.0f }, "%s", denver->cart->trackNames[nsfinterface->state.currentsong - 1].c_str());
 			}
 
 			ImGui::Separator();
@@ -344,7 +344,7 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *
 				for (std::string &track : denver->cart->trackNames) {
 					cItems.push_back(track.c_str());
 				}
-				if (ImGui::Combo("", &state->zeroIndexedTrackNo, cItems.data(), nsfinterface->state.numsongs)) {
+				if (ImGui::Combo("##", &state->zeroIndexedTrackNo, cItems.data(), nsfinterface->state.numsongs)) {
 					nsfinterface->initialize(state->zeroIndexedTrackNo);
 					nsfinterface->state.currentsong = state->zeroIndexedTrackNo + 1;
 				}
@@ -360,7 +360,7 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *
 					names.push_back(track);
 					cItems.push_back(names.back().c_str());
 				}
-				if (ImGui::Combo("", &state->zeroIndexedTrackNo, cItems.data(), nsfinterface->state.numsongs)) {
+				if (ImGui::Combo("##", &state->zeroIndexedTrackNo, cItems.data(), nsfinterface->state.numsongs)) {
 					nsfinterface->initialize(state->zeroIndexedTrackNo);
 					nsfinterface->state.currentsong = state->zeroIndexedTrackNo + 1;
 				}

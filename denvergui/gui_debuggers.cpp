@@ -52,7 +52,7 @@ void	denvergui::internal_render_dbg_node(dbg_dt* node) {
 		}
 		else {
 			// bars.
-			ImGui::Text(node->description.c_str());
+			ImGui::Text("%s", node->description.c_str());
 			float value = (1.0f / (float)node->max) * (float)*bydata;
 			sprintf(buf, "%d", *bydata);
 			ImGui::ProgressBar(value, ImVec2{ 0, 0 }, buf);
@@ -65,7 +65,7 @@ void	denvergui::internal_render_dbg_node(dbg_dt* node) {
 		}
 		else {
 			// bars.
-			ImGui::Text(node->description.c_str());
+			ImGui::Text("%s", node->description.c_str());
 			float value = (1.0f / (float)node->max) * (float)(*bydata & 0x0F);
 			sprintf(buf, "%d", *bydata & 0x0F);
 			ImGui::ProgressBar(value, ImVec2{ 0, 0 }, buf);
@@ -119,7 +119,7 @@ void	denvergui::internal_render_dbg_node(dbg_dt* node) {
 		ImGui::Text("%s:", node->description.c_str());
 		if (node->data != NULL) {
 			ImGui::SameLine();
-			ImGui::Text((const char*)node->data);
+			ImGui::Text("%s", (const char*)node->data);
 		}
 		break;
 	case t_longintarray:
@@ -293,7 +293,7 @@ void	denvergui::render_apuviewer(nes_emulator *denver, denvergui_state *state) {
 		}
 		if (ImGui::TreeNode("Audio Mixing Specifics")) {
 			ImGui::Text("Attentuation: %f", (1.0f - denver->audio->attentuate));
-			ImGui::Text("Number of audio devices: %d", (denver->audio->audibles.size()));
+			ImGui::Text("Number of audio devices: %ld", (denver->audio->audibles.size()));
 			ImGui::Text("DC-(re)calibration: %f", denver->audio->average_mix);
 			ImGui::Separator();
 			ImGui::TreePop();
@@ -375,18 +375,18 @@ void	denvergui::render_cpuviewer(nes_emulator *denver, denvergui_state *state) {
 						break;
 					case 2:
 						ImGui::Text("%02X %02X", (int)denver->mainbus->readmemory(disaddr, true),
-							(int)denver->mainbus->readmemory(disaddr + 1), true);
+							(int)denver->mainbus->readmemory(disaddr + 1, true));
 						disaddr += 2;
 						break;
 					case 3:
 						ImGui::Text("%02X %02X %02X", (int)denver->mainbus->readmemory(disaddr, true),
 							(int)denver->mainbus->readmemory(disaddr + 1, true),
-							(int)denver->mainbus->readmemory(disaddr + 2), true);
+							(int)denver->mainbus->readmemory(disaddr + 2, true));
 						disaddr += 3;
 						break;
 					}
 					ImGui::TableSetColumnIndex(2); // DISASSEMBLY
-					ImGui::Text(distxt.c_str());
+					ImGui::Text("%s", distxt.c_str());
 				}
 				ImGui::EndTable();
 			}
@@ -406,7 +406,7 @@ void	denvergui::render_cpuviewer(nes_emulator *denver, denvergui_state *state) {
 					if (j != 15) ImGui::SameLine();
 				}
 			}
-			ImGui::Text("");
+			ImGui::NewLine();
 			ImGui::Text("WORD @ SP: %04X  --  BYTE @ SP: %02X",
 				denver->mainbus->readmemory_as_word(0x0100 + denver->nes_2a03->cpu_2a03.regs.sp, true),
 				denver->mainbus->readmemory(0x0100 + denver->nes_2a03->cpu_2a03.regs.sp, true)
