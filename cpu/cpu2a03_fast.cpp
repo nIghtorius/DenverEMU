@@ -1,6 +1,8 @@
 #include "cpu2a03_fast.h"
 #include <iostream>
+#include <iomanip>
 #include <cstdint>
+
 
 #pragma warning(disable : 4996)
 
@@ -52,6 +54,33 @@ void cpu2a03_fast::machine_code_trace(int startaddr, int endaddr, int erraddr) {
 			std::cout << "* 0x" << std::hex << (int)myaddr << " " << disassembled << "\n";
 		}
 		myaddr += disasm.last_instruction_size;
+	}
+}
+
+void cpu2a03_fast::stack_dump() {
+	// dump the stack.
+	word addr = 0x0100;
+	std::cout << "Stack dump (literal stack)\n---------------------------\n";
+	std::cout << std::hex;
+	for (int i = 0; i < 16; i++) {
+		// write addr.
+		std::cout << "0x" << std::setw(4) << std::setfill('0') << (int)addr << "       ";
+		// write dump.
+		for (int j = 0; j < 16; j++) {
+			std::cout << "0x" << std::setw(2) << (int)devicebus->readmemory(addr + j, true);
+			// SP.
+			if (regs.sp == (addr - 0x0100 + j + 1)) {
+				std::cout << "[";
+			} else {
+				if (regs.sp == (addr - 0x0100 + j + 0)) {
+					std::cout << "]";
+				}
+				else std::cout << " ";
+			}
+		}
+		// update addr.
+		addr += 0x10;
+		std::cout << "\n";
 	}
 }
 

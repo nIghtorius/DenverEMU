@@ -110,7 +110,7 @@ int		nesdb::in_db(const void* prg, const std::size_t size) {
 	std::cout << "Finding PRG CRC: " << std::hex << (int)crc.GetValue() << "\n";
 
 	// check DB if found.
-	for (int i = 0; i < dbstats.entries; i++) {
+	for (uint32_t i = 0; i < dbstats.entries; i++) {
 		if (entries[i].prgrom_crc32 == crc.GetValue()) {
 			std::cout << "Game found in DB: " << entries[i].gamename << "\n";
 			return i;

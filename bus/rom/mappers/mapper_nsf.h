@@ -65,6 +65,7 @@ class nsfrom : public rom {
 private:
 	byte		ufirm[128];	// uFirmware space (only 128bytes)
 	int			tickcount = 0;
+	uint64_t	total_cpu_ticks = 0;
 
 public:
 	nsf_state state;
@@ -83,8 +84,6 @@ public:
 
 	package_2a03 *n2a03 = nullptr;
 
-	uint64_t		timestarted = 0;
-
 	nsfrom();
 	~nsfrom();
 	virtual	byte	read(const int addr, const int addr_from_base, const bool onlyread = false);
@@ -93,4 +92,5 @@ public:
 	virtual void	set_rom_data(byte *data, const std::size_t size);
 	void			initialize(const byte song);
 	virtual void	set_debug_data();
+	uint64_t		return_time_in_ms() const;
 };

@@ -20,6 +20,7 @@ namespace denvergui {
 
 		// cpu viewer.
 		int	disasm_start = 0x8000;
+		bool lock_disasm_cpu = false;
 
 		// ppu palette (pattern)
 		int	pattern_palette = 0x00;
@@ -30,12 +31,18 @@ namespace denvergui {
 
 		// main window.
 		SDL_Window* mainwin = nullptr;
+		float scaling;
 
 		// last directory.
 		std::string lastpath = "."; // defaults to current directory.
 
 		bool	romChange = false;
 		std::string changeRomTo = "";
+
+		// nsf
+		int		zeroIndexedTrackNo;
+		bool	repeatTrackAfterEnd15s = false;
+		
 	};
 
 	void	render_main (nes_emulator *denver,  GLuint tex, denvergui_state *state);

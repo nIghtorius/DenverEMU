@@ -50,6 +50,7 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *
 		newcaption += "]";
 		denver->load_cartridge(state->changeRomTo.c_str());
 		denver->cold_reset();
+		SDL_SetWindowTitle(state->mainwin, newcaption.c_str());
 	}
 
 	// cpu dialog
@@ -242,6 +243,9 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *
 				if (ImGui::MenuItem("Hard reset CPU", "Ctrl+H")) {
 					denver->cold_reset();
 				}
+				if (ImGui::MenuItem("Pause emulation", "Ctrl+P", denver->clock.pause)) {
+					denver->clock.pause = !denver->clock.pause;
+				}
 				ImGui::Separator();
 				if (ImGui::BeginMenu("Debugging")) {
 					if (ImGui::MenuItem("PPU Viewer")) {
@@ -298,7 +302,7 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *
 	ImGui::SetNextWindowSize(sizeRendering);
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
 	if (denver->cart->nsf_mode) {
-		if (ImGui::Begin("NES Music Player", NULL, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoResize || ImGuiWindowFlags_NoInputs))
+		if (ImGui::Begin("NES Music Player", NULL, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoResize))
 		{
 			// NSF interface.
 			ImGui::Text("Denver NSF Player");
@@ -320,6 +324,7 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *
 
 			// get NSF interface.
 			nsfrom* nsfinterface = reinterpret_cast<nsfrom*>(denver->cart->program);
+			state->zeroIndexedTrackNo = nsfinterface->state.currentsong - 1;
 
 			ImGui::Text("Selected song %d/%d", nsfinterface->state.currentsong, nsfinterface->state.numsongs);
 
@@ -330,19 +335,71 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *
 
 			ImGui::Separator();
 
+			ImGui::Text("Select track:");
+			ImGui::SameLine();
+			if (denver->cart->trackNames.size() > 0) {
+				// tracknamed selection.
+				std::vector<const char*>cItems;
+				cItems.clear();
+				for (std::string &track : denver->cart->trackNames) {
+					cItems.push_back(track.c_str());
+				}
+				if (ImGui::Combo("", &state->zeroIndexedTrackNo, cItems.data(), nsfinterface->state.numsongs)) {
+					nsfinterface->initialize(state->zeroIndexedTrackNo);
+					nsfinterface->state.currentsong = state->zeroIndexedTrackNo + 1;
+				}
+			}
+			else {
+				// Track 1., Track 2., etc selection.
+				std::vector<const char*>cItems;
+				std::vector<std::string>names;
+				names.reserve(nsfinterface->state.numsongs + 1);
+				cItems.clear();
+				for (int i = 0; i < nsfinterface->state.numsongs; i++) {
+					std::string track = std::string("Track ") + std::to_string(i + 1) + std::string(".");
+					names.push_back(track);
+					cItems.push_back(names.back().c_str());
+				}
+				if (ImGui::Combo("", &state->zeroIndexedTrackNo, cItems.data(), nsfinterface->state.numsongs)) {
+					nsfinterface->initialize(state->zeroIndexedTrackNo);
+					nsfinterface->state.currentsong = state->zeroIndexedTrackNo + 1;
+				}
+			}
+	
+			ImGui::Separator();
+
 			// Media buttons.
-			if (ImGui::Button("<<", ImVec2{ 128, 32 })) {
+			if (ImGui::Button("<<", ImVec2{ 128, 24 * state->scaling })) {
 				if (nsfinterface->state.currentsong > 1)
 					nsfinterface->state.currentsong--;
 				// play the track.
 				nsfinterface->initialize(nsfinterface->state.currentsong - 1);
 			}
 			ImGui::SameLine();
-			ImGui::Text("      ");
+			ImGui::Text("  ");
 			ImGui::SameLine();
-			if (ImGui::Button(">>", ImVec2{ 128, 32 })) {
+			if (!denver->clock.pause) {
+				if (ImGui::Button("||", ImVec2{ 128, 24 * state->scaling })) {
+					denver->clock.pause = !denver->clock.pause;
+				}
+			}
+			else {
+				if (ImGui::Button("|>", ImVec2{ 128, 24 * state->scaling })) {
+					denver->clock.pause = !denver->clock.pause;
+				}
+			}
+			ImGui::SameLine();
+			ImGui::Text("  ");
+			ImGui::SameLine();
+			if (ImGui::Button(">>", ImVec2{ 128, 24 * state->scaling })) {
 				if (nsfinterface->state.currentsong < nsfinterface->state.numsongs)
 					nsfinterface->state.currentsong++;
+				nsfinterface->initialize(nsfinterface->state.currentsong - 1);
+			}
+			ImGui::SameLine();
+			ImGui::Text("  ");
+			ImGui::SameLine();
+			if (ImGui::Button(">", ImVec2{ 128, 24 * state->scaling })) {
 				nsfinterface->initialize(nsfinterface->state.currentsong - 1);
 			}
 			ImGui::Separator();
@@ -350,37 +407,37 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *
 			int s = (int)denver->audio->final_mux.size();
 			float* graph = &denver->audio->final_mux[0];
 			float lb = denver->audio->average_mix - 0.7f;
-			float hb = denver->audio->average_mix + 0.7f;
-			ImGui::PlotLines("Sample", graph, s, 0, NULL, lb, hb, ImVec2{ 0, 160.0f });
+			float hb = denver->audio->average_mix + 0.7f;			
+			ImGui::PlotLines("Sample", graph, s, 0, NULL, lb, hb, ImVec2{ 0, 160.0f * state->scaling });
 			ImGui::Separator();
-			ImGui::Text("Expansion Audio:");
-			ImGui::SameLine();
+			ImGui::Text("Audio devices: (check to mute)");
+			ImGui::Checkbox("NES 2A03 APU", &denver->nes_2a03->apu_2a03.muted);
 			if (denver->cart->fdsexp) {
-				ImGui::Text("FDS"); ImGui::SameLine();
+				ImGui::Checkbox("Nintendo FDS", &denver->cart->fdsexp->muted);
 			}
 			if (denver->cart->namexp) {
-				ImGui::Text("NAMCO"); ImGui::SameLine();
+				ImGui::Checkbox("Namco", &denver->cart->namexp->muted);
 			}
 			if (denver->cart->vrc6exp) {
-				ImGui::Text("VRC6"); ImGui::SameLine();
+				ImGui::Checkbox("Konami VRC6", &denver->cart->vrc6exp->muted);
 			}
 			if (denver->cart->vrc7exp) {
-				ImGui::Text("VRC7"); ImGui::SameLine();
+				ImGui::Checkbox("Konami VRC7", &denver->cart->vrc7exp->muted);
 			}
 			if (denver->cart->sunexp) {
-				ImGui::Text("SUNSOFT"); ImGui::SameLine();
+				ImGui::Checkbox("Sunsoft", &denver->cart->sunexp->muted);
 			}
 			if (denver->cart->mmc5exp) {
-				ImGui::Text("MMC5"); ImGui::SameLine();
+				ImGui::Checkbox("Nintendo MMC", &denver->cart->mmc5exp->muted);
 			}
 			if (denver->cart->high_hz_nsf) {
-				ImGui::Text("High refresh mode (3x CPU speed)"); ImGui::SameLine();
+				ImGui::Text("High refresh mode (3x CPU speed)"); 
 			}
-			ImGui::NewLine();
 			ImGui::Separator();
 			// compute time elapsed.
-			uint64_t currenttime = SDL_GetTicks64();
-			uint32_t elapsed = (uint32_t)(currenttime - nsfinterface->timestarted);
+			//uint64_t currenttime = SDL_GetTicks64();
+			uint32_t elapsed = (uint32_t)nsfinterface->return_time_in_ms();
+			uint32_t total = 0;
 			uint32_t seconds = elapsed / 1000;
 			uint32_t minutes = seconds / 60;
 			seconds = seconds % 60;
@@ -403,6 +460,28 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *
 				else ImGui::NewLine();
 			}
 			ImGui::NewLine();
+			// progress bar when tracklength is known.
+			if (denver->cart->trackLengths.size() != 0) {
+				total = denver->cart->trackLengths[nsfinterface->state.currentsong - 1];
+				elapsed = (uint32_t)nsfinterface->return_time_in_ms();
+				int w, h;
+				SDL_GetWindowSize(state->mainwin, &w, &h);
+				w -= 32;
+				float prog = (1.0f / (float)total) * (float)elapsed;
+				ImGui::ProgressBar(prog, ImVec2{ (float)w, 24 * state->scaling });
+			}
+			// repeat track after 15s.
+			if (denver->cart->trackLengths.size() != 0) {
+				ImGui::Checkbox("Repeat track @ End Track + extra 5 seconds.", &state->repeatTrackAfterEnd15s);
+				if (state->repeatTrackAfterEnd15s) {
+					total = denver->cart->trackLengths[nsfinterface->state.currentsong - 1];
+					elapsed = (uint32_t)nsfinterface->return_time_in_ms();
+					if (elapsed > total + 5000) {
+						nsfinterface->initialize(nsfinterface->state.currentsong - 1);
+					}
+				}
+			}
+
 		}
 		ImGui::End();
 	}

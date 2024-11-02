@@ -37,7 +37,7 @@
 #include <SDL_opengl.h>
 #endif
 
-#define		DENVER_VERSION		"0.6 alpha"
+#define		DENVER_VERSION		"0.8 alpha"
 #undef main
 
 // defaults
@@ -367,6 +367,7 @@ int main(int argc, char *argv[])
 	denvergui::denvergui_state windowstates;
 	windowstates.show_apu_debugger = false;
 	windowstates.mainwin = win;
+	windowstates.scaling = display_scale;
 
 	// setup debug rendering for ppu.
 	ppu_debug_vram *ppu_visual_debug = new ppu_debug_vram();

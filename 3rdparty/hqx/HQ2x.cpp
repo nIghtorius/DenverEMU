@@ -71,7 +71,7 @@ uint32_t *HQ2x::resize(
 
 		// adjusts the previous and next line pointers
 		if (row > 0)
-			previous = -width;
+			previous = -(int)width;
 		else
 		{
 			if (wrapY)
@@ -84,7 +84,7 @@ uint32_t *HQ2x::resize(
 		else
 		{
 			if (wrapY)
-				next = -(width * (height - 1));
+				next = -((int)width * ((int)height - 1));
 			else
 				next = 0;
 		}

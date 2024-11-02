@@ -73,11 +73,19 @@ int		nsfrom::rundevice(const int ticks) {
 	if (fdsexp) fdsexp->rundevice(ticks);
 
 	tickcount += ticks;
+	total_cpu_ticks += ticks / 3;
 	if (tickcount >= nmi_trig_cycles) {
 		if (nmi_enabled) nmi_enable = true;
 		tickcount -= nmi_trig_cycles;
 	}
 	return ticks;
+}
+
+uint64_t nsfrom::return_time_in_ms() const {
+	double time = (double)total_cpu_ticks / 29780;	// ticks -> timeblocks in 16.6ms.
+	time *= 60;	// timeblocks -> seconds.
+	uint64_t rtime = (uint64_t)floor(time);
+	return rtime;
 }
 
 void	nsfrom::set_rom_data(byte *data, const std::size_t size) {
@@ -142,7 +150,7 @@ void	nsfrom::initialize(const byte song) {
 	state.nmi_vector = vectors.nmi;
 	state.res_vector = vectors.reset;
 
-	timestarted = SDL_GetTicks64();
+	total_cpu_ticks = 0;
 }
 
 void	nsfrom::set_debug_data() {

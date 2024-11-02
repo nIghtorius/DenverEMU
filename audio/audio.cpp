@@ -83,6 +83,7 @@ void	audio_player::play_audio() {
 
 	// everything is ready. let's mux everything together.
 	final_mux.clear();
+	final_mux.reserve(audibles[0]->sample_buffer.size());
 
 	float avg_center = 0.0f;
 	bool increaseattentuate = true;
@@ -122,9 +123,12 @@ void	audio_player::play_audio() {
 	avg_center /= (float)audibles[0]->sample_buffer.size();
 	average_mix += avg_center; average_mix /= 2;	
 	
+	size_t	lastsize = audibles[0]->sample_buffer.size();
+
 	for (auto audible : audibles) {
 		audible->sample_buffer.clear();
 		audible->audio_frame_ready = false;
+		audible->sample_buffer.reserve(lastsize);	// use last size for preparation.
 	}
 
 	send_sampledata_to_audio_device();
@@ -140,7 +144,7 @@ void	audio_player::bWorthFilter(const float input, float& output) {
 
 void	audio_player::simpleLowpass(const float input, float& output) {
 	if (output == input) return;
-	output += ALPHA_LP * (input - output);
+	output += (float)ALPHA_LP * (input - output);
 	// clamp output when near target "input"
 	if ((output - CLAMP_LP < input) && (output + CLAMP_LP > input)) output = input;
 }
@@ -158,7 +162,7 @@ void	audio_player::send_sampledata_to_audio_device() {
 		if (samples + samples_to_target > final_mux.size()) samples_to_target = final_mux.size() - samples;
 		sample = final_mux[(int)trunc(samples)];
 		if (interpolated) {
-			// no need to calculate if interpolated is disabled.
+			// no need to calculate if interpolation is disabled.
 			if (hq_filter) {
 				bWorthFilter(sample, lpout);
 			}

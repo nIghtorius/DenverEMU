@@ -13,7 +13,7 @@
 struct m71_state {
 	byte outerbank = 0;	// needs work.
 	byte prgbank = 0;
-	byte mirror = 0;
+	byte mirror = 2;	// no single screen.
 };
 
 class m71rom : public rom {

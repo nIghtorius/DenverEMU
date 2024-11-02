@@ -37,7 +37,7 @@ struct nes_frame_tex {
 class nes_emulator {
 private:
 	mainram				* nesram;
-	nes_frame_tex		frame;
+	nes_frame_tex		frame = { 0, 0, nullptr, 0 };
 	bool				quit = false;
 	uint64_t			time;
 

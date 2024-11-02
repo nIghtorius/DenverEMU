@@ -277,12 +277,14 @@ bool	cartridge::readstream_nsfe(std::istream& nsffile, ppu* ppu_device, bus* mai
 	memset(&info, 0, sizeof(nsfe_info));
 	memset(&bank, 0, sizeof(nsfe_bank));	// set to all zeroes. the NSF mapper knows how to handle this.
 
+	std::cout << "Reading chunks: ";
+
 	while (!end_of_file) {
 		nsffile.read((char*)&chunk, sizeof(nsfe_chunk));
 		end_of_file = (chunk.chunkid == NSFE_NEND) || (nsffile.tellg() + (std::streampos)chunk.length >= (std::streampos)filesize);
 		switch (chunk.chunkid) {
 		case NSFE_INFO:
-			std::cout << "Reading INFO chunk..\n";
+			std::cout << "INFO ";
 			readsize = chunk.length;
 			if (readsize > sizeof(nsfe_info)) {
 				readsize = sizeof(nsfe_info);
@@ -294,7 +296,7 @@ bool	cartridge::readstream_nsfe(std::istream& nsffile, ppu* ppu_device, bus* mai
 			if (chunk.length > 0) nsffile.seekg(chunk.length, std::ios_base::cur);	// skip the rest.
 			break;
 		case NSFE_BANK:
-			std::cout << "Reading BANK chunk..\n";
+			std::cout << "BANK ";
 			readsize = chunk.length;
 			if (readsize > 8) {
 				std::cout << "Warning NSFE_BANK block exceeds NSFE_BANK size, truncating..\n";
@@ -306,7 +308,7 @@ bool	cartridge::readstream_nsfe(std::istream& nsffile, ppu* ppu_device, bus* mai
 			if (chunk.length > 0) nsffile.seekg(chunk.length, std::ios_base::cur);	// skip.
 			break;
 		case NSFE_RATE:
-			std::cout << "Reading RATE chunk..\n";
+			std::cout << "RATE ";
 			readsize = chunk.length;
 			if (readsize > sizeof(nsfe_rate)) {
 				readsize = sizeof(nsfe_rate);
@@ -320,13 +322,13 @@ bool	cartridge::readstream_nsfe(std::istream& nsffile, ppu* ppu_device, bus* mai
 			if (chunk.length > 0) nsffile.seekg(chunk.length, std::ios_base::cur);	// skip.
 			break;
 		case NSFE_DATA:
-			std::cout << "Reading DATA chunk..\n";
+			std::cout << "DATA ";
 			romdata = malloc(chunk.length);
 			prgsize = chunk.length;
 			if (romdata != nullptr) nsffile.read((char*)romdata, chunk.length);
 			break;
 		case NSFE_AUTH:
-			std::cout << "Reading AUTH chunk..\n";
+			std::cout << "AUTH ";
 			authdata = malloc(chunk.length);
 			nsffile.read((char*)authdata, chunk.length);
 			// process.
@@ -334,12 +336,12 @@ bool	cartridge::readstream_nsfe(std::istream& nsffile, ppu* ppu_device, bus* mai
 			free(authdata);
 			break;
 		case NSFE_TLBL:
-			std::cout << "Reading TLBL chunk..\n";
+			std::cout << "TLBL ";
 			tracknames = malloc(chunk.length);
 			nsffile.read((char*)tracknames, chunk.length);
 			break;
 		case NSFE_TIME:
-			std::cout << "Reading TIME chunk..\n";
+			std::cout << "TIME ";
 			tracklengths = malloc(chunk.length);
 			nsffile.read((char*)tracklengths, chunk.length);
 			nr_lengths = chunk.length / sizeof(std::int32_t);
@@ -350,7 +352,7 @@ bool	cartridge::readstream_nsfe(std::istream& nsffile, ppu* ppu_device, bus* mai
 			break;
 		}
 	}
-	
+	std::cout << "\n";
 	// check that we have all the data we need!
 	// what is required?
 	//		romdata != null
@@ -1089,7 +1091,8 @@ cartridge::cartridge(const char *filename, ppu *ppu_device, bus *mainbus, audio_
 	filesize = nesfile.tellg();
 	nesfile.seekg(0, std::ios_base::beg);
 	
-	bool is_fds = ((filesize % 65500) == 0) || (((filesize - 16) % 65500) == 0);
+	// prerequisites for identifying a file is an FDS file.
+	bool is_fds = (((filesize % 65500) == 0) || (((filesize - 16) % 65500) == 0)) && (filesize != 0);
 
 	if (is_fds) {
 		std::cout << "Loading FDS image: " << filename << std::endl;

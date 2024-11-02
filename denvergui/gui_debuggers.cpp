@@ -343,6 +343,10 @@ void	denvergui::render_cpuviewer(nes_emulator *denver, denvergui_state *state) {
 			if (ImGui::Button("GO CPU,r.PC")) {
 				state->disasm_start = denver->nes_2a03->cpu_2a03.regs.pc;
 			}
+			if (ImGui::Checkbox("Lock on CPU,r.PC", &state->lock_disasm_cpu)) {
+				//state->lock_disasm_cpu = !state->lock_disasm_cpu;
+			}
+			if (state->lock_disasm_cpu) state->disasm_start = denver->nes_2a03->cpu_2a03.regs.pc;
 			ImGui::Text("Disassembling from: 0x%04X", state->disasm_start);
 			if (ImGui::BeginTable("Disassembly", 3, ImGuiTableFlags_SizingFixedSame)) {
 				ImGui::TableSetupColumn("ADDRESS", ImGuiTableColumnFlags_WidthFixed);

@@ -1,4 +1,5 @@
 #include "clock.h"
+#include "..\video\ppu.h"
 #include <iostream>
 #include <SDL.h>
 
@@ -123,8 +124,17 @@ void fastclock::run() {
 			std::cout << "\nCode around fault:\n";
 			std::cout << "------------------------\n";
 			i2a03->cpu_2a03.machine_code_trace(i2a03->cpu_2a03.regs.pc - 0x10, i2a03->cpu_2a03.regs.pc + 0x03, i2a03->cpu_2a03.regs.pc);
+			std::cout << "\n\n";
+			i2a03->cpu_2a03.stack_dump();
 			running = false;
 		}
+
+		if (pause) {
+			// trigger PPU renderer (buffer render callback) and skip emulation loop.
+			reinterpret_cast<ppu*>(ppudevice)->callback();
+			continue;
+		}
+
 		//  run cpu 1 step.		
 		byte dmabyte;
 		if (cpudevice == NULL) return;
