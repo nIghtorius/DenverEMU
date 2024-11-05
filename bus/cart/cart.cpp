@@ -554,6 +554,13 @@ bool	cartridge::readstream_nsf(std::istream &nsffile, ppu *ppu_device, bus *main
 	}
 	std::cout << "\n";
 
+	// there are NSF with speed 0, just default to 16666
+	if (nsf_hdr.playspeed_ntsc == 0x0000) {
+		// copy speed from PAL.
+		nsf_hdr.playspeed_ntsc = nsf_hdr.playspeed_pal;
+		nsf_hdr.playspeed_ntsc = nsf_hdr.playspeed_ntsc ? nsf_hdr.playspeed_ntsc : 16666;
+	}
+
 	// compute NSF NMI trigger speed.
 	// cpu cycles are 29780 per audio frame (60hz), lower that number and we increase refreshrate.
 	// 16666 = 60.002hz that we know. 16666 = 29780 cycles.

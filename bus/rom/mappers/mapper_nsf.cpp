@@ -54,11 +54,16 @@ void	nsfrom::write(const int addr, const int addr_from_base, const byte data) {
 	if ((addr == 0x3000) && (data == 0xFF)) {
 		nmi_enabled = true;
 	}
+	// Bankswitching.
 	if ((addr >= 0x5FF8) && (addr <= 0x5FFF)) {
 		byte	bank = addr - 0x5FF8;
 		state.banks[bank] = data;
 		prg[bank] = &romdata[(data << 12) % romsize];
 		return;
+	}
+	// Expanded ram write.
+	if ((addr >= 0x6000) && (addr <= 0x7FFF)) {
+		ram[addr - 0x6000] = data;
 	}
 }
 
