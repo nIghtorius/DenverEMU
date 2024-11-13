@@ -302,7 +302,7 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *
 	ImGui::SetNextWindowSize(sizeRendering);
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
 	if (denver->cart->nsf_mode) {
-		if (ImGui::Begin("NES Music Player", NULL, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoResize))
+		if (ImGui::Begin("NES Music Player", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize))
 		{
 			// NSF interface.
 			ImGui::Text("Denver NSF Player");
