@@ -128,6 +128,7 @@ public:
 	void	half_clock();
 	void	quarter_clock();
 	byte	readsample();
+	float	readsample_hres();
 };
 
 class noise_generator {
@@ -186,7 +187,7 @@ public:
 class apu : public audio_device {
 private:
 	float				pulse_muxtable[32];
-	float				tnd_table[204];
+	float				tnd_table[205];
 
 	bool				frame_irq_asserted; // irq
 	bool				five_step_mode;
@@ -204,6 +205,7 @@ private:
 	int					ldm = 0;
 
 	float				mux(byte p1, byte p2, byte tri, byte noi, byte dmc);
+	float				hmux(byte p1, byte p2, float tri, byte noi, byte dmc);
 
 public:
 	apu();

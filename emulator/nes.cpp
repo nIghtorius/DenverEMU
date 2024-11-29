@@ -147,6 +147,7 @@ void	nes_emulator::load_cartridge(const char * filename) {
 	}
 	else clock.set_sync_cycle_in_ppucycles(1);
 	nes_2a03->cpu_2a03.coldboot();
+	audio->update_devices();
 }
 
 void	nes_emulator::load_logo() {

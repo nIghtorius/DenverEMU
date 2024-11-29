@@ -49,7 +49,7 @@ byte	mmc2_rom::read(const int addr, const int addr_from_base, const bool onlyrea
 
 void	mmc2_rom::write(const int addr, const int addr_from_base, const byte data) {
 	if ((addr >= 0xA000) && (addr <= 0xAFFF)) {
-		state.prg_bnk = data & 0x0F;
+		state.prg_bnk = data & 0xFF;
 		update_banks();
 		return;
 	}

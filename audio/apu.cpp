@@ -38,6 +38,11 @@ float	apu::mux(byte p1, byte p2, byte tri, byte noi, byte dmc) {
 	return pulse_muxtable[p1 + p2] + tnd_table[3 * tri + 2 * noi + dmc] * 0.9f;
 }
 
+float	apu::hmux(byte p1, byte p2, float tri, byte noi, byte dmc) {
+	//return (((float)p1/32.0f) + (float(p2)/28.0f) + (tri/32.0f) + ((float)noi/56.0f) + ((float)dmc / 8.0f) / 10.0f);
+	return pulse_muxtable[p1 + p2] + tnd_table[2 * noi + dmc] + (tri / 48.0f);
+}
+
 byte	apu::read(int addr, int addr_from_base, bool onlyread) {
 	switch (addr_from_base) {
 	case APU_STATUS_REGISTER:
@@ -233,7 +238,14 @@ int		apu::rundevice(int ticks) {
 		byte no = noise.enabled ? noise.readsample() : 0;
 		ldm = dmc.readsample(); // disable DMC still outputs? see battletoads has DMC disabled, but sends data anyway?
 
-		sample_buffer.push_back(mux(p1, p2, tr, no, ldm));
+		if (!high_res) {
+			sample_buffer.push_back(mux(p1, p2, tr, no, ldm));
+		}
+		else {
+			float tri = triangle.enabled ? triangle.readsample_hres() : 0.0f;
+			//sample_buffer.push_back(hmux(0, 0, tri, 0, 0));
+			sample_buffer.push_back(hmux(p1, p2, tri, no, ldm));
+		}
 		//sample_buffer.push_back(mux(0,0,0,0, ldm));
 
 		framecycle++;
@@ -363,6 +375,24 @@ void	triangle_generator::quarter_clock() {
 
 byte	triangle_generator::readsample() {
 	return triangle_osc[sequencer];
+}
+
+float	triangle_generator::readsample_hres() {
+//		return (float)triangle_osc[sequencer]; 
+	
+	// interpolated highres guess work!
+	byte p1 = triangle_osc[sequencer];
+	byte p2 = triangle_osc[(sequencer + 1) % 32];
+	// compute sequence pull up using the timer.
+	int timer_neg = timer - timer_counter;
+	if ((timer_neg > 0) && (timer >= 3) && (triangle_length_counter > 0) && (length_counter > 0)) {
+		float to_p2 = (1.0f / (float)timer) * (float)timer_neg;
+		return ((1.0f - to_p2) * (float)p1) + (to_p2 * (float)p2);
+	}
+	else {
+		// something is off? just avg them.
+		return (float)p1;
+	}
 }
 
 void	noise_generator::update_timers() {

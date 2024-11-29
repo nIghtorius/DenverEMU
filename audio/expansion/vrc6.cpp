@@ -51,6 +51,33 @@ byte	vrc6_saw::readsample() {
 	return (accumulated >> 3) & 0x1F;
 }
 
+float	vrc6_saw::readsample_hres() {
+	byte p1 = (accumulated >> 3) & 0x1F;
+	// precompute next step (p2)
+	byte pacc = accumulated;
+	if (step & 1) {
+		pacc += accumulator_rate;
+	}
+	if (step == 13) {
+		pacc = 0;
+	}
+	byte p2 = (pacc >> 3) & 0x1F;
+
+	// exceptions (p1 == 0, return 0)
+	// (p2 == 0) return p1
+	if (p1 == 0) return 0.0f;
+	if (p2 == 0) return (float)p1;
+
+	int	neg_count = frequency - frequency_counter;
+	if (neg_count > 0) {
+		float to_p2 = (1.0f / frequency) * (float)neg_count;
+		return ((1.0f - to_p2) * (float)p1) + (to_p2 * (float)p2);
+	}
+	else {
+		return (float)p1;
+	}
+}
+
 // vrc6 chip implementation.
 
 vrc6audio::vrc6audio() {
@@ -157,6 +184,13 @@ float	vrc6audio::mux(byte p1, byte p2, byte sw) {
 	return (fp1 + fp2 + fsw) / 2.5f;
 }
 
+float	vrc6audio::hmux(byte p1, byte p2, float sw) {
+	float fp1, fp2;
+	fp1 = (1.0f / 24) * (float)p1;
+	fp2 = (1.0f / 24) * (float)p2;
+	return (fp1 + fp2 + (sw / 24.0f)) / 2.5f;
+}
+
 int		vrc6audio::rundevice(int ticks) {
 	if (!ticks) return 0;
 	for (int c = 0; c < ticks; c++) {
@@ -168,8 +202,13 @@ int		vrc6audio::rundevice(int ticks) {
 		byte p1 = pulse[0].enable ? pulse[0].readsample() : 0;
 		byte p2 = pulse[1].enable ? pulse[1].readsample() : 0;
 		byte sw = saw.enable ? saw.readsample() : 0;
-	
-		sample_buffer.push_back(mux(p1, p2, sw));
+		if (!high_res) {
+			sample_buffer.push_back(mux(p1, p2, sw));
+		}
+		else {
+			float fsw = saw.enable ? saw.readsample_hres() : 0.0f;
+			sample_buffer.push_back(mux(p1, p2, fsw));
+		}
 	}
 	return ticks;
 }

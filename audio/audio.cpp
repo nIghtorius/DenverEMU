@@ -65,6 +65,12 @@ void	audio_player::unregister_audible_device(audio_device *dev) {
 	}
 }
 
+void	audio_player::update_devices() {
+	for (auto audible : audibles) {
+		audible->high_res = high_res_linear_mix;
+	}
+}
+
 void	audio_player::play_audio() {
 	// test if devices are registered, when no. No need to play as there is none.
 	if (audibles.size() == 0) return;
@@ -92,7 +98,7 @@ void	audio_player::play_audio() {
 		float input = 0.0f;
 		for (auto audible : audibles) {
 			if (i < audible->sample_buffer.size() && !audible->muted)
-				input += audible->sample_buffer[i];
+				input += (audible->sample_buffer[i] * audible->device_volume);
 			if (no_expanded_audio) break;
 		}
 		avg_center += input;
@@ -170,7 +176,7 @@ void	audio_player::send_sampledata_to_audio_device() {
 				simpleLowpass(sample, lpout);
 			}
 		}
-		buffer[samples_in_buffer + outsamples] = (interpolated ? lpout : sample) * attentuate;
+		buffer[samples_in_buffer + outsamples] = (interpolated ? lpout : sample) * attentuate * main_volume;
 		samples += samples_to_target;
 		outsamples++;
 	}

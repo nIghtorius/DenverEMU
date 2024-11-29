@@ -70,6 +70,7 @@ private:
 public:
 	nsf_state state;
 	byte		*ram = nullptr;
+	byte	    *eram = nullptr;
 	byte		*prg[8] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };	// program banks.
 	int			nmi_trig_cycles = 0;
 	bool		nmi_enabled = false;

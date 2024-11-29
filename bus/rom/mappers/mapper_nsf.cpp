@@ -18,16 +18,20 @@ nsfrom::nsfrom() {
 	// copy in the defined uFirmware.
 	memcpy(&ufirm[0], nsfufirm, sizeof(nsfufirm));
 	set_debug_data();
+	// MMC5 emulation (eram)
+	eram = (byte*)malloc(1024);
 }
 
 nsfrom::~nsfrom() {
-	free(ram);
+	free(eram);
+	free(ram);	
 }
 
 byte	nsfrom::read(const int addr, const int addr_from_base, const bool onlyread) {
 	// uFirmware.
 	if ((addr >= 0x3000) && (addr <= 0x3000 + sizeof(nsfufirm))) return ufirm[addr - 0x3000];
-
+	// eRam
+	if ((addr >= 0x5c00) && (addr <= 0x5fff)) return eram[addr - 0x5c00];
 	// custom vectors.
 	if (addr == 0xFFFA) return state.nmi_vector & 0xFF; // low byte.
 	if (addr == 0xFFFB) return (state.nmi_vector & 0xFF00) >> 8; // hi byte.
@@ -61,6 +65,8 @@ void	nsfrom::write(const int addr, const int addr_from_base, const byte data) {
 		prg[bank] = &romdata[(data << 12) % romsize];
 		return;
 	}
+	// eRam write
+	if ((addr >= 0x5c00) && (addr <= 0x5fff)) eram[addr - 0x5c00] = data;
 	// Expanded ram write.
 	if ((addr >= 0x6000) && (addr <= 0x7FFF)) {
 		ram[addr - 0x6000] = data;

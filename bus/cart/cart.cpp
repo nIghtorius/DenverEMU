@@ -51,7 +51,7 @@ nes_header_data		parse_nes_header(nes_header_raw &ines) {
 
 	data.vs_unisystem = (ines.flags2 & INES_F2_VS_UNISYSTEM) > 0;
 	data.has_playchoice = (ines.flags2 & INES_F2_PLAYCHOICE) > 0;
-	data.has_nes20 = (ines.flags2 & INES_F2_NES20_BITPATTERN) == INES_F2_NES20_BITPATTERN;
+	data.has_nes20 = (ines.flags2 & 0x0C) == INES_F2_NES20_BITPATTERN;
 
 	// nes 2.0 formats.. (these can be ignored when has_nes20 is false)
 	data.program_ram_size = ines.flags3 * 8192;
@@ -61,6 +61,14 @@ nes_header_data		parse_nes_header(nes_header_raw &ines) {
 	data.bus_conflicts = (ines.flags5 & INES_F5_BUS_CONFLICT) > 0;
 	data.ext_mapper = mapper & (ines.flags3 & INES_F3_NES20_MAPPER_HIHI) << 12;
 	data.submapper = (ines.flags3 & INES_F3_NES20_SUBMAPPER) >> 4;
+
+	// override programsize with NES 2 value when NES2 is detected.
+	if (data.has_nes20) {
+		// extend programsize with flags 4 (extended program size)
+		data.programsize = ((((int)ines.flags4 & 0x0F) << 8) | (int)ines.program_blocks);
+		data.programsize <<= 14;
+
+	}
 
 	return data;
 }

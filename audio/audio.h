@@ -71,9 +71,12 @@ struct bworth {
 class audio_device : public bus_device {
 public:
 	bool						muted = false;
+	bool						high_res = false;
+
 	audio_device();
 	std::vector<float>			sample_buffer;		// sample buffer.
 	int							max_sample_buffer = 1;	// amount of "nes" frames of sound.
+	float						device_volume = 1.0f;
 	bool						audio_frame_ready = false;
 	virtual void				set_debug_data();
 };
@@ -106,6 +109,8 @@ public:
 	float	attentuate = 1.0f;
 	bool	attentuate_lock = true;
 	float	max_attentuate = 1.05f;
+	float	main_volume = 1.0f;
+	bool	high_res_linear_mix = false;
 
 	audio_player();
 	~audio_player();
@@ -115,4 +120,5 @@ public:
 	bool	has_enough_samples();
 	void	startplayback();
 	void	stopplayback();
+	void	update_devices();
 };

@@ -38,12 +38,14 @@ struct vrc6_saw {
 	byte		step = 0;
 	void		update_timers();
 	byte		readsample();
+	float		readsample_hres();
 };
 
 class vrc6audio : public audio_device {
 private:
 	bool		halt_all_osc = false;
 	float		mux(byte p1, byte p2, byte sw);
+	float		hmux(byte p1, byte p2, float sw);
 
 public:
 	vrc6audio();

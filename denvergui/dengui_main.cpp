@@ -168,6 +168,10 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *
 					if (ImGui::MenuItem("Use HQ filter", NULL, denver->audio->hq_filter)) {
 						denver->audio->hq_filter= !denver->audio->hq_filter;
 					}
+					if (ImGui::MenuItem("Use highres stepping / linear mixing (ideal chips)", NULL, denver->audio->high_res_linear_mix)) {
+						denver->audio->high_res_linear_mix = !denver->audio->high_res_linear_mix;
+						denver->audio->update_devices();
+					}
 					if (ImGui::MenuItem("Enable auto attentuation", NULL, !denver->audio->attentuate_lock)) {
 						denver->audio->attentuate_lock = !denver->audio->attentuate_lock;
 					}
@@ -175,6 +179,15 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *
 						if (ImGui::MenuItem("NAMCO163 Enhanced Mixing", NULL, denver->cart->namexp->enhanced_mixer)) {
 							denver->cart->namexp->enhanced_mixer = !denver->cart->namexp->enhanced_mixer;
 						}
+					}
+					ImGui::EndMenu();
+				}
+				// volume bar.
+				if (ImGui::BeginMenu("Volume")) {
+					ImGui::SliderFloat("Main vol", &denver->audio->main_volume, 0.1f, 1.0f, "%.1f", 0);
+					ImGui::Separator();
+					for (auto device : denver->audio->audibles) {
+						ImGui::SliderFloat(device->get_device_descriptor(), &device->device_volume, 0.1f, 1.0f, "%.1f", 0);
 					}
 					ImGui::EndMenu();
 				}
