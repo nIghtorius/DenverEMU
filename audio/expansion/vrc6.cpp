@@ -207,7 +207,7 @@ int		vrc6audio::rundevice(int ticks) {
 		}
 		else {
 			float fsw = saw.enable ? saw.readsample_hres() : 0.0f;
-			sample_buffer.push_back(mux(p1, p2, fsw));
+			sample_buffer.push_back(hmux(p1, p2, fsw));
 		}
 	}
 	return ticks;
