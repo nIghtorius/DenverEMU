@@ -83,6 +83,7 @@ public:
 class bus {
 private:
 	bool	no_bus_conflicts = false;		// default we do not emulate bus conflicts, it is costly.
+	bool	buffered_nmi = false;
 public:	
 	bus();
 	~bus();

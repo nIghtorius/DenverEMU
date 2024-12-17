@@ -91,7 +91,14 @@ bool	bus::nmi_pulled() {
 			nmi = true;
 		}
 	}
-	return nmi;
+	if (!buffered_nmi) {
+		buffered_nmi = nmi;
+		return false;
+	}
+	else {
+		buffered_nmi = false;
+		return true;
+	}
 }
 
 bool	bus::irq_pulled() {

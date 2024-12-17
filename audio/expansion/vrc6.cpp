@@ -53,6 +53,8 @@ byte	vrc6_saw::readsample() {
 
 float	vrc6_saw::readsample_hres() {
 	byte p1 = (accumulated >> 3) & 0x1F;
+	if (accumulator_rate == 0) return (float)p1; // no need to interpolate. there is no accumulation value.
+
 	// precompute next step (p2)
 	byte pacc = accumulated;
 	if (step & 1) {
@@ -61,11 +63,11 @@ float	vrc6_saw::readsample_hres() {
 	if (step == 13) {
 		pacc = 0;
 	}
-	byte p2 = (pacc >> 3) & 0x1F;
+	float p2 = (float)((pacc >> 3) & 0x1F);
+	// interpolate half-steps.
+	if (!(step & 1)) p2 += 0.5f;
 
-	// exceptions (p1 == 0, return 0)
-	// (p2 == 0) return p1
-	if (p1 == 0) return 0.0f;
+	// exceptions (p2 == 0, return p1)
 	if (p2 == 0) return (float)p1;
 
 	int	neg_count = frequency - frequency_counter;

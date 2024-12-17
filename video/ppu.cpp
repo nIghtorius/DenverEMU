@@ -12,7 +12,7 @@ ppu::ppu() : bus_device () {
 	strncpy(get_device_descriptor(), "Denver PPU Unit", MAX_DESCRIPTOR_LENGTH);
 	devicestart = 0x2000;
 	deviceend = 0x2FFF;
-	devicemask = 0x2FFF;
+	devicemask = 0x2007;
 	tick_rate = 0x1;
 	// make bus
 	// Palette RAM
@@ -116,12 +116,13 @@ void	ppu::write(const int addr, const int addr_from_base, const byte data) {
 		ppu_internal.t_register |= (data & PPU_BASENAMETABLE) << 10;
 		ppuctrl.bg_0x1000 = (data & PPU_BG_TABLE_0X1000) > 0;
 		ppuctrl.sprites_0x1000 = (data & PPU_SPRITE_TABLE_0X1000) > 0;
+		bool lastnmi = ppuctrl.do_nmi;
 		ppuctrl.do_nmi = (data & PPU_DO_NMI) > 0;
 		if (ppuctrl.do_nmi) {
 			// check if in vblank and retrigger the NMI.
 			// ToDo: Check this. It should be more NES-like, but it breaks HEOHdemo.nes.
-			// is it the demo that is wrong or this behaiviour?
-			//if (ppustatus.vblank) nmi_enable = true;
+			// is it the demo that is wrong or this behaiviour?			
+			if (ppustatus.vblank && !lastnmi) nmi_enable = true;
 		}
 		ppuctrl.increment_32_bytes = (data & PPU_VRAM_INCREMENT_32BYTES) > 0;
 		ppuctrl.master_mode = (data & PPU_MASTER_MODE) > 0;
@@ -138,7 +139,6 @@ void	ppu::write(const int addr, const int addr_from_base, const byte data) {
 		ppumask.showspr = (data & PPU_SHOW_SPR) > 0;
 		if ((ppumask.showbg || ppumask.showspr) && !prev_state_show) {
 			// reset rendering pipeline evaluators.
-			ppu_internal.n = 0;
 			ppu_internal.sn = 0;
 			ppu_internal.m = 0;
 		}
@@ -269,7 +269,6 @@ int		ppu::rundevice(const int ticks) {
 				ppu_internal.oam_clearing = true;
 				byte secaddr = (cycle - 1) % 8;
 				memset(&ppu_internal.secoam[(cycle - 1) % 8], 0xFF, 4);
-				ppu_internal.n = 0;
 				ppu_internal.m = 0;
 				ppu_internal.sn = 0;
 				ppu_internal.oam_evald = false;
@@ -337,7 +336,8 @@ int		ppu::rundevice(const int ticks) {
 			}
 			// sprite loading.
 			if ((cycle >= 257) && (cycle <= 320) && (scanline != 261)) {
-				if (cycle == 257) ppu_internal.n = 0;
+				if (cycle == 257) ppu_internal.sn = 0;
+				ppu_internal.n = 0;
 				byte cs = (cycle - 1) % 8;
 				if (cs == 1) {
 					// do garbage nametable read.
@@ -347,12 +347,12 @@ int		ppu::rundevice(const int ticks) {
 				else if (cs == 3) {
 					// do garbage nametable read.
 					//ppu_internal.shiftreg_nametable = vbus.readmemory(0x1000 | (ppu_internal.v_register & 0x0FFF));
-					ppu_internal.shiftreg_spr_latch[ppu_internal.n] = ppu_internal.secoam[ppu_internal.n].attr;
+					ppu_internal.shiftreg_spr_latch[ppu_internal.sn] = ppu_internal.secoam[ppu_internal.sn].attr;
 				}
 				else if (cs == 5) {
 					// load pattern table tile low
-					byte ltile = ppu_internal.secoam[ppu_internal.n].tile;
-					int	 ix = scanline - (ppu_internal.secoam[ppu_internal.n].y);
+					byte ltile = ppu_internal.secoam[ppu_internal.sn].tile;
+					int	 ix = scanline - (ppu_internal.secoam[ppu_internal.sn].y);
 					word pattern_address;
 					if (ppuctrl.sprites_8x16) {
 						pattern_address = (ltile & 1) == 1 ? 0x1000 : 0x0000;
@@ -362,20 +362,20 @@ int		ppu::rundevice(const int ticks) {
 						pattern_address = (ppuctrl.sprites_0x1000 << 12);
 					}
 					// check bit flip horiz.
-					if ((ppu_internal.shiftreg_spr_latch[ppu_internal.n] & OAM_SPR_ATTR_FLIP_VER) == OAM_SPR_ATTR_FLIP_VER) {
+					if ((ppu_internal.shiftreg_spr_latch[ppu_internal.sn] & OAM_SPR_ATTR_FLIP_VER) == OAM_SPR_ATTR_FLIP_VER) {
 						// inverse ix.
 						ix = ppuctrl.sprites_8x16 ? 15 - ix : 7 - ix;
 					}
 					if (ix > 7) pattern_address += 8;
 					pattern_address += (ltile << 4) + ix;
 					if (pattern_address >= 0x1FF7) pattern_address = 0x1FF7; //clamp it.
-					ppu_internal.shiftreg_spr_pattern_lo[ppu_internal.n] = vbus.readmemory(pattern_address);
-					ppu_internal.shiftreg_spr_counter[ppu_internal.n] = ppu_internal.secoam[ppu_internal.n].x;
+					ppu_internal.shiftreg_spr_pattern_lo[ppu_internal.sn] = vbus.readmemory(pattern_address);
+					ppu_internal.shiftreg_spr_counter[ppu_internal.sn] = ppu_internal.secoam[ppu_internal.sn].x;
 				}
 				else if (cs == 7) {
 					// load pattern table tile high
-					byte ltile = ppu_internal.secoam[ppu_internal.n].tile;
-					int	 ix = scanline - (ppu_internal.secoam[ppu_internal.n].y);
+					byte ltile = ppu_internal.secoam[ppu_internal.sn].tile;
+					int	 ix = scanline - (ppu_internal.secoam[ppu_internal.sn].y);
 					word pattern_address;
 					if (ppuctrl.sprites_8x16) {
 						pattern_address = (ltile & 1) == 1 ? 0x1000 : 0x0000;
@@ -385,7 +385,7 @@ int		ppu::rundevice(const int ticks) {
 						pattern_address = (ppuctrl.sprites_0x1000 << 12);
 					}
 					// check bit flip horiz.
-					if ((ppu_internal.shiftreg_spr_latch[ppu_internal.n] & OAM_SPR_ATTR_FLIP_VER) == OAM_SPR_ATTR_FLIP_VER) {
+					if ((ppu_internal.shiftreg_spr_latch[ppu_internal.sn] & OAM_SPR_ATTR_FLIP_VER) == OAM_SPR_ATTR_FLIP_VER) {
 						// inverse ix.
 						ix = ppuctrl.sprites_8x16 ? 15 - ix : 7 - ix;
 					}					
@@ -393,9 +393,9 @@ int		ppu::rundevice(const int ticks) {
 					pattern_address += (ltile << 4) + ix;
 					if (pattern_address >= 0x1FF7) pattern_address = 0x1FF7; //clamp it.
 
-					ppu_internal.shiftreg_spr_pattern_hi[ppu_internal.n] = vbus.readmemory(pattern_address + 8);
-					ppu_internal.shiftreg_spr_counter[ppu_internal.n] = ppu_internal.secoam[ppu_internal.n].x;
-					ppu_internal.n++;	// eval to next sprite in seconday oam. this will never go over 7, because eval will stop earlier.
+					ppu_internal.shiftreg_spr_pattern_hi[ppu_internal.sn] = vbus.readmemory(pattern_address + 8);
+					ppu_internal.shiftreg_spr_counter[ppu_internal.sn] = ppu_internal.secoam[ppu_internal.sn].x;
+					ppu_internal.sn++;	// eval to next sprite in seconday oam. this will never go over 7, because eval will stop earlier.
 				}
 			}
 			else {
@@ -552,7 +552,7 @@ int		ppu::rundevice(const int ticks) {
 			if (scanline == 262) {
 				events.clear();	// clear captured events.
 				scanline = 0;
-				if (ppu_internal.odd_even_frame) cycle = 340;
+				if (ppu_internal.odd_even_frame && ppumask.showbg) cycle = 340;
 				ppu_internal.odd_even_frame = !ppu_internal.odd_even_frame;
 			}
 		}

@@ -80,7 +80,11 @@ public:
 	cpuregs lastregs;
 
 	bool	error_state = false;
+	bool	generate_stacktrace = false;
+	int		stack_level = 0;
 	byte	last_opcode = 0x00;
+
+	std::vector<std::string> stacktrace;
 
 	cpu2a03_fast();
 	~cpu2a03_fast();

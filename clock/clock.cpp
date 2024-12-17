@@ -121,6 +121,17 @@ void fastclock::run() {
 			std::cout << "CPU opcode: " << (int)i2a03->cpu_2a03.last_opcode << "\n";
 			i2a03->cpu_2a03.log_register();
 			if (i2a03->cpu_2a03.stack_overflow()) std::cout << "Stack might have overflowed..\n";
+
+			if (i2a03->cpu_2a03.generate_stacktrace) {
+				std::cout << "Call/Int/Return subroutine stacktrace.\n";
+				std::cout << "--------------------------------------\n";
+				// printout the debug stacktrace. Function has to be enabled.
+				for (auto line : i2a03->cpu_2a03.stacktrace) {
+					std::cout << line << "\n";
+				}
+				std::cout << "\n";
+			}
+
 			std::cout << "\nCode around fault:\n";
 			std::cout << "------------------------\n";
 			i2a03->cpu_2a03.machine_code_trace(i2a03->cpu_2a03.regs.pc - 0x10, i2a03->cpu_2a03.regs.pc + 0x03, i2a03->cpu_2a03.regs.pc);

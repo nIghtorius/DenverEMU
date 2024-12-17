@@ -65,7 +65,11 @@ class nsfrom : public rom {
 private:
 	byte		ufirm[128];	// uFirmware space (only 128bytes)
 	int			tickcount = 0;
+	int			cps = 0;
+	int			last_cps = 0;
+	int			avg_cps = 0;
 	uint64_t	total_cpu_ticks = 0;
+	uint64_t	timestart;
 
 public:
 	nsf_state state;
@@ -82,8 +86,6 @@ public:
 	vrc7audio* vrc7exp = nullptr;
 	mmc5audio* mmc5exp = nullptr;
 	fdsaudio* fdsexp = nullptr;
-
-	package_2a03 *n2a03 = nullptr;
 
 	nsfrom();
 	~nsfrom();

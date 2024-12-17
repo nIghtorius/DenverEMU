@@ -58,6 +58,7 @@ static int		p1_controller = 0;
 static int		p2_controller = 1;
 static bool		show_controllers = false;
 static bool		do_exec_trace = false;
+static bool		generate_readable_stacktrace = false;
 
 std::vector<std::string> shaderList;
 
@@ -82,11 +83,17 @@ void process_args(int argc, char *argv[]) {
 			std::cout << "--select-controller-id-port1, selects a gamecontroller as port #1\n";
 			std::cout << "--select-controller-id-port2, selects a gamecontroller as port #2\n";
 			std::cout << "--executiontrace\n";
+			std::cout << "--make-stacktrace\n";
 			exit(0);
 		}
 		if (strcmp(argv[i], "--executiontrace") == 0) {
 			std::cout << "WARNING! Running execution trace, log file grows fast!\n";
 			do_exec_trace = true;
+		}
+
+		if (strcmp(argv[i], "--make-stacktrace") == 0) {
+			std::cout << "Require more memory! debug uses only. Generate readable stacktraces.\n";
+			generate_readable_stacktrace = true;
 		}
 
 		if (strcmp(argv[i], "--show-controllers") == 0) {
@@ -363,6 +370,7 @@ int main(int argc, char *argv[])
 	}
 
 	if (do_exec_trace) denver->nes_2a03->cpu_2a03.write_execution_log();
+	if (generate_readable_stacktrace) denver->nes_2a03->cpu_2a03.generate_stacktrace = true;	// MEMORY HUNGRY!
 
 	denvergui::denvergui_state windowstates;
 	windowstates.show_apu_debugger = false;

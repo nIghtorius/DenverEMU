@@ -184,10 +184,14 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *
 				}
 				// volume bar.
 				if (ImGui::BeginMenu("Volume")) {
+					if (ImGui::MenuItem("Unlock 2x volume setting for audio devices", NULL, state->unlock20)) {
+						state->unlock20 = !state->unlock20;
+					}
+					float maxVol = state->unlock20 ? 2.0f : 1.0f;					
 					ImGui::SliderFloat("Main vol", &denver->audio->main_volume, 0.1f, 1.0f, "%.1f", 0);
 					ImGui::Separator();
 					for (auto device : denver->audio->audibles) {
-						ImGui::SliderFloat(device->get_device_descriptor(), &device->device_volume, 0.1f, 1.0f, "%.1f", 0);
+						ImGui::SliderFloat(device->get_device_descriptor(), &device->device_volume, 0.1f, maxVol, "%.1f", 0);
 					}
 					ImGui::EndMenu();
 				}
@@ -483,10 +487,10 @@ void	denvergui::render_main (nes_emulator *denver, GLuint tex, denvergui_state *
 				float prog = (1.0f / (float)total) * (float)elapsed;
 				ImGui::ProgressBar(prog, ImVec2{ (float)w, 24 * state->scaling });
 			}
-			// repeat track after 15s.
+			// repeat track after 5s.
 			if (denver->cart->trackLengths.size() != 0) {
-				ImGui::Checkbox("Repeat track @ End Track + extra 5 seconds.", &state->repeatTrackAfterEnd15s);
-				if (state->repeatTrackAfterEnd15s) {
+				ImGui::Checkbox("Repeat track @ End Track + extra 5 seconds.", &state->repeatTrackAfterEnd5s);
+				if (state->repeatTrackAfterEnd5s) {
 					total = denver->cart->trackLengths[nsfinterface->state.currentsong - 1];
 					elapsed = (uint32_t)nsfinterface->return_time_in_ms();
 					if (elapsed > total + 5000) {

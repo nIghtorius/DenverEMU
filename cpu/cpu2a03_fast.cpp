@@ -1,5 +1,6 @@
 #include "cpu2a03_fast.h"
 #include <iostream>
+#include <sstream>
 #include <iomanip>
 #include <cstdint>
 
@@ -29,6 +30,9 @@ cpu2a03_fast::cpu2a03_fast() {
 	dma_high = 0;
 	irq_delay = 0;
 	nmi_delay = 0;
+
+	// clear stacktrace.
+	stacktrace.clear();
 }
 
 cpu2a03_fast::~cpu2a03_fast() {
@@ -182,6 +186,16 @@ int	cpu2a03_fast::rundevice_internal (int ticks) {
 		nmi_delay = false;
 		pushstack_word(regs.pc);
 		pushstack_byte(regs.sr & ~0x10);
+		// update stacktrace.
+		if (generate_stacktrace) {
+			stack_level++;
+			std::stringstream oss;
+			oss << "[NMI #] @ [" << std::hex << std::setw(4) << std::setfill('0') << (int)regs.pc << "] going to interrupt at address [";
+			oss << devicebus->readmemory_as_word(vector_nmi, true) << "], status register: " << std::setw(2) << (int)regs.sr;
+			oss << " stacklevel is: " << std::dec << stack_level;
+			if (stack_level < 0) oss << " !!!stack invalid!!!";
+			stacktrace.push_back(oss.str());
+		}
 		regs.sr |= cf_interrupt;
 		regs.pc = devicebus->readmemory_as_word(vector_nmi); // NMI vector.
 		return 7 * tick_rate;	// NMI takes 7 cycles.
@@ -190,6 +204,16 @@ int	cpu2a03_fast::rundevice_internal (int ticks) {
 	if (devicebus->irq_pulled() && ((regs.sr & cf_interrupt) == 0)) {
 		pushstack_word(regs.pc);
 		pushstack_byte(regs.sr & ~0x10);
+		// update stacktrace.
+		if (generate_stacktrace) {
+			stack_level;
+			std::stringstream oss;
+			oss << "[IRQ #] @ [" << std::hex << std::setw(4) << std::setfill('0') << (int)regs.pc << "] going to interrupt at address[";
+			oss << devicebus->readmemory_as_word(vector_nmi, true) << "], status register: " << std::setw(2) << (int)regs.sr;
+			oss << " stacklevel is: " << std::dec << stack_level;
+			if (stack_level < 0) oss << " !!!stack invalid!!!";
+			stacktrace.push_back(oss.str());
+		}
 		regs.sr |= cf_interrupt;
 		regs.pc = devicebus->readmemory_as_word(vector_irq); // IRQ vector.
 		irq_delay = false;
@@ -400,6 +424,16 @@ int	cpu2a03_fast::rundevice_internal (int ticks) {
 			break;
 		}
 		case 0x20: { // jsr
+			// update stacktrace.
+			if (generate_stacktrace) {
+				stack_level++;
+				std::stringstream oss;
+				oss << "[JSR #] @ [" << std::hex << std::setw(4) << std::setfill('0') << (int)regs.pc << "] jumping to subroutine [";
+				oss << devicebus->readmemory_as_word(regs.pc, true) << "], status register: " << std::setw(2) << (int)regs.sr;
+				oss << " stacklevel is: " << std::dec << stack_level;
+				if (stack_level < 0) oss << " !!!stack invalid!!!";
+				stacktrace.push_back(oss.str());
+			}
 			pushstack_word(regs.pc + 1);
 			regs.pc = _mem_absolute;
 			actualticks += 6;
@@ -580,8 +614,21 @@ int	cpu2a03_fast::rundevice_internal (int ticks) {
 		}
 		case 0x40: { // rti
 			actualticks += 6;
-			regs.sr = pullstack_byte() | 0x20;
-			regs.pc = pullstack_word();
+			// update stacktrace.
+			if (generate_stacktrace) {
+				std::ostringstream oss;
+				stack_level--;
+				oss << "[RTI #] @ [" << std::hex << std::setw(4) << std::setfill('0') << (int)regs.pc << "] returning interrupt routine to [";
+				regs.sr = pullstack_byte() | 0x20;
+				regs.pc = pullstack_word();
+				oss << regs.pc << "], status register: " << std::setw(2) << (int)regs.sr;
+				oss << " stacklevel is: " << std::dec << stack_level;
+				if (stack_level < 0) oss << " !!!stack invalid!!!";
+				stacktrace.push_back(oss.str());
+			} else {
+				regs.sr = pullstack_byte() | 0x20;
+				regs.pc = pullstack_word();
+			}
 			break;
 		}
 		case 0x41: {
@@ -759,7 +806,20 @@ int	cpu2a03_fast::rundevice_internal (int ticks) {
 		}
 		case 0x60: { // rts
 			actualticks += 6;
-			regs.pc = pullstack_word();
+			// update stacktrace.
+			if (generate_stacktrace) {
+				std::ostringstream oss;
+				stack_level--;
+				oss << "[RTS #] @ [" << std::hex << std::setw(4) << std::setfill('0') << (int)regs.pc << "] returning subroutine to [";
+				regs.pc = pullstack_word();
+				oss << regs.pc << "], status register: " << std::setw(2) << (int)regs.sr;
+				oss << " stacklevel is: " << std::dec << stack_level;
+				if (stack_level < 0) oss << " !!!stack invalid!!!";
+				stacktrace.push_back(oss.str());
+			}
+			else {
+				regs.pc = pullstack_word();
+			}
 			regs.pc++;
 			break;
 		}
@@ -1106,6 +1166,7 @@ int	cpu2a03_fast::rundevice_internal (int ticks) {
 				// thanking the video of "Official USB-NES Channel" on YT for deeply explaining
 				// the behaiviour of the SHY $abs, X opcode.
 				xadr = _mem_absolute & 0x00FF | ((regs.y & hb) << 8);
+				//xadr = _mem_absolute & ((regs.y & hb) << 8);
 				xadr += regs.x;
 			}
 			devicebus->writememory(xadr, regs.y & hb);
@@ -1127,6 +1188,7 @@ int	cpu2a03_fast::rundevice_internal (int ticks) {
 				// explaination. see opcode: 9c
 				// essentially the same but x and y registers swapped.
 				xadr = _mem_absolute & 0x00FF | ((regs.x & hb) << 8);
+				//xadr = _mem_absolute & ((regs.x & hb) << 8);
 				xadr += regs.y;
 			}
 			devicebus->writememory(xadr, regs.x & hb);
@@ -1861,8 +1923,13 @@ byte cpu2a03_fast::opc_inc(byte data) {
 */
 
 void cpu2a03_fast::reset() {
-	regs.pc = devicebus->readmemory_as_word(vector_reset);		// load reset vector @ 0xFFFC
-	regs.sp = 0xFD;
+	// clear stacktrace.
+	stacktrace.clear();
+	stack_level = 0;
+
+	// load reset vector @ 0xFFFC
+	regs.pc = devicebus->readmemory_as_word(vector_reset);
+	regs.sp = regs.sp - 3;
 	regs.sr |= cf_interrupt;
 	error_state = false;
 }
@@ -1873,11 +1940,13 @@ void cpu2a03_fast::coldboot() {
 		return;
 	}
 
+	// clear stacktrace.
+	stacktrace.clear();
+
 	devicebus->busreset();
 
 	regs.pc = devicebus->readmemory_as_word(vector_reset);
 	regs.sp = 0xFD;
-	regs.sr = cf_interrupt | cf_break | 0x20;
 	regs.sr = 0x24;
 	regs.x = 0x00;
 	regs.y = 0x00;

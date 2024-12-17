@@ -39,7 +39,7 @@ void axrom_rom::update_banks() {
 }
 
 byte axrom_rom::read(const int addr, const int addr_from_base, const bool onlyread) {
-	return prg8000[addr_from_base];
+	return prg8000[addr_from_base % romsize];
 }
 
 void axrom_rom::write(const int addr, const int addr_from_base, const byte data) {

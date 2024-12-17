@@ -41,7 +41,10 @@ namespace denvergui {
 
 		// nsf
 		int		zeroIndexedTrackNo;
-		bool	repeatTrackAfterEnd15s = false;
+		bool	repeatTrackAfterEnd5s = false;
+
+		// vol
+		bool	unlock20 = false;
 	};
 
 	void	render_main (nes_emulator *denver,  GLuint tex, denvergui_state *state);

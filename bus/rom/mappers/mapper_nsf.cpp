@@ -20,6 +20,8 @@ nsfrom::nsfrom() {
 	set_debug_data();
 	// MMC5 emulation (eram)
 	eram = (byte*)malloc(1024);
+	// Compute cycle per second.
+	timestart = SDL_GetTicks64();
 }
 
 nsfrom::~nsfrom() {
@@ -74,6 +76,15 @@ void	nsfrom::write(const int addr, const int addr_from_base, const byte data) {
 }
 
 int		nsfrom::rundevice(const int ticks) {
+	cps += ticks;
+	// check if a second has passed.
+	if (SDL_GetTicks64() - timestart >= 1000) {
+		last_cps = cps;
+		avg_cps = (avg_cps + last_cps) >> 1;
+		cps = 0;
+		timestart = SDL_GetTicks64();
+	}
+
 	// for expansion audio.
 	// check expansions
 	if (vrc6exp) vrc6exp->rundevice(ticks);
@@ -93,8 +104,8 @@ int		nsfrom::rundevice(const int ticks) {
 }
 
 uint64_t nsfrom::return_time_in_ms() const {
-	double time = (double)total_cpu_ticks / 29780;	// ticks -> timeblocks in 16.6ms.
-	time *= 60;	// timeblocks -> seconds.
+	double time = (double)total_cpu_ticks / 596.591;// 595.611;	// ticks -> ms
+	//time *= 60;	// timeblocks -> seconds.
 	uint64_t rtime = (uint64_t)floor(time);
 	return rtime;
 }
@@ -162,6 +173,9 @@ void	nsfrom::initialize(const byte song) {
 	state.res_vector = vectors.reset;
 
 	total_cpu_ticks = 0;
+	cps = 0;
+	last_cps = 0;
+	avg_cps = 0;
 }
 
 void	nsfrom::set_debug_data() {
@@ -174,6 +188,8 @@ void	nsfrom::set_debug_data() {
 	debugger.add_debug_var("Expansion Namco", -1, &namexp, t_bool);
 	debugger.add_debug_var("Expansion MMC5", -1, &mmc5exp, t_bool);
 	debugger.add_debug_var("Expansion VRC7", -1, &vrc7exp, t_bool);
+	debugger.add_debug_var("CPU cycles p/s (last)", -1, &last_cps, t_int);
+	debugger.add_debug_var("CPU cycles p/s (avg)", -1, &avg_cps, t_int);
 	debugger.add_debug_var("NSF ROM", -1, NULL, t_endblock);
 
 	debugger.add_debug_var("State", -1, NULL, t_beginblock);
