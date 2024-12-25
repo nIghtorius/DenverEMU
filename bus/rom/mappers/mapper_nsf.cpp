@@ -119,7 +119,7 @@ void	nsfrom::initialize(const byte song) {
 	// get the defaults from state.
 	// first check "base_nsf" state. When the banks are all 0.
 	// first reset the tickcount to 0
-	tickcount = 0;		// so we do not trip the NMI during NSFufirmware initialization.
+	tickcount = 0;		// so we do not trip the NMI during NSF ufirmware initialization.
 	nmi_enable = false;	// make sure a triggered not handled NMI is suppressed.
 	nmi_enabled = false; // NSF hardware do not trigger NMI's. write 0xff to 0x3000 to enable this. Done via uFirmware.
 

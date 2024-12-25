@@ -66,28 +66,23 @@ byte	ppu::read(const int addr, const int addr_from_base, const bool onlyread) {
 		byte data = 0;
 		// reading while rendering causes to trigger X-course and Y-fine to be incremented.
 		// (* see https://www.nesdev.org/wiki/PPU_scrolling#$2007_(PPUDATA)_reads_and_writes )
-		if ((scanline >= 0) && (scanline <= 240) && (ppumask.showbg || ppumask.showspr)) {
+		if ((scanline >= 0) && (scanline <= 240) && (ppumask.showbg || ppumask.showspr) && (ppu_internal.v_register < 0x3F00)) {
 			// course X increment.
 			incrementCourseX();
 			// fine Y increment.
 			incrementY();
 			return prt2007buffer;
 		}
-		if (ppu_internal.v_register < 0x3F00) {
+		if ((ppu_internal.v_register & 0x3FFF) < 0x3F00) {
 			data = prt2007buffer;
 			prt2007buffer = vbus.readmemory(ppu_internal.v_register & 0x3FFF);
 		}
 		else {
 			// special case.
-			data = vpal.read(ppu_internal.v_register & 0x3F1F, (ppu_internal.v_register & 0x3F1F) - 0x3F00, false);
+			data = vbus.readmemory(ppu_internal.v_register & 0x3FFF) ;// vpal.read(ppu_internal.v_register & 0x3F1F, (ppu_internal.v_register & 0x3F1F) - 0x3F00, false);
 			prt2007buffer = vbus.readmemory(ppu_internal.v_register & 0x2FFF);
 		}
-		if (ppuctrl.increment_32_bytes) {
-			ppu_internal.v_register += 32;
-		}
-		else {
-			ppu_internal.v_register++;
-		}
+		ppu_internal.v_register += ppuctrl.increment_32_bytes ? 32 : 1;
 		return data;
 	}
 	return 0x00;

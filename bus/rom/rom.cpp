@@ -2,7 +2,6 @@
 
 #pragma warning(disable : 4996)
 
-
 rom::rom() {
 	// default to 16K rom with mirrored 0xC000 (to 0x8000)
 	strncpy(this->get_device_descriptor(), "NROM 0x00 ROM", MAX_DESCRIPTOR_LENGTH);

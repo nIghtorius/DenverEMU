@@ -16,6 +16,8 @@ fme7rom::fme7rom() {
 	devicemask = 0xFFFF;
 	// prgram (max 256kB)
 	ram = (byte*)malloc(262144);
+	memset(ram, 0, 262144);
+	set_debug_data();
 	reset();
 }
 
@@ -25,6 +27,14 @@ fme7rom::~fme7rom() {
 
 void	fme7rom::reset() {
 	memset(&state, 0, sizeof(fme7_state));
+}
+
+batterybackedram* fme7rom::get_battery_backed_ram() {
+	return new batterybackedram((byte*)ram, 262144);
+}
+
+void fme7rom::set_battery_backed_ram(byte* data, const std::size_t size) {
+	memcpy(ram, data, size);
 }
 
 int		fme7rom::rundevice(const int ticks) {
@@ -142,6 +152,21 @@ void	fme7rom::setbanks() {
 	prg_e000 = &romdata[romsize - 8192];
 	
 	if (charrom) charrom->setbanks(&state);
+}
+
+void fme7rom::set_debug_data() {
+	debugger.add_debug_var("FME-7 Mapper", -1, NULL, t_beginblock);
+	debugger.add_debug_var("Command register", -1, &state.cmdreg, t_byte);
+	debugger.add_debug_var("Character maps", 8, &state.c[0], t_bytearray);
+	debugger.add_debug_var("Program RAM enable", -1, &state.prg_ram_enable, t_bool);
+	debugger.add_debug_var("Program RAM selected", -1, &state.ramrom_select, t_bool);
+	debugger.add_debug_var("Program 0x6000-7fff select", -1, &state.prg0_select, t_byte);
+	debugger.add_debug_var("Program banks 0x8000-0xdfff", 3, &state.p[0], t_bytearray);
+	debugger.add_debug_var("Mirroring", -1, &state.mirroring, t_byte);
+	debugger.add_debug_var("IRQ Enabled", -1, &state.irq_enable, t_bool);
+	debugger.add_debug_var("IRQ Counter Enabled", -1, &state.irq_counter_enable, t_bool);
+	debugger.add_debug_var("IRQ Counter", -1, &state.irq_counter, t_word);
+	debugger.add_debug_var("FME-7 Mapper", -1, NULL, t_endblock);
 }
 
 fme7vrom::fme7vrom() {

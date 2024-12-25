@@ -149,7 +149,7 @@ bool	joypad::pulse_read_out(int controller_id) {
 		readouts[controller_id]++;
 		return true;
 	}
-	return controllers[controller_id].states[7-readouts[controller_id]++];
+	return controllers[controller_id].states[7 - readouts[controller_id]++];
 }
 
 void	joypad::detect_controllers() {
@@ -204,8 +204,8 @@ byte	nes_2a03_joyports::read(int addr, int addr_from_base, bool onlyread)
 		case CTR_CTRL1_PORT:
 		case CTR_CTRL2_PORT:
 			int controller_id = addr_from_base - CTR_CTRL1_PORT;
-			if (controller->pulse_read_out(controller_id)) return 1;
+			if (controller->pulse_read_out(controller_id)) return 0x41;
 			break;
 	}
-	return 0;
+	return 0x40;
 }

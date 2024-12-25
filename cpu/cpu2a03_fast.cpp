@@ -92,6 +92,15 @@ void cpu2a03_fast::write_cpu_log() {
 	// logging makes emulation slower, but helpful debugging issues.
 	// first we want the disassemble.
 	int addr = regs.pc;
+
+	// check if we are dma'ing.
+	if (in_dma_mode) {
+		*cpu_log << std::hex << "0x" << (int)addr << " - [Currently doing DMA, DMA byte #" << dma_count << "]                        ";
+		*cpu_log << "r.ac=" << (int)regs.ac << ", r.x=" << (int)regs.x << ", r.y="
+			<< (int)regs.y << ", r.sp=" << (int)regs.sp << ", r.sr=" << (int)regs.sr << std::endl;
+		return;
+	}
+
 	disasm.set_address(addr);
 	std::string line_to_exec = disasm.disassemble();
 

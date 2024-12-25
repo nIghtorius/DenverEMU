@@ -67,6 +67,9 @@ public:
 	virtual void	reset();
 	virtual void	set_rom_data(byte *data, const std::size_t size);
 	void			link_vrom(fme7vrom *rom);
+	virtual batterybackedram* get_battery_backed_ram();
+	virtual void	set_battery_backed_ram(byte* data, const std::size_t size);
+	virtual void	set_debug_data();
 };
 
 class fme7vrom : public vrom {
