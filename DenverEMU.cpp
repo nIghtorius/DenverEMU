@@ -37,6 +37,11 @@
 #include <SDL_opengl.h>
 #endif
 
+// Windows console output (UTF-8)
+#ifdef _WIN32
+#include <Windows.h>
+#endif
+
 #define		DENVER_VERSION		"0.8 alpha"
 #undef main
 
@@ -182,6 +187,10 @@ void process_args(int argc, char *argv[]) {
 int main(int argc, char *argv[])
 {
 	rom_load_startup[0] = 0x0;
+
+#ifdef _WIN32
+	SetConsoleOutputCP(65001);
+#endif
 
 	if (argc > 1) process_args(argc, argv);
 

@@ -11,7 +11,7 @@
 ppu::ppu() : bus_device () {
 	strncpy(get_device_descriptor(), "Denver PPU Unit", MAX_DESCRIPTOR_LENGTH);
 	devicestart = 0x2000;
-	deviceend = 0x2FFF;
+	deviceend = 0x3FFA;
 	devicemask = 0x2007;
 	tick_rate = 0x1;
 	// make bus

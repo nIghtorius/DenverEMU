@@ -1808,8 +1808,8 @@ IGFD_API void IGFD::FileManager::ScanDir(const FileDialogInternal& vFileDialogIn
                     fileType.SetContent(FileType::ContentType::File);
                 }
 
-                if (fileType.isValid()) {
-                    auto fileNameExt = file.path().filename().string();
+                if (fileType.isValid()) {                    
+                    auto fileNameExt = file.path().filename().u8string();
                     AddFile(vFileDialogInternal, path, fileNameExt, fileType);
                 }
             }

@@ -1,6 +1,7 @@
 #include "cart.h"
 #include <fstream>
 #include <iostream>
+#include <filesystem>
 
 // mappers
 #include "../rom/mappers/mapper_001.h"
@@ -370,6 +371,8 @@ bool	cartridge::readstream_nsfe(std::istream& nsffile, ppu* ppu_device, bus* mai
 	if (romdata == nullptr) return false;
 	if (info.load_address == 0x0000) return false;
 
+	ppu_device->deviceend = 0x2FFF;
+
 	std::cout << "Cartridge is NSFe file..\n";
 	std::cout << "Title           : " << auth.title << "\n";
 	std::cout << "Artist          : " << auth.artist << "\n";
@@ -548,6 +551,7 @@ bool	cartridge::readstream_nsf(std::istream &nsffile, ppu *ppu_device, bus *main
 		return false;
 	}
 
+	ppu_device->deviceend = 0x2FFF;
 	std::cout << "Cartridge is NSF file..\n";
 	std::cout << "Songname  : " << nsf_hdr.songname << "\n";
 	std::cout << "Artist    : " << nsf_hdr.artist << "\n";
@@ -723,6 +727,9 @@ void	cartridge::readstream(std::istream &nesfile, ppu *ppu_device, bus *mainbus,
 		std::cout << "Failed to reserve memory for cartridge file." << std::endl;
 		return;
 	}
+
+	// set correct ppu address space.
+	ppu_device->deviceend = 0x3FFA;
 
 	nesfile.read((char*)program_data, nes.programsize);
 
@@ -1102,6 +1109,20 @@ cartridge::cartridge(const char *filename, ppu *ppu_device, bus *mainbus, audio_
 	// load & parse NES file.
 	std::ifstream	nesfile;
 	nesfile.open(filename, std::ios::binary | std::ios::in);
+	
+	// did we find the file??
+	if (!nesfile.good()) {
+		// oh dear. Nothing found.
+		// it might be an unicode file. Try accessing as UTF8.
+		nesfile.close();
+		nesfile.open(std::filesystem::u8path(filename), std::ios::binary | std::ios::in);
+		if (!nesfile.good()) {
+			// still not able to find it? ditch the effort.
+			std::cout << "Unable to load " << filename << ", bailing..\n";
+			return;
+		}
+	}		
+
 	nesfile.seekg(0, std::ios_base::end);
 	filesize = nesfile.tellg();
 	nesfile.seekg(0, std::ios_base::beg);
