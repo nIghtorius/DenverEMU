@@ -191,8 +191,8 @@ public:
 	fdsaudio* fdsexp = nullptr;
 
 	bool	is_valid;
-	rom		*program;
-	vrom	*character;
+	rom*	program = nullptr;
+	vrom*	character = nullptr;
 	bool	nsf_mode = false;
 	bool	high_hz_nsf = false;
 	int		nsf_cpu_cycles = 0;
