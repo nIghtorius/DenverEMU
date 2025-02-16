@@ -164,13 +164,11 @@ void mmc1_vrom::update_banks(mmc1_state &state) {
 		switch (state.mirroring) {
 		case MMC1_MIRROR_ONESCRN_LOWER:
 			ppubus->resetpins_to_default();
-			ppubus->groundpin(10);
-			ppubus->groundpin(11);
+			ppubus->vccpin(10);
 			break;
 		case MMC1_MIRROR_ONESCRN_UPPER:
 			ppubus->resetpins_to_default();
 			ppubus->groundpin(10);
-			ppubus->groundpin(11);
 			break;
 		case MMC1_MIRROR_VERTICAL:
 			ppubus->resetpins_to_default();

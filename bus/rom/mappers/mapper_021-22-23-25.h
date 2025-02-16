@@ -38,10 +38,10 @@ class vrc2_4_rom : public rom {
 private:
 	vrc2_4_state	state;
 	byte			*ram;
-	byte		*prg_8000;
-	byte		*prg_a000;
-	byte		*prg_c000;
-	byte		*prg_e000;
+	byte		*prg_8000 = nullptr;
+	byte		*prg_a000 = nullptr;
+	byte		*prg_c000 = nullptr;
+	byte		*prg_e000 = nullptr;
 	vrc2_4_vrom	*charrom = nullptr;
 public:
 	bool		vrc2_mode;
@@ -66,14 +66,14 @@ public:
 
 class vrc2_4_vrom : public vrom {
 private:
-	byte		*chr_0000;
-	byte		*chr_0400;
-	byte		*chr_0800;
-	byte		*chr_0c00;
-	byte		*chr_1000;
-	byte		*chr_1400;
-	byte		*chr_1800;
-	byte		*chr_1c00;
+	byte		*chr_0000 = nullptr;
+	byte		*chr_0400 = nullptr;
+	byte		*chr_0800 = nullptr;
+	byte		*chr_0c00 = nullptr;
+	byte		*chr_1000 = nullptr;
+	byte		*chr_1400 = nullptr;
+	byte		*chr_1800 = nullptr;
+	byte		*chr_1c00 = nullptr;
 public:
 	vrc2_4_vrom();
 	void		setbanks(vrc2_4_state *state, bool vrc2mode);

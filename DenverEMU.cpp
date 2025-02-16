@@ -1,7 +1,7 @@
 /*
 	Project Denver
 
-	(c) 2018-2024 Peter Santing.
+	(c) 2018-2025 Peter Santing.
 	This is my second NES emulator. I try to get this as accurate as possible. 
 	
 */
@@ -15,21 +15,13 @@
 #include <fstream>
 #include <exception>
 #include <string>
-#include <filesystem>
-
-#include "imgui.h"
-#include "imgui_internal.h"
-#include "imgui_impl_sdl2.h"
-#include "imgui_impl_opengl3.h"
 
 #include "denvergui/dengui_main.h"
-#include "video/debug_renderer.h"
 
 #include <SDL.h>
 #include <GL/glew.h>
 
 #include "emulator/denver_config.h"
-#include "helpers/nesdb.h"
 
 #if defined(IMGUI_IMPL_OPENGL_ES2)
 #include <SDL_opengles2.h>
@@ -42,32 +34,32 @@
 #include <Windows.h>
 #endif
 
-#define		DENVER_VERSION		"0.8 alpha"
+#define		DENVER_VERSION		"0.9 alpha"
 #undef main
 
 // defaults
-static bool		vsync_enable = false;
-static bool		no_audio = false;
-static bool		no_audio_emu = false;
-static bool		no_expanded_audio = false;
-static bool		no_gui = false;
-static char		rom_load_startup[512];
-static char		shader_load_startup[512];
-static bool		fullscreen = false;
-static int		upscaler = 0;
-static int		width = 512;
-static int		height = 480;
-static bool		linear_filter = true;
-static float	override_scale = -1.0f;
-static int		p1_controller = 0;
-static int		p2_controller = 1;
-static bool		show_controllers = false;
-static bool		do_exec_trace = false;
-static bool		generate_readable_stacktrace = false;
+bool		vsync_enable = false;
+bool		no_audio = false;
+bool		no_audio_emu = false;
+bool		no_expanded_audio = false;
+bool		no_gui = false;
+char		rom_load_startup[512];
+char		shader_load_startup[512];
+bool		fullscreen = false;
+int			upscaler = 0;
+int			width = 512;
+int			height = 480;
+bool		linear_filter = true;
+float		override_scale = -1.0f;
+int			p1_controller = 0;
+int			p2_controller = 1;
+bool		show_controllers = false;
+bool		do_exec_trace = false;
+bool		generate_readable_stacktrace = false;
 
 std::vector<std::string> shaderList;
 
-void process_args(int argc, char *argv[]) {
+static void process_args(int argc, char* argv[]) {
 	for (int i = 1; i < argc; i++) {
 		if ((strcmp(argv[i], "--help") == 0) || (strcmp(argv[i], "-?") == 0) || (strcmp(argv[i], "/?") == 0)) {
 			// show help.
@@ -203,301 +195,19 @@ int main(int argc, char *argv[])
 	/*
 		Print Shield
 	*/
-	std::cout << "Project Denver version " << DENVER_VERSION << std::endl << "(c) 2018-2024 P. Santing aka nIghtorius" << std::endl;
+	std::cout << "Project Denver version " << DENVER_VERSION << std::endl << "(c) 2018-2025 P. Santing aka nIghtorius" << std::endl;
 	std::cout << "Application compiled on " << __DATE__ << " at " << __TIME__ << std::endl << std::endl;
 
 	// start the emulator initialization.
 	std::cout << "Emulator initializing.." << std::endl;
 
-	// Load DB.
-	nesdb nes20db;
-
-	// SDL
-	std::cout << "Setting up SDL.." << std::endl;
-
-	// Collect shaders for the GUI.
-	shaderList.clear();
-	std::string path = "./shaders";
-	for (const auto& entry : std::filesystem::directory_iterator(path)) {
-		shaderList.push_back(entry.path().string());
-	}
-
+	// init SDL
 	SDL_SetHint(SDL_HINT_JOYSTICK_THREAD, "1");
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_GAMECONTROLLER);
 
-	// Decide GL+GLSL versions
-#if defined(IMGUI_IMPL_OPENGL_ES2)
-	// GL ES 2.0 + GLSL 100
-	const char* glsl_version = "#version 100";
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, 0);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
-#elif defined(__APPLE__)
-	// GL 3.2 Core + GLSL 150
-	const char* glsl_version = "#version 150";
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG); // Always required on Mac
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
-#else
-	// GL 3.0 + GLSL 130
-	const char* glsl_version = "#version 130";
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, 0);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
-#endif
-
-	// From 2.0.18: Enable native IME.
-#ifdef SDL_HINT_IME_SHOW_UI
-	SDL_SetHint(SDL_HINT_IME_SHOW_UI, "1");
-#endif
-
-	// Create window with graphics context
-	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
-
-	int flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL | SDL_WINDOW_ALLOW_HIGHDPI;
-	if (fullscreen) {
-		flags = SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN;
-	}
-
+	// initialize denver and SDL stuff.
 	nes_emulator* denver = new nes_emulator();
-	denver->db = &nes20db;
-	if (show_controllers) {
-		// we might have initialized denver, but the init will stop there. But we will show the detected controllers.
-		std::cout << "Denver has detected the following gamecontrollers.\n\n";
-		for (int i = 0; i < denver->joydefs->gameControllers.size(); i++) {
-			const char *controllername = SDL_GameControllerName(denver->joydefs->gameControllers[i]);
-			std::cout << std::dec << i << ". " << controllername << "\n";
-		}
-		std::cout << "\n\nDenver will exit now...\n";
-		exit(0);
-	}
-
-	// configure controller mapping (commandline)
-	denver->joydefs->controllermapping[0] = p1_controller;
-	denver->joydefs->controllermapping[1] = p2_controller;
-
-	SDL_Window* win = SDL_CreateWindow("Denver NES emulator", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, flags);
-	
-	SDL_GLContext gl_context = SDL_GL_CreateContext(win);
-	SDL_GL_MakeCurrent(win, gl_context);
-	int vsync = vsync_enable ? 1 : 0;
-	if (SDL_GL_SetSwapInterval(vsync)) {
-		std::cout << "Unable to set Vsync" << std::endl;
-	}
-
-	GLuint tex;
-	GLuint ppu_ptable;
-	GLuint ppu_ntable;
-
-	// Texture.
-	glGenTextures(1, &tex);
-	glGenTextures(1, &ppu_ptable);
-	glGenTextures(1, &ppu_ntable);
-
-	glBindTexture(GL_TEXTURE_2D, tex);
-	
-	// Setup Dear ImGui context
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	ImGuiIO& io = ImGui::GetIO(); (void)io;
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
-	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
-	
-	float ddpi = 0.0f;
-	SDL_GetDisplayDPI(0, &ddpi, NULL, NULL);
-	float display_scale = ddpi / (float)96.0f;
-	display_scale = display_scale<(float)1.0f?(float)1.0:display_scale;
-
-	if (override_scale > 0.0f) display_scale = override_scale;
-
-	std::cout << "Window Scale will be " << display_scale << "x\n";
-
-	// Setup Dear ImGui style
-	ImFontConfig *fConfig = new ImFontConfig();
-	ImGui::StyleColorsDark();
-	ImGui::GetStyle().ScaleAllSizes(display_scale);
-	io.Fonts->AddFontFromFileTTF(
-		"fonts/denver-ui.ttf", 16 * display_scale, fConfig, io.Fonts->GetGlyphRangesDefault()
-	)->Scale = 1.0;
-	
-	// When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
-	ImGuiStyle& style = ImGui::GetStyle();
-	if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-	{
-		style.WindowRounding = 0.0f;
-		style.Colors[ImGuiCol_WindowBg].w = 1.0f;
-	}
-
-	// Setup Platform/Renderer backends
-	ImGui_ImplSDL2_InitForOpenGL(win, gl_context);
-	ImGui_ImplOpenGL3_Init(glsl_version);
-	glewInit();
-
-	int time = SDL_GetTicks();
-
-	std::cout << "Starting emulation..." << std::endl;
-
-	// test ini files.
-	inifile denverconfig;
-
-	denverconfig.setvalue("controller1", "left", (int)16);
-	denverconfig.setvalue("controller1", "right", (int)17);
-	denverconfig.setvalue("controller2", "up", (int)8);
-	denverconfig.setvalue("controller2", "down", (int)4);
-	denverconfig.setvalue("history", "lastopenedrom", (char*)"mario.nes");
-	denverconfig.setvalue("emulation", "audio_enabled", true);
-
-	denverconfig.save("denver.ini");
-
-	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-
-	bool btrue = true;
-	bool *p_open = &btrue;
-
-	denver->frame_upscaler = upscaler;
-
-	if (strnlen(shader_load_startup, 512) != 0) {
-		denver->use_shader(shader_load_startup);
-	}	
-
-	if (no_audio) denver->audio->no_audio = true;
-	if (no_audio_emu) denver->nes_2a03->no_apu = true;
-	if (no_expanded_audio) denver->audio->no_expanded_audio = true;
-
-	if (strnlen(rom_load_startup, 512) == 0) {
-		denver->load_logo();
-	}
-	else {
-		denver->load_cartridge(rom_load_startup);
-	}
-
-	if (do_exec_trace) denver->nes_2a03->cpu_2a03.write_execution_log();
-	if (generate_readable_stacktrace) denver->nes_2a03->cpu_2a03.generate_stacktrace = true;	// MEMORY HUNGRY!
-
-	denvergui::denvergui_state windowstates;
-	windowstates.show_apu_debugger = false;
-	windowstates.mainwin = win;
-	windowstates.scaling = display_scale;
-
-	// setup debug rendering for ppu.
-	ppu_debug_vram *ppu_visual_debug = new ppu_debug_vram();
-	ppu_visual_debug->set_target_ppu(denver->ppu_device);
-
-	// set the debugger callback for the ppu.
-	denver->ppu_device->dbg_callback = ([&]() {
-		if (windowstates.show_ppu_debugger) {
-			ppu_visual_debug->render_nametable();
-		}
-	});
-
-	// new call back code. set callback to the ppu.
-	denver->ppu_device->callback = ([&] () {
-		SDL_Event event;
-		while (SDL_PollEvent(&event)) {
-			ImGui_ImplSDL2_ProcessEvent(&event);
-			switch (event.type) {
-			case SDL_QUIT:
-				denver->clock.running = false;
-				break;
-			case SDL_KEYDOWN:
-			case SDL_KEYUP:
-				if (event.key.keysym.scancode == 0x35) {
-					denver->audio->boostspeed = (event.type == SDL_KEYDOWN);
-				}
-				denver->joydefs->process_kb_event(&event);
-				break;
-			case SDL_CONTROLLERBUTTONDOWN:
-			case SDL_CONTROLLERBUTTONUP:
-			case SDL_CONTROLLERAXISMOTION:
-				denver->joydefs->process_controller_event(&event);
-				break;
-			case SDL_CONTROLLERDEVICEREMOVED:
-			case SDL_CONTROLLERDEVICEADDED:
-				denver->joydefs->process_controller_connect_event(&event);
-				break;
-			case SDL_DROPFILE:
-				SDL_DropEvent *dropData = reinterpret_cast<SDL_DropEvent*>(&event);
-				// we have dropped the file. Load it.
-				// tell the gui to load it.
-				windowstates.romChange = true;
-				windowstates.changeRomTo = dropData->file;
-			}
-
-		}
-		if (!no_gui) {
-			ImGui_ImplOpenGL3_NewFrame();
-			ImGui_ImplSDL2_NewFrame();
-			ImGui::NewFrame();
-		}
-		denver->prepare_frame();
-		nes_frame_tex * nesframe = denver->returnFrameAsTexture();
-
-		// ToDo: refactor this into the nes_emulator class (emulator/nes.h)
-		glBindTexture(GL_TEXTURE_2D, tex);		
-		if (!linear_filter) {
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		}
-		else {
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		}
-		glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, nesframe->w, nesframe->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, (GLvoid *)nesframe->texture);
-
-		if (windowstates.show_ppu_debugger) {
-			// render ppu debugger pattern table.
-			ppu_visual_debug->render_tilemap(windowstates.pattern_palette);
-			glBindTexture(GL_TEXTURE_2D, ppu_ptable);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-			glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 256, 128, 0, GL_RGBA, GL_UNSIGNED_BYTE, (GLvoid *)ppu_visual_debug->get_patterntable_render());
-
-			// render ppu debugger name table.
-			ppu_visual_debug->show_scroll_registers = windowstates.show_scroll_regs;
-			ppu_visual_debug->show_ppu_updates_from_cpu = windowstates.show_ppu_updates;
-
-			glBindTexture(GL_TEXTURE_2D, ppu_ntable);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-			glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 512, 480, 0, GL_RGBA, GL_UNSIGNED_BYTE, (GLvoid *)ppu_visual_debug->get_nametable_render());
-
-			windowstates.pattern_tex = ppu_ptable;
-			windowstates.ntable_tex = ppu_ntable;
-		}
-
-		int w, h;
-		SDL_GetWindowSize(win, &w, &h);
-		denver->renderFrameToGL(w, h, tex);
-
-		if (!no_gui) {
-			denvergui::render_main(denver, tex, &windowstates);
-			ImGui::Render();
-			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-			if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-			{
-				SDL_Window* backup_current_window = SDL_GL_GetCurrentWindow();
-				SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
-				ImGui::UpdatePlatformWindows();
-				ImGui::RenderPlatformWindowsDefault();
-				SDL_GL_MakeCurrent(backup_current_window, backup_current_context);
-			}
-		}
-
-		SDL_GL_SwapWindow(win);
-		denver->sync_audio();
-	});
-
-	denver->fast_run_callback();
+	denver->start();
 
 	std::cout << "Emulation ended..." << std::endl;
 

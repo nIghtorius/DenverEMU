@@ -130,7 +130,7 @@ void	ppu::write(const int addr, const int addr_from_base, const byte data) {
 		ppumask.emp_red = (data & PPU_EMP_RED) > 0;
 		ppumask.grayscale = (data & PPU_GREYSCALE) > 0;
 		bool	prev_state_show = ppumask.showbg || ppumask.showspr;
-		ppumask.showbg = (data & PPU_SHOW_BG) > 0;
+		ppumask.showbg = (data & PPU_SHOW_BG) > 0; 
 		ppumask.showspr = (data & PPU_SHOW_SPR) > 0;
 		if ((ppumask.showbg || ppumask.showspr) && !prev_state_show) {
 			// reset rendering pipeline evaluators.

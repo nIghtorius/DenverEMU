@@ -28,8 +28,8 @@ cpu2a03_fast::cpu2a03_fast() {
 	dma_count = 0;
 	dma_cycle = 0;
 	dma_high = 0;
-	irq_delay = 0;
-	nmi_delay = 0;
+	irq_delay = false;
+	nmi_delay = false;
 
 	// clear stacktrace.
 	stacktrace.clear();

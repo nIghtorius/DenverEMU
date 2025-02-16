@@ -15,6 +15,12 @@ audio_player::audio_player() {
 	desired.userdata = this;
 
 	aud = SDL_OpenAudioDevice(NULL, 0, &desired, NULL, 0);
+	if (aud) {
+		std::cout << "Audio device initialized..\n";
+	}
+	else {
+		std::cout << "Audio initialization failed..\n";
+	}
 }
 
 void	audio_player::sdl_aud_callback(void * const data, std::uint8_t* const stream, const int len)

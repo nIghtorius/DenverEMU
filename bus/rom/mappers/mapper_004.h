@@ -30,6 +30,8 @@
 #define		MP52_NOCHR256KB				0x40
 #define		MP52_LOCK_UNTIL_RESET		0x80
 
+#define		IRQ_CPUTICK_DELAY			0x03
+
 struct mmc3_state {
 	// banks.
 	byte	bank_update_reg;
@@ -73,6 +75,7 @@ private:
 	mmc3_state	state;
 	mmc3_vrom	*vrom = nullptr;
 	word	lastppuaddr = 0;
+	int		tickcount_irq_trigger = 0;
 	int		cpu_tk = 0;
 	int		lt_a12r = 0;
 public:
@@ -105,6 +108,7 @@ private:
 	byte	*chr1800 = nullptr;
 	byte	*chr1c00 = nullptr;
 public:
+	word	ppuaddr;
 	mmc3_vrom();
 	mmc3_rom		*rom = nullptr;
 	void			update_banks(mmc3_state *state);

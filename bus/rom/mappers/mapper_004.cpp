@@ -121,6 +121,7 @@ void	mmc3_rom::write(const int addr, const int addr_from_base, const byte data) 
 			state.bank_update_reg = data & MMC3_BANKUPDATE_REG;
 			state.prg_bank_mode = (data & MMC3_BANK_MODE) > 0;
 			state.chr_a12_inv = (data & MMC3_CHR_A12_INVERSION) > 0;
+			update_banks();
 			return;
 		}
 		else {
@@ -261,7 +262,7 @@ void	mmc3_rom::set_mapper44_mode() {
 	write(0xA001, 0x4001, 0x00);
 }
 
-void	mmc3_rom::set_rom_data(byte *data, const std::size_t size) {
+void	mmc3_rom::set_rom_data(byte* data, const std::size_t size) {
 	devicestart = 0x6000;
 	deviceend = 0xFFFF;
 	devicemask = 0xFFFF;
@@ -275,7 +276,7 @@ void	mmc3_rom::set_rom_data(byte *data, const std::size_t size) {
 	update_banks();
 }
 
-void	mmc3_rom::link_vrom(mmc3_vrom * m3vrom) {
+void	mmc3_rom::link_vrom(mmc3_vrom* m3vrom) {
 	vrom = m3vrom;
 	if (vrom) {
 		vrom->update_banks(&state);
@@ -285,17 +286,18 @@ void	mmc3_rom::link_vrom(mmc3_vrom * m3vrom) {
 int		mmc3_rom::rundevice(const int ticks) {
 	cpu_tk += ticks;
 	if (!vrom) return ticks;
-	word ppuaddr = vbus->vbus.address;
-	bool a12_risen = ((ppuaddr & 0x1000) > 0) && ((lastppuaddr & 0x1000) == 0);	
+	word ppuaddr = vbus->vbus.address;	
+	/*
+	bool a12_risen = ((ppuaddr & 0x1000) > 0) && ((lastppuaddr & 0x1000) == 0);
 	if ((a12_risen) && (cpu_tk - lt_a12r >= 9)) {
-		// log ppu scanline or a12 rise.	
+		// log ppu scanline or a12 rise.
 		/*
 		int scanline = reinterpret_cast<ppu*>(devicebus->devices[2])->scanline;
 		int ppucycle = reinterpret_cast<ppu*>(devicebus->devices[2])->cycle;
 		int cpux = reinterpret_cast<package_2a03*>(devicebus->devices[0])->cpu_2a03.regs.x;
 		std::cout << "A12 rise on scanline #" << std::dec << scanline << " address is @ " << std::hex << (int)ppuaddr;
 		std::cout << " last address is @ " << (int)lastppuaddr << " ppu cycle: " << std::dec << ppucycle << " cpu.x: " << cpux << "\n";
-		*/
+		*/ /*x
 		lt_a12r = cpu_tk;
 		if ((state.irq_counter == 0) || (state.irq_reload)) {
 			state.irq_counter = state.irq_latch;
@@ -308,7 +310,26 @@ int		mmc3_rom::rundevice(const int ticks) {
 			irq_enable = true;
 		}
 	}
-	lastppuaddr = ppuaddr;
+	lastppuaddr = ppuaddr;*/
+	bool a12_risen = ppuaddr & 0x1000;
+	if (a12_risen) {
+		tickcount_irq_trigger++;
+		if (tickcount_irq_trigger == IRQ_CPUTICK_DELAY) {
+			if ((state.irq_counter == 0) || (state.irq_reload)) {
+				state.irq_counter = state.irq_latch;
+				state.irq_reload = false;
+			}
+			else {
+				state.irq_counter--;
+			}
+			if ((state.irq_counter == 0) && (state.irq_enable)) {
+				irq_enable = true;
+			}
+		}
+	}
+	else {
+		tickcount_irq_trigger = 0;
+	}
 	return ticks;
 }
 
@@ -366,7 +387,7 @@ void mmc3_vrom::update_banks(mmc3_state *state) {
 }
 
 byte mmc3_vrom::read(const int addr, const int addr_from_base, const bool onlyread) {
-	//if (!onlyread) ppuaddr = addr;
+	if (!onlyread) ppuaddr = addr;
 	if (!chr0000) return 0;	// not initialized yet.
 	if ((addr >= 0x0000) && (addr <= 0x03ff)) return chr0000[addr];
 	if ((addr >= 0x0400) && (addr <= 0x07ff)) return chr0400[addr - 0x0400];

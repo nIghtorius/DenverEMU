@@ -28,6 +28,8 @@
 #define DENVER_HQ2X_UPSCALER		1
 #define	DENVER_HQ3X_UPSCALER		2
 
+
+
 struct nes_frame_tex {
 	int w, h;
 	GLvoid *texture;
@@ -81,6 +83,8 @@ public:
 
 	bool hasquit() const;
 	void stop();
+
+	void start(); // starts the emulator with the default handler.	
 
 	void prepare_frame();
 	void renderFrameToGL(const int windowWidth, const int windowHeight, const GLuint tex);

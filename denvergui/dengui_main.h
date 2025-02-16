@@ -31,7 +31,7 @@ namespace denvergui {
 
 		// main window.
 		SDL_Window* mainwin = nullptr;
-		float scaling;
+		float scaling = 1.0f;
 
 		// last directory.
 		std::string lastpath = "."; // defaults to current directory.
@@ -40,7 +40,7 @@ namespace denvergui {
 		std::string changeRomTo = "";
 
 		// nsf
-		int		zeroIndexedTrackNo;
+		int		zeroIndexedTrackNo = 0;
 		bool	repeatTrackAfterEnd5s = false;
 
 		// vol

@@ -166,7 +166,7 @@ void vrc2_4_rom::set_battery_backed_ram(byte* data, std::size_t size) {
 }
 
 
-int		vrc2_4_rom::rundevice(int ticks) {
+int		vrc2_4_rom::rundevice(int ticks) {	
 	if (!state.irq_enabled) return ticks;
 	if (vrc2_mode) return ticks; // vrc2(x) does not have an IRQ counter.
 
