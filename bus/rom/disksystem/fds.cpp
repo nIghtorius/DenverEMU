@@ -57,6 +57,8 @@ byte fds_rom::read(const int addr, const int addr_from_base, const bool onlyread
 		if (state.timer_irq_tripped) status |= 0x01;
 		if (state.byte_transfer) status |= 0x02;
 		//if (!state.crc_passed) status |= 0x10;
+		// new info about fds hardware. FDS_DISK_STATUS_REG.D3 (0x08) returns mirror state.
+		if (!state.mirror_hv) status |= 0x08;
 		if (state.end_head) status |= 0x40;
 		status |= 0x80;
 		if (!onlyread) {

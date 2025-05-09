@@ -207,6 +207,8 @@ int main(int argc, char *argv[])
 
 	// initialize denver and SDL stuff.
 	nes_emulator* denver = new nes_emulator();
+
+	// start the emulator. (which will initialize callbacks, video, audio, controllers, etc)
 	denver->start();
 
 	std::cout << "Emulation ended..." << std::endl;
