@@ -56,6 +56,7 @@ int			p2_controller = 1;
 bool		show_controllers = false;
 bool		do_exec_trace = false;
 bool		generate_readable_stacktrace = false;
+bool		stop_on_unknown_opcode = true;
 
 std::vector<std::string> shaderList;
 
@@ -81,11 +82,16 @@ static void process_args(int argc, char* argv[]) {
 			std::cout << "--select-controller-id-port2, selects a gamecontroller as port #2\n";
 			std::cout << "--executiontrace\n";
 			std::cout << "--make-stacktrace\n";
+			std::cout << "--handleunknownopcodeasnop, resume execution when an unknown opcode is encountered\n";
 			exit(0);
 		}
 		if (strcmp(argv[i], "--executiontrace") == 0) {
 			std::cout << "WARNING! Running execution trace, log file grows fast!\n";
 			do_exec_trace = true;
+		}
+
+		if (strcmp(argv[i], "--handleunknownopcodeasnop") == 0) {
+			stop_on_unknown_opcode = false;
 		}
 
 		if (strcmp(argv[i], "--make-stacktrace") == 0) {

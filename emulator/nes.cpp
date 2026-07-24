@@ -38,6 +38,8 @@ struct imemstream : virtual imembuf, std::istream
 	}
 };
 
+extern bool stop_on_unknown_opcode;
+
 nes_emulator::nes_emulator() {
 	// setup the emulator.
 	mainbus = new bus();
@@ -55,6 +57,9 @@ nes_emulator::nes_emulator() {
 	mainbus->registerdevice(nesram);
 	mainbus->registerdevice(ppu_device);
 	mainbus->emulate_bus_conflicts(true);
+
+	// configure behaivour.
+	nes_2a03->cpu_2a03.stop_on_unknown_opcode = stop_on_unknown_opcode;
 
 	// configure audio.
 	audio->boostspeed = false;

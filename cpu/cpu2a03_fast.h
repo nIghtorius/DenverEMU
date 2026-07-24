@@ -83,6 +83,7 @@ public:
 	bool	generate_stacktrace = false;
 	int		stack_level = 0;
 	byte	last_opcode = 0x00;
+	bool    stop_on_unknown_opcode = true;
 
 	std::vector<std::string> stacktrace;
 

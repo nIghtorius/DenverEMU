@@ -1798,10 +1798,18 @@ int	cpu2a03_fast::rundevice_internal (int ticks) {
 			break;
 		}
 	}
-	if (error_state) {
+	
+	if (error_state && stop_on_unknown_opcode) {
 		last_opcode = opcode;
 		regs.pc--;
 	}
+
+	if (!stop_on_unknown_opcode && error_state) {
+		// recover from error state by treating it as a NOP.
+		actualticks += 1;
+		error_state = false;
+	}
+
 	return actualticks * tick_rate;
 }
 /*
